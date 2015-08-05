@@ -1,4 +1,4 @@
-# databank
+# Databank
 Illinois Data Bank institutional data repository front end for Fedora Commons 4
 
 ## Installing
