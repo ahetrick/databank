@@ -1,0 +1,43 @@
+// Place all the styles related to the Datasets controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+.mainTitleText{
+  font-style: italic;
+  font-weight: bold;
+  font-size: large;
+}
+.logoOrange{
+  color: #E87722;
+  font-weight: bold;
+}
+.info-box {
+  background-color: #F8F8F8;
+}
+
+.metadata-label {
+  font-weight: bold;
+}
+
+.metadata-value {
+  font-style: normal;
+}
+
+.metadata-note {
+  font-style: italic;
+}
+
+div#citation-block {
+  background-color: #ecf0f1;
+}
+
+#citation, #citation-download, #citation-standards {
+  padding: .5em;
+}
+
+#title {
+  font-weight: bold;
+  font-size: large;
+}
+.subtitle {
+  font-style: italic;
+}

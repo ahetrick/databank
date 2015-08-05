@@ -1,0 +1,34 @@
+<div class="container">
+  <!-- Static navbar -->
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">Illinois <span class="logoOrange">Data</span> Bank</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li class="<%= 'active' if current_page?(root_path) %>">
+            <a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+          <li class="<%= 'active' if current_page?(new_dataset_path) %>">
+            <a href="/datasets/new"><span class="glyphicon glyphicon-plus"></span> Upload Data</a></li>
+          <li class="<%= 'active' if current_page?(datasets_path) %>">
+            <a href="/datasets"><span class="glyphicon glyphicon-search"></span> Find Data</a></li>
+          <li class="<%= 'active' if current_page?(policies_path) %>">
+            <a href="/policies"><span class="glyphicon glyphicon-info-sign"></span> Policies</a></li>
+          <li class="<%= 'active' if current_page?(help_path) %>">
+            <a href="/help"><span class="glyphicon glyphicon-info-sign"></span> Help</a></li>
+        </ul>
+
+      </div>
+      <!--/.nav-collapse -->
+    </div>
+    <!--/.container-fluid -->
+  </nav>
+</div>
+

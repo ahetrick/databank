@@ -11,9 +11,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 20150805200938) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "creators", force: :cascade do |t|
+    t.string   "creator_name"
+    t.string   "identifier"
+    t.integer  "dataset_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  create_table "datasets", force: :cascade do |t|
+    t.string   "title"
+    t.string   "identifier"
+    t.string   "publisher"
+    t.string   "publication_year"
+    t.string   "creator_ordered_ids"
+    t.string   "rights"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+    t.string   "description"
+  end
 
 end
