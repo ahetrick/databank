@@ -19,6 +19,13 @@ class DatasetsController < ApplicationController
     end
   end
 
+  # GET /datasets/1/edit
+  def edit
+    if params.keys.include?("input_title")
+      create_or_update_if_valid_input(params)
+    end
+  end
+
   def create_or_update_if_valid_input(input)
 
     if input["input_title"].empty?
@@ -72,13 +79,6 @@ class DatasetsController < ApplicationController
       end
     end
 
-  end
-
-  # GET /datasets/1/edit
-  def edit
-    if params.keys.include?("input_title")
-      create_or_update_if_valid_input(params)
-    end
   end
 
   # POST /datasets
