@@ -44,9 +44,8 @@
 </div>
 
 <div class="container-fluid">
-  <p><span class="metadata-label">Data Description: </span>
-    <% @dataset.description.empty? ? "[data description not provided]" : @dataset.description %>
-  </p>
+  <span class="metadata-label">Data Description: </span>
+    <%= @dataset.description.empty? ? "[data description not provided]" : @dataset.description %>
 </div>
 
 <div class="panel-group" id="rights" role="tablist" aria-multiselectable="true">

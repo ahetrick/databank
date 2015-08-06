@@ -38,8 +38,8 @@ class DatasetsController < ApplicationController
       raise 'dataset creator name list must not be empty'
     end
 
-    if params.keys.include?(:id)
-      @dataset = Dataset.find(:id)
+    if params[:action] == 'edit'
+      @dataset = Dataset.find(params[:id])
       @dataset.title = input["input_title"]
       @dataset.identifier = input["input_identifier"]
       @dataset.publisher = "University of Illinois at Urbana-Champaign"
