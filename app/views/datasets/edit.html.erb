@@ -1,46 +1,6 @@
-<h1>Editing Dataset</h1>
+<h1>Upload Data</h1>
 
-<form role="form" data-toggle="validator" class="form-horizontal container-fluid">
-
-  <div class="form-group">
-    <label for="input_identifier">DOI</label>
-    <input type="text" id="input_identifier" name="input_identifier" class="form-control" placeholder="[Leave blank if requesting a new DOI]">
-  </div>
-
-  <div class="form-group">
-    <label for="input_title">Title</label>
-    <input type="text" id="input_title" name="input_title" class="form-control" placeholder="[The Title]" required>
-  </div>
-
-  <div class="form-group">
-    <label for="input_creator_name_list">Creator(s)</label>
-    <input type="text" id="input_creator_name_list" name="input_creator_name_list" class="form-control" placeholder="[Semi-colon spearated list of names, e.g.: Verfasser, Maria; Auteur, Henri]" required>
-  </div>
-
-  <div class="form-group">
-    <label for="input_publication_year">Publication Year</label>
-    <input type="text" id="input_publication_year" name="input_publication_year" pattern="[0-9]{4}" class="form-control" value="2015" required>
-    <span class="help-block">Four digit year (YYYY)</span>
-  </div>
-
-  <div class="form-group">
-    <label for="input_description">Data Description</label>
-    <input type="text" id="input_description" name="input_description" class="form-control" placeholder = "[Data Description]" >
-  </div>
-
-  <div class="form-group">
-    <label for="input_rights">Access Rights Description</label>
-    <input type="text" id="input_rights" name="input_rights" class="form-control" placeholder="[Access Rights Description]" >
-  </div>
-
-  <div class="primary-actions pull-right">
-
-    <button type="submit" class="btn btn-primary">Create Dataset</button>
-
-    <%= link_to t(:'helpers.action.cancel'), main_app.root_path, class: 'btn btn-link' %>
-  </div>
-
-</form>
+<%= render partial: 'form' %>
 
 <%= link_to 'Show', @dataset %> |
 <%= link_to 'Back', datasets_path %>
