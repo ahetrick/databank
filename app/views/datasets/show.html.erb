@@ -45,10 +45,7 @@
 
 <div class="container-fluid">
   <p><span class="metadata-label">Data Description: </span>
-    <% if @dataset.description && @dataset.description.length > 0 %>
-      <%= @dataset.description %>
-    <% else %>[description not provided]
-    <% end %>
+    <% @dataset.description.empty? ? "[data description not provided]" : @dataset.description %>
   </p>
 </div>
 
@@ -63,10 +60,7 @@
     </div>
     <div id="collapseRights" class="panel-collapse collapse" role="tabpanel" aria-labelledby="rightsHeading">
       <div class="panel-body">
-        <% if @dataset.rights && @dataset.rights.length > 0 %>
-          <%= @dataset.rights %>
-        <% else %>[description not provided]
-        <% end %>
+        <%= @dataset.rights.empty? ? "[rights information not provided]" : @dataset.rights %>
       </div>
     </div>
   </div>
