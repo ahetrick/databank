@@ -29,7 +29,7 @@ class Dataset < ActiveRecord::Base
   end
 
   def set_key
-    self.key = self.key || self.id
+    self.key = self.id
   end
 
   def save_to_repo
