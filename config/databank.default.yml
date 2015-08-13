@@ -1,0 +1,14 @@
+development:
+  :fedora_url: http://localhost:8080/rest/databank
+  :solr_url: http://localhost:8983/solr/
+  :solr_core: databank
+
+test:
+  :fedora_url: http://localhost:8080/rest/databank
+  :solr_url: http://localhost:8983/solr/
+  :solr_core: databank
+
+production:
+  :fedora_url: http://localhost:8080/fedora/rest/databank
+  :solr_url: http://localhost:8983/solr/
+  :solr_core: databank
