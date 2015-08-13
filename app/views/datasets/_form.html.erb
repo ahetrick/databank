@@ -1,33 +1,34 @@
 <form role="form" data-toggle="validator" class="form-horizontal container-fluid">
 
   <div class="form-group">
-    <label for="input_identifier">DOI</label>
+    <label class="control-label" for="input_identifier">DOI</label>
     <input type="text" id="input_identifier" name="input_identifier" class="form-control" placeholder="[Leave blank if requesting a new DOI]" value="<%= @dataset ? @dataset.identifier : nil %>">
   </div>
 
-  <div class="form-group">
-    <label for="input_title">Title</label>
+  <div class="form-group required">
+    <label  class="control-label"for="input_title">Title</label>
     <input type="text" id="input_title" name="input_title" class="form-control" placeholder="[The Title]" required value="<%= @dataset ? @dataset.title : nil %>">
   </div>
 
-  <div class="form-group">
-    <label for="input_creator_name_list">Creator(s)</label>
+  <div class="form-group required">
+    <label class="control-label" for="input_creator_name_list">Creator(s)</label>
     <input type="text" id="input_creator_name_list" name="input_creator_name_list" class="form-control" placeholder="[Semi-colon spearated list of names, e.g.: Verfasser, Maria; Auteur, Henri]" required value="<%= @dataset ? @dataset.creator_list : nil %>">
+    <span class="help-block">The personal name format for each name should be: family, given.</span>
   </div>
 
-  <div class="form-group">
-    <label for="input_publication_year">Publication Year</label>
+  <div class="form-group required">
+    <label class="control-label" for="input_publication_year">Publication Year</label>
     <input type="text" id="input_publication_year" name="input_publication_year" pattern="[0-9]{4}" class="form-control" value="2015" required value="<%= @dataset ? @dataset.publication_year : nil %>">
     <span class="help-block">Four digit year (YYYY)</span>
   </div>
 
   <div class="form-group">
-    <label for="input_description">Data Description</label>
+    <label class="control-label" for="input_description">Data Description</label>
     <input type="text" id="input_description" name="input_description" class="form-control" placeholder="[Data Description]" value="<%= @dataset ? @dataset.description : nil %>">
   </div>
 
   <div class="form-group">
-    <label for="input_license">Access Rights Description</label>
+    <label class="control-label" for="input_license">Access Rights Description</label>
     <input type="text" id="input_license" name="input_license" class="form-control" placeholder="[Access Rights Description]" value="<%= @dataset ? @dataset.rights : nil %>">
   </div>
 

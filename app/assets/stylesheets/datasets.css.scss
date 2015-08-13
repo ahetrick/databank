@@ -41,3 +41,8 @@ div#citation-block {
 .subtitle {
   font-style: italic;
 }
+
+.form-group.required .control-label:after {
+  content:"*";
+  color:red;
+}
