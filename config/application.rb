@@ -7,7 +7,50 @@ require 'rails/all'
 Bundler.require(*Rails.groups)
 
 module Databank
+
+  NAMESPACE_URI = 'http://databank.illinois.edu/definitions/v1/repository#'
+
+  ##
+  # "System objects" used by the application in the subject-predicate-object
+  # sense. These will be appended to NAMESPACE_URI.
+  #
+  class RDFObjects
+    DERIVATIVE_BYTESTREAM = 'Bytestream/Type/Derivative'
+    MASTER_BYTESTREAM = 'Bytestream/Type/Master'
+    ORIGINAL_SHAPE = 'Bytestream/Shape/Original'
+    SQUARE_SHAPE = 'Bytestream/Shape/Square'
+  end
+
+  ##
+  # "System predicates" used by the application in the
+  # subject-predicate-object sense. These will be appended to NAMESPACE_URI.
+  #
+  class RDFPredicates
+    BYTE_SIZE = 'byteSize'
+    BYTESTREAM_SHAPE = 'bytestreamShape'
+    BYTESTREAM_TYPE = 'bytestreamType'
+    BYTESTREAM_URI = 'hasBytestream'
+    CLASS = 'hasClass'
+    COLLECTION_KEY = 'collectionKey'
+    DATE = 'date'
+    FULL_TEXT = 'fullText'
+    HEIGHT = 'height'
+    IS_MEMBER_OF_COLLECTION = 'isMemberOfCollection'
+    IS_MEMBER_OF_ITEM = 'isMemberOfItem'
+    PAGE_INDEX = 'pageIndex'
+    PARENT_URI = 'hasParent'
+    PUBLISHED = 'published'
+    WEB_ID = 'webID'
+    WIDTH = 'width'
+
+
+
+  end
+
   class Application < Rails::Application
+
+    attr_accessor :databank_config
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.

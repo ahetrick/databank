@@ -45,14 +45,14 @@ class DatasetsController < ApplicationController
       @dataset.publisher = "University of Illinois at Urbana-Champaign"
       @dataset.publication_year = input["input_publication_year"]
       @dataset.description = input["input_description"]
-      @dataset.rights = input["input_rights"]
+      @dataset.license = input["input_license"]
     else
       @dataset = Dataset.new :title => input["input_title"],
                              :identifier => input["input_identifier"],
                              :publisher => "University of Illinois at Urbana-Champaign",
                              :publication_year => input["input_publication_year"],
                              :description => input["input_description"],
-                             :rights => input["input_rights"]
+                             :license => input["input_license"]
     end
     @dataset.save!
     creator_array = input["input_creator_name_list"].split(";")

@@ -40,6 +40,20 @@ gem 'simple_form'
 
 gem 'rubyzip'
 
+# Use ActiveMedusa to interact with Fedora repository
+gem 'active-medusa', github: 'medusa-project/active-medusa', branch: 'master'
+gem 'httpclient', git: 'git://github.com/medusa-project/httpclient.git'
+
+# Use rsolr to interact with Solr core
+gem 'rsolr'
+
+# Use rdf to handle RDF stuff
+gem 'rdf'
+gem 'rdf-turtle'
+gem 'rdf-rdfxml'
+
+gem 'nokogiri'
+gem 'equivalent-xml'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

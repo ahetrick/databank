@@ -59,7 +59,7 @@
     </div>
     <div id="collapseRights" class="panel-collapse collapse" role="tabpanel" aria-labelledby="rightsHeading">
       <div class="panel-body">
-        <%= @dataset.rights.empty? ? "[rights information not provided]" : @dataset.rights %>
+        <%= @dataset.license.empty? ? "[license information not provided]" : @dataset.license %>
       </div>
     </div>
   </div>
