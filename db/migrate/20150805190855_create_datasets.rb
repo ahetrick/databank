@@ -6,8 +6,9 @@ class CreateDatasets < ActiveRecord::Migration
       t.string :publisher
       t.string :publication_year
       t.string :creator_ordered_ids
-      t.string :rights
+      t.string :license
       t.string :key
+      t.string :description
 
       t.timestamps null: false
     end
