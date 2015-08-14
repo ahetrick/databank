@@ -7,6 +7,7 @@ class CreateDatasets < ActiveRecord::Migration
       t.string :publication_year
       t.string :creator_ordered_ids
       t.string :rights
+      t.string :key
 
       t.timestamps null: false
     end

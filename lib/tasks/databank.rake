@@ -31,7 +31,7 @@ namespace :databank do
     c2.save!
 
     ds2.creator_ordered_ids = "#{c1.id},#{c2.id}"
-
+sample
     ds2.save!
 
     ds1 = Dataset.new :identifier => %Q[10.9999/dev/test1],
