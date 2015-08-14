@@ -3,6 +3,8 @@ module Repository
 # collection.rb
   class Collection < ActiveMedusa::Container
 
+    Rails.logger.info $:
+
     include Indexable
     include Introspection
 
