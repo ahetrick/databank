@@ -25,7 +25,7 @@ class Dataset < ActiveRecord::Base
 
     citation_id = (identifier && !identifier.empty?) ? "http://dx.doi.org/#{identifier}" : ""
 
-    return "#{creator_list}; (#{publication_year}): #{title}; #{publisher}. #{citation_id}"
+    return "#{creator_list} (#{publication_year}): #{title}. #{publisher}. #{citation_id}"
   end
 
   def set_key
