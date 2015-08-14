@@ -70,6 +70,7 @@ module Databank
     config.autoload_paths << File.join(Rails.root, 'jobs')
     config.autoload_paths << File.join(Rails.root, 'lib')
     config.autoload_once_paths << File.join(Rails.root, 'app/models')
+    config.autoload_once_paths << File.join(Rails.root, 'app/models/concerns')
 
   end
 end
