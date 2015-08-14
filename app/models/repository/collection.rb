@@ -1,4 +1,4 @@
-require 'indexible'
+require_relative '../../models/concerns/indexable'
 
 module Repository
 
