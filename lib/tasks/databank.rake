@@ -7,9 +7,15 @@ namespace :databank do
     Dataset.all.each do |dataset|
       dataset.destroy
     end
-
   end
 
+  desc 'delete all collections'
+  task :delete_collections => :environment do
+    Repository::Collection.all.each do |dataset|
+      puts dataset.title
+      dataset.delete
+    end
+  end
 
   desc 'Import sample datasets'
   task :sample_import => :environment do
@@ -24,7 +30,7 @@ namespace :databank do
 
     ds2.save!
 
-    c1 = Creator.new :creator_name => "McNeill, Matthew S.", :identifier => ["http://orcid.org/0000-0002-6610-0376"],  :dataset_id => ds2.id
+    c1 = Creator.new :creator_name => "McNeill, Matthew S.", :identifier => ["http://orcid.org/0000-0002-6610-0376"], :dataset_id => ds2.id
     c2 = Creator.new :creator_name => "Robinson, Gene E.", :identifier => ["http://orcid.org/0000-0003-4828-4068"], :dataset_id => ds2.id
 
     c1.save!
@@ -41,16 +47,16 @@ namespace :databank do
                       :publisher => "University of Illinois at Urbana-Champaign"
     ds1.save!
 
-    c1 = Creator.new :creator_name => "Rimkus, Kyle R.", :identifier =>["http://orcid.org/0000-0002-9142-6677"], :dataset_id => ds1.id
-    c2 = Creator.new :creator_name => "Padilla, Thomas",  :identifier =>["http://orcid.org/0000-0002-6743-6592"], :dataset_id => ds1.id
-    c3 = Creator.new :creator_name => "Popp, Tracy", :dataset_id => ds1.id
-    c4 = Creator.new :creator_name => "Martin, Greer", :dataset_id => ds1.id
+    c3 = Creator.new :creator_name => "Rimkus, Kyle R.", :identifier => ["http://orcid.org/0000-0002-9142-6677"], :dataset_id => ds1.id
+    c4 = Creator.new :creator_name => "Padilla, Thomas", :identifier => ["http://orcid.org/0000-0002-6743-6592"], :dataset_id => ds1.id
+    c5 = Creator.new :creator_name => "Popp, Tracy", :dataset_id => ds1.id
+    c6 = Creator.new :creator_name => "Martin, Greer", :dataset_id => ds1.id
 
-    c1.save!
-    c2.save!
     c3.save!
-    c4.save
-    ds1.creator_ordered_ids = "#{c1.id},#{c2.id},#{c3.id},#{c4.id}"
+    c4.save!
+    c5.save!
+    c6.save
+    ds1.creator_ordered_ids = "#{c3.id},#{c4.id},#{c5.id},#{c6.id}"
     ds1.save!
 
   end
