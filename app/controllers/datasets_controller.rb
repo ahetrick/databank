@@ -1,5 +1,12 @@
+require 'open-uri'
+
 class DatasetsController < ApplicationController
   before_action :set_dataset, only: [:show, :edit, :update, :destroy]
+
+  # enable streaming responses
+  include ActionController::Streaming
+  # enable zipline
+  include Zipline
 
   # GET /datasets
   # GET /datasets.json
@@ -10,7 +17,11 @@ class DatasetsController < ApplicationController
   # GET /datasets/1
   # GET /datasets/1.json
   def show
+    if params.keys.include?("selectedFiles")
+      download_datafiles
+    end
   end
+
 
   # GET /datasets/new
   def new
@@ -124,6 +135,7 @@ class DatasetsController < ApplicationController
   end
 
   def stream_file
+
     bs = Repository::Bytestream.find(params[:file_id])
     raise ActiveRecord::RecordNotFound, 'Bytestream not found' unless bs
 
@@ -156,6 +168,158 @@ class DatasetsController < ApplicationController
       render text: '404 Not Found', status: 404
     end
   end
+
+  def download_datafiles
+
+    set_dataset()
+
+    datafiles = Array.new
+
+    params[:selectedFiles].each do |file_id|
+
+      bs = Repository::Bytestream.find(file_id)
+      raise ActiveRecord::RecordNotFound, 'Bytestream not found' unless bs
+
+      if bs and bs.repository_url
+        file_url = bs.repository_url
+        zip_path = bs.filename
+        datafiles << [file_url, zip_path]
+      end
+
+    end
+
+    file_mappings = datafiles
+                        .lazy  # Lazy allows us to begin sending the download immediately instead of waiting to download everything
+                        .map { |url, path| [open(url), path] }
+    zipline(file_mappings, 'datafiles.zip')
+
+  end
+
+  def download_endNote_XML
+    set_dataset()
+
+    t = Tempfile.new("#{@dataset.mainTitle}_endNote")
+
+    doc = Nokogiri::XML::Document.parse(%Q(<?xml version="1.0" encoding="UTF-8"?><xml></xml>))
+
+    recordsNode = doc.create_element('records')
+    recordsNode.parent = doc.root
+
+    recordNode = doc.create_element('record')
+    recordNode.parent = recordsNode
+
+
+    reftypeNode = doc.create_element('ref-type')
+    reftypeNode.parent = recordNode
+    reftypeNode['name'] = 'Online Database'
+    reftypeNode.content = '45'
+
+    contributorsNode = doc.create_element('contributors')
+    contributorsNode.parent = recordNode
+
+    authorsNode = doc.create_element('authors')
+    authorsNode.parent = contributorsNode
+
+    @dataset.creators.each do |creator|
+      authorNode = doc.create_element('author')
+      authorNode.content = creator.creatorName
+      authorNode.parent = authorsNode
+    end
+
+    titlesNode = doc.create_element('titles')
+    titlesNode.parent = recordNode
+
+    titleNode = doc.create_element('title')
+    titleNode.parent = titlesNode
+    titleNode.content = @dataset.mainTitle
+
+    datesNode = doc.create_element('dates')
+    datesNode.parent = recordNode
+
+    yearNode = doc.create_element('year')
+    yearNode.content = @dataset.publicationYear
+    yearNode.parent = datesNode
+
+    publisherNode = doc.create_element('publisher')
+    publisherNode.parent = recordNode
+    publisherNode.content = @dataset.publisher
+
+    urlsNode = doc.create_element('urls')
+    urlsNode.parent = recordNode
+
+    relatedurlsNode = doc.create_element('related-urls')
+    relatedurlsNode.parent = urlsNode
+
+    urlNode = doc.create_element('url')
+    urlNode.parent = relatedurlsNode
+    urlNode.content = "http://dx.doi.org/#{@dataset.identifier}"
+
+    electronicNode = doc.create_element('electronic-resource-num')
+    electronicNode.parent = recordNode
+    electronicNode.content = @dataset.identifier
+
+    t.write(doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML).strip.sub("\n", ''))
+
+    send_file t.path, :type => 'application/xml',
+              :disposition => 'attachment',
+              :filename => "DOI-#{@dataset.identifier}.xml"
+
+    t.close
+
+  end
+
+  def download_RIS
+    @dataset = Dataset.find(params[:id])
+
+    t = Tempfile.new("#{@dataset.identifier}_datafiles")
+
+    t.write(%Q[Provider: Illinois Data Bank\nContent: text/plain; charset=%Q[us-ascii]\nTY  - DATA\nT1  - #{@dataset.mainTitle}\n])
+
+    @dataset.creators.each do |creator|
+      t.write("AU  - #{creator.creatorName.strip}\n")
+    end
+
+    t.write(%Q[DO  - #{@dataset.identifier}\nPY  - #{@dataset.publicationYear}\nUR  - http://dx.doi.org/#{@dataset.identifier}\nPB  - #{@dataset.publisher}\nER  - ])
+
+    send_file t.path, :type => 'application/x-Research-Info-Systems',
+              :disposition => 'attachment',
+              :filename => "DOI-#{@dataset.mainTitle}.ris"
+    t.close
+  end
+
+  def download_plaintext_citation
+    @dataset = Dataset.find(params[:id])
+
+    t = Tempfile.new("#{@dataset.mainTitle}_citation")
+
+    t.write(%Q[#{@dataset.plainTextCitation}\n])
+
+    send_file t.path, :type => 'text/plain',
+              :disposition => 'attachment',
+              :filename => "DOI-#{@dataset.mainTitle}.txt"
+
+    t.close
+
+  end
+
+
+  def download_BibTeX
+    set_dataset()
+
+    t = Tempfile.new("#{@dataset.identifier}_endNote")
+    citekey = SecureRandom.uuid
+
+    t.write("@data{#{citekey},\ndoi = {#{@dataset.identifier}},\nurl = {http://dx.doi.org/#{@dataset.identifier}},\nauthor = {#{@dataset.creatorList}},\npublisher = {#{@dataset.publisher}},\ntitle = {#{@dataset.mainTitle} ﻿},\nyear = {#{@dataset.publicationYear}}
+}")
+
+    send_file t.path, :type => 'application/application/x-bibtex',
+              :disposition => 'attachment',
+              :filename => "DOI-#{@dataset.identifier}.bib"
+
+    t.close
+
+  end
+
 
   private
 

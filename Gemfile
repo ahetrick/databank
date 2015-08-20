@@ -39,6 +39,7 @@ gem 'highcharts-rails'
 gem 'simple_form'
 
 gem 'rubyzip'
+gem 'zipline'
 
 # Use ActiveMedusa to interact with Fedora repository
 gem 'active-medusa', github: 'medusa-project/active-medusa', branch: 'master'
@@ -59,7 +60,7 @@ gem 'equivalent-xml'
 # gem 'bcrypt', '~> 3.1.7'
 
 # Use Unicorn as the app server
-# gem 'unicorn'
+gem 'unicorn'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
