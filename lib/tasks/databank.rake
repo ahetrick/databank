@@ -152,6 +152,8 @@ namespace :databank do
           upload_pathname: path4)
       bs4.media_type = 'application/pdf'
       bs4.save!
+    else
+      Rails.logger.warning "#{path4} not found"
     end
 
 

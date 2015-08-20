@@ -123,6 +123,8 @@ module Repository
       doc[Solr::Fields::MEDIA_TYPE] = self.media_type
       doc[Solr::Fields::BYTESTREAM_TYPE] = self.type
       Solr::Solr.client.add(doc)
+      Solr::Solr.client.commit
+
     end
 
     private
