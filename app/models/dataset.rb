@@ -3,7 +3,9 @@ class Dataset < ActiveRecord::Base
 
   after_save 'save_to_repo'
   before_destroy 'delete_repository_entity'
-  after_initialize 'set_key'
+  before_create 'set_key'
+
+  KEY_LENGTH = 5
 
   def creator_list
     creator_list = ""
@@ -29,8 +31,15 @@ class Dataset < ActiveRecord::Base
     return "#{creator_list} (#{publication_year}): #{title}. #{publisher}. #{citation_id}"
   end
 
+  def collection
+    collection = Repository::Collection.find_by_key(self.key)
+  end
+
+  def datafiles
+    Repository::Item.where(Solr::Fields::COLLECTION => collection.repository_url)
+  end
+
   def save_to_repo
-    self.key = self.key || self.id
     collection = Repository::Collection.find_by_key(self.key)
     if collection.nil?
       collection = Repository::Collection.new :parent_url => Databank::Application.databank_config[:fedora_url]
@@ -49,18 +58,32 @@ class Dataset < ActiveRecord::Base
   end
 
   def delete_repository_entity
-    self.key = self.key || self.id
     collection = Repository::Collection.find_by_key(self.key)
     if !collection.nil?
+      datafiles.each do |datafile|
+        datafile.destroy
+      end
       collection.destroy
     end
   end
 
   def set_key
-    unless self.key && !self.key.empty?
-      self.key = self.id
-      self.save!
-    end
+    self.key = generate_key
   end
+
+  ##
+  # Generates a guaranteed-unique key, of which there are
+  # 36^KEY_LENGTH available.
+  #
+  def generate_key
+    proposed_key = nil
+    while true
+      proposed_key = (36 ** (KEY_LENGTH - 1) +
+          rand(36 ** KEY_LENGTH - 36 ** (KEY_LENGTH - 1))).to_s(36)
+      break unless self.class.find_by_key(proposed_key)
+    end
+    proposed_key
+  end
+
 
 end

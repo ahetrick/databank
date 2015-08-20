@@ -1,5 +1,3 @@
-require_relative '../../models/concerns/indexable'
-
 module Repository
 
 # collection.rb
@@ -9,6 +7,8 @@ module Repository
     include Introspection
 
     entity_class_uri 'http://databank.illinois.edu/definitions/v1/repository#Dataset'
+
+    has_many :items, class_name: 'Repository::Item'
 
     property :key,
              type: :string,
@@ -77,7 +77,7 @@ module Repository
       doc[Solr::Fields::PUBLISHER] = self.publisher
 
       Solr::Solr.client.add(doc)
-      Solr::Solr.client.update :data => '<commit/>'
+      Solr::Solr.client.commit
     end
 
 

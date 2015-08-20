@@ -8,7 +8,7 @@ Bundler.require(*Rails.groups)
 
 module Databank
 
-  NAMESPACE_URI = 'http://databank.illinois.edu/definitions/v1/repository#'
+  NAMESPACE_URI = 'http://databank.illinois.edu/definitions/v1/'
 
   ##
   # "System objects" used by the application in the subject-predicate-object

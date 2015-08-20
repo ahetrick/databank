@@ -42,9 +42,8 @@ module Indexable
   end
 
   def delete_from_solr
-    Rails.logger.info "inside delete from solr #{self.repository_url}"
     Solr::Solr.client.delete_by_id(self.repository_url)
-    Solr::Solr.client.update :data => '<commit/>'
+    Solr::Solr.client.commit
   end
 
   def reindex

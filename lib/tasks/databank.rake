@@ -4,22 +4,18 @@ namespace :databank do
 
   desc 'delete all datasets'
   task :delete_all => :environment do
+
+
+
     Dataset.all.each do |dataset|
       dataset.destroy
-    end
-  end
-
-  desc 'delete all collections'
-  task :delete_collections => :environment do
-    Repository::Collection.all.each do |dataset|
-      puts dataset.title
-      dataset.delete
     end
   end
 
   desc 'Import sample datasets'
   task :sample_import => :environment do
 
+    repository_url =
 
     ds2 = Dataset.new :identifier => %Q[10.13012/J8Z60KZG],
                       :title => "Honey bee brain images processed to reveal c-jun mRNA",
@@ -38,6 +34,67 @@ namespace :databank do
 
     ds2.creator_ordered_ids = "#{c1.id},#{c2.id}"
     ds2.save!
+
+
+    # make item
+    i0 = Repository::Item.new(
+        collection: ds2.collection,
+        parent_url: ds2.collection.repository_url,
+        published: true,
+        description: "Brain MRI Imaages")
+    i0.save!
+
+    path0 = "#{Rails.application.config.root}/lib/sample_data/bytestreams/Brain_Images.zip"
+    if File.exists?(path0)
+      bs0 = Repository::Bytestream.new(
+          parent_url: i0.repository_url,
+          type: Repository::Bytestream::Type::MASTER,
+          item: i0,
+          upload_pathname: path0)
+      bs0.media_type = 'application/zip'
+      bs0.save!
+    end
+
+
+    # make item
+    i1 = Repository::Item.new(
+        collection: ds2.collection,
+        parent_url: ds2.collection.repository_url,
+        published: true,
+        description: "data description and use guidance")
+    i1.save!
+
+    # append file
+    path1 = "#{Rails.application.config.root}/lib/sample_data/bytestreams/README-McNeill-Robinson.txt"
+    if File.exists?(path1)
+      bs1 = Repository::Bytestream.new(
+          parent_url: i1.repository_url,
+          type: Repository::Bytestream::Type::MASTER,
+          item: i1,
+          upload_pathname: path1)
+      bs1.media_type = 'text/plain'
+      bs1.save!
+    end
+
+    # make item
+    i2 = Repository::Item.new(
+        collection: ds2.collection,
+        parent_url: ds2.collection.repository_url,
+        published: true,
+        description: "Brain Model and Masks")
+    i2.save!
+
+    path2 = "#{Rails.application.config.root}/lib/sample_data/bytestreams/BrainModel_and_Masks.zip"
+    if File.exists?(path2)
+      bs2 = Repository::Bytestream.new(
+          parent_url: i2.repository_url,
+          type: Repository::Bytestream::Type::MASTER,
+          item: i2,
+          upload_pathname: path2)
+      bs2.media_type = 'application/zip'
+      bs2.save!
+    end
+
 
     ds1 = Dataset.new :identifier => %Q[10.9999/dev/test1],
                       :license => "Copyright © (2014), University of Illinois. All rights reserved. License Placeholder Text",
@@ -58,6 +115,45 @@ namespace :databank do
     c6.save
     ds1.creator_ordered_ids = "#{c3.id},#{c4.id},#{c5.id},#{c6.id}"
     ds1.save!
+
+    # make item
+    i3 = Repository::Item.new(
+        collection: ds1.collection,
+        parent_url: ds1.collection.repository_url,
+        published: true,
+        description: "File Format Statistics - csv")
+    i3.save!
+
+    path3 = "#{Rails.application.config.root}/lib/sample_data/bytestreams/FileFormatStatistics.csv"
+    if File.exists?(path3)
+      bs3 = Repository::Bytestream.new(
+          parent_url: i3.repository_url,
+          type: Repository::Bytestream::Type::MASTER,
+          item: i3,
+          upload_pathname: path3)
+      bs3.media_type = 'text/csv'
+      bs3.save!
+    end
+
+    # make item
+    i4 = Repository::Item.new(
+        collection: ds1.collection,
+        parent_url: ds1.collection.repository_url,
+        published: true,
+        description: "File Format Statistics - pdf")
+    i4.save!
+
+    path4 = "#{Rails.application.config.root}/lib/sample_data/bytestreams/FileFormatStatistics.pdf"
+    if File.exists?(path4)
+      bs4 = Repository::Bytestream.new(
+          parent_url: i4.repository_url,
+          type: Repository::Bytestream::Type::MASTER,
+          item: i4,
+          upload_pathname: path4)
+      bs4.media_type = 'application/pdf'
+      bs4.save!
+    end
+
 
   end
 

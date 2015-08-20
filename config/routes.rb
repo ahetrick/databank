@@ -23,4 +23,6 @@ Rails.application.routes.draw do
   get '/datasets/:id/download_RIS', to: 'datasets#download_RIS'
   get '/datasets/:id/download_plaintext_citation', to: 'datasets#download_plaintext_citation'
 
+  get '/datasets/:id/stream_file/:file_id', to: 'datasets#stream_file'
+
 end

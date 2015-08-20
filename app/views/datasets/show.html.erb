@@ -44,8 +44,8 @@
 </div>
 
 <div class="container-fluid">
-  <span class="metadata-label">Data Description: </span>
-    <%= @dataset.description.empty? ? "[data description not provided]" : @dataset.description %>
+  <span class="metadata-label">Dataset Description: </span>
+  <%= @dataset.description.empty? ? "[data description not provided]" : @dataset.description %>
 </div>
 
 <div class="panel-group" id="rights" role="tablist" aria-multiselectable="true">
@@ -60,6 +60,66 @@
     <div id="collapseRights" class="panel-collapse collapse" role="tabpanel" aria-labelledby="rightsHeading">
       <div class="panel-body">
         <%= @dataset.license.empty? ? "[license information not provided]" : @dataset.license %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel-group" id="files" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#files" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          Files
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body">
+        <form role="form">
+          <div class="form-group" id="select-files-form-group">
+            <table class="table table-striped">
+              <tbody>
+              <tr>
+                <td>
+                  <div class="row">
+            <span class="col-md-3">
+              <button class="btn btn-block btn-primary" type="submit">
+                <span class="glyphicon glyphicon-download"></span> Zip and Download Selected
+                (<span id="checkFileSelectedCount"></span>)
+              </button>
+            </span>
+                  </div>
+                  <div class="row">
+                    <span class=" checkbox col-md-3"><label><input type="checkbox" class="checkFileGroup" id="checkAllFiles" value="checkAllFiles">Select
+                      all (<%= @dataset.datafiles.count %>) </label></span>
+                  </div>
+                </td>
+              </tr>
+
+              <% @dataset.datafiles.each do |datafile| %>
+                <% binary = datafile.master_bytestream %>
+                <tr>
+                  <td>
+                    <div class="row checkbox">
+          <span class="col-md-4"><label><input type="checkbox" class="checkFile checkFileGroup" name="selectedFiles[]" value="<%= datafile.id %>"><%= binary.filename %>
+          </label></span>
+                      <span class="col-md-4"><%= datafile.description %></span>
+                      <span class="col-md-2"><%= binary.media_type %></span>
+                      <span class="col-md-1"><%= number_to_human_size(binary.byte_size) %></span>
+                      <span class="col-md-1"><a href="#" onclick='window.location = "/datasets/<%=@dataset.id%>/stream_file/<%= binary.id%>"' class="btn btn-block btn-primary btn-sm" role="button">
+                        <span class="glyphicon glyphicon-download"></span> File
+                      </a></span>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+              </tbody>
+            </table>
+
+          </div>
+          <!-- end select-files-form-group -->
+        </form>
       </div>
     </div>
   </div>
