@@ -1,7 +1,7 @@
 require 'open-uri'
 
 class DatasetsController < ApplicationController
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :addDatafile]
 
   # enable streaming responses
   include ActionController::Streaming
@@ -17,7 +17,7 @@ class DatasetsController < ApplicationController
   # GET /datasets/1
   # GET /datasets/1.json
   def show
-    if params.keys.include?("selectedFiles")
+    if params.keys.include?("selected_files")
       download_datafiles
     end
   end
@@ -25,7 +25,13 @@ class DatasetsController < ApplicationController
 
   # GET /datasets/new
   def new
+
     if params.keys.include?("input_title")
+
+      Rails.logger.info "\n\n**********\n\n"
+      Rails.logger.info params.to_s
+      Rails.logger.info "\n\n**********\n\n"
+
       create_or_update_if_valid_input(params)
     end
   end
@@ -78,16 +84,29 @@ class DatasetsController < ApplicationController
     end
     @dataset.creator_ordered_ids = creator_id_list
 
-    params[:action] == 'new' ? action_word = 'created' : action_word = 'updated'
+    if params[:action] == 'new'
 
-    respond_to do |format|
-      if @dataset.save
-        format.html { redirect_to @dataset, notice: "Dataset was successfully #{action_word}." }
-        format.json { render :show, status: :created, location: @dataset }
-      else
-        format.html { render :new }
-        format.json { render json: @dataset.errors, status: :unprocessable_entity }
+      respond_to do |format|
+        if @dataset.save
+          format.html { redirect_to edit_dataset_path(@dataset), notice: "Dataset ready for file upload." }
+          format.json { render :edit, status: :created, location: @dataset }
+        else
+          format.html { render :new }
+          format.json { render json: @dataset.errors, status: :unprocessable_entity }
+        end
       end
+
+    else
+      respond_to do |format|
+        if @dataset.save
+          format.html { redirect_to @dataset, notice: "Dataset was successfully updated." }
+          format.json { render :show, status: :created, location: @dataset }
+        else
+          format.html { render :new }
+          format.json { render json: @dataset.errors, status: :unprocessable_entity }
+        end
+      end
+
     end
 
   end
@@ -171,11 +190,9 @@ class DatasetsController < ApplicationController
 
   def download_datafiles
 
-    set_dataset()
-
     datafiles = Array.new
 
-    params[:selectedFiles].each do |file_id|
+    params[:selected_files].each do |file_id|
 
       bs = Repository::Bytestream.find(file_id)
       raise ActiveRecord::RecordNotFound, 'Bytestream not found' unless bs
@@ -198,7 +215,6 @@ class DatasetsController < ApplicationController
   end
 
   def download_endNote_XML
-    set_dataset()
 
     t = Tempfile.new("#{@dataset.mainTitle}_endNote")
 
@@ -271,7 +287,6 @@ class DatasetsController < ApplicationController
   end
 
   def download_RIS
-    @dataset = Dataset.find(params[:id])
 
     t = Tempfile.new("#{@dataset.identifier}_datafiles")
 
@@ -290,7 +305,6 @@ class DatasetsController < ApplicationController
   end
 
   def download_plaintext_citation
-    @dataset = Dataset.find(params[:id])
 
     t = Tempfile.new("#{@dataset.mainTitle}_citation")
 
@@ -306,8 +320,6 @@ class DatasetsController < ApplicationController
 
 
   def download_BibTeX
-    set_dataset()
-
     t = Tempfile.new("#{@dataset.identifier}_endNote")
     citekey = SecureRandom.uuid
 
@@ -325,6 +337,24 @@ class DatasetsController < ApplicationController
 
   private
 
+  def addDatafile(path)
+    # make item
+    item = Repository::Item.new(
+        collection: @dataset.collection,
+        parent_url: @dataset.collection.repository_url,
+        published: true,
+        description: "file description TBD")
+    item.save!
+
+    bs = Repository::Bytestream.new(
+        parent_url: item.repository_url,
+        type: Repository::Bytestream::Type::MASTER,
+        item: item,
+        upload_pathname: path)
+    bs.save!
+
+  end
+
   # Use callbacks to share common setup or constraints between actions.
   def set_dataset
     @dataset = Dataset.find(params[:id])
@@ -332,7 +362,7 @@ class DatasetsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def dataset_params
-    params.require(:dataset).permit(:input_title, :input_identifier, :input_publication_year, :input_license, :input_description, :input_creator_name_list, :file_id)
+    params.require(:dataset).permit(:input_title, :input_identifier, :input_publication_year, :input_license, :input_description, :input_creator_name_list, :file_id, :selected_files)
   end
 
 end
