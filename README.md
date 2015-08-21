@@ -53,7 +53,13 @@ Illinois Data Bank institutional data repository front end for Fedora Commons 4
 
 Edit these as necessary.
 
-#### Create and seed the database
+#### Create and seed the database 
 
+`$ cd ..`
 `$ bundle exec rake db:setup`
+
+#### Run on unicorn server on nix system to support streaming zip file downloads
+
+`$ ./unicorn_start.shcd `
+
 
