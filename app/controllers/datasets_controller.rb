@@ -188,11 +188,11 @@ class DatasetsController < ApplicationController
 
     end
 
-   file_mappings = datafiles
-                        .lazy  # Lazy allows us to begin sending the download immediately instead of waiting to download everything
+    file_mappings = datafiles
+                        .lazy # Lazy allows us to begin sending the download immediately instead of waiting to download everything
                         .map { |url, path| [open(url), path] }
 
-      zipline(file_mappings, 'datafiles.zip')
+    zipline(file_mappings, 'datafiles.zip')
 
 
   end
