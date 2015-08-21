@@ -171,8 +171,6 @@ class DatasetsController < ApplicationController
 
   def download_datafiles
 
-    #this currently
-
     set_dataset()
 
     datafiles = Array.new
@@ -190,19 +188,11 @@ class DatasetsController < ApplicationController
 
     end
 
-    # Rails.logger.info "\n*****\n"
-    # Rails.logger.info datafiles.to_s
-    # Rails.logger.info "\n*****\n"
-
-    file_mappings = datafiles
+   file_mappings = datafiles
                         .lazy  # Lazy allows us to begin sending the download immediately instead of waiting to download everything
                         .map { |url, path| [open(url), path] }
 
-    # Rails.logger.info "\n*****\n"
-    # Rails.logger.info file_mappings.to_s
-    # Rails.logger.info "\n*****\n"
-
-    zipline(file_mappings, 'datafiles.zip')
+      zipline(file_mappings, 'datafiles.zip')
 
 
   end

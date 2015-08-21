@@ -38,8 +38,8 @@ gem 'highcharts-rails'
 
 gem 'simple_form'
 
-gem 'rubyzip'
-gem 'zipline'
+#gem 'rubyzip'
+gem 'zipline', path: "vendor/zipline"
 
 # Use ActiveMedusa to interact with Fedora repository
 gem 'active-medusa', github: 'medusa-project/active-medusa', branch: 'master'
