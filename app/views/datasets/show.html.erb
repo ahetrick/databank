@@ -1,5 +1,14 @@
-<span id="title"><%= @dataset.title %></span>
 
+<span id="title"><%= @dataset.title %></span>
+<div class="container-fluid">
+  <div class="row">
+    <span class="pull-right">
+      <%= link_to edit_dataset_path(@dataset), :class => "btn btn-info btn-block btn-sm" do %>
+        <span class="glyphicon glyphicon-edit"></span> Edit
+      <% end %>
+    </span>
+  </div>
+</div>
 <div class="container-fluid" id="citation-block">
 
   <div class="row bg-citation">
@@ -42,15 +51,7 @@
       </span>
   </div>
 </div>
-<div class="container-fluid">
-  <div class="row">
-    <span class="pull-right">
-      <%= link_to edit_dataset_path(@dataset), :class => "btn btn-info btn-block btn-sm" do %>
-        <span class="glyphicon glyphicon-edit"></span> Edit
-      <% end %>
-    </span>
-  </div>
-</div>
+
 <div class="container-fluid">
   <span class="metadata-label">Dataset Description: </span>
   <%= @dataset.description.empty? ? "[data description not provided]" : @dataset.description %>
