@@ -1,7 +1,7 @@
 = form_for(@dataset, :html => { :multipart => true, :role => "form", :enctype => "multipart/form-data", "data-toggle"=>"validator", :class => "form-horizontal container-fluid input-append" }) do |f|
 
   .form-group.required
-    = f.label :title, "Title", :class => "control-label"
+    = f.label :title, "Dataset Title", :class => "control-label"
     %br
     = f.text_field :title, :class => "form-control", :placeholder => "[The Title]", :required => true
   
@@ -37,7 +37,7 @@
     = f.label "File(s)", :class => "control-label"
 
 
-  - if @dataset.datafiles
+  - if !@dataset.collection.nil? && @dataset.datafiles
 
     - @dataset.datafiles.each do |datafile|
       -if datafile.master_bytestream && !datafile.master_bytestream.nil?
@@ -45,7 +45,7 @@
           - binary = datafile.master_bytestream
           %span(class="col-md-1")
             = link_to "#{request.base_url}/datasets/#{@dataset.id}/destroy_file/#{datafile.web_id}", :class=>"btn btn-danger btn-sm" do
-              %i(class="glyphicon glyphicon-remove" )
+              = %Q[<button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-remove"> File</span></button>].html_safe
           %span(class="col-md-3")
             = binary.filename
           %span(class="col-md-4")
@@ -59,6 +59,13 @@
   .container-fluid
     = f.fields_for :binaries do |binary|
       = render 'binary_fields', f: binary
-      .links
-      = link_to_add_association 'add file', f, :binaries
-  = f.submit
+  .links
+    = link_to_add_association %Q[<button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"> File</span></button>].html_safe, f, :binaries
+
+  .primary-actions.pull-right
+    -if params[:action] == 'new'
+      %button(type="submit" class="btn btn-primary") Deposit Dataset
+    -else
+      %button(type="submit" class="btn btn-primary") Update Dataset
+
+  = link_to t(:'helpers.action.cancel'), main_app.root_path, class: 'btn btn-lnk'

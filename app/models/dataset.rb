@@ -21,7 +21,11 @@ class Dataset < ActiveRecord::Base
   end
 
   def collection
-    collection = Repository::Collection.find_by_key(self.key)
+    if !self.key || self.key.empty
+      nil
+    else
+      collection = Repository::Collection.find_by_key(self.key)
+    end
   end
 
   def datafiles
@@ -48,13 +52,13 @@ class Dataset < ActiveRecord::Base
     collection.publisher = self.publisher
     collection.save!
 
-     binaries.each do |binary|
+    binaries.each do |binary|
       # make item
       item = Repository::Item.new(
           collection: collection,
           parent_url: collection.repository_url,
           published: true,
-          description: "file description")
+          description: binary.description)
       item.save!
 
       path = binary.datafile.current_path

@@ -16,6 +16,12 @@ ready = function() {
 
     $('#term-supports').tooltip();
 
+    $("#agreement").modal();
+
+    $('#cancel-button').click(function () {
+        window.location.href="/";
+    });
+
 }
 
 $(document).ready(ready);
