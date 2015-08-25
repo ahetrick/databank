@@ -6,6 +6,7 @@ module Solr
     BYTESTREAM_SHAPE = :idb_sys_bytestream_shape_s
     BYTESTREAM_TYPE = :idb_sys_bytestream_type_s
     CLASS = :idb_sys_class_s
+    PCDM = :idb_sys_pcdm_s
     COLLECTION = :idb_sys_collection_s
     COLLECTION_KEY = :idb_sys_collection_key_s
     CREATED_AT = :idb_sys_created_at_dtsi
@@ -31,7 +32,6 @@ module Solr
     LICENSE = :idb_meta_license_s
     PUBLICATION_YEAR = :idb_meta_publication_year_s
     PUBLISHER = :idb_meta_publisher_s
-    
 
   end
 

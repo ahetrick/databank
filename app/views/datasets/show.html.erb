@@ -97,6 +97,14 @@
                 </td>
               </tr>
 
+              <% @binaries.each do |binary| %>
+              <tr><td>
+                <a href="<%= binary.datafile %>"><%= binary.datafile.file.filename %></a><br/>
+                <br/>
+                <a href="/binaries/<%= binary.id %>/download">download</a>
+              </td></tr>
+              <% end %>
+
               <% @dataset.datafiles.each do |datafile| %>
                 <% if datafile.master_bytestream && !datafile.master_bytestream.nil? %>
 

@@ -11,10 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150805191331) do
+ActiveRecord::Schema.define(version: 20150825192600) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "binaries", force: :cascade do |t|
+    t.string   "datafile"
+    t.integer  "dataset_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.string   "description"
+  end
 
   create_table "creators", force: :cascade do |t|
     t.string   "creator_name"
@@ -35,6 +43,7 @@ ActiveRecord::Schema.define(version: 20150805191331) do
     t.string   "description"
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
+    t.string   "creator_text"
   end
 
 end

@@ -16,7 +16,7 @@
       <%= dataset.creator_list %><br/>
       <%= dataset.publisher %>
       <%= dataset.publication_year %>
-      <%= !dataset.identifier.empty? ? (link_to "doi:#{dataset.identifier}", dataset) : "" %></span>
+      <%= (dataset.identifier && !dataset.identifier.empty?) ? (link_to "doi:#{dataset.identifier}", dataset) : "" %></span>
     <span class="col-md-1">
       <%= link_to dataset, :class => "btn btn-primary btn-block btn-sm" do %>
         <span class="glyphicon glyphicon-zoom-in"></span> View

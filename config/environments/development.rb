@@ -36,6 +36,9 @@ Rails.application.configure do
   # Raises helpful error messages.
   config.assets.raise_runtime_errors = true
 
+  # set log_level to warn to avoid large noisy log files
+  config.log_level = :warn
+
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 end

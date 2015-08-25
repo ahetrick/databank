@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Datafile:</strong>
+  <%= @binary.datafile %>
+</p>
+
+<p>
+  <strong>Dataset:</strong>
+  <%= @binary.dataset_id %>
+</p>
+
+<%= link_to 'Edit', edit_binary_path(@binary) %> |
+<%= link_to 'Back', binaries_path %>

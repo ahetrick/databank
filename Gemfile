@@ -38,8 +38,10 @@ gem 'highcharts-rails'
 
 gem 'simple_form'
 
-#gem 'rubyzip'
 gem 'zipline', path: "vendor/zipline"
+
+# use carrierwave for file upload to temporary location before ingest into fedora
+gem 'carrierwave'
 
 # Use ActiveMedusa to interact with Fedora repository
 gem 'active-medusa', github: 'medusa-project/active-medusa', branch: 'master'
@@ -61,6 +63,9 @@ gem 'equivalent-xml'
 
 # Use Unicorn as the app server
 gem 'unicorn'
+
+# Use cocoon to helep with nested forms
+gem "cocoon"
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

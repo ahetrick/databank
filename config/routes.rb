@@ -1,8 +1,10 @@
 Rails.application.routes.draw do
 
+  resources :binaries
   resources :creators
   resources :creators
   resources :datasets
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
@@ -23,5 +25,8 @@ Rails.application.routes.draw do
   get '/datasets/:id/download_plaintext_citation', to: 'datasets#download_plaintext_citation'
 
   get '/datasets/:id/stream_file/:file_id', to: 'datasets#stream_file'
+  get '/datasets/:id/destroy_file/:web_id', to: 'datasets#destroy_file'
+
+  get '/binaries/:id/download', to: 'binaries#download'
 
 end

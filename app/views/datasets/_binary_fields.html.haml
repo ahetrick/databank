@@ -1,0 +1,9 @@
+.nested-fields
+  .form-group
+    .row
+      %span(class="col-md-1")
+        = link_to_remove_association %Q[<button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></span></button>].html_safe, f
+      %span(class="col-md-3" )
+        = f.file_field :datafile
+      %span(class="col-md-4")
+        = f.text_field :description

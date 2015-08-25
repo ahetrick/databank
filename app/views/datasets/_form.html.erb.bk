@@ -1,5 +1,4 @@
 <form role="form" enctype="multipart/form-data" data-toggle="validator" class="form-horizontal container-fluid input-append">
-
   <div class="form-group">
     <label class="control-label" for="input_identifier">DOI</label>
     <input type="text" id="input_identifier" name="input_identifier" class="form-control" placeholder="[Leave blank if requesting a new DOI]" value="<%= @dataset ? @dataset.identifier : nil %>">
@@ -35,33 +34,8 @@
   <% if @dataset %>
 
     <div class="form-group">
-      <div class="container">
-        <div class="row">
-          <input type="hidden" id="count" name="count" value="1"/>
-
-          <div class="control-group" id="fields">
-            <label class="control-label" for="field1">Files</label>
-
-            <div class="controls" id="datafiles">
-              <div id="field">
-                <div class="input-group form-control">
-                  <input autocomplete="off"
-                         class="input"
-                         id="field1"
-                         name="field1[datafile]"
-                         type="file"
-                         placeholder="Type something"
-                         data-items="8"/>
-                  <button id="b1" class="btn btn-sm add-more" type="button">+</button>
-                </div>
-                <small>Press + to add another file</small>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <label class="control-label"  for="dataset_binaries_attributes_0_datafile">File</label><br>
+      <input multiple="multiple" name="binaries[datafile][]" type="file" id="dataset_binaries_attributes_0_datafile">
     </div>
 
   <% end %> <!-- end only show file options if there is a dataset -->

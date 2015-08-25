@@ -1,5 +1,7 @@
 class Dataset < ActiveRecord::Base
   has_many :creators, dependent: :destroy
+  has_many :binaries, dependent: :destroy
+  accepts_nested_attributes_for :binaries, :reject_if => :all_blank, allow_destroy: true
 
   after_save 'save_to_repo'
   before_destroy 'delete_repository_entity'
@@ -8,20 +10,7 @@ class Dataset < ActiveRecord::Base
   KEY_LENGTH = 5
 
   def creator_list
-    creator_list = ""
-
-    if creator_ordered_ids && !creator_ordered_ids.empty? && creator_ordered_ids.respond_to?(:split)
-      creator_array = creator_ordered_ids.split(",")
-      creator_array.each_with_index do |creatorID, index|
-        if index > 0
-          creator_list << "; "
-        end
-        creator = Creator.find(creatorID)
-        creator_list << creator.creator_name.strip
-      end
-    end
-
-    return creator_list
+    creator_text
   end
 
   def plain_text_citation
@@ -36,7 +25,11 @@ class Dataset < ActiveRecord::Base
   end
 
   def datafiles
-    Repository::Item.where(Solr::Fields::COLLECTION => collection.repository_url)
+    if collection.nil?
+      nil
+    else
+      Repository::Item.where(Solr::Fields::COLLECTION => collection.repository_url)
+    end
   end
 
   def save_to_repo
@@ -54,6 +47,30 @@ class Dataset < ActiveRecord::Base
     collection.publication_year = self.publication_year
     collection.publisher = self.publisher
     collection.save!
+
+     binaries.each do |binary|
+      # make item
+      item = Repository::Item.new(
+          collection: collection,
+          parent_url: collection.repository_url,
+          published: true,
+          description: "file description")
+      item.save!
+
+      path = binary.datafile.current_path
+      if File.exists?(path)
+        bs = Repository::Bytestream.new(
+            parent_url: item.repository_url,
+            type: Repository::Bytestream::Type::MASTER,
+            item: item,
+            upload_pathname: path)
+        bs.media_type = binary.datafile.file.content_type
+        bs.save!
+      end
+
+      binary.destroy
+
+    end
 
   end
 
@@ -84,6 +101,5 @@ class Dataset < ActiveRecord::Base
     end
     proposed_key
   end
-
 
 end
