@@ -21,7 +21,7 @@ class Dataset < ActiveRecord::Base
   end
 
   def collection
-    if !self.key || self.key.empty
+    if !self.key || self.key.empty?
       nil
     else
       collection = Repository::Collection.find_by_key(self.key)
