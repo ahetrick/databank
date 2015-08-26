@@ -6,4 +6,5 @@
       %span(class="col-md-3" )
         = f.file_field :datafile
       %span(class="col-md-4")
-        = f.text_field :description
+        = "File Description: "
+        = f.text_field :description, class: "file-description-textfield"
