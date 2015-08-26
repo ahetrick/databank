@@ -45,7 +45,7 @@
           - binary = datafile.master_bytestream
           %span(class="col-md-1")
             = link_to "#{request.base_url}/datasets/#{@dataset.id}/destroy_file/#{datafile.web_id}", :class=>"btn btn-danger btn-sm" do
-              = %Q[<button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-remove"> File</span></button>].html_safe
+              = %Q[<span class="glyphicon glyphicon-remove"> File</span>].html_safe
           %span(class="col-md-3")
             = binary.filename
           %span(class="col-md-4")
