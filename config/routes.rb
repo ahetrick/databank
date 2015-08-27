@@ -15,8 +15,6 @@ Rails.application.routes.draw do
     resources :creators
   end
 
-  resources :identities
-
   get '/faqs', to: 'welcome#faqs', :as => :faq
   get '/policies', to: 'welcome#policies', :as => :policies
   get '/help', to: 'welcome#help', :as => :help
