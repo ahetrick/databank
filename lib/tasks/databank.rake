@@ -159,6 +159,13 @@ namespace :databank do
 
   end
 
+  desc "Clear users"
+  task clear_users: :environment do
+    User.all.each do |user|
+      user.destroy
+    end
+  end
+
   desc "Clear Rails cache (sessions, views, etc.)"
   task clear: :environment do
     Rails.cache.clear

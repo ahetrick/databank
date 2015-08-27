@@ -18,7 +18,7 @@
 
   <title>Illinois Data Bank</title>
   <%= favicon_link_tag 'favicon.ico' %>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
   <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -28,7 +28,7 @@
 
   <% if @dataset && @dataset.creator_list.respond_to?(:each) %>
     <meta name="citation_title" content="<%= @dataset.title %>"/>
-    <% @dataset.creator_list.each do |creator|  %>
+    <% @dataset.creator_list.each do |creator| %>
       <meta name="citation_author" content="<%= creator %>"/>
     <% end %>
     <meta name="citation_publisher" content="<%= @dataset.publisher %>"/>
@@ -40,12 +40,13 @@
 <body>
 
 <%= render :partial => 'shared/header_navbar' %>
-
-<%= render partial: 'shared/ajax_modal' %>
-
 <div id="main-container" class="container tab-content">
+
   <div class="row">
     <div class="container">
+      <% flash.each do |key, value| %>
+        <div class="alert alert-info"><%= value %></div>
+      <% end %>
       <%= yield %>
     </div>
   </div>

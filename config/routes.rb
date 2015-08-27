@@ -15,6 +15,8 @@ Rails.application.routes.draw do
     resources :creators
   end
 
+  resources :identities
+
   get '/faqs', to: 'welcome#faqs', :as => :faq
   get '/policies', to: 'welcome#policies', :as => :policies
   get '/help', to: 'welcome#help', :as => :help
@@ -28,5 +30,13 @@ Rails.application.routes.draw do
   get '/datasets/:id/destroy_file/:web_id', to: 'datasets#destroy_file'
 
   get '/binaries/:id/download', to: 'binaries#download'
+
+  # authentication routes
+  match '/auth/:provider/callback', to: 'sessions#create', via: [:get, :post]
+  match '/login', to: 'sessions#new', as: :login, via: [:get, :post]
+  match '/logout', to: 'sessions#destroy', as: :logout, via: [:get, :post]
+
+ match '/auth/failure', to: 'sessions#unauthorized', as: :unauthorized, via: [:get, :post]
+
 
 end

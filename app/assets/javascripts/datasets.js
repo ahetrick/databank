@@ -22,6 +22,16 @@ ready = function() {
         window.location.href="/";
     });
 
+    $('#dropdown-login').click(function(event)
+    {
+        if (event.stopPropagation){
+            event.stopPropagation();
+        }
+        else if(window.event){
+            window.event.cancelBubble=true;
+        }
+    });
+
 }
 
 $(document).ready(ready);

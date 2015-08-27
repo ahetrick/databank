@@ -59,13 +59,16 @@ gem 'nokogiri'
 gem 'equivalent-xml'
 
 # Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
+gem 'bcrypt', '~> 3.1.7'
 
 # Use Unicorn as the app server
 gem 'unicorn'
 
 # Use cocoon to helep with nested forms
 gem "cocoon"
+
+# Use identity strategy to create local accounts for testing
+gem 'omniauth-identity'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
