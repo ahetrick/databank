@@ -5,6 +5,19 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_user
 
+  include CanCan::ControllerAdditions
+
+  rescue_from CanCan::AccessDenied do |exception|
+
+    alert_message = exception.message
+
+    if exception.subject.class == Dataset && exception.action == :new
+      alert_message = "Log in to deposit data."
+    end
+
+    redirect_to main_app.root_url, :alert => alert_message
+  end
+
   private
 
   def current_user

@@ -322,8 +322,8 @@ module Solr
         ]
     }
 
-    @@client = RSolr.connect(url: Databank::Application.databank_config[:solr_url].chomp('/') +
-                                 '/' + Databank::Application.databank_config[:solr_core])
+    @@client = RSolr.connect(url: IDB_CONFIG[:solr_url].chomp('/') +
+                                 '/' + IDB_CONFIG[:solr_core])
 
     ##
     # @return [RSolr]
@@ -345,8 +345,8 @@ module Solr
 
     def initialize
       @http = HTTPClient.new
-      @url = Databank::Application.databank_config[:solr_url].chomp('/') + '/' +
-          Databank::Application.databank_config[:solr_core]
+      @url = IDB_CONFIG[:solr_url].chomp('/') + '/' +
+          IDB_CONFIG[:solr_core]
     end
 
     def clear

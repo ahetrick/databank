@@ -34,5 +34,10 @@ ready = function() {
 
 }
 
+function setDepositor(email, name){
+    $('#depositor_email').val(email);
+    $('#depositor_name').val(name);
+}
+
 $(document).ready(ready);
 $(document).on('page:load', ready);

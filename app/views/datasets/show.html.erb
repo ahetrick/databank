@@ -1,13 +1,12 @@
-
-<span id="title"><%= @dataset.title %></span>
-<div class="container-fluid">
-  <div class="row">
-    <span class="pull-right">
-      <%= link_to edit_dataset_path(@dataset), :class => "btn btn-info btn-block btn-sm" do %>
+<div class="row">
+  <span class="col-md-11" id="title"><%= @dataset.title %></span>
+  <% if can? :update, @dataset %>
+    <span class="col-md-1 pull-right">
+      <%= link_to edit_dataset_path(@dataset), :class => "btn btn-info btn-sm" do %>
         <span class="glyphicon glyphicon-edit"></span> Edit
       <% end %>
     </span>
-  </div>
+  <% end %>
 </div>
 <div class="container-fluid" id="citation-block">
 
@@ -147,4 +146,7 @@
       </div>
     </div>
   </div>
+</div>
+<div class="container-fluid">
+  <p>Depositor:  <%= @dataset.depositor_name %>, <%= @dataset.depositor_email %></p>
 </div>

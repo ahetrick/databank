@@ -21,23 +21,22 @@
       <%= link_to dataset, :class => "btn btn-primary btn-block btn-sm" do %>
         <span class="glyphicon glyphicon-zoom-in"></span> View
       <% end %>
-      <%= link_to edit_dataset_path(dataset), :class => "btn btn-info btn-block btn-sm" do %>
-        <span class="glyphicon glyphicon-edit"></span> Edit
-      <% end %>
-      <%= link_to dataset, method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn btn-danger btn-block btn-sm" do %>
-        <span class="glyphicon glyphicon-remove"></span> Delete
-      <% end %>
+      <% if can? :update, dataset %>
 
-
+        <%= link_to edit_dataset_path(dataset), :class => "btn btn-info btn-block btn-sm" do %>
+          <span class="glyphicon glyphicon-edit"></span> Edit
+        <% end %>
+      <% end %>
+      <% if can? :destroy, dataset %>
+        <%= link_to dataset, method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn btn-danger btn-block btn-sm" do %>
+          <span class="glyphicon glyphicon-remove"></span> Delete
+        <% end %>
+      <% end %>
     </span>
-
-
   </div>
   <hr/>
-
 <% end %>
-
-
 <br>
-
-<%= link_to 'New Dataset', new_dataset_path %>
+<% if can? :create, Dataset %>
+  <%= link_to 'New Dataset', new_dataset_path %>
+<% end %>

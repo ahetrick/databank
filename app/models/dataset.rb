@@ -1,4 +1,5 @@
 class Dataset < ActiveRecord::Base
+
   has_many :creators, dependent: :destroy
   has_many :binaries, dependent: :destroy
   accepts_nested_attributes_for :binaries, :reject_if => :all_blank, allow_destroy: true
@@ -6,6 +7,9 @@ class Dataset < ActiveRecord::Base
   after_save 'save_to_repo'
   before_destroy 'delete_repository_entity'
   before_create 'set_key'
+
+  validates :depositor_email, presence: true
+  validates :title, presence: true
 
   KEY_LENGTH = 5
 
@@ -39,7 +43,7 @@ class Dataset < ActiveRecord::Base
   def save_to_repo
     collection = Repository::Collection.find_by_key(self.key)
     if collection.nil?
-      collection = Repository::Collection.new :parent_url => Databank::Application.databank_config[:fedora_url]
+      collection = Repository::Collection.new :parent_url => IDB_CONFIG[:fedora_url]
     end
     collection.key = self.key
     collection.published = true

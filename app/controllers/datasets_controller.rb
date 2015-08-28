@@ -1,6 +1,9 @@
 require 'open-uri'
 
 class DatasetsController < ApplicationController
+
+  load_and_authorize_resource
+
   before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :addDatafile]
 
   # enable streaming responses
@@ -298,7 +301,7 @@ class DatasetsController < ApplicationController
   # end
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :creator_text, binaries_attributes: [:datafile, :description, :dataset_id, :id, :_destory ])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :creator_text, :depositor_email, :depositor_name, binaries_attributes: [:datafile, :description, :dataset_id, :id, :_destory ])
   end
 
 end

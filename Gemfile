@@ -70,6 +70,9 @@ gem "cocoon"
 # Use identity strategy to create local accounts for testing
 gem 'omniauth-identity'
 
+# Use canan to restrict what resources a given user is allowed to access
+gem 'cancancan'
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 

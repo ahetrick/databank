@@ -2,13 +2,16 @@ development:
   :fedora_url: http://localhost:8080/rest/databank
   :solr_url: http://localhost:8983/solr/
   :solr_core: databank
+  :admin_list: admin
 
 test:
   :fedora_url: http://localhost:8080/rest/databank
   :solr_url: http://localhost:8983/solr/
   :solr_core: databank
+  :admin_list: admin
 
 production:
   :fedora_url: http://localhost:8080/fedora/rest/databank
   :solr_url: http://localhost:8983/solr/
   :solr_core: databank
+  :admin_list: <%= ENV["ADMIN_LIST"] %>

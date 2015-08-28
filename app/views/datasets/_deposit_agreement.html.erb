@@ -88,7 +88,7 @@ is your responsibility to notify the University of these changes.
       </div>
       <div class="modal-footer container-fluid">
         <div class="row">
-          <span class="col-md-2 col-md-offset-8"><button type="button" class="btn btn-primary" data-dismiss="modal">I Agree</button></span>
+          <span class="col-md-2 col-md-offset-8"><button onclick = "setDepositor('<%= current_user.email %>', '<%= current_user.name %>')",  type="button" class="btn btn-primary" data-dismiss="modal" id="agree-button">I Agree</button></span>
           <span class="col-md-2"><button type="button" class="btn btn-danger" data-dismiss="modal" id="cancel-button">Cancel</button></span>
         </div>
       </div>
