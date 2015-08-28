@@ -19,7 +19,7 @@ ready = function() {
     $("#agreement").modal();
 
     $('#cancel-button').click(function () {
-        window.location.href="/";
+        alert("You must agree to the Deposit Agreement before depositing data into Illinois Data Bank.");
     });
 
     $('#dropdown-login').click(function(event)
@@ -32,11 +32,15 @@ ready = function() {
         }
     });
 
+      $('#agree_btn').html('Deposit Agreement (click to open for review)')
+
+
 }
 
 function setDepositor(email, name){
     $('#depositor_email').val(email);
     $('#depositor_name').val(name);
+    $('#agree_btn').html('Deposit Agreement')
 }
 
 $(document).ready(ready);

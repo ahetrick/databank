@@ -1,4 +1,10 @@
 = form_for(@dataset, :html => { :multipart => true, :role => "form", :enctype => "multipart/form-data", "data-toggle"=>"validator", :class => "form-horizontal container-fluid input-append" }) do |f|
+  - if @dataset.errors.any?
+    .error_explaination
+      = "#{pluralize(@dataset.errors.count, "error")} prohibited this dataset from being deposited."
+      %ul
+        - @dataset.errors.full_messages.each do |msg|
+          %li msg
 
   .form-group.required
     = f.label :title, "Dataset Title", :class => "control-label"
@@ -33,9 +39,9 @@
     %br
     = f.text_field :license, :class => "form-control"
 
-  = f.text_hidden :depositor_email, :class => "form-control", :id => "depositor_email", :required => true, :title => "Must agree to deposit agreement to deposit data."
+  = f.hidden_field :depositor_email, :class => "form-control", :id => "depositor_email", :required => true, :title => "Must agree to deposit agreement to deposit data."
 
-  = f.text_hidden :depositor_name, :class => "form-control", :id => "depositor_name"
+  = f.hidden_field :depositor_name, :class => "form-control", :id => "depositor_name"
 
   .form-group.required
     = f.label "File(s)", :class => "control-label"
@@ -69,7 +75,7 @@
 
 
   .primary-actions.pull-right
-    %button(class="btn btn-link" data-toggle="modal" data-target="#agreement") Deposit Agreement
+    %button(class="btn btn-link" id="agree_btn" data-toggle="modal" data-target="#agreement")
     -if params[:action] == 'new'
       %button(type="submit" class="btn btn-primary") Deposit Dataset
     -else
