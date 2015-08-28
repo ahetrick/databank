@@ -33,9 +33,9 @@
     %br
     = f.text_field :license, :class => "form-control"
 
-  = f.text_field :depositor_email, :class => "form-control", :id => "depositor_email", :required => true, :title => "Must agree to deposit agreement to deposit data."
+  = f.text_hidden :depositor_email, :class => "form-control", :id => "depositor_email", :required => true, :title => "Must agree to deposit agreement to deposit data."
 
-  = f.text_field :depositor_name, :class => "form-control", :id => "depositor_name"
+  = f.text_hidden :depositor_name, :class => "form-control", :id => "depositor_name"
 
   .form-group.required
     = f.label "File(s)", :class => "control-label"
