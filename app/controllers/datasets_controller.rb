@@ -269,26 +269,8 @@ class DatasetsController < ApplicationController
 
   end
 
-
   private
 
-  def addDatafile(path)
-    # make item
-    item = Repository::Item.new(
-        collection: @dataset.collection,
-        parent_url: @dataset.collection.id,
-        published: true,
-        description: "file description TBD")
-    item.save!
-
-    bs = Repository::Bytestream.new(
-        parent_url: item.id,
-        type: Repository::Bytestream::Type::MASTER,
-        item: item,
-        upload_pathname: path)
-    bs.save!
-
-  end
 
   # Use callbacks to share common setup or constraints between actions.
   def set_dataset
