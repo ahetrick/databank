@@ -18,11 +18,6 @@ class User < ActiveRecord::Base
 
         admins = IDB_CONFIG[:admin_list].split(", ")
 
-        Rails.logger.warn "\n\n admins"
-        Rails.logger.warn admins
-        Rails.logger.warn "\n netid"
-        Rails.logger.warn netid
-
         if admins.include?(netid)
           role = "admin"
         else
