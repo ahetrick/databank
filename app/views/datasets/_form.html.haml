@@ -4,7 +4,9 @@
       = "#{pluralize(@dataset.errors.count, "error")} prohibited this dataset from being deposited."
       %ul
         - @dataset.errors.full_messages.each do |msg|
-          %li msg
+          %li
+            = msg
+
 
   - if can? :manage, @dataset
     .form-group
@@ -45,7 +47,7 @@
     %br
     = f.text_field :license, :class => "form-control"
 
-  = f.hidden_field :depositor_email, :class => "form-control", :id => "depositor_email", :required => true, :title => "Must agree to deposit agreement to deposit data."
+  = f.hidden_field :depositor_email, :class => "form-control", :id => "depositor_email", :title => "Must agree to deposit agreement to deposit data."
 
   = f.hidden_field :depositor_name, :class => "form-control", :id => "depositor_name"
 
