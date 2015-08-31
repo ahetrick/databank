@@ -15,8 +15,6 @@ namespace :databank do
   desc 'Import sample datasets'
   task :sample_import => :environment do
 
-    repository_url =
-
     ds2 = Dataset.new :identifier => %Q[10.13012/J8Z60KZG],
                       :title => "Honey bee brain images processed to reveal c-jun mRNA",
                       :license => "Copyright © (2014), University of Illinois. All rights reserved. License Placeholder Text",
@@ -39,7 +37,7 @@ namespace :databank do
     # make item
     i0 = Repository::Item.new(
         collection: ds2.collection,
-        parent_url: ds2.collection.repository_url,
+        parent_url: ds2.collection.id,
         published: true,
         description: "Brain MRI Imaages")
     i0.save!
@@ -47,7 +45,7 @@ namespace :databank do
     path0 = "#{Rails.application.config.root}/lib/sample_data/bytestreams/Brain_Images.zip"
     if File.exists?(path0)
       bs0 = Repository::Bytestream.new(
-          parent_url: i0.repository_url,
+          parent_url: i0.id,
           type: Repository::Bytestream::Type::MASTER,
           item: i0,
           upload_pathname: path0)
@@ -59,7 +57,7 @@ namespace :databank do
     # make item
     i1 = Repository::Item.new(
         collection: ds2.collection,
-        parent_url: ds2.collection.repository_url,
+        parent_url: ds2.collection.id,
         published: true,
         description: "data description and use guidance")
     i1.save!
@@ -68,7 +66,7 @@ namespace :databank do
     path1 = "#{Rails.application.config.root}/lib/sample_data/bytestreams/README-McNeill-Robinson.txt"
     if File.exists?(path1)
       bs1 = Repository::Bytestream.new(
-          parent_url: i1.repository_url,
+          parent_url: i1.id,
           type: Repository::Bytestream::Type::MASTER,
           item: i1,
           upload_pathname: path1)
@@ -79,7 +77,7 @@ namespace :databank do
     # make item
     i2 = Repository::Item.new(
         collection: ds2.collection,
-        parent_url: ds2.collection.repository_url,
+        parent_url: ds2.collection.id,
         published: true,
         description: "Brain Model and Masks")
     i2.save!
@@ -87,7 +85,7 @@ namespace :databank do
     path2 = "#{Rails.application.config.root}/lib/sample_data/bytestreams/BrainModel_and_Masks.zip"
     if File.exists?(path2)
       bs2 = Repository::Bytestream.new(
-          parent_url: i2.repository_url,
+          parent_url: i2.id,
           type: Repository::Bytestream::Type::MASTER,
           item: i2,
           upload_pathname: path2)
@@ -119,7 +117,7 @@ namespace :databank do
     # make item
     i3 = Repository::Item.new(
         collection: ds1.collection,
-        parent_url: ds1.collection.repository_url,
+        parent_url: ds1.collection.id,
         published: true,
         description: "File Format Statistics - csv")
     i3.save!
@@ -127,7 +125,7 @@ namespace :databank do
     path3 = "#{Rails.application.config.root}/lib/sample_data/bytestreams/FileFormatStatistics.csv"
     if File.exists?(path3)
       bs3 = Repository::Bytestream.new(
-          parent_url: i3.repository_url,
+          parent_url: i3.id,
           type: Repository::Bytestream::Type::MASTER,
           item: i3,
           upload_pathname: path3)
@@ -138,7 +136,7 @@ namespace :databank do
     # make item
     i4 = Repository::Item.new(
         collection: ds1.collection,
-        parent_url: ds1.collection.repository_url,
+        parent_url: ds1.collection.id,
         published: true,
         description: "File Format Statistics - pdf")
     i4.save!
@@ -146,7 +144,7 @@ namespace :databank do
     path4 = "#{Rails.application.config.root}/lib/sample_data/bytestreams/FileFormatStatistics.pdf"
     if File.exists?(path4)
       bs4 = Repository::Bytestream.new(
-          parent_url: i4.repository_url,
+          parent_url: i4.id,
           type: Repository::Bytestream::Type::MASTER,
           item: i4,
           upload_pathname: path4)

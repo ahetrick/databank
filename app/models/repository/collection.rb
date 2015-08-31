@@ -3,7 +3,7 @@ module Repository
 # collection.rb
   class Collection < ActiveMedusa::Container
 
-    include Indexable
+    include ActiveMedusa::Indexable
     include Introspection
 
     entity_class_uri 'http://databank.illinois.edu/definitions/v1/repository#Dataset'

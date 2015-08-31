@@ -61,7 +61,7 @@ module Repository
       http = ActiveMedusa::Fedora.client
       begin
         http.head(url)
-      rescue HTTPClient::BadResponseError => e
+      rescue ActiveMedusa::RepositoryError => e
         return false if [404, 410].include?(e.res.status)
       end
       true

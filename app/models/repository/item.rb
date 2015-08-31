@@ -3,7 +3,7 @@ module Repository
   class Item < ActiveMedusa::Container
 
     include BytestreamOwner
-    include Indexable
+    include ActiveMedusa::Indexable
 
     WEB_ID_LENGTH = 5
 
@@ -63,20 +63,20 @@ module Repository
     end
 
     def ==(other)
-      other.kind_of?(self.class) and self.uuid == other.uuid
+      other.kind_of?(self.class) and self.id == other.id
     end
 
     def bytestreams
-      Repository::Bytestream.where(Solr::Fields::PARENT_URI => self.repository_url)
+      Repository::Bytestream.where(Solr::Fields::PARENT_URI => self.id)
     end
 
     ##
     # @return boolean True if any text was extracted; false if not
     #
     def extract_and_update_full_text
-      if self.master_bytestream and self.master_bytestream.repository_url
+      if self.master_bytestream and self.master_bytestream.id
         begin
-          yomu = Yomu.new(self.master_bytestream.repository_url)
+          yomu = Yomu.new(self.master_bytestream.id)
           self.full_text = yomu.text.force_encoding('UTF-8')
         rescue Errno::EPIPE
           # nothing we can do

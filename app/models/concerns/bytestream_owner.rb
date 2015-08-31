@@ -54,7 +54,7 @@ module BytestreamOwner
   end
 
   def bytestreams
-    Repository::Bytestream.where(Solr::Fields::ITEM => self.repository_url)
+    Repository::Bytestream.where(Solr::Fields::ITEM => self.id)
   end
 
   ##

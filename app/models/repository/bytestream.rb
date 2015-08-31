@@ -2,7 +2,7 @@ module Repository
 
   class Bytestream < ActiveMedusa::Binary
 
-    include Indexable
+    include ActiveMedusa::Indexable
 
     class Type
       DERIVATIVE = Databank::NAMESPACE_URI +
@@ -110,7 +110,7 @@ module Repository
     end
 
     def to_param
-      self.uuid
+      self.id
     end
 
     def reindex

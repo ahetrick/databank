@@ -93,8 +93,8 @@ class DatasetsController < ApplicationController
     bs = Repository::Bytestream.find(params[:file_id])
     raise ActiveRecord::RecordNotFound, 'Bytestream not found' unless bs
 
-    if bs and bs.repository_url
-      repo_url = URI(bs.repository_url)
+    if bs and bs.id
+      repo_url = URI(bs.id)
       Net::HTTP.start(repo_url.host, repo_url.port) do |http|
         request = Net::HTTP::Get.new(repo_url)
         http.request(request) do |res|
@@ -117,7 +117,7 @@ class DatasetsController < ApplicationController
       #options = {}
       #options[:type] = bs.media_type if bs.media_type
       #options[:filename] = bs.filename if bs.filename
-      #send_file(open(bs.repository_url), options)
+      #send_file(open(bs.id), options)
     else
       render text: '404 Not Found', status: 404
     end
@@ -132,8 +132,8 @@ class DatasetsController < ApplicationController
       bs = Repository::Bytestream.find(file_id)
       raise ActiveRecord::RecordNotFound, 'Bytestream not found' unless bs
 
-      if bs and bs.repository_url
-        file_url = bs.repository_url
+      if bs and bs.id
+        file_url = bs.id
         zip_path = bs.filename
         datafiles << [file_url, zip_path]
       end
@@ -276,13 +276,13 @@ class DatasetsController < ApplicationController
     # make item
     item = Repository::Item.new(
         collection: @dataset.collection,
-        parent_url: @dataset.collection.repository_url,
+        parent_url: @dataset.collection.id,
         published: true,
         description: "file description TBD")
     item.save!
 
     bs = Repository::Bytestream.new(
-        parent_url: item.repository_url,
+        parent_url: item.id,
         type: Repository::Bytestream::Type::MASTER,
         item: item,
         upload_pathname: path)

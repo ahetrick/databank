@@ -22,9 +22,9 @@ module Solr
     SEARCH_ALL = :idb_searchall_txt
     SINGLE_TITLE = :idb_meta_title_s
     UPDATED_AT = :idb_sys_updated_at_dtsi
-    UUID = :idb_sys_uuid_s
     WEB_ID = :idb_sys_web_id_s
     WIDTH = :idb_sys_width_i
+    URI = :id
 
     CREATOR_LIST = :idb_meta_creator_s
     DESCRIPTION = :idb_meta_description_s

@@ -4,9 +4,10 @@ class Dataset < ActiveRecord::Base
   has_many :binaries, dependent: :destroy
   accepts_nested_attributes_for :binaries, :reject_if => :all_blank, allow_destroy: true
 
+  before_create 'set_key'
   after_save 'save_to_repo'
   before_destroy 'delete_repository_entity'
-  before_create 'set_key'
+
 
   validates :depositor_email, presence: true
   validates :title, presence: true
@@ -29,15 +30,14 @@ class Dataset < ActiveRecord::Base
       nil
     else
       collection = Repository::Collection.find_by_key(self.key)
+      raise ActiveRecord::RecordNotFound unless collection
     end
   end
 
   def datafiles
-    if collection.nil?
-      nil
-    else
-      Repository::Item.where(Solr::Fields::COLLECTION => collection.repository_url)
-    end
+    col = Repository::Collection.find_by_key(self.key)
+    raise ActiveRecord::RecordNotFound unless col
+    Repository::Item.where(Solr::Fields::COLLECTION => col.id)
   end
 
   def save_to_repo
@@ -55,25 +55,28 @@ class Dataset < ActiveRecord::Base
     collection.publication_year = self.publication_year
     collection.publisher = self.publisher
     collection.save!
+    Solr::Solr.client.commit
 
     binaries.each do |binary|
       # make item
       item = Repository::Item.new(
           collection: collection,
-          parent_url: collection.repository_url,
+          parent_url: collection.id,
           published: true,
           description: binary.description)
       item.save!
+      Solr::Solr.client.commit
 
       path = binary.datafile.current_path
       if File.exists?(path)
         bs = Repository::Bytestream.new(
-            parent_url: item.repository_url,
+            parent_url: item.id,
             type: Repository::Bytestream::Type::MASTER,
             item: item,
             upload_pathname: path)
         bs.media_type = binary.datafile.file.content_type
         bs.save!
+        Solr::Solr.client.commit
       end
 
       binary.destroy
@@ -87,6 +90,7 @@ class Dataset < ActiveRecord::Base
     if !collection.nil?
       datafiles.each do |datafile|
         datafile.destroy
+        Solr::Solr.client.commit
       end
       collection.destroy
     end
