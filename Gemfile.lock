@@ -1,7 +1,7 @@
 GIT
   remote: git://github.com/medusa-project/active-medusa.git
-  revision: d66551252aeee12bcd3082953f87caa5cec409e3
-  branch: master
+  revision: 8efda410ba17f1b2e7187430c14930af98279eed
+  tag: 2.0.0
   specs:
     active-medusa (2.0.0)
       activemodel
