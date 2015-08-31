@@ -6,6 +6,12 @@
         - @dataset.errors.full_messages.each do |msg|
           %li msg
 
+  - if can? :manage, @dataset
+    .form-group
+      = f.label :identifier, "DOI", :class => "control-label"
+      %br
+      = f.text_field :identifier, :class => "form-control", :placeholder => "[Leave blank if requesting a DOI.]", :required => true
+
   .form-group.required
     = f.label :title, "Dataset Title", :class => "control-label"
     %br
