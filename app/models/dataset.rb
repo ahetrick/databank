@@ -9,7 +9,7 @@ class Dataset < ActiveRecord::Base
   before_destroy 'delete_repository_entity'
 
 
-  validates :depositor_email, presence: {:message => "Depositor agreement required to deposit dataset."}
+  validates :depositor_email, presence: {:message => "Deposit Agreement required to deposit dataset (see link next to Update Dataset button in the bottom right of form)."}
   validates :title, presence: true
 
   KEY_LENGTH = 5
