@@ -5,8 +5,6 @@ namespace :databank do
   desc 'delete all datasets'
   task :delete_all => :environment do
 
-
-
     Dataset.all.each do |dataset|
       dataset.destroy
     end
@@ -34,6 +32,7 @@ namespace :databank do
     ds2.save!
 
 
+=begin
     # make item
     i0 = Repository::Item.new(
         collection: ds2.collection,
@@ -52,6 +51,7 @@ namespace :databank do
       bs0.media_type = 'application/zip'
       bs0.save!
     end
+=end
 
 
     # make item

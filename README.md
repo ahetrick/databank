@@ -3,13 +3,13 @@ Illinois Data Bank institutional data repository front end for Fedora Commons 4
 
 ## Installing
 
-### Fedora
+### Fedora 4.3
 
-### Solr
+### Solr 5.0.0
 
-### PostgreSQL
+### PostgreSQL 9.4.2
 
-### Ruby on Rails
+### Ruby on Rails 4.2.1
 
 #### RVM
 

@@ -44,7 +44,7 @@ gem 'zipline', path: "vendor/zipline"
 gem 'carrierwave'
 
 # Use ActiveMedusa to interact with Fedora repository
-gem 'active-medusa', github: 'medusa-project/active-medusa', branch: 'master'
+gem 'active-medusa', github: 'medusa-project/active-medusa', tag: '2.0.0'
 gem 'httpclient', git: 'git://github.com/medusa-project/httpclient.git'
 
 # Use rsolr to interact with Solr core
