@@ -5,7 +5,7 @@ Illinois Data Bank institutional data repository front end for Fedora Commons 4
 
 ### Fedora 4.3
 
-### Solr 5.0.0
+### Solr 5.2.1
 
 ### PostgreSQL 9.4.2
 
