@@ -65,7 +65,10 @@ class Dataset < ActiveRecord::Base
           published: true,
           description: binary.description)
       item.save!
+      Rails.logger.debug "Created #{item.id}"
+
       Solr::Solr.client.commit
+      Rails.logger.debug "Committed #{item.id}"
 
       path = binary.datafile.current_path
       if File.exists?(path)
@@ -74,12 +77,16 @@ class Dataset < ActiveRecord::Base
             type: Repository::Bytestream::Type::MASTER,
             item: item,
             upload_pathname: path)
+
         bs.media_type = binary.datafile.file.content_type
         bs.save!
+        Rails.logger.debug "Created master bytestream"
         Solr::Solr.client.commit
-      end
 
-      binary.destroy
+        binary.destroy
+      else
+        Rails.logger.debug "Did not find path #{path}"
+      end
 
     end
 
