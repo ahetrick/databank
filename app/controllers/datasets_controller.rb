@@ -127,7 +127,6 @@ class DatasetsController < ApplicationController
 
     (@dataset.identifier && !@dataset.identifier.empty?) ? filename = "DOI-#{@dataset.identifier}.zip" : filename = "datafiles.zip"
 
-
     datafiles = Array.new
 
     params[:selected_files].each do |file_id|
