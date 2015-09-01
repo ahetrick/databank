@@ -23,6 +23,7 @@ namespace :databank do
                       :depositor_email => "demo1@example.edu"
 
     ds2.save!
+    Solr::Solr.client.commit
 
     c1 = Creator.new :creator_name => "McNeill, Matthew S.", :identifier => ["http://orcid.org/0000-0002-6610-0376"], :dataset_id => ds2.id
     c2 = Creator.new :creator_name => "Robinson, Gene E.", :identifier => ["http://orcid.org/0000-0003-4828-4068"], :dataset_id => ds2.id
@@ -32,6 +33,7 @@ namespace :databank do
 
     ds2.creator_ordered_ids = "#{c1.id},#{c2.id}"
     ds2.save!
+    Solr::Solr.client.commit
 
 
 =begin
@@ -65,6 +67,7 @@ namespace :databank do
         published: true,
         description: "data description and use guidance")
     i1.save!
+    Solr::Solr.client.commit
 
     # append file
     path1 = "#{Rails.application.config.root}/lib/sample_data/bytestreams/README-McNeill-Robinson.txt"
@@ -77,6 +80,7 @@ namespace :databank do
       bs1.media_type = 'text/plain'
       bs1.save!
     end
+    Solr::Solr.client.commit
 
     # make item
     i2 = Repository::Item.new(
@@ -85,6 +89,7 @@ namespace :databank do
         published: true,
         description: "Brain Model and Masks")
     i2.save!
+    Solr::Solr.client.commit
 
     path2 = "#{Rails.application.config.root}/lib/sample_data/bytestreams/BrainModel_and_Masks.zip"
     if File.exists?(path2)
@@ -96,7 +101,7 @@ namespace :databank do
       bs2.media_type = 'application/zip'
       bs2.save!
     end
-
+    Solr::Solr.client.commit
 
     ds1 = Dataset.new :identifier => %Q[10.9999/dev/test1],
                       :license => "CC0",
@@ -107,6 +112,7 @@ namespace :databank do
                       :depositor_name => "Demo1 User",
                       :depositor_email => "demo1@example.edu"
     ds1.save!
+    Solr::Solr.client.commit
 
     c3 = Creator.new :creator_name => "Rimkus, Kyle R.", :identifier => ["http://orcid.org/0000-0002-9142-6677"], :dataset_id => ds1.id
     c4 = Creator.new :creator_name => "Padilla, Thomas", :identifier => ["http://orcid.org/0000-0002-6743-6592"], :dataset_id => ds1.id
@@ -119,6 +125,7 @@ namespace :databank do
     c6.save
     ds1.creator_ordered_ids = "#{c3.id},#{c4.id},#{c5.id},#{c6.id}"
     ds1.save!
+    Solr::Solr.client.commit
 
     col1 = Repository::Collection.find_by_key(ds1.key)
     raise ActiveRecord::RecordNotFound unless col1
@@ -130,6 +137,7 @@ namespace :databank do
         published: true,
         description: "File Format Statistics - csv")
     i3.save!
+    Solr::Solr.client.commit
 
     path3 = "#{Rails.application.config.root}/lib/sample_data/bytestreams/FileFormatStatistics.csv"
     if File.exists?(path3)
@@ -141,6 +149,7 @@ namespace :databank do
       bs3.media_type = 'text/csv'
       bs3.save!
     end
+    Solr::Solr.client.commit
 
     # make item
     i4 = Repository::Item.new(
@@ -149,6 +158,7 @@ namespace :databank do
         published: true,
         description: "File Format Statistics - pdf")
     i4.save!
+    Solr::Solr.client.commit
 
     path4 = "#{Rails.application.config.root}/lib/sample_data/bytestreams/FileFormatStatistics.pdf"
     if File.exists?(path4)
