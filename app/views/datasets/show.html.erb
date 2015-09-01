@@ -10,7 +10,7 @@
 </div>
 <div class="container-fluid" id="citation-block">
 
-  <div class="row bg-citation">
+  <div class="row bg-citation" >
     <div id="citation" class="col-md-9" onclick="if (event.target) { selectText(event.target); } else{ selectText(this); }"><%= @dataset.plain_text_citation %></div>
     <div class="col-md-3 text-right" id="citation-download">
       <div class="dropdown">
@@ -147,6 +147,11 @@
     </div>
   </div>
 </div>
-<div class="container-fluid">
-  <p>Depositor:  <%= @dataset.depositor_name %>, <%= @dataset.depositor_email %></p>
-</div>
+
+<% localtitle = @dataset.title.downcase %>
+
+<% if localtitle.include? 'unicorn' %>
+  <div class="pull-right">
+    <%= image_tag('Rainbow_Unicorn.png') %>
+  </div>
+<% end %>
