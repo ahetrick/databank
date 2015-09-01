@@ -1,4 +1,4 @@
-= form_for(@dataset, :html => { :multipart => true, :role => "form", :enctype => "multipart/form-data", "data-toggle"=>"validator", :class => "form-horizontal container-fluid input-append" }) do |f|
+= form_for(@dataset, :html => { :multipart => true, :role => "form", :enctype => "multipart/form-data", "data-toggle"=>"validator", :class => "container-fluid input-append" }) do |f|
   - if @dataset.errors.any?
     .error_explaination
       = "#{pluralize(@dataset.errors.count, "error")} prohibited this dataset from being deposited."
@@ -55,32 +55,26 @@
     = f.label "File(s)", :class => "control-label"
 
 
-  - if !@dataset.collection.nil? && @dataset.datafiles
+  - if @dataset.datafiles
 
     - @dataset.datafiles.each do |datafile|
       -if datafile.master_bytestream && !datafile.master_bytestream.nil?
         .row
           - binary = datafile.master_bytestream
+          %span(class="col-md-4" )
+            = binary.filename
+          %span(class="col-md-6")
+            = datafile.description
           %span(class="col-md-1")
             = link_to "#{request.base_url}/datasets/#{@dataset.id}/destroy_file/#{datafile.web_id}", :class=>"btn btn-danger btn-sm" do
               = %Q[<span class="glyphicon glyphicon-remove"> File</span>].html_safe
-          %span(class="col-md-3")
-            = binary.filename
-          %span(class="col-md-4")
-            = datafile.description
-          %span(class="col-md-2")
-            = binary.media_type
-          %span(class="col-md-2")
-            = number_to_human_size(binary.byte_size)
-
-
 
   = f.fields_for :binaries do |binary|
     = render 'binary_fields', f: binary
   .links
     = link_to_add_association %Q[<button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"> File</span></button>].html_safe, f, :binaries
 
-
+  %hr
 
   .primary-actions.pull-right
     %button(class="btn btn-link" id="agree_btn" data-toggle="modal" data-target="#agreement")

@@ -55,11 +55,13 @@ namespace :databank do
     end
 =end
 
+    col2 = Repository::Collection.find_by_key(ds2.key)
+    raise ActiveRecord::RecordNotFound unless col2
 
     # make item
     i1 = Repository::Item.new(
-        collection: ds2.collection,
-        parent_url: ds2.collection.id,
+        collection: col2,
+        parent_url: col2.id,
         published: true,
         description: "data description and use guidance")
     i1.save!
@@ -78,8 +80,8 @@ namespace :databank do
 
     # make item
     i2 = Repository::Item.new(
-        collection: ds2.collection,
-        parent_url: ds2.collection.id,
+        collection: col2,
+        parent_url: col2.id,
         published: true,
         description: "Brain Model and Masks")
     i2.save!
@@ -118,10 +120,13 @@ namespace :databank do
     ds1.creator_ordered_ids = "#{c3.id},#{c4.id},#{c5.id},#{c6.id}"
     ds1.save!
 
+    col1 = Repository::Collection.find_by_key(ds1.key)
+    raise ActiveRecord::RecordNotFound unless col1
+
     # make item
     i3 = Repository::Item.new(
-        collection: ds1.collection,
-        parent_url: ds1.collection.id,
+        collection: col1,
+        parent_url: col1.id,
         published: true,
         description: "File Format Statistics - csv")
     i3.save!
@@ -139,8 +144,8 @@ namespace :databank do
 
     # make item
     i4 = Repository::Item.new(
-        collection: ds1.collection,
-        parent_url: ds1.collection.id,
+        collection: col1,
+        parent_url: col1.id,
         published: true,
         description: "File Format Statistics - pdf")
     i4.save!
@@ -157,7 +162,7 @@ namespace :databank do
     else
       Rails.logger.warning "#{path4} not found"
     end
-
+    Solr::Solr.client.commit
 
   end
 

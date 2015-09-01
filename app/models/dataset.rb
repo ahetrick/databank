@@ -30,8 +30,8 @@ class Dataset < ActiveRecord::Base
       nil
     else
       collection = Repository::Collection.find_by_key(self.key)
-      raise ActiveRecord::RecordNotFound unless collection
     end
+    raise ActiveRecord::RecordNotFound unless collection
   end
 
   def datafiles
@@ -58,6 +58,7 @@ class Dataset < ActiveRecord::Base
     Solr::Solr.client.commit
 
     binaries.each do |binary|
+
       # make item
       item = Repository::Item.new(
           collection: collection,

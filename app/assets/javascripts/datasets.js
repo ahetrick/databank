@@ -32,7 +32,7 @@ ready = function() {
         }
     });
 
-      $('#agree_btn').html('Deposit Agreement (click to open for review)')
+      $('#agree_btn').html('Deposit Agreement')
 
 
 }
@@ -40,7 +40,6 @@ ready = function() {
 function setDepositor(email, name){
     $('#depositor_email').val(email);
     $('#depositor_name').val(name);
-    $('#agree_btn').html('Deposit Agreement')
 }
 
 $(document).ready(ready);

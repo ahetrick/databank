@@ -125,6 +125,9 @@ class DatasetsController < ApplicationController
 
   def download_datafiles
 
+    (@dataset.identifier && !@dataset.identifier.empty?) ? filename = "DOI-#{@dataset.identifier}.zip" : filename = "datafiles.zip"
+
+
     datafiles = Array.new
 
     params[:selected_files].each do |file_id|
@@ -144,7 +147,7 @@ class DatasetsController < ApplicationController
                         .lazy # Lazy allows us to begin sending the download immediately instead of waiting to download everything
                         .map { |url, path| [open(url), path] }
 
-    zipline(file_mappings, 'datafiles.zip')
+    zipline(file_mappings, filename)
 
 
   end
