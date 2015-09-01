@@ -11,6 +11,8 @@
 /log/*
 !/log/.keep
 /tmp
+/shared/log/*
+
 
 # Ignore local files.
 .idea
@@ -20,3 +22,4 @@ config/secrets.yml
 public/uploads
 
 fcrepo4-data
+
