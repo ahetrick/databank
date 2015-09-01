@@ -27,6 +27,6 @@ class ApplicationController < ActionController::Base
     rescue ActiveRecord::RecordNotFound
       session[:user_id] = nil
     end
-    
+
   end
 end

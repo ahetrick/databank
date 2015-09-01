@@ -1,4 +1,4 @@
-= form_for(@dataset, :html => { :multipart => true, :role => "form", :enctype => "multipart/form-data", "data-toggle"=>"validator", :class => "container-fluid input-append" }) do |f|
+= form_for(@dataset, :html => { :multipart => true, :role => "form", :enctype => "multipart/form-data", "data-toggle"=>"validator", :class => "container-fluid input-append dataset-form"}) do |f|
   - if @dataset.errors.any?
     .error_explaination
       = "#{pluralize(@dataset.errors.count, "error")} prohibited this dataset from being deposited."
@@ -54,6 +54,7 @@
   .form-group.required
     = f.label "File(s)", :class => "control-label"
 
+  = f.check_box :complete, :id => "complete_checkbox"
 
   - if @dataset.datafiles
 
@@ -78,9 +79,10 @@
 
   .primary-actions.pull-right
     %button(class="btn btn-link" id="agree_btn" data-toggle="modal" data-target="#agreement")
-    -if params[:action] == 'new'
-      %button(type="submit" class="btn btn-primary") Deposit Dataset
-    -else
+    -if @dataset.complete?
       %button(type="submit" class="btn btn-primary") Update Dataset
+    -else
+      %button(type="submit" class="btn btn-success") Save Dataset
+      %button(type="button" id="deposit-btn" class="btn btn-primary") Deposit Dataset
 %br
 %a{:href => "/"} Cancel

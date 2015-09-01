@@ -21,7 +21,8 @@ namespace :databank do
                       :publication_year => "2014",
                       :publisher => "University of Illinois at Urbana-Champaign",
                       :depositor_name => "Demo1 User",
-                      :depositor_email => "demo1@example.edu"
+                      :depositor_email => "demo1@example.edu",
+                      :complete => true
 
     ds2.save!
     Solr::Solr.client.commit
@@ -112,7 +113,8 @@ namespace :databank do
                       :publication_year => "2014",
                       :publisher => "University of Illinois at Urbana-Champaign",
                       :depositor_name => "Demo1 User",
-                      :depositor_email => "demo1@example.edu"
+                      :depositor_email => "demo1@example.edu",
+                      :complete => true
     ds1.save!
     Solr::Solr.client.commit
 
@@ -205,5 +207,6 @@ namespace :databank do
     end
 
   end
+
 
 end

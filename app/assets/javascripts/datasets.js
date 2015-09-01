@@ -34,6 +34,11 @@ ready = function() {
 
       $('#agree_btn').html('Deposit Agreement')
 
+    $('#deposit-btn').click(function () {
+        $('#complete_checkbox').prop('checked', true);
+        $('.dataset-form')[0].submit();
+    });
+
 
 }
 
