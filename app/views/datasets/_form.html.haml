@@ -12,7 +12,7 @@
     .form-group
       = f.label :identifier, "DOI", :class => "control-label"
       %br
-      = f.text_field :identifier, :class => "form-control", :placeholder => "[Leave blank if requesting a DOI.]", :required => true
+      = f.text_field :identifier, :class => "form-control", :placeholder => "[Leave blank if requesting a DOI.]"
 
   .form-group.required
     = f.label :title, "Dataset Title", :class => "control-label"
@@ -82,5 +82,5 @@
       %button(type="submit" class="btn btn-primary") Deposit Dataset
     -else
       %button(type="submit" class="btn btn-primary") Update Dataset
-
-  = link_to t(:'helpers.action.cancel'), main_app.root_path, class: 'btn btn-lnk'
+%br
+%a{:href => "/"} Cancel
