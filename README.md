@@ -60,6 +60,6 @@ Edit these as necessary.
 
 #### Run on unicorn server on nix system to support streaming zip file downloads
 
-`$ ./unicorn_start.sh`
+`$ ./idb_start.sh`
 
 
