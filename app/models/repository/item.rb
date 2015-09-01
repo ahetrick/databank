@@ -66,10 +66,6 @@ module Repository
       other.kind_of?(self.class) and self.id == other.id
     end
 
-    def bytestreams
-      Repository::Bytestream.where(Solr::Fields::PARENT_URI => self.id)
-    end
-
     ##
     # @return boolean True if any text was extracted; false if not
     #
