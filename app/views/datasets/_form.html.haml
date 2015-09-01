@@ -55,7 +55,7 @@
     = f.label "File(s)", :class => "control-label"
 
 
-  - if params[:action] == :edit && @dataset.datafiles
+  - if @dataset.datafiles
 
     - @dataset.datafiles.each do |datafile|
       -if datafile.master_bytestream && !datafile.master_bytestream.nil?

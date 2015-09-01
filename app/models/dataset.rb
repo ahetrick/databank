@@ -30,14 +30,19 @@ class Dataset < ActiveRecord::Base
       nil
     else
       collection = Repository::Collection.find_by_key(self.key)
+      raise ActiveRecord::RecordNotFound unless collection
     end
-    raise ActiveRecord::RecordNotFound unless collection
+
   end
 
   def datafiles
-    col = Repository::Collection.find_by_key(self.key)
-    raise ActiveRecord::RecordNotFound unless col
-    Repository::Item.where(Solr::Fields::COLLECTION => col.id)
+    if !self.key || self.key.empty?
+      nil
+    else
+      col = Repository::Collection.find_by_key(self.key)
+      raise ActiveRecord::RecordNotFound unless col
+      Repository::Item.where(Solr::Fields::COLLECTION => col.id)
+    end
   end
 
   def save_to_repo
