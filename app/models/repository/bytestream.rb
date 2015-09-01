@@ -52,7 +52,7 @@ module Repository
 
     ##
     # Returns the fedora filename. Not available until the instance has been
-    # persisted.
+    # persisted.  This triple may not be visible in the web interface.
     #
     # @return [String]
     #
