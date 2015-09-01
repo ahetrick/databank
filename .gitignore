@@ -18,3 +18,5 @@ config/database.yml
 config/databank.yml
 config/secrets.yml
 public/uploads
+
+fcrepo4-data

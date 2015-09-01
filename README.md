@@ -58,6 +58,12 @@ Edit these as necessary.
 `$ cd ..`
 `$ bundle exec rake db:setup`
 
+#### Create demo depositor accounts, if desired
+`$ bundle exec rake databank:create_users`
+
+creates 10 users in the pattern demo1@example.edu, demo2@example.edu ..., each with a password of demo
+
+
 #### Run on unicorn server on nix system to support streaming zip file downloads
 
 `$ ./idb_start.sh`

@@ -15,10 +15,12 @@ namespace :databank do
 
     ds2 = Dataset.new :identifier => %Q[10.13012/J8Z60KZG],
                       :title => "Honey bee brain images processed to reveal c-jun mRNA",
-                      :license => "Copyright © (2014), University of Illinois. All rights reserved. License Placeholder Text",
+                      :license => "CC0",
                       :description => %Q[Immediate early genes (IEG) have served as useful markers of brain neuronal activity in mammals, and more recently in insects. The mammalian canonical IEG, c-jun, is part of regulatory pathways conserved in insects and has been shown to be responsive to alarm pheromone in honey bees. We tested whether c-jun is responsive in honey bees to another behaviorally relevant stimulus, sucrose, in order to further identify brain regions involved in sucrose processing. To identify responsive regions, we developed a new method of voxel-based analysis of c-jun mRNA expression. We found that c-jun is expressed in somata throughout the brain. It was rapidly induced in response to sucrose stimuli, and it responded in somata near the antennal and mechanosensory motor center, mushroom body calices, and lateral protocerebrum, which are known to be involved in sucrose processing. c-jun also responded to sucrose in somata near the lateral subesophageal ganglion, dorsal optic lobe, ventral optic lobe, and dorsal posterior protocerebrum, which had not been previously identified by other methods. These results demonstrate the utility of voxel-based analysis of mRNA expression in the insect brain.],
                       :publication_year => "2014",
-                      :publisher => "University of Illinois at Urbana-Champaign"
+                      :publisher => "University of Illinois at Urbana-Champaign",
+                      :depositor_name => "Demo1 User",
+                      :depositor_email => "demo1@example.edu"
 
     ds2.save!
 
@@ -95,11 +97,13 @@ namespace :databank do
 
 
     ds1 = Dataset.new :identifier => %Q[10.9999/dev/test1],
-                      :license => "Copyright © (2014), University of Illinois. All rights reserved. License Placeholder Text",
+                      :license => "CC0",
                       :title => %Q[Data from "Digital Preservation File Format Policies of ARL Member Libraries: An Analysis"],
                       :description => %Q[Whether overseeing institutional repositories, digital library collections, or digital preservation services, repository managers often establish file format policies intended to extend the longevity of collections under their care. While concerted efforts have been made in the library community to encourage common standards, digital preservation policies regularly vary from one digital library service to another. In the interest of gaining a broad view of contemporary digital preservation practice in North American research libraries, this paper presents the findings of a study of file format policies at Association of Research Libraries (ARL) member institutions. It is intended to present the digital preservation community with an assessment of the level of trust currently placed in common file formats in digital library collections and institutional repositories. Beginning with a summary of file format research to date, the authors describe the research methodology they used to collect and analyze data from the file format policies of ARL Library repositories and digital library services. The paper concludes with a presentation and analysis of findings that explore levels of confidence placed in image, text, audio, video, tabular data, software application, presentation, geospatial, and computer program file formats. The data show that file format policies have evolved little beyond the document and image digitization standards of traditional library reformatting programs, and that current approaches to file format policymaking must evolve to meet the challenges of research libraries' expanding digital repository services.],
                       :publication_year => "2014",
-                      :publisher => "University of Illinois at Urbana-Champaign"
+                      :publisher => "University of Illinois at Urbana-Champaign",
+                      :depositor_name => "Demo1 User",
+                      :depositor_email => "demo1@example.edu"
     ds1.save!
 
     c3 = Creator.new :creator_name => "Rimkus, Kyle R.", :identifier => ["http://orcid.org/0000-0002-9142-6677"], :dataset_id => ds1.id
@@ -167,6 +171,22 @@ namespace :databank do
   desc "Clear Rails cache (sessions, views, etc.)"
   task clear: :environment do
     Rails.cache.clear
+  end
+
+  desc 'Create demo users'
+  task :create_users => :environment do
+    salt = BCrypt::Engine.generate_salt
+    encrypted_password = BCrypt::Engine.hash_secret("demo", salt)
+
+    num_accounts = 10
+
+    (1..num_accounts).each do |i|
+      identity =   Identity.find_or_create_by(email: "demo#{i}@example.edu" )
+      identity.name = "Demo#{i} Depositor"
+      identity.password_digest = encrypted_password
+      identity.save!
+    end
+
   end
 
 end

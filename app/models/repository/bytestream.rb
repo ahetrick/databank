@@ -51,13 +51,13 @@ module Repository
     end
 
     ##
-    # Returns the PREMIS filename. Not available until the instance has been
+    # Returns the fedora filename. Not available until the instance has been
     # persisted.
     #
     # @return [String]
     #
     def filename
-      self.rdf_graph.any_object('http://www.loc.gov/premis/rdf/v1#hasOriginalName').to_s
+      self.rdf_graph.any_object('http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#filename').to_s
     end
 
     def guess_media_type
