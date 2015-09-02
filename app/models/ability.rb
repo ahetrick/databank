@@ -14,6 +14,9 @@ class Ability
       can :update, Dataset do |dataset|
         dataset.try(:depositor_email) == user.email
       end
+      can :deposit, Dataset do |dataset|
+        dataset.try(:depositor_email) == user.email
+      end
     else
       can :read, :all
     end

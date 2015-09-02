@@ -18,13 +18,22 @@
     = f.label :title, "Dataset Title", :class => "control-label"
     %br
     = f.text_field :title, :class => "form-control", :placeholder => "[The Title]", :required => true
-  
 
   .form-group.required
     = f.label :creator_text, "Creator(s)", :class => "control-label"
     %br
     = f.text_field :creator_text, :class => "form-control", :placeholder => "[Semi-colon spearated list of names, e.g.: Verfasser, Maria; Auteur, Henri]", :required => true
     %span(class="help-block") The personal name format for each name in the semi-colon separted list should be: family, given, (e.g.: Verfasser, Maria; Auteur, Henri).
+
+  .form-group.required
+    = f.label :corresponding_creator_name, "Correspoding Creator", :class => "control-label"
+    %br
+    = f.text_field :corresponding_creator_name, :class => "form-control", :placeholder => "[The personal name for the person who serves as the point of contact for inquiries about the dataset (e.g. Verfasser, Maria).]", :required => true
+
+  .form-group.required
+    = f.label :corresponding_creator_email, "Correspoding Creator Email Address", :class => "control-label"
+    %br
+    = f.text_field :corresponding_creator_email, :class => "form-control", :placeholder => "[Correspondence about this dataset, including notice of deposit, will route to this email address.]", :required => true
 
   .field
     = f.hidden_field :publisher, :value=>"University of Illinois at Urbana-Champaign"
@@ -54,8 +63,6 @@
   .form-group.required
     = f.label "File(s)", :class => "control-label"
 
-  = f.check_box :complete, :id => "complete_checkbox", :class => "hidden"
-
   - if @dataset.datafiles
 
     - @dataset.datafiles.each do |datafile|
@@ -67,22 +74,24 @@
           %span(class="col-md-6")
             = datafile.description
           %span(class="col-md-1")
-            = link_to "#{request.base_url}/datasets/#{@dataset.id}/destroy_file/#{datafile.web_id}", :class=>"btn btn-danger btn-sm" do
-              = %Q[<span class="glyphicon glyphicon-remove"> File</span>].html_safe
+            - if ((can? :update, @dataset) && (!@dataset.complete?))
+              = link_to "#{request.base_url}/datasets/#{@dataset.id}/destroy_file/#{datafile.web_id}", :class=>"btn btn-danger btn-sm" do
+                = %Q[<span class="glyphicon glyphicon-remove"> File</span>].html_safe
 
-  = f.fields_for :binaries do |binary|
-    = render 'binary_fields', f: binary
-  .links
-    = link_to_add_association %Q[<button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"> File</span></button>].html_safe, f, :binaries
+  - if ((can? :update, @dataset) && (!@dataset.complete?))
+
+    = f.fields_for :binaries do |binary|
+      = render 'binary_fields', f: binary
+    .links
+      = link_to_add_association %Q[<button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"> File</span></button>].html_safe, f, :binaries
 
   %hr
 
   .primary-actions.pull-right
     %button(class="btn btn-link" id="agree_btn" data-toggle="modal" data-target="#agreement")
-    -if @dataset.complete?
-      %button(type="submit" class="btn btn-primary") Update Dataset
-    -else
-      %button(type="submit" class="btn btn-success") Save Dataset
-      %button(type="button" id="deposit-btn" class="btn btn-primary") Deposit Dataset
+      -if params[:action] == 'new'
+        %button(type="submit" class="btn btn-primary") Save
+      -else
+        %button(type="submit" class="btn btn-primary") Update Dataset
 %br
 %a{:href => "/"} Cancel

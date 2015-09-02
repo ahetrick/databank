@@ -3,8 +3,13 @@ require 'open-uri'
 class DatasetsController < ApplicationController
 
   load_and_authorize_resource
+  skip_load_and_authorize_resource :only => :download_datafiles
+  skip_load_and_authorize_resource :only => :download_endNote_XML
+  skip_load_and_authorize_resource :only => :download_plaintext_citation
+  skip_load_and_authorize_resource :only => :download_BibTeX
+  skip_load_and_authorize_resource :only => :download_RIS
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit]
 
   # enable streaming responses
   include ActionController::Streaming
@@ -46,9 +51,9 @@ class DatasetsController < ApplicationController
     respond_to do |format|
       if @dataset.save
         if @dataset.complete?
-          success_msg = 'Dataset was successfully created.'
+          success_msg = 'Dataset was successfully deposited.'
         else
-          success_msg = 'Dataset was saved but not published.  To publish, Edit, then Deposit Dataset.'
+          success_msg = 'Dataset was saved but not deposited.'
         end
        
         format.html { redirect_to @dataset, notice: success_msg }
@@ -84,6 +89,19 @@ class DatasetsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to datasets_url, notice: 'Dataset was successfully destroyed.' }
       format.json { head :no_content }
+    end
+  end
+
+  def deposit
+    @dataset.complete = true
+    respond_to do |format|
+      if @dataset.save
+        format.html { redirect_to @dataset, notice: 'Dataset was successfully deposited.' }
+        format.json { render :show, status: :ok, location: @dataset }
+      else
+        format.html { render :edit }
+        format.json { render json: @dataset.errors, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -291,7 +309,7 @@ class DatasetsController < ApplicationController
   # end
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :creator_text, :depositor_email, :depositor_name, :complete, binaries_attributes: [:datafile, :description, :dataset_id, :id, :_destory ])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :creator_text, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, binaries_attributes: [:datafile, :description, :dataset_id, :id, :_destory ])
   end
 
 end

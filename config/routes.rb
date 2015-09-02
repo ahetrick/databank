@@ -29,12 +29,15 @@ Rails.application.routes.draw do
 
   get '/binaries/:id/download', to: 'binaries#download'
 
+  # deposit
+  get '/datasets/:id/deposit', to: 'datasets#deposit'
+
   # authentication routes
   match '/auth/:provider/callback', to: 'sessions#create', via: [:get, :post]
   match '/login', to: 'sessions#new', as: :login, via: [:get, :post]
   match '/logout', to: 'sessions#destroy', as: :logout, via: [:get, :post]
 
- match '/auth/failure', to: 'sessions#unauthorized', as: :unauthorized, via: [:get, :post]
+  match '/auth/failure', to: 'sessions#unauthorized', as: :unauthorized, via: [:get, :post]
 
 
 end

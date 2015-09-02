@@ -11,30 +11,32 @@
 <!--</form>-->
 <hr/>
 <% @datasets.each do |dataset| %>
-  <div class="row">
-    <span class="col-md-11"><span class="mainTitle"> <%= link_to "#{dataset.title}", dataset %></span><br/>
-      <%= dataset.creator_list %><br/>
-      <%= dataset.publisher %>
-      <%= dataset.publication_year %>
-      <%= (dataset.identifier && !dataset.identifier.empty?) ? (link_to "doi:#{dataset.identifier}", dataset) : "" %></span>
-    <span class="col-md-1">
-      <%= link_to dataset, :class => "btn btn-primary btn-block btn-sm" do %>
-        <span class="glyphicon glyphicon-zoom-in"></span> View
-      <% end %>
-      <% if can? :update, dataset %>
+  <% if ((can? :update, dataset) || dataset.complete?) %>
+    <div class="row">
+      <span class="col-md-11"><span class="mainTitle"> <%= link_to "#{dataset.title}", dataset %></span><br/>
+        <%= dataset.creator_list %><br/>
+        <%= dataset.publisher %>
+        <%= dataset.publication_year %>
+        <%= (dataset.identifier && !dataset.identifier.empty?) ? (link_to "doi:#{dataset.identifier}", dataset) : "" %></span>
+      <span class="col-md-1">
+        <%= link_to dataset, :class => "btn btn-primary btn-block btn-sm" do %>
+          <span class="glyphicon glyphicon-zoom-in"></span> View
+        <% end %>
+        <% if can? :update, dataset %>
 
-        <%= link_to edit_dataset_path(dataset), :class => "btn btn-info btn-block btn-sm" do %>
-          <span class="glyphicon glyphicon-edit"></span> Edit
+          <%= link_to edit_dataset_path(dataset), :class => "btn btn-info btn-block btn-sm" do %>
+            <span class="glyphicon glyphicon-edit"></span> Edit
+          <% end %>
         <% end %>
-      <% end %>
-      <% if can? :destroy, dataset %>
-        <%= link_to dataset, method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn btn-danger btn-block btn-sm" do %>
-          <span class="glyphicon glyphicon-remove"></span> Delete
+        <% if can? :destroy, dataset %>
+          <%= link_to dataset, method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn btn-danger btn-block btn-sm" do %>
+            <span class="glyphicon glyphicon-remove"></span> Delete
+          <% end %>
         <% end %>
-      <% end %>
-    </span>
-  </div>
-  <hr/>
+      </span>
+    </div>
+    <hr/>
+  <% end %>
 <% end %>
 <br>
 <% if can? :create, Dataset %>

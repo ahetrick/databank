@@ -22,7 +22,9 @@ namespace :databank do
                       :publisher => "University of Illinois at Urbana-Champaign",
                       :depositor_name => "Demo1 User",
                       :depositor_email => "demo1@example.edu",
-                      :complete => true
+                      :complete => true,
+                      :corresponding_creator_name => "McNeill, Matthew S.",
+                      :corresponding_creator_email => "mfall3@illinois.edu"
 
     ds2.save!
     Solr::Solr.client.commit
@@ -114,7 +116,10 @@ namespace :databank do
                       :publisher => "University of Illinois at Urbana-Champaign",
                       :depositor_name => "Demo1 User",
                       :depositor_email => "demo1@example.edu",
-                      :complete => true
+                      :complete => true,
+                      :corresponding_creator_name => "Rimkus, Kyle R.",
+                      :corresponding_creator_email => "mfall3@illinois.edu"
+
     ds1.save!
     Solr::Solr.client.commit
 
