@@ -26,12 +26,12 @@
     %span(class="help-block") The personal name format for each name in the semi-colon separted list should be: family, given, (e.g.: Verfasser, Maria; Auteur, Henri).
 
   .form-group.required
-    = f.label :corresponding_creator_name, "Correspoding Creator", :class => "control-label"
+    = f.label :corresponding_creator_name, "Corresponding Creator", :class => "control-label"
     %br
     = f.text_field :corresponding_creator_name, :class => "form-control", :placeholder => "[The personal name for the person who serves as the point of contact for inquiries about the dataset (e.g. Verfasser, Maria).]", :required => true
 
   .form-group.required
-    = f.label :corresponding_creator_email, "Correspoding Creator Email Address", :class => "control-label"
+    = f.label :corresponding_creator_email, "Corresponding Creator Email Address", :class => "control-label"
     %br
     = f.text_field :corresponding_creator_email, :class => "form-control", :placeholder => "[Correspondence about this dataset, including notice of deposit, will route to this email address.]", :required => true
 
@@ -78,7 +78,7 @@
               = link_to "#{request.base_url}/datasets/#{@dataset.id}/destroy_file/#{datafile.web_id}", :class=>"btn btn-danger btn-sm" do
                 = %Q[<span class="glyphicon glyphicon-remove"> File</span>].html_safe
 
-  - if ((can? :update, @dataset) && (!@dataset.complete?))
+  - if ((params[:action] == 'new') || ((can? :update, @dataset) && (!@dataset.complete?)))
 
     = f.fields_for :binaries do |binary|
       = render 'binary_fields', f: binary
