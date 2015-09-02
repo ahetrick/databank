@@ -1,17 +1,19 @@
 <% if ((can? :update, @dataset) || @dataset.complete?) %>
   <div class="container-fluid">
     <div class="row">
-      <span class="col-md-9" id="title"><%= @dataset.title %></span>
+      <span class="col-md-8" id="title"><%= @dataset.title %></span>
       <% if (can? :update, @dataset) && !@dataset.complete? %>
-          <span class="col-md-2">
-            <a id="datasetForm:BibTeXLink" href="#" onclick='window.location = "/datasets/<%=@dataset.id%>/deposit"' class="btn btn-block btn-primary" role="button">
-              Confirm and Deposit
+          <span class="col-md-4">
+            <a href = "http://researchdataservice.illinois.edu/contact-us/" class = "btn btn-danger">
+              <span class="glyphicon glyphicon-question-sign"></span> Get Help
             </a>
-          </span>
-          <span class="col-md-1">
+
             <%= link_to edit_dataset_path(@dataset), :class => "btn btn-info" do %>
               <span class="glyphicon glyphicon-edit"></span> Edit
             <% end %>
+            <a id="datasetForm:BibTeXLink" href="#" onclick='window.location = "/datasets/<%=@dataset.id%>/deposit"' class="btn btn-primary" role="button">
+              Confirm & Deposit
+            </a>
           </span>
       <% end %>
     </div>
