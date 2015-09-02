@@ -1,5 +1,5 @@
 <% if ((can? :update, @dataset) || @dataset.complete?) %>
-  <div class="container">
+  <div class="container-fluid">
     <div class="row">
       <span class="col-md-9" id="title"><%= @dataset.title %></span>
       <% if (can? :update, @dataset) && !@dataset.complete? %>
