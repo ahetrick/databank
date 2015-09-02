@@ -11,7 +11,8 @@
 /log/*
 !/log/.keep
 /tmp
-/shared/log/*
+
+/shared/*
 
 
 # Ignore local files.

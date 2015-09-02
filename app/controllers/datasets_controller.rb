@@ -45,8 +45,14 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       if @dataset.save
+        if @dataset.complete?
+          success_msg = 'Dataset was successfully created.'
+        else
+          success_msg = 'Dataset was saved but not published.  To publish, Edit, then Deposit Dataset.'
+        end
        
-        format.html { redirect_to @dataset, notice: 'Dataset was successfully created.' }
+        format.html { redirect_to @dataset, notice: success_msg }
+
         format.json { render :show, status: :created, location: @dataset }
       else
         format.html { render :new }

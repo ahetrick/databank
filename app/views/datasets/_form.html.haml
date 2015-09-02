@@ -54,7 +54,7 @@
   .form-group.required
     = f.label "File(s)", :class => "control-label"
 
-  = f.check_box :complete, :id => "complete_checkbox"
+  = f.check_box :complete, :id => "complete_checkbox", :class => "hidden"
 
   - if @dataset.datafiles
 
