@@ -110,7 +110,7 @@ class Dataset < ActiveRecord::Base
   end
 
   def set_key
-    self.key = generate_key
+    self.key ||= generate_key
   end
 
   ##
