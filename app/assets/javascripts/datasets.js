@@ -34,8 +34,6 @@ ready = function() {
 
     $('#term-supports').tooltip();
 
-    $("#agreement").modal();
-
     $('#cancel-button').click(function () {
         alert("You must agree to the Deposit Agreement before depositing data into Illinois Data Bank.");
     });
@@ -48,6 +46,11 @@ ready = function() {
         else if(window.event){
             window.event.cancelBubble=true;
         }
+    });
+
+    $('.save-button').click(function () {
+        window.onbeforeunload = null;
+        $('.dataset-form')[0].submit();
     });
 
     $('input.dataset').change(function() {

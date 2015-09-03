@@ -24,7 +24,9 @@ namespace :databank do
                       :depositor_email => "demo1@example.edu",
                       :complete => true,
                       :corresponding_creator_name => "McNeill, Matthew S.",
-                      :corresponding_creator_email => "mfall3@illinois.edu"
+                      :corresponding_creator_email => "mfall3@illinois.edu",
+                      :binaries_attributes =>{"0"=>{:description=>"placeholder"}}
+
 
     ds2.save!
     Solr::Solr.client.commit
@@ -118,7 +120,8 @@ namespace :databank do
                       :depositor_email => "demo1@example.edu",
                       :complete => true,
                       :corresponding_creator_name => "Rimkus, Kyle R.",
-                      :corresponding_creator_email => "mfall3@illinois.edu"
+                      :corresponding_creator_email => "mfall3@illinois.edu",
+                      :binaries_attributes =>{"0"=>{:description=>"placeholder"}}
 
     ds1.save!
     Solr::Solr.client.commit

@@ -1,4 +1,6 @@
 class Dataset < ActiveRecord::Base
+  
+  MIN_FILES = 1
 
   has_many :creators, dependent: :destroy
   has_many :binaries, dependent: :destroy
@@ -8,9 +10,9 @@ class Dataset < ActiveRecord::Base
   after_save 'save_to_repo'
   before_destroy 'delete_repository_entity'
 
-
-  validates :depositor_email, presence: {:message => "Deposit Agreement required to deposit dataset (see link next to Update Dataset button in the bottom right of form)."}
+  validates :depositor_email, presence: {message:"Deposit Agreement required to deposit dataset (see link next to Update Dataset button in the bottom right of form)."}
   validates :title, presence: true
+  validates :binaries, length: { minimum: MIN_FILES, message: "::Dataset must include at least one file."}
 
   KEY_LENGTH = 5
 
@@ -63,38 +65,47 @@ class Dataset < ActiveRecord::Base
     Solr::Solr.client.commit
 
     binaries.each do |binary|
-
-      # make datafile
-      datafile = Repository::Datafile.new(
-          repo_dataset: repo_dataset,
-          parent_url: repo_dataset.id,
-          published: true,
-          description: binary.description)
-      datafile.save!
-      Rails.logger.debug "Created #{datafile.id}"
-
-      Solr::Solr.client.commit
-      Rails.logger.debug "Committed #{datafile.id}"
-
-      path = binary.attachment.current_path
-      if File.exists?(path)
-        bs = Repository::Bytestream.new(
-            parent_url: datafile.id,
-            type: Repository::Bytestream::Type::MASTER,
-            datafile: datafile,
-            upload_pathname: path)
-
-        bs.media_type = binary.attachment.file.content_type
-        bs.save!
-        Rails.logger.debug "Created master bytestream"
+      if binary.attachment.nil? && !binary.attachment.empty?
+        # make datafile
+        datafile = Repository::Datafile.new(
+            repo_dataset: repo_dataset,
+            parent_url: repo_dataset.id,
+            published: true,
+            description: binary.description)
+        datafile.save!
+        Rails.logger.debug "Created #{datafile.id}"
+  
         Solr::Solr.client.commit
-
-        binary.destroy
-      else
-        Rails.logger.debug "Did not find path #{path}"
-      end
+        Rails.logger.debug "Committed #{datafile.id}"
+  
+        path = binary.attachment.current_path
+        if File.exists?(path)
+          bs = Repository::Bytestream.new(
+              parent_url: datafile.id,
+              type: Repository::Bytestream::Type::MASTER,
+              datafile: datafile,
+              upload_pathname: path)
+  
+          bs.media_type = binary.attachment.file.content_type
+          bs.save!
+          Rails.logger.debug "Created master bytestream"
+          Solr::Solr.client.commit
+  
+          binary.destroy
+        else
+          Rails.logger.debug "Did not find path #{path}"
+        end
+      end 
+      
+      if self.binaries.count > 1
+        # create a single placeholder binary to make validation work
+        placeholder_binary = Binary.new(description: "placeholder", dataset_id: self.id )
+        placeholder_binary.save!
+      end 
+        
 
     end
+    
 
   end
 
