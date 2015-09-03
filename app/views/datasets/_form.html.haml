@@ -90,9 +90,9 @@
   .primary-actions.pull-right
     %button(class="btn btn-link" id="agree_btn" data-toggle="modal" data-target="#agreement")
       -if params[:action] == 'new'
-        %button(type="submit" class="btn btn-primary save-button") Save
+        %button(type="button" class="btn btn-primary save-button") Save
       -else
-        %button(type="submit" class="btn btn-primary save-button") Update Dataset
+        %button(type="button" class="btn btn-primary save-button") Update Dataset
 %br
 %a{:href => "/"} Cancel
 
