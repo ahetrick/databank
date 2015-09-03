@@ -65,7 +65,7 @@ class Dataset < ActiveRecord::Base
     Solr::Solr.client.commit
 
     binaries.each do |binary|
-      if binary.attachment.nil? && !binary.attachment.empty?
+      unless binary.attachment.nil?
         # make datafile
         datafile = Repository::Datafile.new(
             repo_dataset: repo_dataset,
@@ -73,11 +73,9 @@ class Dataset < ActiveRecord::Base
             published: true,
             description: binary.description)
         datafile.save!
-        Rails.logger.debug "Created #{datafile.id}"
-  
+        
         Solr::Solr.client.commit
-        Rails.logger.debug "Committed #{datafile.id}"
-  
+        
         path = binary.attachment.current_path
         if File.exists?(path)
           bs = Repository::Bytestream.new(
@@ -105,8 +103,7 @@ class Dataset < ActiveRecord::Base
         
 
     end
-    
-
+    Solr::Solr.client.commit
   end
 
   def delete_repository_entity
