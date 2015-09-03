@@ -1,20 +1,19 @@
 module Repository
 
-# collection.rb
-  class Collection < ActiveMedusa::Container
+  class RepoDataset < ActiveMedusa::Container
 
     include ActiveMedusa::Indexable
     include Introspection
 
-    entity_class_uri 'http://databank.illinois.edu/definitions/v1/repository#Dataset'
+    entity_class_uri Databank::NAMESPACE_URI + Databank::RDFObjects::DATASET
 
-    has_many :items, class_name: 'Repository::Item'
+    has_many :datafiles, class_name: 'Repository::Datafile'
 
     property :key,
              type: :string,
              rdf_predicate: Databank::NAMESPACE_URI +
-                 Databank::RDFPredicates::COLLECTION_KEY,
-             solr_field: Solr::Fields::COLLECTION_KEY
+                 Databank::RDFPredicates::DATASET_KEY,
+             solr_field: Solr::Fields::DATASET_KEY
 
     property :published,
              type: :boolean,
@@ -57,17 +56,26 @@ module Repository
              rdf_predicate: 'http://purl.org/dc/terms/publisher',
              solr_field: Solr::Fields::PUBLISHER
 
+    property :pcdm_class,
+             type: :string,
+             rdf_predicate: 'http://www.w3.org/2000/01/rdf-schema#Class',
+             solr_field: Solr::Fields::PCDM_CLASS
+
+    before_create :set_pcdm_class
+
+    def set_pcdm_class
+      self.pcdm_class = 'http://pcdm.org/models#Object'
+    end
+
     def reindex
 
       Rails.logger.info "Description:"
 
       Rails.logger.info self.description
 
-      databank_predicates = Databank::RDFPredicates
-
       doc = base_solr_document
-      doc[Solr::Fields::COLLECTION_KEY] = self.rdf_graph.any_object(databank_predicates::COLLECTION_KEY)
-      doc[Solr::Fields::PUBLISHED] =  self.rdf_graph.any_object(databank_predicates::PUBLISHED)
+      doc[Solr::Fields::DATASET_KEY] = self.rdf_graph.any_object(Databank::RDFPredicates::DATASET_KEY)
+      doc[Solr::Fields::PUBLISHED] =  self.rdf_graph.any_object(Databank::RDFPredicates::PUBLISHED)
       doc[Solr::Fields::SINGLE_TITLE] = self.title
       doc[Solr::Fields::CREATOR_LIST] = self.creator_list
       doc[Solr::Fields::DESCRIPTION] = self.description
@@ -75,6 +83,7 @@ module Repository
       doc[Solr::Fields::LICENSE] = self.license
       doc[Solr::Fields::PUBLICATION_YEAR] = self.publication_year
       doc[Solr::Fields::PUBLISHER] = self.publisher
+      doc[Solr::Fields::PCDM_CLASS] = self.pcdm_class
 
       Solr::Solr.client.add(doc)
       Solr::Solr.client.commit

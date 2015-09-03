@@ -146,7 +146,7 @@
                           <span class="col-md-4"><%= datafile.description %></span>
                           <span class="col-md-2"><%= binary.media_type %></span>
                           <span class="col-md-1"><%= number_to_human_size(binary.byte_size) %></span>
-                        <span class="col-md-1"><a href="#" onclick='window.location = "/datasets/<%=@dataset.id%>/stream_file/<%= binary.id %>"' class="btn btn-block btn-primary btn-sm" role="button">
+                        <span class="col-md-1"><a href="#" onclick='window.location = "/datasets/<%=@dataset.id%>/stream_file/<%= datafile.web_id %>"' class="btn btn-block btn-primary btn-sm" role="button">
                           <span class="glyphicon glyphicon-download"></span> File
                         </a></span>
                         </div>

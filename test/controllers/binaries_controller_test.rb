@@ -18,7 +18,7 @@ class BinariesControllerTest < ActionController::TestCase
 
   test "should create binary" do
     assert_difference('Binary.count') do
-      post :create, binary: { datafile: @binary.datafile, dataset_id: @binary.dataset_id }
+      post :create, binary: { attachment: @binary.datafile, dataset_id: @binary.dataset_id }
     end
 
     assert_redirected_to binary_path(assigns(:binary))
@@ -35,7 +35,7 @@ class BinariesControllerTest < ActionController::TestCase
   end
 
   test "should update binary" do
-    patch :update, id: @binary, binary: { datafile: @binary.datafile, dataset_id: @binary.dataset_id }
+    patch :update, id: @binary, binary: { attachment: @binary.datafile, dataset_id: @binary.dataset_id }
     assert_redirected_to binary_path(assigns(:binary))
   end
 

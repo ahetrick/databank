@@ -73,6 +73,6 @@ class BinariesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def binary_params
-      params.require(:binary).permit(:datafile, :description, :dataset_id)
+      params.require(:binary).permit(:attachment, :description, :dataset_id)
     end
 end

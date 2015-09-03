@@ -10,18 +10,19 @@ module Repository
       MASTER = Databank::NAMESPACE_URI + Databank::RDFObjects::MASTER_BYTESTREAM
     end
 
-    entity_class_uri 'http://pcdm.org/models#File'
+    entity_class_uri Databank::NAMESPACE_URI + Databank::RDFObjects::BYTESTREAM
 
-    belongs_to :item, class_name: 'Repository::Item',
+    belongs_to :datafile, class_name: 'Repository::Datafile',
                rdf_predicate: Databank::NAMESPACE_URI +
-                   Databank::RDFPredicates::IS_MEMBER_OF_ITEM,
-               solr_field: Solr::Fields::ITEM
+                   Databank::RDFPredicates::IS_MEMBER_OF_DATAFILE,
+               solr_field: Solr::Fields::DATAFILE
 
     property :height,
              type: :integer,
              rdf_predicate: Databank::NAMESPACE_URI +
                  Databank::RDFPredicates::HEIGHT,
              solr_field: Solr::Fields::HEIGHT
+
     property :media_type,
              type: :string,
              rdf_predicate: 'http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasMimeType',
@@ -32,13 +33,24 @@ module Repository
              rdf_predicate: Databank::NAMESPACE_URI +
                  Databank::RDFPredicates::BYTESTREAM_TYPE,
              solr_field: Solr::Fields::BYTESTREAM_TYPE
+
     property :width,
              type: :integer,
              rdf_predicate: Databank::NAMESPACE_URI +
                  Databank::RDFPredicates::WIDTH,
              solr_field: Solr::Fields::WIDTH
 
+    property :pcdm_class,
+             type: :string,
+             rdf_predicate: 'http://www.w3.org/2000/01/rdf-schema#Class',
+             solr_field: Solr::Fields::PCDM_CLASS
+
     before_save :assign_technical_info
+    before_create :set_pcdm_class
+
+    def set_pcdm_class
+      self.pcdm_class = 'http://pcdm.org/models#File'
+    end
 
     ##
     # Returns the PREMIS byte size, populated by the repository. Not available
@@ -117,11 +129,12 @@ module Repository
       databank_predicates = Databank::RDFPredicates
 
       doc = base_solr_document
-      doc[Solr::Fields::ITEM] =
-          self.rdf_graph.any_object(databank_predicates::IS_MEMBER_OF_ITEM)
+      doc[Solr::Fields::DATAFILE] =
+          self.rdf_graph.any_object(databank_predicates::IS_MEMBER_OF_DATAFILE)
       doc[Solr::Fields::BYTE_SIZE] = self.byte_size
       doc[Solr::Fields::MEDIA_TYPE] = self.media_type
       doc[Solr::Fields::BYTESTREAM_TYPE] = self.type
+      doc[Solr::Fields::PCDM_CLASS] = self.pcdm_class
       Solr::Solr.client.add(doc)
       Solr::Solr.client.commit
 

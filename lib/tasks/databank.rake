@@ -61,12 +61,12 @@ namespace :databank do
     end
 =end
 
-    col2 = Repository::Collection.find_by_key(ds2.key)
+    col2 = Repository::RepoDataset.find_by_key(ds2.key)
     raise ActiveRecord::RecordNotFound unless col2
 
     # make item
-    i1 = Repository::Item.new(
-        collection: col2,
+    i1 = Repository::Datafile.new(
+        repo_dataset: col2,
         parent_url: col2.id,
         published: true,
         description: "data description and use guidance")
@@ -79,7 +79,7 @@ namespace :databank do
       bs1 = Repository::Bytestream.new(
           parent_url: i1.id,
           type: Repository::Bytestream::Type::MASTER,
-          item: i1,
+          datafile: i1,
           upload_pathname: path1)
       bs1.media_type = 'text/plain'
       bs1.save!
@@ -87,8 +87,8 @@ namespace :databank do
     Solr::Solr.client.commit
 
     # make item
-    i2 = Repository::Item.new(
-        collection: col2,
+    i2 = Repository::Datafile.new(
+        repo_dataset: col2,
         parent_url: col2.id,
         published: true,
         description: "Brain Model and Masks")
@@ -100,7 +100,7 @@ namespace :databank do
       bs2 = Repository::Bytestream.new(
           parent_url: i2.id,
           type: Repository::Bytestream::Type::MASTER,
-          item: i2,
+          datafile: i2,
           upload_pathname: path2)
       bs2.media_type = 'application/zip'
       bs2.save!
@@ -136,12 +136,12 @@ namespace :databank do
     #ds1.save!
     #Solr::Solr.client.commit
 
-    col1 = Repository::Collection.find_by_key(ds1.key)
+    col1 = Repository::RepoDataset.find_by_key(ds1.key)
     raise ActiveRecord::RecordNotFound unless col1
 
     # make item
-    i3 = Repository::Item.new(
-        collection: col1,
+    i3 = Repository::Datafile.new(
+        repo_dataset: col1,
         parent_url: col1.id,
         published: true,
         description: "File Format Statistics - csv")
@@ -153,7 +153,7 @@ namespace :databank do
       bs3 = Repository::Bytestream.new(
           parent_url: i3.id,
           type: Repository::Bytestream::Type::MASTER,
-          item: i3,
+          datafile: i3,
           upload_pathname: path3)
       bs3.media_type = 'text/csv'
       bs3.save!
@@ -161,8 +161,8 @@ namespace :databank do
     Solr::Solr.client.commit
 
     # make item
-    i4 = Repository::Item.new(
-        collection: col1,
+    i4 = Repository::Datafile.new(
+        repo_dataset: col1,
         parent_url: col1.id,
         published: true,
         description: "File Format Statistics - pdf")
@@ -174,7 +174,7 @@ namespace :databank do
       bs4 = Repository::Bytestream.new(
           parent_url: i4.id,
           type: Repository::Bytestream::Type::MASTER,
-          item: i4,
+          datafile: i4,
           upload_pathname: path4)
       bs4.media_type = 'application/pdf'
       bs4.save!

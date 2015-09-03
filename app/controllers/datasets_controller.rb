@@ -8,6 +8,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :download_plaintext_citation
   skip_load_and_authorize_resource :only => :download_BibTeX
   skip_load_and_authorize_resource :only => :download_RIS
+  skip_load_and_authorize_resource :only => :stream_file
 
   before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit]
 
@@ -106,16 +107,18 @@ class DatasetsController < ApplicationController
   end
 
   def destroy_file
-    item = Repository::Item.find_by_web_id(params[:web_id])
-    raise ActiveRecord::RecordNotFound, 'Item not found' unless item
-    item.destroy
+    datafile = Repository::Datafile.find_by_web_id(params[:web_id])
+    raise ActiveRecord::RecordNotFound, 'Datafile not found' unless datafile
+    datafile.destroy
     redirect_to action: "edit", id: [params[:id]]
   end
 
   def stream_file
 
-    bs = Repository::Bytestream.find(params[:file_id])
-    raise ActiveRecord::RecordNotFound, 'Bytestream not found' unless bs
+    datafile = Repository::Datafile.find_by_web_id(params[:web_id])
+    raise ActiveRecord::RecordNotFound, 'Datafile not found' unless datafile
+
+    bs = datafile.master_bytestream
 
     if bs and bs.id
       repo_url = URI(bs.id)
@@ -309,7 +312,7 @@ class DatasetsController < ApplicationController
   # end
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :creator_text, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, binaries_attributes: [:datafile, :description, :dataset_id, :id, :_destory ])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :creator_text, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, binaries_attributes: [:attachment, :description, :dataset_id, :id, :_destory ])
   end
 
 end

@@ -390,9 +390,7 @@ module Solr
         { source: self.class.field_name_for_predicate(t.predicate),
           dest: t.facet.solr_field }
       end
-      facetable_fields << {
-          source: Fields::COLLECTION,
-          dest: Facet.where(name: 'Collection').first.solr_field }
+
       facetable_fields_to_add = facetable_fields.reject do |ff|
         current['schema']['copyFields'].
             map{ |sf| "#{sf['source']}-#{sf['dest']}" }.

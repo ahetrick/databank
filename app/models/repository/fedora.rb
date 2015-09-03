@@ -17,8 +17,7 @@ module Repository
     def reindex
       # In case we are coming in via rake, we have to reference all of our
       # model classes before ActiveMedusa::Base.class_for_predicate will work
-      [Collection]
-      # [Item, Collection, Bytestream]
+      [RepoDataset, Datafile, Bytestream]
       delete_missing_ids
       index_node(ActiveMedusa::Configuration.instance.fedora_url)
     end

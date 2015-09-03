@@ -8,7 +8,7 @@ Bundler.require(*Rails.groups)
 
 module Databank
 
-  NAMESPACE_URI = 'http://databank.illinois.edu/definitions/v1/'
+  NAMESPACE_URI = 'http://databank.illinois.edu/definitions/v1#'
 
   ##
   # "System objects" used by the application in the subject-predicate-object
@@ -19,6 +19,9 @@ module Databank
     MASTER_BYTESTREAM = 'Bytestream/Type/Master'
     ORIGINAL_SHAPE = 'Bytestream/Shape/Original'
     SQUARE_SHAPE = 'Bytestream/Shape/Square'
+    BYTESTREAM = 'Bytestream'
+    DATAFILE = 'Datafile'
+    DATASET = 'Dataset'
   end
 
   ##
@@ -26,22 +29,24 @@ module Databank
   # subject-predicate-object sense. These will be appended to NAMESPACE_URI.
   #
   class RDFPredicates
+
     BYTE_SIZE = 'byteSize'
     BYTESTREAM_SHAPE = 'bytestreamShape'
     BYTESTREAM_TYPE = 'bytestreamType'
     BYTESTREAM_URI = 'hasBytestream'
     CLASS = 'hasClass'
-    COLLECTION_KEY = 'collectionKey'
+    DATASET_KEY = 'datasetKey'
     DATE = 'date'
     FULL_TEXT = 'fullText'
     HEIGHT = 'height'
-    IS_MEMBER_OF_COLLECTION = 'isMemberOfCollection'
-    IS_MEMBER_OF_ITEM = 'isMemberOfItem'
+    IS_MEMBER_OF_DATASET = 'isMemberOfDataset'
+    IS_MEMBER_OF_DATAFILE = 'isMemberOfDatafile'
     PAGE_INDEX = 'pageIndex'
     PARENT_URI = 'hasParent'
     PUBLISHED = 'published'
     WEB_ID = 'webID'
     WIDTH = 'width'
+
 
 
 

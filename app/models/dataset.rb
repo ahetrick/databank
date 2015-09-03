@@ -25,12 +25,12 @@ class Dataset < ActiveRecord::Base
     return "#{creator_list} (#{publication_year}): #{title}. #{publisher}. #{citation_id}"
   end
 
-  def collection
+  def repo_dataset
     if !self.key || self.key.empty?
       nil
     else
-      collection = Repository::Collection.find_by_key(self.key)
-      raise ActiveRecord::RecordNotFound unless collection
+      repo_dataset = Repository::RepoDataset.find_by_key(self.key)
+      raise ActiveRecord::RecordNotFound unless repo_dataset
     end
 
   end
@@ -39,52 +39,52 @@ class Dataset < ActiveRecord::Base
     if !self.key || self.key.empty?
       nil
     else
-      col = Repository::Collection.find_by_key(self.key)
-      raise ActiveRecord::RecordNotFound unless col
-      Repository::Item.where(Solr::Fields::COLLECTION => col.id)
+      repo_dataset = Repository::RepoDataset.find_by_key(self.key)
+      raise ActiveRecord::RecordNotFound unless repo_dataset
+      Repository::Datafile.where(Solr::Fields::DATASET => repo_dataset.id)
     end
   end
 
   def save_to_repo
-    collection = Repository::Collection.find_by_key(self.key)
-    if collection.nil?
-      collection = Repository::Collection.new :parent_url => IDB_CONFIG[:fedora_url]
+    repo_dataset = Repository::RepoDataset.find_by_key(self.key)
+    if repo_dataset.nil?
+      repo_dataset = Repository::RepoDataset.new :parent_url => IDB_CONFIG[:fedora_url]
     end
-    collection.key = self.key
-    collection.published = true
-    collection.title = self.title
-    collection.creator_list = self.creator_list
-    collection.description = self.description
-    collection.identifier = self.identifier
-    collection.license = self.license
-    collection.publication_year = self.publication_year
-    collection.publisher = self.publisher
-    collection.save!
+    repo_dataset.key = self.key
+    repo_dataset.published = self.complete?
+    repo_dataset.title = self.title
+    repo_dataset.creator_list = self.creator_list
+    repo_dataset.description = self.description
+    repo_dataset.identifier = self.identifier
+    repo_dataset.license = self.license
+    repo_dataset.publication_year = self.publication_year
+    repo_dataset.publisher = self.publisher
+    repo_dataset.save!
     Solr::Solr.client.commit
 
     binaries.each do |binary|
 
-      # make item
-      item = Repository::Item.new(
-          collection: collection,
-          parent_url: collection.id,
+      # make datafile
+      datafile = Repository::Datafile.new(
+          repo_dataset: repo_dataset,
+          parent_url: repo_dataset.id,
           published: true,
           description: binary.description)
-      item.save!
-      Rails.logger.debug "Created #{item.id}"
+      datafile.save!
+      Rails.logger.debug "Created #{datafile.id}"
 
       Solr::Solr.client.commit
-      Rails.logger.debug "Committed #{item.id}"
+      Rails.logger.debug "Committed #{datafile.id}"
 
-      path = binary.datafile.current_path
+      path = binary.attachment.current_path
       if File.exists?(path)
         bs = Repository::Bytestream.new(
-            parent_url: item.id,
+            parent_url: datafile.id,
             type: Repository::Bytestream::Type::MASTER,
-            item: item,
+            datafile: datafile,
             upload_pathname: path)
 
-        bs.media_type = binary.datafile.file.content_type
+        bs.media_type = binary.attachment.file.content_type
         bs.save!
         Rails.logger.debug "Created master bytestream"
         Solr::Solr.client.commit
@@ -99,13 +99,13 @@ class Dataset < ActiveRecord::Base
   end
 
   def delete_repository_entity
-    collection = Repository::Collection.find_by_key(self.key)
-    if !collection.nil?
+    repo_dataset = Repository::RepoDataset.find_by_key(self.key)
+    if !repo_dataset.nil?
       datafiles.each do |datafile|
         datafile.destroy
         Solr::Solr.client.commit
       end
-      collection.destroy
+      repo_dataset.destroy
     end
   end
 

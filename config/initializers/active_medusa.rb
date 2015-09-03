@@ -4,7 +4,7 @@ ActiveMedusa::Configuration.new do |config|
   databank_config = YAML.load_file(File.join(Rails.root, 'config', 'databank.yml'))[Rails.env]
   config.fedora_url = databank_config[:fedora_url]
   config.logger = Rails.logger
-  config.class_predicate = 'http://www.w3.org/2000/01/rdf-schema#Class'
+  config.class_predicate = Databank::NAMESPACE_URI + Databank::RDFPredicates::CLASS
   config.solr_url = databank_config[:solr_url]
   config.solr_core = databank_config[:solr_core]
   # config.solr_more_like_this_endpoint = '/mlt'

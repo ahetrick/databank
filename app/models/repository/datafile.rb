@@ -1,18 +1,18 @@
 module Repository
 
-  class Item < ActiveMedusa::Container
+  class Datafile < ActiveMedusa::Container
 
     include BytestreamOwner
     include ActiveMedusa::Indexable
 
     WEB_ID_LENGTH = 5
 
-    entity_class_uri 'http://databank.illinois.edu/definitions/v1/repository#Datafile'
+    entity_class_uri Databank::NAMESPACE_URI + Databank::RDFObjects::DATAFILE
 
-    belongs_to :collection, class_name: 'Repository::Collection',
+    belongs_to :repo_dataset, class_name: 'Repository::RepoDataset',
                rdf_predicate: Databank::NAMESPACE_URI +
-                   Databank::RDFPredicates::IS_MEMBER_OF_COLLECTION,
-               solr_field: Solr::Fields::COLLECTION
+                   Databank::RDFPredicates::IS_MEMBER_OF_DATASET,
+               solr_field: Solr::Fields::DATASET
 
     has_many :bytestreams, class_name: 'Repository::Bytestream'
 
@@ -51,11 +51,23 @@ module Repository
              rdf_predicate: 'http://purl.org/dc/terms/title',
              solr_field: Solr::Fields::SINGLE_TITLE
 
+    property :pcdm_class,
+             type: :string,
+             rdf_predicate: 'http://www.w3.org/2000/01/rdf-schema#Class',
+             solr_field: Solr::Fields::PCDM_CLASS
+
+
+
     #validates :title, length: { minimum: 2, maximum: 200 }
     validates :web_id, length: { minimum: WEB_ID_LENGTH,
                                  maximum: WEB_ID_LENGTH }
 
     before_create { self.web_id ||= generate_web_id }
+    before_create :set_pcdm_class
+
+    def set_pcdm_class
+      self.pcdm_class = 'http://pcdm.org/models#Object'
+    end
 
     def initialize(params = {})
       @published = true
@@ -96,12 +108,13 @@ module Repository
       databank_predicates = Databank::RDFPredicates
 
       doc = base_solr_document
-      doc[Solr::Fields::COLLECTION] = self.rdf_graph.any_object(databank_predicates::IS_MEMBER_OF_COLLECTION)
+      doc[Solr::Fields::DATASET] = self.rdf_graph.any_object(databank_predicates::IS_MEMBER_OF_DATASET)
       doc[Solr::Fields::FULL_TEXT] = self.rdf_graph.any_object(databank_predicates::FULL_TEXT)
       doc[Solr::Fields::MEDIA_TYPE] = self.media_type
       doc[Solr::Fields::PUBLISHED] = self.rdf_graph.any_object(databank_predicates::PUBLISHED)
       doc[Solr::Fields::SINGLE_TITLE] = self.title
       doc[Solr::Fields::WEB_ID] = self.rdf_graph.any_object(databank_predicates::WEB_ID)
+      doc[Solr::Fields::PCDM_CLASS] = self.pcdm_class
       date = self.rdf_graph.any_object(databank_predicates::DATE).to_s.strip
       doc[Solr::Fields::DATE] = normalized_date(date)
 
