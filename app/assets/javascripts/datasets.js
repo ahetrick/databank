@@ -1,3 +1,21 @@
+var confirmOnPageExit
+confirmOnPageExit = function (e)
+{
+    // If we haven't been passed the event get the window.event
+    e = e || window.event;
+
+    var message = 'If you navigate away from this page, unsaved changes will be lost.';
+
+    // For IE6-8 and Firefox prior to version 4
+    if (e)
+    {
+        e.returnValue = message;
+    }
+
+    // For Chrome, Safari, IE8+ and Opera 12+
+    return message;
+};
+
 // work-around turbo links to trigger ready function stuff on every page.
 
 var ready;
@@ -32,6 +50,11 @@ ready = function() {
         }
     });
 
+    $('input.dataset').change(function() {
+        if( $(this).val() != "" )
+            window.onbeforeunload = confirmOnPageExit;
+    });
+
 }
 
 function setDepositor(email, name){
@@ -41,3 +64,4 @@ function setDepositor(email, name){
 
 $(document).ready(ready);
 $(document).on('page:load', ready);
+

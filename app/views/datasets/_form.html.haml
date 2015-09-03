@@ -17,23 +17,23 @@
   .form-group.required
     = f.label :title, "Dataset Title", :class => "control-label"
     %br
-    = f.text_field :title, :class => "form-control", :placeholder => "[The Title]", :required => true
+    = f.text_field :title, :class => "form-control dataset", :placeholder => "[The Title]", :required => true
 
   .form-group.required
     = f.label :creator_text, "Creator(s)", :class => "control-label"
     %br
-    = f.text_field :creator_text, :class => "form-control", :placeholder => "[Semi-colon spearated list of names, e.g.: Verfasser, Maria; Auteur, Henri]", :required => true
+    = f.text_field :creator_text, :class => "form-control dataset", :placeholder => "[Semi-colon spearated list of names, e.g.: Verfasser, Maria; Auteur, Henri]", :required => true
     %span(class="help-block") The personal name format for each name in the semi-colon separted list should be: family, given, (e.g.: Verfasser, Maria; Auteur, Henri).
 
   .form-group.required
     = f.label :corresponding_creator_name, "Corresponding Creator", :class => "control-label"
     %br
-    = f.text_field :corresponding_creator_name, :class => "form-control", :placeholder => "[The personal name for the person who serves as the point of contact for inquiries about the dataset (e.g. Verfasser, Maria).]", :required => true
+    = f.text_field :corresponding_creator_name, :class => "form-control dataset", :placeholder => "[The personal name for the person who serves as the point of contact for inquiries about the dataset (e.g. Verfasser, Maria).]", :required => true
 
   .form-group.required
     = f.label :corresponding_creator_email, "Corresponding Creator Email Address", :class => "control-label"
     %br
-    = f.text_field :corresponding_creator_email, :class => "form-control", :placeholder => "[Correspondence about this dataset, including notice of deposit, will route to this email address.]", :required => true
+    = f.text_field :corresponding_creator_email, :class => "form-control dataset", :placeholder => "[Correspondence about this dataset, including notice of deposit, will route to this email address.]", :required => true
 
   .field
     = f.hidden_field :publisher, :value=>"University of Illinois at Urbana-Champaign"
@@ -48,13 +48,13 @@
   .form-group
     = f.label :description, "Data Description", :class => "control-label"
     %br
-    = f.text_field :description, :class => "form-control"
+    = f.text_field :description, :class => "form-control dataset"
   
 
   .form-group
     = f.label :license, "License", :class => "control-label"
     %br
-    = f.text_field :license, :class => "form-control"
+    = f.text_field :license, :class => "form-control dataset"
 
   = f.hidden_field :depositor_email, :class => "form-control", :id => "depositor_email", :title => "Must agree to deposit agreement to deposit data."
 
