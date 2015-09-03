@@ -17,8 +17,20 @@ class Ability
       can :deposit, Dataset do |dataset|
         dataset.try(:depositor_email) == user.email
       end
+      can :stream_file, Dataset
+      can :download_datafiles, Dataset
+      can :download_endNote_XML, Dataset
+      can :download_plaintext_citation, Dataset
+      can :download_BibTeX, Dataset
+      can :download_RIS, Dataset
     else
       can :read, :all
+      can :stream_file, Dataset
+      can :download_datafiles, Dataset
+      can :download_endNote_XML, Dataset
+      can :download_plaintext_citation, Dataset
+      can :download_BibTeX, Dataset
+      can :download_RIS, Dataset
     end
     #
     # The first argument to `can` is the action you are giving the user 

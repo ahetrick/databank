@@ -188,7 +188,7 @@ class DatasetsController < ApplicationController
 
   def download_endNote_XML
 
-    t = Tempfile.new("#{@dataset.mainTitle}_endNote")
+    t = Tempfile.new("#{@dataset.key}_endNote")
 
     doc = Nokogiri::XML::Document.parse(%Q(<?xml version="1.0" encoding="UTF-8"?><xml></xml>))
 
@@ -210,24 +210,23 @@ class DatasetsController < ApplicationController
     authorsNode = doc.create_element('authors')
     authorsNode.parent = contributorsNode
 
-    @dataset.creators.each do |creator|
-      authorNode = doc.create_element('author')
-      authorNode.content = creator.creatorName
-      authorNode.parent = authorsNode
-    end
+
+    authorNode = doc.create_element('author')
+    authorNode.content = @dataset.creator_text
+    authorNode.parent = authorsNode
 
     titlesNode = doc.create_element('titles')
     titlesNode.parent = recordNode
 
     titleNode = doc.create_element('title')
     titleNode.parent = titlesNode
-    titleNode.content = @dataset.mainTitle
+    titleNode.content = @dataset.title
 
     datesNode = doc.create_element('dates')
     datesNode.parent = recordNode
 
     yearNode = doc.create_element('year')
-    yearNode.content = @dataset.publicationYear
+    yearNode.content = @dataset.publication_year
     yearNode.parent = datesNode
 
     publisherNode = doc.create_element('publisher')
@@ -240,9 +239,11 @@ class DatasetsController < ApplicationController
     relatedurlsNode = doc.create_element('related-urls')
     relatedurlsNode.parent = urlsNode
 
-    urlNode = doc.create_element('url')
-    urlNode.parent = relatedurlsNode
-    urlNode.content = "http://dx.doi.org/#{@dataset.identifier}"
+    if @dataset.identifier
+      urlNode = doc.create_element('url')
+      urlNode.parent = relatedurlsNode
+      urlNode.content = "http://dx.doi.org/#{@dataset.identifier}"
+    end
 
     electronicNode = doc.create_element('electronic-resource-num')
     electronicNode.parent = recordNode
@@ -260,31 +261,39 @@ class DatasetsController < ApplicationController
 
   def download_RIS
 
-    t = Tempfile.new("#{@dataset.identifier}_datafiles")
+    if !@dataset.identifier
+      @dataset.identifer = @dataset.key
+    end
 
-    t.write(%Q[Provider: Illinois Data Bank\nContent: text/plain; charset=%Q[us-ascii]\nTY  - DATA\nT1  - #{@dataset.mainTitle}\n])
+    t = Tempfile.new("#{@dataset.key}_datafiles")
+
+    t.write(%Q[Provider: Illinois Data Bank\nContent: text/plain; charset=%Q[us-ascii]\nTY  - DATA\nT1  - #{@dataset.title}\n])
 
     @dataset.creators.each do |creator|
       t.write("AU  - #{creator.creatorName.strip}\n")
     end
 
-    t.write(%Q[DO  - #{@dataset.identifier}\nPY  - #{@dataset.publicationYear}\nUR  - http://dx.doi.org/#{@dataset.identifier}\nPB  - #{@dataset.publisher}\nER  - ])
+    t.write(%Q[DO  - #{@dataset.identifier}\nPY  - #{@dataset.publication_year}\nUR  - http://dx.doi.org/#{@dataset.identifier}\nPB  - #{@dataset.publisher}\nER  - ])
+
+    if !@dataset.identifier
+      @dataset.identifer = @dataset.key
+    end
 
     send_file t.path, :type => 'application/x-Research-Info-Systems',
               :disposition => 'attachment',
-              :filename => "DOI-#{@dataset.mainTitle}.ris"
+              :filename => "DOI-#{@dataset.identifier}.ris"
     t.close
   end
 
   def download_plaintext_citation
 
-    t = Tempfile.new("#{@dataset.mainTitle}_citation")
+    t = Tempfile.new("#{@dataset.key}_citation")
 
-    t.write(%Q[#{@dataset.plainTextCitation}\n])
+    t.write(%Q[#{@dataset.plain_text_citation}\n])
 
     send_file t.path, :type => 'text/plain',
               :disposition => 'attachment',
-              :filename => "DOI-#{@dataset.mainTitle}.txt"
+              :filename => "DOI-#{@dataset.identifier}.txt"
 
     t.close
 
@@ -292,10 +301,15 @@ class DatasetsController < ApplicationController
 
 
   def download_BibTeX
-    t = Tempfile.new("#{@dataset.identifier}_endNote")
+
+    if !@dataset.identifier
+      @dataset.identifer = @dataset.key
+    end
+
+    t = Tempfile.new("#{@dataset.key}_endNote")
     citekey = SecureRandom.uuid
 
-    t.write("@data{#{citekey},\ndoi = {#{@dataset.identifier}},\nurl = {http://dx.doi.org/#{@dataset.identifier}},\nauthor = {#{@dataset.creatorList}},\npublisher = {#{@dataset.publisher}},\ntitle = {#{@dataset.mainTitle} ﻿},\nyear = {#{@dataset.publicationYear}}
+    t.write("@data{#{citekey},\ndoi = {#{@dataset.identifier}},\nurl = {http://dx.doi.org/#{@dataset.identifier}},\nauthor = {#{@dataset.creator_text}},\npublisher = {#{@dataset.publisher}},\ntitle = {#{@dataset.title} ﻿},\nyear = {#{@dataset.publication_year}}
 }")
 
     send_file t.path, :type => 'application/application/x-bibtex',
