@@ -55,7 +55,7 @@ module Repository
     validates :web_id, length: { minimum: WEB_ID_LENGTH,
                                  maximum: WEB_ID_LENGTH }
 
-    before_create { self.web_id = generate_web_id }
+    before_create { self.web_id ||= generate_web_id }
 
     def initialize(params = {})
       @published = true
