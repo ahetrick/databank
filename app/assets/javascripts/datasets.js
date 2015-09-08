@@ -1,3 +1,5 @@
+var MAX_FILESIZE = 2147483648;
+
 var confirmOnPageExit
 confirmOnPageExit = function (e)
 {
@@ -58,7 +60,19 @@ ready = function() {
             window.onbeforeunload = confirmOnPageExit;
     });
 
+    $(document).on('change', '.file-field', handleFilesize )
+
 }
+
+function handleFilesize(){
+    f = this.files[0];
+    num_bytes = f.size||f.fileSize;
+    if (num_bytes > MAX_FILESIZE){
+        alert("For files larger than 2GB, please contact the Research Data Service.");
+        this.value = ''
+    }
+}
+
 
 function setDepositor(email, name){
     $('#depositor_email').val(email);

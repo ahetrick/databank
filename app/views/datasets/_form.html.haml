@@ -84,7 +84,7 @@
       - if ((params[:action] == 'new') || (binary.index > 0))
         = render 'binary_fields', f: binary
     .links
-      = link_to_add_association %Q[<button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"> File</span></button>].html_safe, f, :binaries
+      = link_to_add_association %Q[<button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus add-attachment-subform-button"> File</span></button>].html_safe, f, :binaries
 
   %hr
 
