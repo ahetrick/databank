@@ -62,7 +62,10 @@
 
   .form-group.required
     = f.label "File(s)", :class => "control-label"
-
+    %span(class="help-block")
+      For files larger than 2 GB, contact the
+      %a(href="http://researchdataservice.illinois.edu/")Research Data Service
+      
   - if @dataset.datafiles
 
     - @dataset.datafiles.each do |datafile|
@@ -78,7 +81,7 @@
               = link_to "#{request.base_url}/datasets/#{@dataset.id}/destroy_file/#{datafile.web_id}", :class=>"btn btn-danger btn-sm" do
                 = %Q[<span class="glyphicon glyphicon-remove"> File</span>].html_safe
 
-  - if ((params[:action] == 'new') || ((can? :update, @dataset) && (!@dataset.complete?)))
+  - if ((params[:action] == 'new') ||  (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)))
     -
     = f.fields_for :binaries do |binary|
       - if ((params[:action] == 'new') || (binary.index > 0))
