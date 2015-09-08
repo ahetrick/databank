@@ -69,7 +69,7 @@ function handleFilesize(){
     num_bytes = f.size||f.fileSize;
     if (num_bytes > MAX_FILESIZE){
         alert("For files larger than 2GB, please contact the Research Data Service.");
-        this.value = ''
+        this.value = '';
     }
 }
 
