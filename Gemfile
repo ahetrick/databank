@@ -73,8 +73,6 @@ gem 'omniauth-identity'
 # Use canan to restrict what resources a given user is allowed to access
 gem 'cancancan'
 
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -85,5 +83,11 @@ group :development, :test do
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+
+  # Use rspec/factory girl/capybara/database cleaner in testing
+  gem 'rspec-rails', '~> 3.0.0'
+  gem 'factory_girl_rails'
+  gem 'capybara'
+  gem 'database_cleaner'
 end
 

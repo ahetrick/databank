@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
 
+  resources :users
+  resources :identities
+  resources :datasets
   resources :binaries
   resources :creators
   resources :creators

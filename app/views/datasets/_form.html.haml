@@ -79,9 +79,10 @@
                 = %Q[<span class="glyphicon glyphicon-remove"> File</span>].html_safe
 
   - if ((params[:action] == 'new') || ((can? :update, @dataset) && (!@dataset.complete?)))
-
+    -
     = f.fields_for :binaries do |binary|
-      = render 'binary_fields', f: binary
+      - if ((params[:action] == 'new') || (binary.index > 0))
+        = render 'binary_fields', f: binary
     .links
       = link_to_add_association %Q[<button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"> File</span></button>].html_safe, f, :binaries
 

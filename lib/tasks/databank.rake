@@ -182,7 +182,7 @@ namespace :databank do
       bs4.media_type = 'application/pdf'
       bs4.save!
     else
-      Rails.logger.warning "#{path4} not found"
+      Rails.logger.debug "#{path4} not found"
     end
     Solr::Solr.client.commit
 
@@ -192,6 +192,9 @@ namespace :databank do
   task clear_users: :environment do
     User.all.each do |user|
       user.destroy
+    end
+    Identity.all.each do |identity|
+      identity.destroy
     end
   end
 
@@ -213,6 +216,11 @@ namespace :databank do
       identity.password_digest = encrypted_password
       identity.save!
     end
+
+    # create rspec test user -- not just identity
+    auth = OmniAuth.config.mock_auth[:identity]
+    user = User.create_with_omniauth(auth)
+    user.save!
 
   end
 

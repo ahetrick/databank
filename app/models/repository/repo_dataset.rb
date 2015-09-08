@@ -69,10 +69,6 @@ module Repository
 
     def reindex
 
-      Rails.logger.info "Description:"
-
-      Rails.logger.info self.description
-
       doc = base_solr_document
       doc[Solr::Fields::DATASET_KEY] = self.rdf_graph.any_object(Databank::RDFPredicates::DATASET_KEY)
       doc[Solr::Fields::PUBLISHED] =  self.rdf_graph.any_object(Databank::RDFPredicates::PUBLISHED)

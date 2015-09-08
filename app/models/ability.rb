@@ -23,6 +23,7 @@ class Ability
       can :download_plaintext_citation, Dataset
       can :download_BibTeX, Dataset
       can :download_RIS, Dataset
+      can :show, Dataset
     else
       can :read, :all
       can :stream_file, Dataset
@@ -31,6 +32,8 @@ class Ability
       can :download_plaintext_citation, Dataset
       can :download_BibTeX, Dataset
       can :download_RIS, Dataset
+      can :show, Dataset
+
     end
     #
     # The first argument to `can` is the action you are giving the user 
