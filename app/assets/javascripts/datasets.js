@@ -32,6 +32,7 @@ ready = function() {
 
     $(".checkFileGroup").change(function () {
         $("#checkFileSelectedCount").html($('.checkFile:checked').size());
+        $('#checkAllFiles').prop('checked', false );
     });
 
     $('#term-supports').tooltip();
