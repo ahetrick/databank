@@ -61,7 +61,18 @@ ready = function() {
             window.onbeforeunload = confirmOnPageExit;
     });
 
-    $(document).on('change', '.file-field', handleFilesize )
+    $(document).on('change', '.file-field', handleFilesize );
+
+    $('#show-all-radio, #show-my-radio').change(function() {
+        var selectedVal = $('input[name=filterOpt]:checked').val();
+        if (selectedVal == 'all'){
+            window.location.assign('/datasets');
+        }
+        else {
+            window.location.assign('/datasets?depositor_email=' + selectedVal);
+        }
+
+    });
 
 }
 

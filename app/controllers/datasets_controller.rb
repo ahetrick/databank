@@ -22,6 +22,9 @@ class DatasetsController < ApplicationController
   # GET /datasets.json
   def index
     @datasets = Dataset.order(updated_at: :desc)
+    if params[:depositor_email]
+      @datasets = @datasets.where(depositor_email: params[:depositor_email])
+    end
   end
 
   # GET /datasets/1

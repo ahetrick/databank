@@ -1,17 +1,29 @@
-<p id="notice"><%= notice %></p>
-<h1>Datasets</h1>
-<!--<form accept-charset="UTF-8" action="/search" method="get">-->
-<!--<div class="input-group col-md-8">-->
-<!--<input type="text" class="form-control" placeholder="Search" name="srch-term" id="srch-term">-->
+<div class="row">
+  <div class="col-md-9">
+    <h1>Datasets</h1>
+  </div>
 
-<!--<div class="input-group-btn">-->
-<!--<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>-->
-<!--</div>-->
-<!--</div>-->
-<!--</form>-->
-<hr/>
+  <% if can? :create, Dataset %>
+
+
+    <div class="form-group border col-md-3">
+
+      <div class="radio">
+        <label><input type="radio" name="filterOpt" id="show-all-radio" value="all" <% if !params[:depositor_email] %> checked="checked" <% end %> > Show All Datastes</label>
+      </div>
+      <div class="radio">
+        <label><input type="radio" name="filterOpt" id="show-my-radio" value="<%= current_user.email  %>" <% if params[:depositor_email] %> checked="checked" <% end %> >Show Just My Saved Datasets</label>
+      </div>
+    </div>
+
+
+  <% end %>
+
+</div>
+
 <% @datasets.each do |dataset| %>
   <% if ((can? :update, dataset) || dataset.complete?) %>
+    <hr/>
     <div class="row">
       <span class="col-md-11"><span class="mainTitle"> <%= link_to "#{dataset.title}", dataset %></span><br/>
         <%= dataset.creator_list %><br/>
@@ -35,10 +47,10 @@
         <% end %>
       </span>
     </div>
-    <hr/>
+
   <% end %>
 <% end %>
-<br>
+<hr/>
 <% if can? :create, Dataset %>
   <%= link_to 'New Dataset', new_dataset_path %>
 <% end %>
