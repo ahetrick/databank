@@ -9,13 +9,13 @@ class Dataset < ActiveRecord::Base
   after_save 'save_to_repo'
   before_destroy 'delete_repository_entity'
 
-  validates :depositor_email, presence: {message:"Deposit Agreement required to deposit dataset (see link next to Update Dataset button in the bottom right of form)."}
+  validates :depositor_email, presence: {message: "Deposit Agreement required to deposit dataset (see link next to Update Dataset button in the bottom right of form)."}
   validates :title, presence: true
   validates :creator_text, presence: true
   validates :corresponding_creator_name, presence: true
   validates :corresponding_creator_email, presence: true
   validates :publication_year, presence: true
-  validates :binaries, length: { minimum: MIN_FILES, message: "::Dataset must include at least one file."}
+  validates :binaries, length: {minimum: MIN_FILES, message: "::Dataset must include at least one file."}
 
   KEY_LENGTH = 5
 
@@ -72,45 +72,60 @@ class Dataset < ActiveRecord::Base
     Solr::Solr.client.commit
 
     binaries.each do |binary|
-      unless binary.attachment.nil?  || binary.attachment.current_path.nil?
-        # make datafile
-        datafile = Repository::Datafile.new(
-            repo_dataset: repo_dataset,
-            parent_url: repo_dataset.id,
-            published: true,
-            description: binary.description)
-        datafile.save!
-        
-        Solr::Solr.client.commit
-        
-        path = binary.attachment.current_path
-        if File.exists?(path)
-          bs = Repository::Bytestream.new(
-              parent_url: datafile.id,
-              type: Repository::Bytestream::Type::MASTER,
-              datafile: datafile,
-              upload_pathname: path)
-  
-          bs.media_type = binary.attachment.file.content_type
-          bs.save!
-          Solr::Solr.client.commit
-  
-          binary.destroy
-        else
-          Rails.logger.debug "Did not find path #{path}"
-        end
-      end 
-      
-      if binaries.count < 1
-        # create a single placeholder binary to make validation work
-        placeholder_binary = Binary.new(description: "internal placeholder", dataset_id: self.id )
-        placeholder_binary.save!
+      unless binary.attachment.nil? || binary.attachment.current_path.nil?
+         begin
+          # make datafile
+          datafile = Repository::Datafile.new(
+              repo_dataset: repo_dataset,
+              parent_url: repo_dataset.id,
+              published: true,
+              description: binary.description)
+          datafile.save!
 
-      end 
-        
+          Solr::Solr.client.commit
+
+          path = binary.attachment.current_path
+          if File.exists?(path)
+            bs = Repository::Bytestream.new(
+                parent_url: datafile.id,
+                type: Repository::Bytestream::Type::MASTER,
+                datafile: datafile,
+                upload_pathname: path)
+
+            bs.media_type = binary.attachment.file.content_type
+            bs.save!
+            Solr::Solr.client.commit
+
+            binary.destroy
+
+          else
+            Rails.logger.debug "Did not find path #{path}"
+          end
+
+         rescue Exception => ex
+
+           datafile.destroy if datafile
+           bs.destroy if bs
+           binary.destroy if binary
+           make_placeholder_binary if binaries.count < 1
+           Solr::Solr.client.commit
+           raise ex
+
+         end #end make datafile/bytestream transaction
+
+      end
+
+      make_placeholder_binary if binaries.count < 1
+
 
     end
     Solr::Solr.client.commit
+  end
+
+  def make_placeholder_binary
+    # create a single placeholder binary to make validation work
+    placeholder_binary = Binary.new(description: "internal placeholder", dataset_id: self.id)
+    placeholder_binary.save!
   end
 
   def delete_repository_entity
