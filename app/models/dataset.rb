@@ -1,5 +1,5 @@
 class Dataset < ActiveRecord::Base
-  
+
   MIN_FILES = 1
 
   has_many :creators, dependent: :destroy

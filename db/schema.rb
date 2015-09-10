@@ -11,45 +11,38 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150903160952) do
+ActiveRecord::Schema.define(version: 20150910144421) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "binaries", force: :cascade do |t|
     t.string   "attachment"
+    t.string   "description"
     t.integer  "dataset_id"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
-    t.string   "description"
-  end
-
-  create_table "creators", force: :cascade do |t|
-    t.string   "creator_name"
-    t.string   "identifier"
-    t.integer  "dataset_id"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
   end
 
   create_table "datasets", force: :cascade do |t|
+    t.string   "key",                         null: false
     t.string   "title"
+    t.string   "creator_text"
     t.string   "identifier"
     t.string   "publisher"
     t.string   "publication_year"
-    t.string   "creator_ordered_ids"
-    t.string   "license"
-    t.string   "key"
     t.string   "description"
-    t.datetime "created_at",                                  null: false
-    t.datetime "updated_at",                                  null: false
-    t.string   "creator_text"
+    t.string   "license"
     t.string   "depositor_name"
     t.string   "depositor_email"
-    t.boolean  "complete",                    default: false
+    t.boolean  "complete"
     t.string   "corresponding_creator_name"
     t.string   "corresponding_creator_email"
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
+
+  add_index "datasets", ["key"], name: "index_datasets_on_key", unique: true, using: :btree
 
   create_table "identities", force: :cascade do |t|
     t.string   "name"
@@ -62,11 +55,11 @@ ActiveRecord::Schema.define(version: 20150903160952) do
   create_table "users", force: :cascade do |t|
     t.string   "provider"
     t.string   "uid"
-    t.string   "email"
     t.string   "name"
+    t.string   "email"
+    t.string   "role"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string   "role"
   end
 
 end

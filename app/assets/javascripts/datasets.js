@@ -53,7 +53,7 @@ ready = function() {
 
     $('.save-button').click(function () {
         window.onbeforeunload = null;
-        $('.dataset-form')[0].submit();
+        //$('.dataset-form')[0].submit();
     });
 
     $('input.dataset').change(function() {
