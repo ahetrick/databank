@@ -302,7 +302,7 @@ class DatasetsController < ApplicationController
   def download_BibTeX
 
     if !@dataset.identifier
-      @dataset.identifer = @dataset.key
+      @dataset.identifier = @dataset.key
     end
 
     t = Tempfile.new("#{@dataset.key}_endNote")
