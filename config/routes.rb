@@ -2,21 +2,15 @@ Rails.application.routes.draw do
 
   resources :users
   resources :identities
-  resources :datasets
-  resources :binaries
-  resources :creators
-  resources :creators
-  resources :datasets
+  resources :datasets do
+    resources :binaries
+  end
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
   root 'welcome#index'
-
-  resources :datasets do
-    resources :creators
-  end
 
   get '/faqs', to: 'welcome#faqs', :as => :faq
   get '/policies', to: 'welcome#policies', :as => :policies

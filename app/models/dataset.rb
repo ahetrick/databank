@@ -2,7 +2,6 @@ class Dataset < ActiveRecord::Base
 
   MIN_FILES = 1
 
-  has_many :creators, dependent: :destroy
   has_many :binaries, dependent: :destroy
   accepts_nested_attributes_for :binaries, :reject_if => :all_blank, allow_destroy: true
 
@@ -19,6 +18,10 @@ class Dataset < ActiveRecord::Base
   validates :binaries, length: { minimum: MIN_FILES, message: "::Dataset must include at least one file."}
 
   KEY_LENGTH = 5
+
+  def to_param
+    self.key
+  end
 
   def creator_list
     creator_text

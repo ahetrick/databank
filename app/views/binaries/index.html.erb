@@ -14,7 +14,7 @@
   <tbody>
     <% @binaries.each do |binary| %>
       <tr>
-        <td><%= binary.datafile %></td>
+        <td><%= binary.attachment %></td>
         <td><%= binary.dataset_id %></td>
         <td><%= link_to 'Show', binary %></td>
         <td><%= link_to 'Edit', edit_binary_path(binary) %></td>

@@ -2,7 +2,8 @@ require 'open-uri'
 
 class DatasetsController < ApplicationController
 
-  load_and_authorize_resource
+  load_resource :find_by => :key
+  authorize_resource
   skip_load_and_authorize_resource :only => :download_datafiles
   skip_load_and_authorize_resource :only => :download_endNote_XML
   skip_load_and_authorize_resource :only => :download_plaintext_citation
@@ -33,7 +34,6 @@ class DatasetsController < ApplicationController
     if params.keys.include?("selected_files")
       download_datafiles
     end
-    @binaries = @dataset.binaries.all
   end
 
 
@@ -272,10 +272,6 @@ class DatasetsController < ApplicationController
 
     t.write(%Q[Provider: Illinois Data Bank\nContent: text/plain; charset=%Q[us-ascii]\nTY  - DATA\nT1  - #{@dataset.title}\n])
 
-    @dataset.creators.each do |creator|
-      t.write("AU  - #{creator.creatorName.strip}\n")
-    end
-
     t.write(%Q[DO  - #{@dataset.identifier}\nPY  - #{@dataset.publication_year}\nUR  - http://dx.doi.org/#{@dataset.identifier}\nPB  - #{@dataset.publisher}\nER  - ])
 
     if !@dataset.identifier
@@ -328,7 +324,8 @@ class DatasetsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_dataset
-    @dataset = Dataset.find(params[:id])
+    @dataset = Dataset.find_by_key(params[:id])
+    raise ActiveRecord::RecordNotFound unless @dataset
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
