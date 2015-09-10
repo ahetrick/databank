@@ -7,31 +7,33 @@ class ApplicationController < ActionController::Base
 
   include CanCan::ControllerAdditions
 
-  rescue_from CanCan::AccessDenied do |exception|
-
-    alert_message = exception.message
-
-    if exception.subject.class == Dataset && exception.action == :new
-      alert_message = "Log in to deposit data."
-    end
-
-    redirect_to main_app.root_url, :alert => alert_message
-  end
-
-  # rescue_from ::Exception, with: :error_occurred
+  rescue_from Exception::StandardError, with: :error_occurred
 
   protected
 
   def error_occurred(exception)
 
-    Rails.logger.error "\n***---***"
-    Rails.logger.error exception.message
-    exception.backtrace.each {|line| Rails.logger.error line}
+    if exception.class == CanCan::AccessDenied
 
-    render :file => File.join(Rails.root, 'public', '500.html')
+      alert_message = exception.message
+
+      if exception.subject.class == Dataset && exception.action == :new
+        alert_message = "Log in to deposit data."
+      end
+
+      redirect_to main_app.root_url, :alert => alert_message
+
+    else
+
+      Rails.logger.error "\n***---***"
+      Rails.logger.error exception.class
+      Rails.logger.error exception.message
+      exception.backtrace.each { |line| Rails.logger.error line }
+
+      render :file => File.join(Rails.root, 'public', '500.html')
+    end
 
   end
-
 
 
   private

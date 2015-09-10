@@ -265,7 +265,7 @@ class DatasetsController < ApplicationController
   def download_RIS
 
     if !@dataset.identifier
-      @dataset.identifer = @dataset.key
+      @dataset.identifier = @dataset.key
     end
 
     t = Tempfile.new("#{@dataset.key}_datafiles")
