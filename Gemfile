@@ -73,9 +73,6 @@ gem 'omniauth-identity'
 # Use canan to restrict what resources a given user is allowed to access
 gem 'cancancan'
 
-# Use has_permalink for persistent urls, even after disaster recovery
-gem "has_permalink"
-
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
