@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
     redirect_to main_app.root_url, :alert => alert_message
   end
 
-  rescue_from ::Exception, with: :error_occurred
+  # rescue_from ::Exception, with: :error_occurred
 
   protected
 
