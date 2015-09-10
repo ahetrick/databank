@@ -61,9 +61,9 @@ class DatasetsController < ApplicationController
           success_msg = 'Dataset was saved but not deposited.'
         end
        
-        format.html { redirect_to @dataset, notice: success_msg }
+        format.html { redirect_to dataset_path(@dataset.key), notice: success_msg }
 
-        format.json { render :show, status: :created, location: @dataset }
+        format.json { render :show, status: :created, location: dataset_path(@dataset.key) }
       else
         format.html { render :new }
         format.json { render json: @dataset.errors, status: :unprocessable_entity }
@@ -77,8 +77,8 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       if @dataset.update(dataset_params)
-        format.html { redirect_to @dataset, notice: 'Dataset was successfully updated.' }
-        format.json { render :show, status: :ok, location: @dataset }
+        format.html { redirect_to dataset_path(@dataset.key), notice: 'Dataset was successfully updated.' }
+        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
       else
         format.html { render :edit }
         format.json { render json: @dataset.errors, status: :unprocessable_entity }
@@ -101,8 +101,8 @@ class DatasetsController < ApplicationController
     @dataset.complete = true
     respond_to do |format|
       if @dataset.save
-        format.html { redirect_to @dataset, notice: 'Dataset was successfully deposited.' }
-        format.json { render :show, status: :ok, location: @dataset }
+        format.html { redirect_to dataset_path(@dataset.key), notice: 'Dataset was successfully deposited.' }
+        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
       else
         format.html { render :edit }
         format.json { render json: @dataset.errors, status: :unprocessable_entity }

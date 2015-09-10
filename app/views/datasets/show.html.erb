@@ -11,7 +11,7 @@
             <%= link_to edit_dataset_path(@dataset), :class => "btn btn-info" do %>
               <span class="glyphicon glyphicon-edit"></span> Edit
             <% end %>
-            <a id="datasetForm:BibTeXLink" href="#" onclick='window.location = "/datasets/<%=@dataset.id%>/deposit"' class="btn btn-primary" role="button">
+            <a id="datasetForm:BibTeXLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/deposit"' class="btn btn-primary" role="button">
               Confirm & Deposit
             </a>
           </span>
@@ -29,22 +29,22 @@
           </button>
           <ul class="dropdown-menu pull-right text-left" role="menu">
             <li>
-              <a id="datasetForm:endNoteLink" href="#" onclick='window.location = "/datasets/<%=@dataset.id%>/download_endNote_XML"'>
+              <a id="datasetForm:endNoteLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_endNote_XML"'>
                 EndNote XML
               </a>
             </li>
             <li>
-              <a id="datasetForm:risLink" href="#" onclick='window.location = "/datasets/<%=@dataset.id%>/download_RIS"'>
+              <a id="datasetForm:risLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_RIS"'>
                 RIS Format
               </a>
             </li>
             <li>
-              <a id="datasetForm:BibTeXLink" href="#" onclick='window.location = "/datasets/<%=@dataset.id%>/download_BibTeX"'>
+              <a id="datasetForm:BibTeXLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_BibTeX"'>
                 BibTeX Format
               </a>
             </li>
             <li>
-              <a id="datasetForm:plainTextCitationLink" href="#" onclick='window.location = "/datasets/<%=@dataset.id%>/download_plaintext_citation"'>
+              <a id="datasetForm:plainTextCitationLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_plaintext_citation"'>
                 Plain Text
               </a>
             </li>
@@ -136,7 +136,7 @@
                           <span class="col-md-4"><%= datafile.description %></span>
                           <span class="col-md-2"><%= binary.media_type %></span>
                           <span class="col-md-1"><%= number_to_human_size(binary.byte_size) %></span>
-                        <span class="col-md-1"><a href="#" onclick='window.location = "/datasets/<%=@dataset.id%>/stream_file/<%= datafile.web_id %>"' class="btn btn-block btn-primary btn-sm" role="button">
+                        <span class="col-md-1"><a href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/stream_file/<%= datafile.web_id %>"' class="btn btn-block btn-primary btn-sm" role="button">
                           <span class="glyphicon glyphicon-download"></span> File
                         </a></span>
                         </div>
