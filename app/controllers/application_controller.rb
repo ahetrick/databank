@@ -18,6 +18,22 @@ class ApplicationController < ActionController::Base
     redirect_to main_app.root_url, :alert => alert_message
   end
 
+  rescue_from ::Exception, with: :error_occurred
+
+  protected
+
+  def error_occurred(exception)
+
+    Rails.logger.error "\n***---***"
+    Rails.logger.error exception.message
+    exception.backtrace.each {|line| Rails.logger.error line}
+
+    render :file => File.join(Rails.root, 'public', '500.html')
+
+  end
+
+
+
   private
 
   def current_user
