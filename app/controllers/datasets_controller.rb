@@ -34,6 +34,10 @@ class DatasetsController < ApplicationController
     if params.keys.include?("selected_files")
       download_datafiles
     end
+    # clean up after failed uploads
+    @dataset.datafiles.each do |datafile|
+      datafile.destroy if (!datafile.master_bytestream || datafile.master_bytestream.nil?)
+    end
   end
 
 
