@@ -163,7 +163,7 @@ class DatasetsController < ApplicationController
 
   def download_datafiles
 
-    (@dataset.identifier && !@dataset.identifier.empty?) ? filename = "DOI-#{@dataset.identifier}.zip" : filename = "datafiles.zip"
+  (@dataset.identifier && !@dataset.identifier.empty?) ? filename = "DOI-#{@dataset.identifier}.zip" : filename = "datafiles.zip"
 
     datafiles = Array.new
 
@@ -185,7 +185,6 @@ class DatasetsController < ApplicationController
                         .map { |url, path| [open(url), path] }
 
     zipline(file_mappings, filename)
-
 
   end
 
