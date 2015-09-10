@@ -17,6 +17,9 @@ class Ability
       can :deposit, Dataset do |dataset|
         dataset.try(:depositor_email) == user.email
       end
+      can :destroy_file, Dataset do |dataset|
+        (dataset.try(:depositor_email) == user.email) && !dataset.complete?
+      end
       can :stream_file, Dataset
       can :download_datafiles, Dataset
       can :download_endNote_XML, Dataset
