@@ -133,8 +133,8 @@
 
             <span class="col-md-4"><label><input type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="<%= binary.id %>"><%= binary.filename %>
             </label></span>
-                          <span class="col-md-4"><%= datafile.description %></span>
-                          <span class="col-md-2"><%= binary.media_type %></span>
+                          <span class="col-md-6"><%= datafile.description %></span>
+
                           <span class="col-md-1"><%= number_to_human_size(binary.byte_size) %></span>
                         <span class="col-md-1"><a href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/stream_file/<%= datafile.web_id %>"' class="btn btn-block btn-primary btn-sm" role="button">
                           <span class="glyphicon glyphicon-download"></span> File
