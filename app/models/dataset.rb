@@ -1,3 +1,5 @@
+require 'fileutils'
+
 class Dataset < ActiveRecord::Base
 
   MIN_FILES = 1
@@ -114,6 +116,10 @@ class Dataset < ActiveRecord::Base
          end #end make datafile/bytestream transaction
 
       end
+
+      #clean upload directory
+      FileUtils.rm_rf('public/uploads/tmp')
+      FileUtils.rm_rf('public/uploads/binary')
 
       make_placeholder_binary if binaries.count < 1
 
