@@ -37,7 +37,6 @@ class DatasetsController < ApplicationController
     # clean up after failed uploads
 
     @dataset.datafiles.each do |datafile|
-      Rails.logger.warn datafile.id
       datafile.destroy if (!datafile.master_bytestream || datafile.master_bytestream.nil?)
     end
   end
@@ -188,21 +187,13 @@ class DatasetsController < ApplicationController
 
     end
 
-    begin
+    file_mappings = datafiles
+                        .lazy # Lazy allows us to begin sending the download immediately instead of waiting to download everything
+                        .map { |url, path| [open(url), path] }
 
-      file_mappings = datafiles
-                          .lazy # Lazy allows us to begin sending the download immediately instead of waiting to download everything
-                          .map { |url, path| [open(url), path] }
+    zipline(file_mappings, filename)
 
-      zipline(file_mappings, filename)
 
-    rescue => ex
-
-      Rails.logger.warn ex.message
-      raise ex
-
-    end
-    
   end
 
   def download_endNote_XML
