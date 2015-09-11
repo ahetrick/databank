@@ -35,7 +35,9 @@ class DatasetsController < ApplicationController
       download_datafiles
     end
     # clean up after failed uploads
+
     @dataset.datafiles.each do |datafile|
+      Rails.logger.warn datafile.id
       datafile.destroy if (!datafile.master_bytestream || datafile.master_bytestream.nil?)
     end
   end

@@ -69,17 +69,16 @@
   - if @dataset.datafiles
 
     - @dataset.datafiles.each do |datafile|
-      -if datafile.master_bytestream && !datafile.master_bytestream.nil?
-        .row
-          - binary = datafile.master_bytestream
-          %span(class="col-md-4" )
-            = binary.filename
-          %span(class="col-md-6")
-            = datafile.description
-          %span(class="col-md-1")
-            - if ((can? :update, @dataset) && (!@dataset.complete?))
-              = link_to "#{request.base_url}/datasets/#{@dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-danger btn-sm" do
-                = %Q[<span class="glyphicon glyphicon-remove"> File</span>].html_safe
+      .row
+        - binary = datafile.master_bytestream
+        %span(class="col-md-4" )
+          = binary.filename
+        %span(class="col-md-6")
+          = datafile.description
+        %span(class="col-md-1")
+          - if ((can? :update, @dataset) && (!@dataset.complete?))
+            = link_to "#{request.base_url}/datasets/#{@dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-danger btn-sm" do
+              = %Q[<span class="glyphicon glyphicon-remove"> File</span>].html_safe
 
   - if ((params[:action] == 'new') ||  (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)))
     -
