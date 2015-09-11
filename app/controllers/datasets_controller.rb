@@ -105,6 +105,7 @@ class DatasetsController < ApplicationController
 
   def deposit
     @dataset.complete = true
+    @dataset.identifier ||= mint_doi
     respond_to do |format|
       if @dataset.save
         format.html { redirect_to dataset_path(@dataset.key), notice: 'Dataset was successfully deposited.' }
@@ -201,8 +202,7 @@ class DatasetsController < ApplicationController
       raise ex
 
     end
-
-
+    
   end
 
   def download_endNote_XML
@@ -352,5 +352,15 @@ class DatasetsController < ApplicationController
   def dataset_params
     params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :creator_text, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, binaries_attributes: [:attachment, :description, :dataset_id, :id, :_destory ])
   end
+
+
+  def mint_doi
+
+    "10.5072/FK2#{@dataset.key}"
+
+  end
+
+
+
 
 end
