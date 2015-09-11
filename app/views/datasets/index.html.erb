@@ -29,8 +29,6 @@
         <%= dataset.creator_list %><br/>
         <%= dataset.publisher %>
         <%= dataset.publication_year %>
-        <%= dataset.key %>
-        <%= dataset.complete? %>
 
         <%= (dataset.identifier && !dataset.identifier.empty?) ? (link_to "doi:#{dataset.identifier}", dataset_path(dataset.key)) : "" %></span>
       <span class="col-md-1">
