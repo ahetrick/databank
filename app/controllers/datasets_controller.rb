@@ -174,9 +174,10 @@ class DatasetsController < ApplicationController
     params[:selected_files].each do |file_id|
 
       bs = Repository::Bytestream.find(file_id)
-      raise ActiveRecord::RecordNotFound, 'Bytestream not found' unless bs
+      raise ActiveRecord::RecordNotFound, 'Bytestream not found' unless bss
 
       if bs and bs.id
+
         file_url = bs.id
         zip_path = bs.filename
         datafiles << [file_url, zip_path]
@@ -184,11 +185,21 @@ class DatasetsController < ApplicationController
 
     end
 
-    file_mappings = datafiles
-                        .lazy # Lazy allows us to begin sending the download immediately instead of waiting to download everything
-                        .map { |url, path| [open(url), path] }
+    begin
 
-    zipline(file_mappings, filename)
+      file_mappings = datafiles
+                          .lazy # Lazy allows us to begin sending the download immediately instead of waiting to download everything
+                          .map { |url, path| [open(url), path] }
+
+      zipline(file_mappings, filename)
+
+    rescue OpenURI::HTTPError => ex
+
+      Rails.logger.warn ex.message
+      raise ex
+
+    end
+
 
   end
 
