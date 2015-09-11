@@ -193,7 +193,7 @@ class DatasetsController < ApplicationController
 
       zipline(file_mappings, filename)
 
-    rescue OpenURI::HTTPError => ex
+    rescue => ex
 
       Rails.logger.warn ex.message
       raise ex
