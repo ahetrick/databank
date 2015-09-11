@@ -70,7 +70,7 @@
 
     - @dataset.datafiles.each do |datafile|
 
-      - if binary
+      - if datafile.master_bytestream
         .row
           - binary = datafile.master_bytestream
           %span(class="col-md-4" )
