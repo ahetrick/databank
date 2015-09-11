@@ -3,6 +3,8 @@ require 'fileutils'
 class Dataset < ActiveRecord::Base
 
   MIN_FILES = 1
+  MAX_FILES = 10000
+
 
   has_many :binaries, dependent: :destroy
   accepts_nested_attributes_for :binaries, :reject_if => :all_blank, allow_destroy: true
@@ -52,7 +54,7 @@ class Dataset < ActiveRecord::Base
     else
       repo_dataset = Repository::RepoDataset.find_by_key(self.key)
       raise ActiveRecord::RecordNotFound unless repo_dataset
-      Repository::Datafile.where(Solr::Fields::DATASET => repo_dataset.id)
+      Repository::Datafile.where(Solr::Fields::DATASET => repo_dataset.id).limit(MAX_FILES)
     end
   end
 
@@ -116,15 +118,12 @@ class Dataset < ActiveRecord::Base
          end #end make datafile/bytestream transaction
 
       end
-
-      #clean upload directory
-      FileUtils.rm_rf('public/uploads/tmp')
-      FileUtils.rm_rf('public/uploads/binary')
-
-      make_placeholder_binary if binaries.count < 1
-
-
     end
+    #clean upload directory
+    FileUtils.rm_rf('public/uploads/tmp')
+    FileUtils.rm_rf('public/uploads/binary')
+
+    make_placeholder_binary if binaries.count < 1
     Solr::Solr.client.commit
   end
 
