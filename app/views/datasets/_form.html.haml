@@ -70,8 +70,9 @@
 
     - if (can? :manage, @dataset)
       = @dataset.datafiles.count
-      - @dataset.datafiles.each do |datafile|
+      - @dataset.datafiles.each_with_index do |datafile, index|
         .p
+          = index
           = datafile.id
           = link_to "#{request.base_url}/datasets/#{@dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-danger btn-sm" do
             = %Q[<span class="glyphicon glyphicon-remove"> File</span>].html_safe
