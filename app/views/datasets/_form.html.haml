@@ -70,7 +70,7 @@
 
     - if (can? :manage, @dataset)
       = @dataset.datafiles.count
-      - @dataset.datafiles.each do |df|
+      - @dataset.datafiles.each do |datafile|
         .p
           = datafile.id
           = link_to "#{request.base_url}/datasets/#{@dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-danger btn-sm" do
