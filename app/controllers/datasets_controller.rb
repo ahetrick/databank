@@ -174,7 +174,7 @@ class DatasetsController < ApplicationController
     params[:selected_files].each do |file_id|
 
       bs = Repository::Bytestream.find(file_id)
-      raise ActiveRecord::RecordNotFound, 'Bytestream not found' unless bss
+      raise ActiveRecord::RecordNotFound, 'Bytestream not found' unless bs
 
       if bs and bs.id
 
