@@ -70,6 +70,9 @@
 
     - if (can? :manage, @dataset)
       = @dataset.datafiles.count
+
+      = debug(@dataset.datafiles)
+
       - @dataset.datafiles.each_with_index do |datafile, index|
         .p
           = index
