@@ -23,6 +23,8 @@ confirmOnPageExit = function (e)
 var ready;
 ready = function() {
 
+
+
     $("#checkFileSelectedCount").html('0');
 
     $("#checkAllFiles").click(function () {
@@ -74,6 +76,8 @@ ready = function() {
         }
 
     });
+
+    $('[data-toggle="tooltip"]').tooltip();
 
 }
 
