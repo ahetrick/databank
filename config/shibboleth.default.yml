@@ -1,5 +1,5 @@
 development:
-  host: https://rds-dev.library.illinois.edu/Shibboleth
+  host: rds-dev.library.illinois.edu
   uid_field: eppn
   extra_fields:
     - eppn
