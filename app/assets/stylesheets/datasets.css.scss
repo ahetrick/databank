@@ -67,3 +67,17 @@ div#citation-block {
   border:1px solid #ddd;
   padding-left: 10px;
 }
+
+fieldset.metadata-border {
+  border: 1px groove #C0C0C0 !important;
+  padding: 0 1.4em 1.4em 1.4em !important;
+  margin: 0 0 1.5em 0 !important;
+  background-color: #F0F0F0;
+}
+
+legend.metadata-border{
+  width:inherit; /* Or auto */
+  padding:0 10px; /* To give a bit of padding on the left and right */
+  border-bottom:none;
+  background-color: #FFFFFF;
+}

@@ -13,14 +13,6 @@ class Dataset < ActiveRecord::Base
   after_save 'save_to_repo'
   before_destroy 'delete_repository_entity'
 
-  validates :depositor_email, presence: {message: "Deposit Agreement required to deposit dataset (see link next to Update Dataset button in the bottom right of form)."}
-  validates :title, presence: true
-  validates :creator_text, presence: true
-  validates :corresponding_creator_name, presence: true
-  validates :corresponding_creator_email, presence: true
-  validates :publication_year, presence: true
-  validates :binaries, length: {minimum: MIN_FILES, message: "::Dataset must include at least one file."}
-
   KEY_LENGTH = 5
 
   def to_param
@@ -111,8 +103,6 @@ class Dataset < ActiveRecord::Base
            datafile.destroy if datafile
            bs.destroy if bs
            binary.destroy if binary
-           make_placeholder_binary if binaries.count < 1
-           Solr::Solr.client.commit
            raise ex
 
          end #end make datafile/bytestream transaction
@@ -122,15 +112,6 @@ class Dataset < ActiveRecord::Base
     #clean upload directory
     FileUtils.rm_rf('public/uploads/tmp')
     FileUtils.rm_rf('public/uploads/binary')
-
-    make_placeholder_binary if binaries.count < 1
-    Solr::Solr.client.commit
-  end
-
-  def make_placeholder_binary
-    # create a single placeholder binary to make validation work
-    placeholder_binary = Binary.new(description: "internal placeholder", dataset_id: self.id)
-    placeholder_binary.save!
   end
 
   def delete_repository_entity

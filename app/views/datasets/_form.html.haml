@@ -7,90 +7,93 @@
           %li
             = msg
 
-
   - if can? :manage, @dataset
     .form-group
       = f.label :identifier, "DOI", :class => "control-label"
       %br
       = f.text_field :identifier, :class => "form-control", :placeholder => "[Leave blank if requesting a DOI.]"
 
-  .form-group.required
-    = f.label :title, "Dataset Title", :class => "control-label"
-    %br
-    = f.text_field :title, :class => "form-control dataset", :placeholder => "[The Title]", :required => true
+  %fieldset(class = "metadata-border")
+    %legend(class = "metadata-border")Required to Deposit Dataset
+    .form-group
+      = f.label :title, "Dataset Title", :class => "control-label"
+      %br
+      = f.text_field :title, :class => "form-control dataset", :placeholder => "[The Title]"
+    .form-group
+      = f.label :creator_text, "Creator(s)", :class => "control-label"
+      %br
+      = f.text_field :creator_text, :class => "form-control dataset", :placeholder => "[Semi-colon spearated list of names, e.g.: Verfasser, Maria; Auteur, Henri]"
+      %span(class="help-block") The personal name format for each name in the semi-colon separted list should be: family, given, (e.g.: Verfasser, Maria; Auteur, Henri).
+    .row
+      %span(class="col-md-6")
+        .form-group
+          = f.label :corresponding_creator_name, "Corresponding Creator", :class => "control-label"
+          %br
+          = f.text_field :corresponding_creator_name, :class => "form-control dataset", :placeholder => "[The personal name for the person who serves as the point of contact for inquiries about the dataset (e.g. Verfasser, Maria).]"
+      %span(class="col-md-6")
+        .form-group
+          = f.label :corresponding_creator_email, "Corresponding Creator Email Address", :class => "control-label"
+          %br
 
-  .form-group.required
-    = f.label :creator_text, "Creator(s)", :class => "control-label"
-    %br
-    = f.text_field :creator_text, :class => "form-control dataset", :placeholder => "[Semi-colon spearated list of names, e.g.: Verfasser, Maria; Auteur, Henri]", :required => true
-    %span(class="help-block") The personal name format for each name in the semi-colon separted list should be: family, given, (e.g.: Verfasser, Maria; Auteur, Henri).
+          = f.email_field :corresponding_creator_email, :class => "form-control dataset", :placeholder => "[Correspondence about this dataset, including notice of deposit, will route to this email address.]"
+          .help-block.with-errors
 
-  .form-group.required
-    = f.label :corresponding_creator_name, "Corresponding Creator", :class => "control-label"
-    %br
-    = f.text_field :corresponding_creator_name, :class => "form-control dataset", :placeholder => "[The personal name for the person who serves as the point of contact for inquiries about the dataset (e.g. Verfasser, Maria).]", :required => true
+    .field
+      = f.hidden_field :publisher, :value=>"University of Illinois at Urbana-Champaign"
 
-  .form-group.required
-    = f.label :corresponding_creator_email, "Corresponding Creator Email Address", :class => "control-label"
-    %br
-    = f.text_field :corresponding_creator_email, :class => "form-control dataset", :placeholder => "[Correspondence about this dataset, including notice of deposit, will route to this email address.]", :required => true
+    .form-group
+      = f.label :publication_year, "Publication Year", :class => "control-label"
+      %br
+      = f.text_field :publication_year, :value => '2015', :class => "form-control"
+      %span(class="help-block") Four digit year (YYYY)
 
-  .field
-    = f.hidden_field :publisher, :value=>"University of Illinois at Urbana-Champaign"
+  %fieldset(class = "metadata-border")
+    %legend(class = "metadata-border")Recommended
+    .form-group
+      = f.label :description, "Dataset Description", :class => "control-label"
+      %br
+      = f.text_field :description, :class => "form-control dataset"
 
-  .form-group.required
-    = f.label :publication_year, "Publication Year", :class => "control-label"
-    %br
-    = f.text_field :publication_year, :value => '2015', :class => "form-control", :required => true
-    %span(class="help-block") Four digit year (YYYY)
-  
 
-  .form-group
-    = f.label :description, "Data Description", :class => "control-label"
-    %br
-    = f.text_field :description, :class => "form-control dataset"
-  
-
-  .form-group
-    = f.label :license, "License", :class => "control-label"
-    %br
-    = f.text_field :license, :class => "form-control dataset"
+    .form-group
+      = f.label :license, "License", :class => "control-label"
+      %br
+      = f.text_field :license, :class => "form-control dataset"
 
   = f.hidden_field :depositor_email, :class => "form-control", :id => "depositor_email", :title => "Must agree to deposit agreement to deposit data."
 
   = f.hidden_field :depositor_name, :class => "form-control", :id => "depositor_name"
 
-  .form-group.required
-    = f.label "File(s)", :class => "control-label"
+
+
+  %fieldset(class = "metadata-border")
+    %legend(class = "metadata-border")File(s) -- at least one required for deposit
     %span(class="help-block")
       For files larger than 2 GB, contact the
       %a(href="http://researchdataservice.illinois.edu/")Research Data Service
-      
-  - if @dataset.datafiles
+    - if @dataset.datafiles
 
-    - @dataset.datafiles.each do |datafile|
+      - @dataset.datafiles.each do |datafile|
 
-      - if datafile.master_bytestream
-        .row
-          - binary = datafile.master_bytestream
-          %span(class="col-md-4" )
-            = binary.filename
-          %span(class="col-md-6")
-            = datafile.description
-          %span(class="col-md-1")
-            - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
-              = link_to "#{request.base_url}/datasets/#{@dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-danger btn-sm" do
-                = %Q[<span class="glyphicon glyphicon-remove"> File</span>].html_safe
+        - if datafile.master_bytestream
+          .row
+            - binary = datafile.master_bytestream
+            %span(class="col-md-4" )
+              = binary.filename
+            %span(class="col-md-6")
+              = datafile.description
+            %span(class="col-md-1")
+              - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
+                = link_to "#{request.base_url}/datasets/#{@dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-danger btn-sm" do
+                  = %Q[<span class="glyphicon glyphicon-remove"> File</span>].html_safe
 
-  - if ((params[:action] == 'new') ||  (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)))
-    -
-    = f.fields_for :binaries do |binary|
-      - if ((params[:action] == 'new') || (binary.index > 0))
-        = render 'binary_fields', f: binary
-    .links
-      = link_to_add_association %Q[<button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus add-attachment-subform-button"> File</span></button>].html_safe, f, :binaries
-
-  %hr
+    - if ((params[:action] == 'new') ||  (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)))
+      -
+      = f.fields_for :binaries do |binary|
+        - if ((params[:action] == 'new') || (binary.index > 0))
+          = render 'binary_fields', f: binary
+      .links
+        = link_to_add_association %Q[<button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus add-attachment-subform-button"> File</span></button>].html_safe, f, :binaries
 
   .primary-actions.pull-right
     %button(class="btn btn-link" id="agree_btn" data-toggle="modal" data-target="#agreement") Deposit Agreement

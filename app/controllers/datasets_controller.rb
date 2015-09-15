@@ -2,6 +2,8 @@ require 'open-uri'
 
 class DatasetsController < ApplicationController
 
+  VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
+
   load_resource :find_by => :key
   authorize_resource
   skip_load_and_authorize_resource :only => :download_datafiles
@@ -34,11 +36,13 @@ class DatasetsController < ApplicationController
     if params.keys.include?("selected_files")
       download_datafiles
     end
-    # clean up after failed uploads
 
+    # clean up after failed uploads
     @dataset.datafiles.each do |datafile|
       datafile.destroy if (!datafile.master_bytestream || datafile.master_bytestream.nil?)
     end
+    Solr::Solr.client.commit
+
   end
 
 
@@ -104,16 +108,69 @@ class DatasetsController < ApplicationController
 
   def deposit
     @dataset.complete = true
-    @dataset.identifier ||= mint_doi
-    respond_to do |format|
-      if @dataset.save
-        format.html { redirect_to dataset_path(@dataset.key), notice: 'Dataset was successfully deposited.' }
-        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
-      else
-        format.html { render :edit }
-        format.json { render json: @dataset.errors, status: :unprocessable_entity }
+    validation_error_messages = Array.new
+    validation_error_message = ""
+
+    if !@dataset.title || @dataset.title.empty?
+      @dataset.complete = false
+      validation_error_messages << "missing title"
+    end
+
+    if !@dataset.creator_text || @dataset.creator_text.empty?
+      @dataset.complete = false
+      validation_error_messages << "missing creator(s)"
+    end
+
+    if !@dataset.corresponding_creator_name || @dataset.corresponding_creator_name.empty?
+      @dataset.complete = false
+      validation_error_messages << "missing corresponding creator name"
+    end
+
+    if !@dataset.corresponding_creator_email || @dataset.corresponding_creator_email.empty?
+      @dataset.complete = false
+      validation_error_messages << "missing corresponding creator email"
+    end
+
+    if @dataset.corresponding_creator_email && !@dataset.corresponding_creator_email.empty?
+      if @dataset.corresponding_creator_email =~ VALID_EMAIL_REGEX
+        @dataset.complete = false
+        validation_error_messages << "invalid corresponding creator email"
       end
     end
+
+    if @dataset.datafiles.count < 1
+      @dataset.complete = false
+      validation_error_messages << "missing at least one file"
+    end
+
+    if validation_error_messages.length > 0
+      validation_error_message << "Required elements for depositing a dataset missing or invalid: "
+      validation_error_messages.each_with_index do |m, i|
+        if i > 0
+          validation_error_message << ", "
+        end
+        validation_error_message << m
+      end
+      validation_error_message << "."
+    end
+
+
+    respond_to do |format|
+      if @dataset.complete?
+        @dataset.identifier ||= mint_doi
+        if @dataset.save
+          format.html { redirect_to dataset_path(@dataset.key), notice: 'Dataset was successfully deposited.' }
+          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        else
+          format.html { render :edit }
+          format.json { render json: @dataset.errors, status: :unprocessable_entity }
+        end
+      else
+        format.html { redirect_to edit_dataset_path(@dataset.key), notice: validation_error_message }
+        format.json {render json: validation_error_message, status: :unprocessable_entity}
+      end
+    end
+
   end
 
   def show_agreement
