@@ -1,7 +1,7 @@
 <% if ((can? :update, @dataset) || @dataset.complete?) %>
   <div class="container-fluid">
     <div class="row">
-      <span class="col-md-8" id="title"><%= @dataset.title %></span>
+      <span class="col-md-8" id="title"><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></span>
       <% if (can? :update, @dataset) && !@dataset.complete? %>
           <span class="col-md-4">
             <a href = "http://researchdataservice.illinois.edu/contact-us/" class = "btn btn-danger">

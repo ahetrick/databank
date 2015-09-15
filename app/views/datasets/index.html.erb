@@ -25,8 +25,8 @@
   <% if ((can? :update, dataset) || dataset.complete?) %>
     <hr/>
     <div class="row">
-      <span class="col-md-11"><span class="mainTitle"> <%= link_to "#{dataset.title}", dataset_path(dataset.key) %></span><br/>
-        <%= dataset.creator_list %><br/>
+      <span class="col-md-11"><span class="mainTitle"> <%= link_to "#{(!dataset.title || dataset.title.empty?) ? "[Title not provided]" : dataset.title}", dataset_path(dataset.key) %></span><br/>
+        <%= (!dataset.creator_list || dataset.creator_list.empty?) ? "[Creator(s) not provided]" : dataset.creator_list %><br/>
         <%= dataset.publisher %>
         <%= dataset.publication_year %>
 
