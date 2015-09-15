@@ -2,8 +2,6 @@ require 'open-uri'
 
 class DatasetsController < ApplicationController
 
-  VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
-
   load_resource :find_by => :key
   authorize_resource
   skip_load_and_authorize_resource :only => :download_datafiles
@@ -113,38 +111,31 @@ class DatasetsController < ApplicationController
 
     if !@dataset.title || @dataset.title.empty?
       @dataset.complete = false
-      validation_error_messages << "missing title"
+      validation_error_messages << "title"
     end
 
     if !@dataset.creator_text || @dataset.creator_text.empty?
       @dataset.complete = false
-      validation_error_messages << "missing creator(s)"
+      validation_error_messages << "creator(s)"
     end
 
     if !@dataset.corresponding_creator_name || @dataset.corresponding_creator_name.empty?
       @dataset.complete = false
-      validation_error_messages << "missing corresponding creator name"
+      validation_error_messages << "corresponding creator name"
     end
 
     if !@dataset.corresponding_creator_email || @dataset.corresponding_creator_email.empty?
       @dataset.complete = false
-      validation_error_messages << "missing corresponding creator email"
-    end
-
-    if @dataset.corresponding_creator_email && !@dataset.corresponding_creator_email.empty?
-      if @dataset.corresponding_creator_email =~ VALID_EMAIL_REGEX
-        @dataset.complete = false
-        validation_error_messages << "invalid corresponding creator email"
-      end
+      validation_error_messages << "corresponding creator email"
     end
 
     if @dataset.datafiles.count < 1
       @dataset.complete = false
-      validation_error_messages << "missing at least one file"
+      validation_error_messages << "at least one file"
     end
 
     if validation_error_messages.length > 0
-      validation_error_message << "Required elements for depositing a dataset missing or invalid: "
+      validation_error_message << "Required elements for depositing a dataset missing: "
       validation_error_messages.each_with_index do |m, i|
         if i > 0
           validation_error_message << ", "
