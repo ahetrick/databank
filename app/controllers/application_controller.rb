@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :null_session
 
-  helper_method :current_user
+  helper_method :current_user, :logged_in?
 
   include CanCan::ControllerAdditions
 
@@ -35,16 +35,38 @@ class ApplicationController < ActionController::Base
 
   end
 
-
   private
 
   def current_user
-
     begin
       @current_user ||= User.find(session[:user_id]) if session[:user_id]
     rescue ActiveRecord::RecordNotFound
       session[:user_id] = nil
     end
-
   end
+
+  def set_current_user(user)
+    @current_user = user
+    session[:current_user_id] = user.id
+  end
+
+  def unset_current_user
+    @current_user = nil
+    session[:current_user_id] = nil
+  end
+
+  def logged_in?
+    current_user.present?
+  end
+
+  def require_logged_in
+    unless logged_in?
+      session[:login_return_uri] = request.env['REQUEST_URI']
+      redirect_to(login_path)
+    end
+  end
+
+
+
+
 end

@@ -67,8 +67,13 @@ gem 'unicorn'
 # Use cocoon to helep with nested forms
 gem "cocoon"
 
+# Use email validator
+gem 'valid_email'
+
 # Use identity strategy to create local accounts for testing
 gem 'omniauth-identity'
+gem 'omniauth-shibboleth'
+
 
 # Use canan to restrict what resources a given user is allowed to access
 gem 'cancancan'
