@@ -1,4 +1,5 @@
 var MAX_FILESIZE = 2147483648;
+var MIN_FILESIZE = 1;
 
 var confirmOnPageExit
 confirmOnPageExit = function (e)
@@ -22,8 +23,6 @@ confirmOnPageExit = function (e)
 
 var ready;
 ready = function() {
-
-
 
     $("#checkFileSelectedCount").html('0');
 
@@ -88,6 +87,14 @@ function handleFilesize(){
         alert("For files larger than 2GB, please contact the Research Data Service.");
         this.value = '';
     }
+    else if (num_bytes == null || num_bytes < MIN_FILESIZE){
+        alert("No file contents found, please contact the Research Data Service for assistance.");
+        this.value = '';
+    }
+    else {
+        alert(num_bytes);
+    }
+
 }
 
 
