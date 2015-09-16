@@ -29,38 +29,39 @@
         <ul class="nav navbar-nav navbar-right">
           <% if current_user %>
             <li><%= link_to "#{current_user.name}", "/", title: "#{current_user.role}", rel: 'tooltip' %></li>
-            <li><%= link_to "Log Out", :logout %></li>
+            <li><%= link_to "Log out", :logout %></li>
 
 
           <% else %>
+            <li><%= link_to "Log in with netid", :login %></li>
 
 
-            <li class="dropdown">
+            <!--<li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Log
                 In <span class="caret"></span></a>
               <ul class="dropdown-menu login-form">
-                <%= form_tag "/auth/identity/callback" do %>
+                <% form_tag "/auth/identity/callback" do %>
                   <li>
                     <div class="form-group">
-                      <%= label_tag :auth_key, "Email", :class => "control-label" %><br/>
-                      <%= text_field_tag :auth_key %>
+                      <% label_tag :auth_key, "Email", :class => "control-label" %><br/>
+                      <% text_field_tag :auth_key %>
                     </div>
                   </li>
                   <li>
                     <div class="form-group">
-                      <%= label_tag :password, "Password", :class => "control-label" %><br/>
-                      <%= password_field_tag :password %>
+                      <% label_tag :password, "Password", :class => "control-label" %><br/>
+                      <% password_field_tag :password %>
                     </div>
                   </li>
                   <li>
                     <div class="actions">
-                      <%= submit_tag "Log In" %><br/>
-                      <%= link_to "Create Account", "/auth/identity/register" %>
+                      <% submit_tag "Log In" %><br/>
+                      <% link_to "Create Account", "/auth/identity/register" %>
                     </div>
                   </li>
                 <% end %>
               </ul>
-            </li>
+            </li>-->
           <% end %>
         </ul>
 
