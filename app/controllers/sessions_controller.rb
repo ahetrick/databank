@@ -4,8 +4,8 @@ class SessionsController < ApplicationController
 
   def new
     session[:login_return_referer] = request.env['HTTP_REFERER']
-    redirect_to('/auth/identity')
-    # redirect_to(shibboleth_login_path(Databank::Application.shibboleth_host))
+    # redirect_to('/auth/identity')
+    redirect_to(shibboleth_login_path(Databank::Application.shibboleth_host))
   end
   def create
     #raise request.env["omniauth.auth"].to_yaml
