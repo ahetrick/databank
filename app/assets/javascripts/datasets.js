@@ -92,7 +92,7 @@ function handleFilesize(){
         this.value = '';
     }
     else {
-        alert(num_bytes);
+        //alert(num_bytes);
     }
 
 }
