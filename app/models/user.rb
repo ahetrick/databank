@@ -1,10 +1,9 @@
 class User < ActiveRecord::Base
 
   ROLES = %w[admin depositor guest]
-
-
+  
   validates_uniqueness_of :uid, allow_blank: false
-  validates :email, allow_blank: false, uniqueness: true, email: true
+  validates :email, allow_blank: false, email: true
 
   def netid
     self.uid.split('@').first
