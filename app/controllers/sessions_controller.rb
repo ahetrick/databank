@@ -4,8 +4,11 @@ class SessionsController < ApplicationController
 
   def new
     session[:login_return_referer] = request.env['HTTP_REFERER']
-    # redirect_to('/auth/identity')
-    redirect_to(shibboleth_login_path(Databank::Application.shibboleth_host))
+    if IDB_CONFIG.has_key?(:local_mode) && IDB_CONFIG[:local_mode]
+      redirect_to('/auth/identity')
+    else
+      redirect_to(shibboleth_login_path(Databank::Application.shibboleth_host))
+    end
   end
   def create
     #raise request.env["omniauth.auth"].to_yaml
@@ -15,22 +18,7 @@ class SessionsController < ApplicationController
 
       return_url = clear_and_return_return_path
 
-      Rails.logger.warn "\n*** auth"
-      Rails.logger.warn auth.to_yaml
-
-      user = User.find_by_provider_and_uid(auth["provider"], auth["uid"])
-
-      if user
-        Rails.logger.warn "\n*** user found"
-        Rails.logger.warn user
-      else
-        user = User.create_with_omniauth(auth)
-        if user
-          Rails.logger.warn "\n*** user created with omniauth"
-          Rails.logger.warn user
-        end
-
-      end
+      user = User.find_by_provider_and_uid(auth["provider"], auth["uid"]) || User.create_with_omniauth(auth)
 
       if user.id
         session[:user_id] = user.id
