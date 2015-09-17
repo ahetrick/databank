@@ -27,11 +27,11 @@ class SessionsController < ApplicationController
         user = User.create_with_omniauth(auth)
         if user
           Rails.logger.warn "\n*** user created with omniauth"
-          Rails.logger.warnm "\n**auth"
+          Rails.logger.warn user
         end
 
       end
-      
+
       if user.id
         session[:user_id] = user.id
       else
