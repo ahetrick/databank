@@ -73,18 +73,18 @@
       </span>
       <% if can? :manage, @dataset %>
         <span class="col-md-6">
-          <span class="metadata-label">Corresponding Creator Email: </span>
-          <%= (!@dataset.corresponding_creator_email || @dataset.corresponding_creator_email.empty?) ? "[corresponding creator email not provided]" : @dataset.corresponding_creator_email %>
+          <span class="metadata-label">Depositor:</span>
+          <%= @dataset.depositor_name %>
         </span>
       <% end %>
     </div>
     <% if can? :manage, @dataset %>
       <div class="row">
         <span class="col-md-6">
-          <span class="metadata-label">Depositor:</span>
-          <%= @dataset.depositor_name %>
+          <span class="metadata-label">Corresponding Creator Email: </span>
+             <%= (!@dataset.corresponding_creator_email || @dataset.corresponding_creator_email.empty?) ? "[corresponding creator email not provided]" : @dataset.corresponding_creator_email %>
         </span>
-        <span class="col-md-6">
+      <span class="col-md-6">
           <span class="metadata-label">Depositor Email:</span>
           <%= @dataset.depositor_email %>
         </span>
