@@ -45,34 +45,13 @@ class User < ActiveRecord::Base
 
   def self.create_with_omniauth(auth)
 
-    if auth["provider"] == "identity"
-
-      create! do |user|
-        user.provider = auth["provider"]
-        user.uid = auth["uid"]
-        user.name = auth["info"]["name"]
-        user.email = auth["info"]["email"]
-        user.role = user_role(auth["uid"])
-      end
-
-    elsif auth["provider"] == "Shibboleth"
-
-
-      create! do |user|
-        user.provider = auth["provider"]
-        user.uid = auth["uid"]
-        user.name = auth["info"]["name"]
-        user.email = auth["info"]["email"]
-        user.role = user_role(auth["eppn"])
-      end
-
-    else
-
-      Rails.logger.warn "\n***auth"
-      Rails.logger.warn auth
-
+    create! do |user|
+      user.provider = auth["provider"]
+      user.uid = auth["uid"]
+      user.name = auth["info"]["name"]
+      user.email = auth["info"]["email"]
+      user.role = user_role(auth["uid"])
     end
-
 
   end
 
