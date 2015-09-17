@@ -57,7 +57,7 @@
     .form-group
       = f.label :description, "Dataset Description", :class => "control-label"
       %br
-      = f.text_field :description, :class => "form-control dataset"
+      = f.text_area :description, :rows => 3,  :class => "form-control dataset", :placeholder => "[Description of this dataset, including an overview of content, structure, and format.]"
 
 
     .form-group
