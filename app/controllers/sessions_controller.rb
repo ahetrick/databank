@@ -14,8 +14,30 @@ class SessionsController < ApplicationController
     if auth && auth[:uid]
 
       return_url = clear_and_return_return_path
-      user = User.find_by_provider_and_uid(auth["provider"], auth["uid"]) || User.create_with_omniauth(auth)
-      session[:user_id] = user.id
+
+      Rails.logger.warn "\n*** auth"
+      Rails.logger.warn auth.to_yaml
+
+      user = User.find_by_provider_and_uid(auth["provider"], auth["uid"])
+
+      if user
+        Rails.logger.warn "\n*** user found"
+        Rails.logger.warn user
+      else
+        user = User.create_with_omniauth(auth)
+        if user
+          Rails.logger.warn "\n*** user created with omniauth"
+          Rails.logger.warnm "\n**auth"
+        end
+
+      end
+      
+      if user.id
+        session[:user_id] = user.id
+      else
+        unauthorized
+      end
+
       redirect_to return_url
 
     else
