@@ -4,7 +4,7 @@
       <span class="col-md-8" id="title"><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></span>
       <% if (can? :update, @dataset) && !@dataset.complete? %>
           <span class="col-md-4">
-            <a href = "http://researchdataservice.illinois.edu/contact-us/" class = "btn btn-danger">
+            <a href="http://researchdataservice.illinois.edu/contact-us/" class="btn btn-danger">
               <span class="glyphicon glyphicon-question-sign"></span> Get Help
             </a>
 
@@ -66,12 +66,31 @@
     <%= @dataset.description.empty? ? "[data description not provided]" : @dataset.description %>
   </div>
   <div class="container-fluid">
-    <span class="metadata-label">Corresponding Creator: </span>
-    <%= (!@dataset.corresponding_creator_name || @dataset.corresponding_creator_name.empty?) ? "[corresponding creator name not provided]" : @dataset.corresponding_creator_name %>
+    <div class="row">
+      <span class="col-md-6">
+        <span class="metadata-label">Corresponding Creator: </span>
+        <%= (!@dataset.corresponding_creator_name || @dataset.corresponding_creator_name.empty?) ? "[corresponding creator name not provided]" : @dataset.corresponding_creator_name %>
+      </span>
+      <% if can? :manage, @dataset %>
+        <span class="col-md-6">
+          <span class="metadata-label">Corresponding Creator Email: </span>
+          <%= (!@dataset.corresponding_creator_email || @dataset.corresponding_creator_email.empty?) ? "[corresponding creator email not provided]" : @dataset.corresponding_creator_email %>
+        </span>
+      <% end %>
+    </div>
     <% if can? :manage, @dataset %>
-      <span class="metadata-label">Corresponding Creator Email: </span>
-      <%= (!@dataset.corresponding_creator_email || @dataset.corresponding_creator_email.empty?) ? "[corresponding creator email not provided]" : @dataset.corresponding_creator_email %>
+      <div class="row">
+        <span class="col-md-6">
+          <span class="metadata-label">Depositor:</span>
+          <%= @dataset.depositor_name %>
+        </span>
+        <span class="col-md-6">
+          <span class="metadata-label">Depositor Email:</span>
+          <%= @dataset.depositor_email %>
+        </span>
+      </div>
     <% end %>
+
   </div>
 
   <div class="panel-group" id="rights" role="tablist" aria-multiselectable="true">
