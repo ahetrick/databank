@@ -75,7 +75,8 @@
 
   %fieldset(class = "metadata-border")
     %legend(class = "metadata-border")File(s) -- at least one required for deposit
-    .deposit-agreement-file-warning
+    - if !@dataset.depositor_email 
+      .deposit-agreement-file-warning
     %span(class="help-block")
       For files larger than 2 GB, contact the
       %a(href="http://researchdataservice.illinois.edu/")Research Data Service
