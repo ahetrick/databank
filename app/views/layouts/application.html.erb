@@ -26,11 +26,9 @@
   <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
 
-  <% if @dataset && @dataset.creator_list.respond_to?(:each) %>
+  <% if @dataset %>
     <meta name="citation_title" content="<%= @dataset.title %>"/>
-    <% @dataset.creator_list.each do |creator| %>
-      <meta name="citation_author" content="<%= creator %>"/>
-    <% end %>
+    <meta name="citation_author" content="<%= @dataset.creator_list %>"/>
     <meta name="citation_publisher" content="<%= @dataset.publisher %>"/>
     <meta name="citation_publication_date" content="<%= @dataset.publication_year %>"/>
     <meta name="citation_doi" content="<%= @dataset.identifier %>"/>
