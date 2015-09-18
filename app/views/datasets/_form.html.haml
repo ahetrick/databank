@@ -104,7 +104,7 @@
   .container-fluid
     %span(class="pull-right" )
       - if @dataset && @dataset.depositor_email
-        = link_to "Review Deposit Agreement", {:controller => "dataset", :action => "review_deposit_agreement", :id => @dataset.id}
+        = link_to "Review Deposit Agreement", {:controller => "datasets", :action => "review_deposit_agreement", :id => @dataset.key}
       - else
         %button(id="show-agreement-modal-link" class="btn btn-link" data-toggle="modal" data-target="#agreement") Deposit Agreement
       -if params[:action] == 'new'
