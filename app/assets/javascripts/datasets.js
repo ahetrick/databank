@@ -80,16 +80,17 @@ ready = function() {
     $('[data-toggle="tooltip"]').tooltip();
 
     handleNotAgreed();
-
 }
 
 function handleNotAgreed(){
+
     $('#new-save-button').attr("disabled", true);
     $('#new-save-button').text('<- Deposit Agreement Required to Save');
     $('.file-field').attr("disabled", true);
     $('.add-attachment-subform-button').attr("disabled", true);
     $('.add-attachment-subform-button').hide();
-    $('.deposit-agreement-file-warning').text("Deposit Agreement Required to Add Files")
+    $('.deposit-agreement-file-warning').text("Deposit Agreement Required to Add Files");
+    $('#show-agreement-modal-link').show();
 }
 
 function handleFilesize(){
@@ -117,7 +118,8 @@ function setDepositor(email, name){
     $('.file-field').removeAttr("disabled");
     $('.add-attachment-subform-button').show();
     $('.add-attachment-subform-button').removeAttr("disabled");
-    $('.deposit-agreement-file-warning').text("")
+    $('.deposit-agreement-file-warning').text("");
+    $('#show-agreement-modal-link').hide();
 }
 
 $(document).ready(ready);

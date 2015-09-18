@@ -96,7 +96,6 @@
                   = %Q[<span class="glyphicon glyphicon-remove"> File</span>].html_safe
 
     - if ((params[:action] == 'new') ||  (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)))
-      -
       = f.fields_for :binaries do |binary|
         - if ((params[:action] == 'new') || (binary.index > 0))
           = render 'binary_fields', f: binary
@@ -104,7 +103,10 @@
         = link_to_add_association %Q[<button type="button" class="btn btn-primary btn-sm add-attachment-subform-button"><span class="glyphicon glyphicon-plus"> File</span></button>].html_safe, f, :binaries
   .container-fluid
     %span(class="pull-right" )
-      %button(class="btn btn-link" id="agree_btn" data-toggle="modal" data-target="#agreement") Deposit Agreement
+      - if @dataset && @dataset.depositor_email
+        = link_to "Review Deposit Agreement", {:controller => "dataset", :action => "review_deposit_agreement", :id => @dataset.id}
+      - else
+        %button(id="show-agreement-modal-link" class="btn btn-link" data-toggle="modal" data-target="#agreement") Deposit Agreement
       -if params[:action] == 'new'
         %button(type="button" class="btn btn-primary save-button" id="new-save-button")
       -else

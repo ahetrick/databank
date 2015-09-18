@@ -11,6 +11,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :download_RIS
   skip_load_and_authorize_resource :only => :stream_file
   skip_load_and_authorize_resource :only => :show_agreement
+  skip_load_and_authorize_resource :only => :review_deposit_agreement
 
   before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit]
 
@@ -164,11 +165,11 @@ class DatasetsController < ApplicationController
 
   end
 
-  def show_agreement
-    #respond_to do # This line should be
-    respond_to do |format|
-      format.js { render :js => "show_agreement();" }
+  def review_deposit_agreement
+    if params.has_key?(:id)
+      set_dataset
     end
+
   end
 
   def destroy_file

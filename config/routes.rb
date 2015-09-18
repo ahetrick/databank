@@ -29,6 +29,11 @@ Rails.application.routes.draw do
   # deposit
   get '/datasets/:id/deposit', to: 'datasets#deposit'
 
+  # review agreement
+  get '/review_deposit_agreement', to: 'datasets#review_deposit_agreement'
+  get '/datasets/:id/review_deposit_agreement', to: 'datasets#review_deposit_agreement'
+
+
   # authentication routes
   match '/auth/:provider/callback', to: 'sessions#create', via: [:get, :post]
   match '/login', to: 'sessions#new', as: :login, via: [:get, :post]
