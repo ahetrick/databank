@@ -67,7 +67,7 @@
       %br
       = f.text_field :license, :class => "form-control dataset"
 
-  = f.hidden_field :depositor_email, :class => "form-control", :id => "depositor_email", :title => "Must agree to deposit agreement to deposit data."
+  = f.hidden_field :depositor_email, :class => "form-control", :id => "depositor_email", :title => "Must agree to deposit agreement to deposit data.", :required => true
 
   = f.hidden_field :depositor_name, :class => "form-control", :id => "depositor_name"
 
@@ -75,6 +75,7 @@
 
   %fieldset(class = "metadata-border")
     %legend(class = "metadata-border")File(s) -- at least one required for deposit
+    .deposit-agreement-file-warning
     %span(class="help-block")
       For files larger than 2 GB, contact the
       %a(href="http://researchdataservice.illinois.edu/")Research Data Service
@@ -100,15 +101,15 @@
         - if ((params[:action] == 'new') || (binary.index > 0))
           = render 'binary_fields', f: binary
       .links
-        = link_to_add_association %Q[<button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus add-attachment-subform-button"> File</span></button>].html_safe, f, :binaries
-
-  .primary-actions.pull-right
-    %button(class="btn btn-link" id="agree_btn" data-toggle="modal" data-target="#agreement") Deposit Agreement
-    -if params[:action] == 'new'
-      %button(type="button" class="btn btn-primary save-button") Save
-    -else
-      %button(type="button" class="btn btn-primary save-button") Update Dataset
-    %button(type = "submit" class="hidden" id="dataset-submit-button" ) Submit
+        = link_to_add_association %Q[<button type="button" class="btn btn-primary btn-sm add-attachment-subform-button"><span class="glyphicon glyphicon-plus"> File</span></button>].html_safe, f, :binaries
+  .container-fluid
+    %span(class="pull-right" )
+      %button(class="btn btn-link" id="agree_btn" data-toggle="modal" data-target="#agreement") Deposit Agreement
+      -if params[:action] == 'new'
+        %button(type="button" class="btn btn-primary save-button" id="new-save-button")
+      -else
+        %button(type="button" class="btn btn-primary update save-button") Update Dataset
+      %button(type = "submit" class="hidden" id="dataset-submit-button" ) Submit
 %br
 %a{:href => "/"} Cancel
 
