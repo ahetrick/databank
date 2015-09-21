@@ -28,7 +28,7 @@
 
         <ul class="nav navbar-nav navbar-right">
           <% if current_user %>
-            <li><%= link_to "#{current_user.name}", "/", title: "#{current_user.role}", rel: 'tooltip' %></li>
+            <li><span class="navbar-user"><%= current_user.name %></span></li>
             <li><%= link_to "Log out", :logout %></li>
 
 
