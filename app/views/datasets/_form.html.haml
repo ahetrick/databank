@@ -96,7 +96,7 @@
                 = link_to "#{request.base_url}/datasets/#{@dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-danger btn-sm" do
                   = %Q[<span class="glyphicon glyphicon-remove"> File</span>].html_safe
 
-    - if ((can? :update, @dataset) && (!@dataset.complete?))
+    - if ((params[:action] == 'new') ||  (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)))
       = f.fields_for :binaries do |binary|
         = render 'binary_fields', f: binary
       .links

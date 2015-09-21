@@ -86,10 +86,10 @@ function handleNotAgreed(){
 
     $('#new-save-button').attr("disabled", true);
     $('#new-save-button').text('<- Deposit Agreement Required to Save');
-    $('.file-field').attr("disabled", true);
-    $('.add-attachment-subform-button').attr("disabled", true);
-    $('.add-attachment-subform-button').hide();
-    $('.deposit-agreement-file-warning').text("Deposit Agreement Required to Add Files");
+    //$('.file-field').attr("disabled", true);
+    //$('.add-attachment-subform-button').attr("disabled", true);
+    //$('.add-attachment-subform-button').hide();
+    //$('.deposit-agreement-file-warning').text("Deposit Agreement Required to Add Files");
     $('#show-agreement-modal-link').show();
 }
 
