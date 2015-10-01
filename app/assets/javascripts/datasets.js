@@ -113,7 +113,7 @@ function handleFilesize(){
 function setDepositor(email, name){
     $('#depositor_email').val(email);
     $('#depositor_name').val(name);
-    $('#new-save-button').text('Save');
+    $('#new-save-button').text('Save & Review');
     $('#new-save-button').removeAttr("disabled");
     $('.file-field').removeAttr("disabled");
     $('.add-attachment-subform-button').show();

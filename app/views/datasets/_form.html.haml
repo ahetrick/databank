@@ -103,8 +103,9 @@
         = link_to_add_association %Q[<button type="button" class="btn btn-primary btn-sm add-attachment-subform-button"><span class="glyphicon glyphicon-plus"> File</span></button>].html_safe, f, :binaries
   .container-fluid
     %span(class="pull-right" )
+      %button(type="button" class="btn btn-primary" name="cancel" onclick='window.location = "/"' ) Cancel
       - if @dataset && @dataset.depositor_email
-        = link_to "Review Deposit Agreement", {:controller => "datasets", :action => "review_deposit_agreement", :id => @dataset.key}
+        = render :partial => "review_deposit_button"
       - else
         %button(id="show-agreement-modal-link" class="btn btn-link" data-toggle="modal" data-target="#agreement") Deposit Agreement
       -if params[:action] == 'new'
@@ -112,8 +113,6 @@
       -else
         %button(type="button" class="btn btn-primary update save-button") Update Dataset
       %button(type = "submit" class="hidden" id="dataset-submit-button" ) Submit
-%br
-%a{:href => "/"} Cancel
 
 - if !@dataset.depositor_email
   %script $("#agreement").modal('show');
