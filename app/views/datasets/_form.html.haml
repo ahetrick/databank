@@ -52,7 +52,7 @@
         = f.number_field :publication_year, :value => '2015', :class => "form-control", :min => "1800", :max => "#{Time.now.year + 1}", :maxlength => 4
         %span(class="help-block") Four digit year (YYYY)
     - else
-      = f.hidden_field :publication_year, :value => '2015'
+      = f.hidden_field :publication_year, :value => "#{Time.now.year}"
 
   %fieldset(class = "metadata-border")
     %legend(class = "metadata-border")Recommended
