@@ -89,7 +89,7 @@ function handleNotAgreed(){
     //$('.file-field').attr("disabled", true);
     //$('.add-attachment-subform-button').attr("disabled", true);
     //$('.add-attachment-subform-button').hide();
-    //$('.deposit-agreement-file-warning').text("Deposit Agreement Required to Add Files");
+    $('.deposit-agreement-file-warning').text("Deposit Agreement Required to Add Files");
     $('#show-agreement-modal-link').show();
 }
 

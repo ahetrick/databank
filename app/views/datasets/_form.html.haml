@@ -71,12 +71,8 @@
 
   = f.hidden_field :depositor_name, :class => "form-control", :id => "depositor_name"
 
-
-
   %fieldset(class = "metadata-border")
     %legend(class = "metadata-border")File(s) -- at least one required for deposit
-    - if !@dataset.depositor_email 
-      .deposit-agreement-file-warning
     %span(class="help-block")
       For files larger than 2 GB, contact the
       %a(href="http://researchdataservice.illinois.edu/")Research Data Service
@@ -95,19 +91,20 @@
               - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
                 = link_to "#{request.base_url}/datasets/#{@dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-danger btn-sm" do
                   = %Q[<span class="glyphicon glyphicon-remove"> File</span>].html_safe
-
     - if ((params[:action] == 'new') ||  (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)))
       = f.fields_for :binaries do |binary|
         = render 'binary_fields', f: binary
       .links
         = link_to_add_association %Q[<button type="button" class="btn btn-primary btn-sm add-attachment-subform-button"><span class="glyphicon glyphicon-plus"> File</span></button>].html_safe, f, :binaries
+
+
   .container-fluid
     %span(class="pull-right" )
       %button(type="button" class="btn btn-primary" name="cancel" onclick='window.location = "/"' ) Cancel
       - if @dataset && @dataset.depositor_email
         = render :partial => "review_deposit_button"
       - else
-        %button(id="show-agreement-modal-link" class="btn btn-link" data-toggle="modal" data-target="#agreement") Deposit Agreement
+        %button(type="button" id="show-agreement-modal-link" class="btn btn-primary" data-toggle="modal" data-target="#agreement") Deposit Agreement
       -if params[:action] == 'new'
         %button(type="button" class="btn btn-primary save-button" id="new-save-button")
       -else
