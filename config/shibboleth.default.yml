@@ -9,6 +9,8 @@ development:
   info_fields:
     name: displayName
     email: mail
+    lastname: sn
+    nickname: eduPersonNickName
 
 
 production:
@@ -22,3 +24,5 @@ production:
   info_fields:
     name: displayName
     email: mail
+    lastname: sn
+    nickname: eduPersonNickName

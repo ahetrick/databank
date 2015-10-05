@@ -47,10 +47,16 @@ class User < ActiveRecord::Base
     Rails.logger.warn "\n*** auth to yaml"
     Rails.logger.warn auth.to_yaml
 
+    authname = auth["info"]["name"]
+
+    if auth["info"]["nickname"] && (auth['info']['nickname']) != ""
+      authname = "#{auth['info']['nickname']} #{auth['info']['lastname']}"
+    end
+
     create! do |user|
       user.provider = auth["provider"]
       user.uid = auth["uid"]
-      user.name =  auth["info"]["nickname"] || auth["info"]["name"]
+      user.name =  authname
       user.email = auth["info"]["email"]
       user.role = user_role(auth["uid"])
     end
