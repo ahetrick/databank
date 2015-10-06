@@ -5,12 +5,12 @@ development:
     - eppn
     - unscoped-affiliation
     - uid
+    - sn
+    - eduPersonNickName
   request_type: header
   info_fields:
     name: displayName
     email: mail
-    lastname: sn
-    nickname: eduPersonNickName
 
 
 production:
@@ -20,9 +20,10 @@ production:
     - eppn
     - unscoped-affiliation
     - uid
+    - sn
+    - eduPersonNickName
   request_type: header
   info_fields:
     name: displayName
     email: mail
-    lastname: sn
-    nickname: eduPersonNickName
+   

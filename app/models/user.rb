@@ -49,8 +49,8 @@ class User < ActiveRecord::Base
 
     authname = auth["info"]["name"]
 
-    if auth["info"]["nickname"] && (auth['info']['nickname']) != ""
-      authname = "#{auth['info']['nickname']} #{auth['info']['lastname']}"
+    if ( (auth["raw_info"]["nickname"]) && ( (auth['raw_info']['nickname']) != "") )
+      authname = "#{auth['raw_info']['nickname']} #{auth['raw_info']['lastname']}"
     end
 
     create! do |user|
