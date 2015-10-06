@@ -6,7 +6,7 @@ development:
     - unscoped-affiliation
     - uid
     - sn
-    - eduPersonNickName
+    - nickname
     - givenName
   request_type: header
   info_fields:
@@ -22,7 +22,7 @@ production:
     - unscoped-affiliation
     - uid
     - sn
-    - eduPersonNickName
+    - nickname
     - givenName
   request_type: header
   info_fields:
