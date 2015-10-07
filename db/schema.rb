@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150910144421) do
+ActiveRecord::Schema.define(version: 20151007180002) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,17 @@ ActiveRecord::Schema.define(version: 20150910144421) do
     t.integer  "dataset_id"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+  end
+
+  create_table "datafiles", force: :cascade do |t|
+    t.string   "description"
+    t.string   "repo_url"
+    t.integer  "dataset_id"
+    t.string   "dataset_key"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.string   "web_id"
+    t.string   "attachment"
   end
 
   create_table "datasets", force: :cascade do |t|
@@ -40,6 +51,7 @@ ActiveRecord::Schema.define(version: 20150910144421) do
     t.string   "corresponding_creator_email"
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
+    t.string   "keywords"
   end
 
   add_index "datasets", ["key"], name: "index_datasets_on_key", unique: true, using: :btree

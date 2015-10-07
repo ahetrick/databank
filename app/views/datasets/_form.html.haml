@@ -61,6 +61,10 @@
       %br
       = f.text_area :description, :rows => 3,  :class => "form-control dataset", :placeholder => "[Description of this dataset, including an overview of content, structure, and format.]"
 
+    .form-group
+      = f.label :keywords, "Keywords", :class => "control-label"
+      %br
+      = f.text_field :keywords, :class => "form-control dataset", :placeholder => "[Semi-colon spearated list of keywords or phrases, e.g.: institutional repositories; file formats]"
 
     .form-group
       = f.label :license, "License", :class => "control-label"

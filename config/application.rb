@@ -47,9 +47,6 @@ module Databank
     WEB_ID = 'webID'
     WIDTH = 'width'
 
-
-
-
   end
 
   class Application < Rails::Application

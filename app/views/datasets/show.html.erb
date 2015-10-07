@@ -75,6 +75,14 @@
     <span class="metadata-label">Dataset Description: </span>
     <%= @dataset.description.empty? ? "[description not provided]" : @dataset.description %>
   </div>
+
+  <% if @dataset.keywords && !@dataset.keywords.empty? %>
+    <div class="container-fluid">
+      <span class="metadata-label">Keywords: </span>
+      <%= @dataset.keywords %>
+    </div>
+  <% end %>
+
   <div class="container-fluid">
     <div class="row">
       <span class="col-md-6">

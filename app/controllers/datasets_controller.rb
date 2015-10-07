@@ -390,7 +390,7 @@ class DatasetsController < ApplicationController
   # end
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :creator_text, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, binaries_attributes: [:attachment, :description, :dataset_id, :id, :_destory ])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :creator_text, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, binaries_attributes: [:attachment, :description, :dataset_id, :id, :_destory ])
   end
 
 

@@ -26,6 +26,7 @@ module Solr
     WIDTH = :idb_sys_width_i
     URI = :id
 
+    KEYWORDS = :idb_meta_keywords_s
     CREATOR_LIST = :idb_meta_creator_s
     DESCRIPTION = :idb_meta_description_s
     IDENTIFIER = :idb_meta_doi_s

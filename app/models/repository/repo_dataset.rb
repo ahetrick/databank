@@ -61,6 +61,11 @@ module Repository
              rdf_predicate: 'http://www.w3.org/2000/01/rdf-schema#Class',
              solr_field: Solr::Fields::PCDM_CLASS
 
+    property :keywords,
+             type: :string,
+             rdf_predicate: 'http://purl.org/dc/terms/subject',
+             solr_field: Solr::Fields::KEYWORDS
+
     before_create :set_pcdm_class
 
     def set_pcdm_class
@@ -80,6 +85,7 @@ module Repository
       doc[Solr::Fields::PUBLICATION_YEAR] = self.publication_year
       doc[Solr::Fields::PUBLISHER] = self.publisher
       doc[Solr::Fields::PCDM_CLASS] = self.pcdm_class
+      doc[Solr::Fields::KEYWORDS] = self.keywords
 
       Solr::Solr.client.add(doc)
       Solr::Solr.client.commit

@@ -64,6 +64,7 @@ class Dataset < ActiveRecord::Base
     repo_dataset.license = self.license
     repo_dataset.publication_year = self.publication_year
     repo_dataset.publisher = self.publisher
+    repo_dataset.keywords = self.keywords
     repo_dataset.save!
     Solr::Solr.client.commit
 
