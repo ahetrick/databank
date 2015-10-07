@@ -149,7 +149,9 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       if @dataset.complete?
-        @dataset.identifier ||= mint_doi
+        if !@dataset.identifier || @dataset.identifier.empty?
+          @dataset.identifier = mint_doi
+        end
         if @dataset.save
           format.html { redirect_to dataset_path(@dataset.key), notice: 'Dataset was successfully deposited.' }
           format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
