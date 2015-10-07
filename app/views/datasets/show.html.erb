@@ -1,19 +1,29 @@
+<!-- Only show page contents if dataset is complete or if the viewer has rights to modify it. -->
 <% if ((can? :update, @dataset) || @dataset.complete?) %>
   <div class="container-fluid">
     <div class="row">
-      <span class="col-md-8" id="title"><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></span>
-      <% if (can? :update, @dataset) && !@dataset.complete? %>
-          <span class="col-md-4">
-            <a href="http://researchdataservice.illinois.edu/contact-us/" class="btn btn-danger">
+      <span class="col-md-6" id="title"><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></span>
+
+      <% if (can? :update, @dataset)%>
+          <span class="pull-right">
+            <a href="http://researchdataservice.illinois.edu/contact-us/" class="btn btn-success" role="button">
               <span class="glyphicon glyphicon-question-sign"></span> Get Help
             </a>
 
             <%= link_to edit_dataset_path(@dataset), :class => "btn btn-info" do %>
               <span class="glyphicon glyphicon-edit"></span> Edit
             <% end %>
-            <a id="datasetForm:BibTeXLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/deposit"' class="btn btn-primary" role="button">
-              Confirm & Deposit
-            </a>
+
+            <% if !@dataset.complete? %>
+              <a href="/datasets/<%=@dataset.key%>/deposit" class="btn btn-primary" role="button">
+                Confirm & Deposit
+              </a>
+            <% end %>
+            <% if (((can? :destroy, @dataset) && (!@dataset.complete?))||(can? :manage, @dataset) )%>
+              <%= link_to dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn btn-danger" do %>
+                <span class="glyphicon glyphicon-remove"></span> Delete
+              <% end %>
+            <% end %>
           </span>
       <% end %>
     </div>
