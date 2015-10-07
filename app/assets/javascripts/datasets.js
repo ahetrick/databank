@@ -119,7 +119,7 @@ function setDepositor(email, name){
     $('.add-attachment-subform-button').show();
     $('.add-attachment-subform-button').removeAttr("disabled");
     $('.deposit-agreement-file-warning').text("");
-    $('#show-agreement-modal-link').hide();
+    //$('#show-agreement-modal-link').hide();
 }
 
 $(document).ready(ready);
