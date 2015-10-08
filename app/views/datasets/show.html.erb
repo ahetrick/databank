@@ -65,10 +65,16 @@
 
     <div class="row bg-muted">
       <span id="citation-standards" class="col-md-9 text-muted small">If you use these data, please add this citation to your scholarly resources. </span>
-        <span class="col-md-3 pull-right text-right">
-          <!--<span class="label label-primary">Downloads <span class="badge">42</span></span>-->
-        </span>
+      <span class="col-md-3 pull-right text-right">
+        <!--<span class="label label-primary">Downloads <span class="badge">42</span></span>-->
+      </span>
     </div>
+
+    <%if @dataset.complete?%>
+      <div class="row bg-muted">
+        <span id="citation-standards" class="col-md-9 text-muted small">Link for this item: <a href="http://dx.doi.org/<%= @dataset.identifier %>">http://dx.doi.org/<%= @dataset.identifier %></a></span>
+      </div>
+    <% end %>
   </div>
 
   <div class="container-fluid">

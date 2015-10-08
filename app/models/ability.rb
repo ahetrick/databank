@@ -40,6 +40,7 @@ class Ability
       can :download_BibTeX, Dataset
       can :download_RIS, Dataset
       can :show, Dataset
+      can :splash_url, Dataset
 
     end
     #

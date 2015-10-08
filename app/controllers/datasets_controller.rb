@@ -1,4 +1,5 @@
 require 'open-uri'
+require "net/http"
 
 class DatasetsController < ApplicationController
 
@@ -13,7 +14,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :show_agreement
   skip_load_and_authorize_resource :only => :review_deposit_agreement
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi]
 
   # enable streaming responses
   include ActionController::Streaming
@@ -379,7 +380,6 @@ class DatasetsController < ApplicationController
 
   private
 
-
   # Use callbacks to share common setup or constraints between actions.
   def set_dataset
     @dataset = Dataset.find_by_key(params[:id])
@@ -398,8 +398,60 @@ class DatasetsController < ApplicationController
 
   def mint_doi
 
-    "10.5072/FK2#{@dataset.key}"
+    host = IDB_CONFIG[:ezid_host]
+    shoulder = IDB_CONFIG[:ezid_shoulder]
+    user = IDB_CONFIG[:ezid_username]
+    password = IDB_CONFIG[:ezid_password]
 
+    target = "#{request.base_url}#{dataset_path(@dataset.key)}"
+
+    metadata = {}
+    metadata['_target'] = target
+    metadata['datacite'] = @dataset.to_datacite_xml
+
+    Rails.logger.warn metadata
+
+    uri = URI.parse("https://#{host}/shoulder/#{shoulder}")
+
+    request = Net::HTTP::Post.new(uri.request_uri)
+    request.basic_auth(user, password)
+    request.content_type = "text/plain"
+    request.body = make_anvl(metadata)
+
+    sock = Net::HTTP.new(uri.host, uri.port)
+    # sock.set_debug_output $stderr
+
+    if uri.scheme == 'https'
+      sock.use_ssl = true
+    end
+
+    response = sock.start { |http| http.request(request) }
+
+    case response
+      when Net::HTTPSuccess, Net::HTTPRedirection
+        response_split = response.body.split(" ")
+        Rails.logger.warn response_split
+        response_split2 = response_split[1].split(":")
+        Rails.logger.warn response_split2
+        doi = response_split2[1]
+
+      else
+        raise "error minting DOI"
+    end
+
+  end
+
+  def make_anvl(metadata)
+    def escape(s)
+      URI.escape(s, /[%:\n\r]/)
+    end
+    anvl = ''
+    metadata.each do |n, v|
+      anvl += escape(n.to_s) + ': ' + escape(v.to_s) + "\n"
+    end
+    # remove last newline. there is probably a really good way to
+    # avoid adding it in the first place. if you know it, please fix.
+    anvl.strip.encode!('UTF-8')
   end
 
 

@@ -3,15 +3,33 @@ development:
   :solr_url: http://localhost:8983/solr/
   :solr_core: databank
   :admin_list: admin
+  :local_mode: true
+  :ezid_host: ezid.lib.purdue.edu
+  :ezid_username: apitest
+  :ezid_password: apitest
+  :ezid_shoulder: doi:10.5072/FK2
+  :ezid_placeholder_identifier: 10.5072/FK2
 
 test:
   :fedora_url: http://localhost:8080/rest/databank
   :solr_url: http://localhost:8983/solr/
   :solr_core: databank
   :admin_list: admin
+  :local_mode: true
+  :ezid_host: ezid.lib.purdue.edu
+  :ezid_username: apitest
+  :ezid_password: apitest
+  :ezid_shoulder: doi:10.5072/FK2
+  :ezid_placeholder_identifier: 10.5072/FK2
 
 production:
   :fedora_url: http://localhost:8080/fedora/rest/databank
   :solr_url: http://localhost:8983/solr/
   :solr_core: databank
   :admin_list: <%= ENV["ADMIN_LIST"] %>
+  :local_mode: false
+  :ezid_host: ezid.lib.purdue.edu
+  :ezid_username: <%= ENV["EZID_USERNAME"] %>
+  :ezid_password: <%= ENV["EZID_PASSWORD"] %>
+  :ezid_shoulder: <%= ENV["EZID_SHOULDER"] %>
+  :ezid_placeholder_identifier: 10.5072/FK2

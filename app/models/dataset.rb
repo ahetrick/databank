@@ -19,6 +19,99 @@ class Dataset < ActiveRecord::Base
     self.key
   end
 
+  def to_datacite_xml
+
+    if !self.title || !self.creator_text
+      raise 'Dataset is not complete; a valid datacite xml document cannot be generated.'
+    end
+
+    creatorArr = self.creator_text.split(";")
+
+    if self.keywords
+      keywordArr = self.keywords.split(";")
+    else
+      keywordArr = Array.new
+    end
+
+    doc = Nokogiri::XML::Document.parse(%Q(<?xml version="1.0"?><resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd"></resource>))
+    resourceNode = doc.first_element_child
+
+    identifierNode = doc.create_element('identifier')
+    identifierNode['identifierType'] = "DOI"
+    identifierNode.content = IDB_CONFIG[:ezid_placeholder_identifier]
+    identifierNode.parent = resourceNode
+
+    creatorsNode = doc.create_element('creators')
+    creatorsNode.parent = resourceNode
+
+    creatorArr.each do |creator|
+      creatorNode = doc.create_element('creator')
+      creatorNode.parent = creatorsNode
+
+      creatorNameNode = doc.create_element('creatorName')
+      creatorNameNode.content = creator.strip
+      creatorNameNode.parent = creatorNode
+
+    end
+
+    titlesNode = doc.create_element('titles')
+    titlesNode.parent = resourceNode
+
+    titleNode = doc.create_element('title')
+    titleNode.content = self.title || "Dataset Title"
+    titleNode.parent = titlesNode
+
+    publisherNode = doc.create_element('publisher')
+    publisherNode.content = self.publisher || "University of Illinois at Urbana-Champaign"
+    publisherNode.parent = resourceNode
+
+    publicationYearNode = doc.create_element('publicationYear')
+    publicationYearNode.content = self.publication_year || "2015"
+    publicationYearNode.parent = resourceNode
+
+    if keywordArr.length > 0
+
+      subjectsNode = doc.create_element('subjects')
+      subjectsNode.parent = resourceNode
+
+      keywordArr.each do |keyword|
+        subjectNode = doc.create_element('subject')
+        subjectNode.content = keyword.strip
+        subjectNode.parent = subjectsNode
+      end
+
+    end
+
+    languageNode = doc.create_element('language')
+    languageNode.content = "en-us"
+    languageNode.parent = resourceNode
+
+    if self.license && !self.license.blank?
+      rightsListNode = doc.create_element('rightsList')
+      rightsListNode.parent = resourceNode
+
+      rightsNode = doc.create_element('rights')
+      rightsNode.content = self.license
+      rightsNode.parent = rightsListNode
+    end
+
+    if self.description && !self.description.blank?
+      descriptionsNode = doc.create_element('descriptions')
+      descriptionsNode.parent = resourceNode
+      descriptionNode = doc.create_element('description')
+      descriptionNode.content = self.description
+      descriptionNode.parent = descriptionsNode
+    end
+
+    resourceTypeNode = doc.create_element('resourceType')
+    resourceTypeNode['resourceTypeGeneral'] = "Dataset"
+    resourceTypeNode.content = "Dataset"
+    resourceTypeNode.parent = resourceNode
+
+    doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
+
+  end
+
   def creator_list
     creator_text
   end
