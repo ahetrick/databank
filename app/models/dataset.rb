@@ -29,8 +29,6 @@ class Dataset < ActiveRecord::Base
 
     if self.keywords
       keywordArr = self.keywords.split(";")
-    else
-      keywordArr = Array.new
     end
 
     doc = Nokogiri::XML::Document.parse(%Q(<?xml version="1.0"?><resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd"></resource>))
@@ -69,7 +67,7 @@ class Dataset < ActiveRecord::Base
     publicationYearNode.content = self.publication_year || "2015"
     publicationYearNode.parent = resourceNode
 
-    if keywordArr.length > 0
+    if self.keywords && keywordArr.length > 0
 
       subjectsNode = doc.create_element('subjects')
       subjectsNode.parent = resourceNode
@@ -99,6 +97,7 @@ class Dataset < ActiveRecord::Base
       descriptionsNode = doc.create_element('descriptions')
       descriptionsNode.parent = resourceNode
       descriptionNode = doc.create_element('description')
+      descriptionNode['descriptionType'] = "Abstract"
       descriptionNode.content = self.description
       descriptionNode.parent = descriptionsNode
     end
