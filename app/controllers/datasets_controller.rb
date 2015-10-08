@@ -425,7 +425,14 @@ class DatasetsController < ApplicationController
       sock.use_ssl = true
     end
 
-    response = sock.start { |http| http.request(request) }
+    begin
+
+      response = sock.start { |http| http.request(request) }
+
+    rescue Net::HTTPBadResponse, Net::HTTPServerError => error
+      Rails.logger.warn error.message
+      Rails.logger.warn response.body
+    end
 
     case response
       when Net::HTTPSuccess, Net::HTTPRedirection
