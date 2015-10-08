@@ -443,6 +443,7 @@ class DatasetsController < ApplicationController
         doi = response_split2[1]
 
       else
+        Rails.logger.warn response.to_yaml
         raise "error minting DOI"
     end
 
