@@ -49,7 +49,7 @@ class User < ActiveRecord::Base
 
     authname = auth["info"]["name"]
 
-    if ( (auth["extra"]["raw_info"]["nickname"]) && ( (auth["extra"]["raw_info"]["nickname"]) != "") )
+    if ( (auth["provider"] == "shibboleth") &&  (auth["extra"]["raw_info"]["nickname"]) && ( (auth["extra"]["raw_info"]["nickname"]) != "") )
       authname = "#{auth["extra"]["raw_info"]["nickname"]} #{auth["extra"]["raw_info"]["sn"]}"
     end
 

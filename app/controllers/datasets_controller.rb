@@ -24,10 +24,12 @@ class DatasetsController < ApplicationController
   # GET /datasets
   # GET /datasets.json
   def index
-    @datasets = Dataset.order(updated_at: :desc)
+    @datasets = Dataset.search(params[:search]).order(updated_at: :desc)
+
     if params[:depositor_email]
       @datasets = @datasets.where(depositor_email: params[:depositor_email])
     end
+
   end
 
   # GET /datasets/1
@@ -392,7 +394,7 @@ class DatasetsController < ApplicationController
   # end
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :creator_text, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, binaries_attributes: [:attachment, :description, :dataset_id, :id, :_destory ])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :creator_text, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, :search, binaries_attributes: [:attachment, :description, :dataset_id, :id, :_destory ])
   end
 
 

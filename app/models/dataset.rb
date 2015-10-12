@@ -19,6 +19,15 @@ class Dataset < ActiveRecord::Base
     self.key
   end
 
+  def self.search(search)
+    if search
+      lower_search = search.downcase
+      where('lower(title) LIKE :search OR lower(keywords) LIKE :search OR lower(creator_text) LIKE :search OR lower(identifier) LIKE :search OR lower(description) LIKE :search', search: "%#{lower_search}%")
+    else
+      Dataset.all
+    end
+  end
+
   def to_datacite_xml
 
     if !self.title || !self.creator_text
