@@ -9,6 +9,22 @@ class ApplicationController < ActionController::Base
 
   rescue_from Exception::StandardError, with: :error_occurred
 
+  after_filter :store_location
+
+
+  def store_location
+    return unless request.get?
+    if (request.path != '/login' &&
+        request.path != '/logout' &&
+        !request.xhr?) # don't store ajax calls
+      session[:previous_url] = request.fullpath
+    end
+  end
+
+  def redirect_path
+    session[:previous_url] || main_app.root_url
+  end
+
   protected
 
   def error_occurred(exception)
@@ -18,10 +34,10 @@ class ApplicationController < ActionController::Base
       alert_message = exception.message
 
       if exception.subject.class == Dataset && exception.action == :new
-        alert_message = "Log in to deposit data."
+        alert_message = %Q[<a href = "/login">Log in with NetID</a> to deposit data.]
       end
 
-      redirect_to main_app.root_url, :alert => alert_message
+      redirect_to redirect_path, :alert => alert_message
 
     else
 
