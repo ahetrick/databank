@@ -79,6 +79,14 @@ ready = function() {
 
     $('[data-toggle="tooltip"]').tooltip();
 
+    var clip = new ZeroClipboard($("#d_clip_button"))
+
+    $("#clear-test").on("click", function(){
+        $("#fe_text").val("Copy me!");
+        $("#testarea").val("");
+    });
+
+
     handleNotAgreed();
 }
 

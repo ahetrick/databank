@@ -13,6 +13,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery-fileupload
+//= require zeroclipboard
 //= require turbolinks
 //= require bootstrap-sprockets
 //= require cocoon
