@@ -22,7 +22,7 @@
     .form-group
       = f.label :creator_text, "Creator(s)", :class => "control-label"
       %br
-      = f.text_field :creator_text, :class => "form-control dataset", :placeholder => "[Semi-colon spearated list of names, e.g.: Verfasser, Maria; Auteur, Henri]"
+      = f.text_field :creator_text, :class => "form-control dataset", :placeholder => "[Semi-colon spearated list of names (e.g.: Verfasser, Maria; Auteur, Henri)]"
       %span(class="help-block") The personal name format for each name in the semi-colon separted list should be: family, given, (e.g.: Verfasser, Maria; Auteur, Henri).
     .row
       %span(class="col-md-6")
@@ -62,9 +62,10 @@
       = f.text_area :description, :rows => 3,  :class => "form-control dataset", :placeholder => "[Description of this dataset, including an overview of content, structure, and format.]"
 
     .form-group
-      = f.label :keywords, "Keywords", :class => "control-label"
+      = f.label :keywords, "Keywords (Semi-colon delimted list)", :class => "control-label"
       %br
-      = f.text_field :keywords, :class => "form-control dataset", :placeholder => "[Semi-colon spearated list of keywords or phrases, e.g.: institutional repositories; file formats]"
+      = f.text_field :keywords, :class => "form-control dataset", :placeholder => "[Semi-colon separated list of keywords or phrases, e.g.: (institutional repositories; file formats)]"
+      %span(class="help-block") Use a semi-colon (;) to separate keywords or phrases (e.g.: institutional repositories; file formats).
 
     .form-group
       = f.label :license, "License", :class => "control-label"
