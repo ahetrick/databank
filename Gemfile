@@ -49,6 +49,9 @@ gem 'zipline', path: "vendor/zipline"
 # use carrierwave for file upload to temporary location before ingest into fedora
 gem 'carrierwave'
 
+# use will_paginate to handle paging results on datasets index
+gem 'will_paginate', '~> 3.0.5'
+
 # Use ActiveMedusa to interact with Fedora repository
 gem 'active-medusa', github: 'medusa-project/active-medusa', tag: '2.0.0'
 gem 'httpclient', git: 'git://github.com/medusa-project/httpclient.git'

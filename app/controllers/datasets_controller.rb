@@ -30,6 +30,8 @@ class DatasetsController < ApplicationController
       @datasets = @datasets.where(depositor_email: params[:depositor_email])
     end
 
+    @datasets = @datasets.page(params[:page]).per_page(10)
+
   end
 
   # GET /datasets/1
