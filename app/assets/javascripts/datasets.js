@@ -39,7 +39,7 @@ ready = function() {
     $('#term-supports').tooltip();
 
     $('#cancel-button').click(function () {
-        alert("You must agree to the Deposit Agreement before depositing data into Illinois Data Bank.");
+        // alert("You must agree to the Deposit Agreement before depositing data into Illinois Data Bank.");
         handleNotAgreed();
     });
 
@@ -81,24 +81,20 @@ ready = function() {
 
     var clip = new ZeroClipboard($("#d_clip_button"))
 
-    $("#clear-test").on("click", function(){
-        $("#fe_text").val("Copy me!");
-        $("#testarea").val("");
-    });
-
-
     handleNotAgreed();
+
+    $("#login-prompt").modal('show');
+
 }
 
 function handleNotAgreed(){
 
-    $('#new-save-button').attr("disabled", true);
-    $('#new-save-button').text('<- Deposit Agreement Required to Save');
-    //$('.file-field').attr("disabled", true);
-    //$('.add-attachment-subform-button').attr("disabled", true);
-    //$('.add-attachment-subform-button').hide();
-    $('.deposit-agreement-file-warning').text("Deposit Agreement Required to Add Files");
+    $('.form-control').attr("disabled", true);
+    $('.file-field').attr("disabled", true);
+    $('.add-attachment-subform-button').hide();
     $('#show-agreement-modal-link').show();
+    $('#new-save-button').hide();
+    $('.deposit-agreement-warning').show();
 }
 
 function handleFilesize(){
@@ -121,12 +117,12 @@ function handleFilesize(){
 function setDepositor(email, name){
     $('#depositor_email').val(email);
     $('#depositor_name').val(name);
+    $('#new-save-button').show();
     $('#new-save-button').text('Save & Review');
-    $('#new-save-button').removeAttr("disabled");
+    $('.form-control').removeAttr("disabled");
     $('.file-field').removeAttr("disabled");
     $('.add-attachment-subform-button').show();
-    $('.add-attachment-subform-button').removeAttr("disabled");
-    $('.deposit-agreement-file-warning').text("");
+    $('.deposit-agreement-warning').hide();
     //$('#show-agreement-modal-link').hide();
 }
 

@@ -1,3 +1,4 @@
+<%= render partial: 'confirm_deposit_modal' %>
 <!-- Only show page contents if dataset is complete or if the viewer has rights to modify it. -->
 <% if ((can? :update, @dataset) || @dataset.complete?) %>
   <div class="container-fluid">
@@ -15,9 +16,7 @@
             <% end %>
 
             <% if !@dataset.complete? %>
-              <a href="/datasets/<%=@dataset.key%>/deposit" class="btn btn-primary" role="button">
-                Confirm & Deposit
-              </a>
+              <button type="button" id="show-confirm-modal-link" class="btn btn-primary" data-toggle="modal" data-target="#deposit">Confirm & Deposit</button>
             <% end %>
             <% if (((can? :destroy, @dataset) && (!@dataset.complete?))||(can? :manage, @dataset) )%>
               <%= link_to dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn btn-danger" do %>
@@ -79,9 +78,6 @@
       </div>
     <% end %>
   </div>
-
-
-
   <div class="container-fluid">
     <span class="metadata-label">Dataset Description: </span>
     <%= @dataset.description.empty? ? "[description not provided]" : @dataset.description %>

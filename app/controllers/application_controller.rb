@@ -19,6 +19,9 @@ class ApplicationController < ActionController::Base
         !request.xhr?) # don't store ajax calls
       session[:previous_url] = request.fullpath
     end
+    if (request.path == '/welcome/deposit_login_modal' )
+      session[:previous_url] = '/datasets/new'
+    end
   end
 
   def redirect_path
@@ -34,10 +37,10 @@ class ApplicationController < ActionController::Base
       alert_message = exception.message
 
       if exception.subject.class == Dataset && exception.action == :new
-        alert_message = %Q[<a href = "/login">Log in with NetID</a> to deposit data.]
+        redirect_to '/welcome/deposit_login_modal'
+      else
+        redirect_to redirect_path, :alert => alert_message
       end
-
-      redirect_to redirect_path, :alert => alert_message
 
     else
 
@@ -81,8 +84,5 @@ class ApplicationController < ActionController::Base
       redirect_to(login_path)
     end
   end
-
-
-
 
 end
