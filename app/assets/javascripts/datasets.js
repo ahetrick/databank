@@ -122,7 +122,7 @@ function setDepositor(email, name){
     $('#depositor_name').val(name);
     $('.save').show();
     $('#new-save-button').show();
-    $('#new-save-button').text('Save & Review');
+    $('#new-save-button').text('Save & Review Dataset');
     $('.dataset').removeAttr("disabled");
     $('.file-field').removeAttr("disabled");
     $('.add-attachment-subform-button').show();
