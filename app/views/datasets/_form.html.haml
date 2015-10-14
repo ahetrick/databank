@@ -1,7 +1,9 @@
-.deposit-agreement-warning
-  You must agree to the Deposit Agreement before depositing data into Illinois Data Bank.
-  %button(type="button" id="show-agreement-modal-link" class="btn btn-primary" data-toggle="modal" data-target="#agreement") Deposit Agreement
-  %button(type="button" class="btn btn-primary" name="cancel" onclick='window.location = "/"' ) Cancel
+- if params[:action] == 'new'
+  .deposit-agreement-warning
+    You must agree to the Deposit Agreement before depositing data into Illinois Data Bank.
+    %button(type="button" id="show-agreement-modal-link" class="btn btn-primary .deposit-agreement-btn" data-toggle="modal" data-target="#agreement") Deposit Agreement
+    %button(type="button" class="btn btn-primary" name="cancel" onclick='window.location = "/"' ) Cancel
+
 = form_for(@dataset, :html => { :multipart => true, :role => "form", :enctype => "multipart/form-data", "data-toggle"=>"validator", :class => "container-fluid input-append dataset-form"}) do |f|
   - if @dataset.errors.any?
     .error_explaination
@@ -15,7 +17,7 @@
     .form-group
       = f.label :identifier, "DOI", :class => "control-label"
       %br
-      = f.text_field :identifier, :class => "form-control", :placeholder => "[Leave blank if requesting a DOI.]"
+      = f.text_field :identifier, :class => "form-control dataset", :placeholder => "[Leave blank if requesting a DOI.]"
 
   %fieldset(class = "metadata-border")
     %legend(class = "metadata-border")Required to Deposit Dataset
@@ -53,7 +55,7 @@
       .form-group
         = f.label :publication_year, "Publication Year", :class => "control-label"
         %br
-        = f.number_field :publication_year, :value => '2015', :class => "form-control", :min => "1800", :max => "#{Time.now.year + 1}", :maxlength => 4
+        = f.number_field :publication_year, :value => '2015', :class => "form-control dataset", :min => "1800", :max => "#{Time.now.year + 1}", :maxlength => 4
         %span(class="help-block") Four digit year (YYYY)
     - else
       = f.hidden_field :publication_year, :value => "#{Time.now.year}"
@@ -98,16 +100,18 @@
               = datafile.description
             %span(class="col-md-1")
               - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
-                = link_to "#{request.base_url}/datasets/#{@dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-danger btn-sm" do
-                  = %Q[<span class="glyphicon glyphicon-remove"> File</span>].html_safe
-    - if ((params[:action] == 'new') ||  (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)))
+                = link_to "#{request.base_url}/datasets/#{@dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-sm btn-danger" do
+                  = %Q[<span class="glyphicon glyphicon-remove"> Delete File</span>].html_safe
+      %br
+    - if params[:action] == 'new'
       = f.fields_for :binaries do |binary|
         = render 'binary_fields', f: binary
+    - if ((params[:action] == 'new') ||  (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)))
       .links
-        = link_to_add_association %Q[<button type="button" class="btn btn-primary btn-sm add-attachment-subform-button"><span class="glyphicon glyphicon-plus"> File</span></button>].html_safe, f, :binaries
+        = link_to_add_association %Q[<button type="button" class="btn btn-primary add-attachment-subform-button"><span class="glyphicon glyphicon-plus dataset"> Add File</span></button>].html_safe, f, :binaries
 
 
-  .container-fluid
+  .container-fluid.save
     %span(class="pull-right" )
       %button(type="button" class="btn btn-primary" name="cancel" onclick='window.location = "/"' ) Cancel
       - if @dataset && @dataset.depositor_email
@@ -121,4 +125,6 @@
       %button(type = "submit" class="hidden" id="dataset-submit-button" ) Submit
 
 - if !@dataset.depositor_email
-  %script $("#agreement").modal('show');
+  %script
+    handleNotAgreed();
+    $("#agreement").modal('show');

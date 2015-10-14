@@ -2,28 +2,37 @@
   <% dataset = @dataset %>
   <% if ((can? :update, dataset) || dataset.complete?) %>
     <div class="row">
-        <span class="col-md-11"><span class="mainTitle"> <%= link_to "#{(!dataset.title || dataset.title.empty?) ? "[Title not provided]" : dataset.title}", dataset_path(dataset.key) %></span><br/>
-          <%= (!dataset.creator_list || dataset.creator_list.empty?) ? "[Creator(s) not provided]" : dataset.creator_list %><br/>
-          <%= dataset.publisher %>
-          <%= dataset.publication_year %>
+      <span class="col-md-9">
+        <% (dataset.identifier && !dataset.identifier.empty?) ? doi_part = "doi:#{dataset.identifier}" : doi_part = "" %>
+        <%= link_to "#{dataset.creator_list} (#{dataset.publication_year}): #{dataset.title}. #{dataset.publisher}. #{doi_part}", dataset_path(dataset.key) %>
+        <br />
+        <% if dataset.description && !dataset.description.empty? %>
+          <%= dataset.description.first(230) %><%if dataset.description.length > 230 %>[...]<%end%><br />
+        <% end %>
+        <% if dataset.keywords && !dataset.keywords.empty? %>
+          <span class="metadata-label">Keyword(s): </span><%= dataset.keywords %>
+        <% end %>
+      </span>
 
-          <%= (dataset.identifier && !dataset.identifier.empty?) ? (link_to "doi:#{dataset.identifier}", dataset_path(dataset.key)) : "" %></span>
-        <span class="col-md-1">
-          <%= link_to dataset_path(dataset.key), :class => "btn btn-primary btn-block btn-sm" do %>
-            <span class="glyphicon glyphicon-zoom-in"></span> View
-          <% end %>
-          <% if can? :update, dataset %>
+      <span class="col-md-3">
 
-            <%= link_to edit_dataset_path(dataset.key), :class => "btn btn-info btn-block btn-sm" do %>
-              <span class="glyphicon glyphicon-edit"></span> Edit
-            <% end %>
+        <%= link_to dataset_path(dataset.key), :class => "btn btn-primary btn-sm" do %>
+          <span class="glyphicon glyphicon-zoom-in"></span> View
+        <% end %>
+
+        <% if can? :update, dataset %>
+          <%= link_to edit_dataset_path(dataset.key), :class => "btn btn-info btn-sm" do %>
+            <span class="glyphicon glyphicon-edit"></span> Edit
           <% end %>
-          <% if can? :destroy, dataset %>
-            <%= link_to dataset_path(dataset.key), method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn btn-danger btn-block btn-sm" do %>
-              <span class="glyphicon glyphicon-remove"></span> Delete
-            <% end %>
+        <% end %>
+
+        <% if (((can? :destroy, dataset) && (!dataset.complete?))||(can? :manage, dataset) )%>
+          <%= link_to dataset_path(dataset.key), method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn btn-danger btn-sm" do %>
+            <span class="glyphicon glyphicon-remove"></span> Delete
           <% end %>
-        </span>
+        <% end %>
+
+      </span>
     </div>
   <% end %>
 <% end %>

@@ -81,21 +81,22 @@ ready = function() {
 
     var clip = new ZeroClipboard($("#d_clip_button"))
 
-    handleNotAgreed();
-
     $("#login-prompt").modal('show');
 
 }
 
 function handleNotAgreed(){
 
-    $('.form-control').attr("disabled", true);
+    $('.save').hide();
+    $('.dataset').attr("disabled", true);
     $('.file-field').attr("disabled", true);
     $('.add-attachment-subform-button').hide();
     $('#show-agreement-modal-link').show();
     $('#new-save-button').hide();
     $('.deposit-agreement-warning').show();
     $('.search').removeAttr("disabled");
+    $('.deposit-agreement-btn').removeAttr("disabled");
+    window.scrollTo(0,0);
 }
 
 function handleFilesize(){
@@ -116,11 +117,13 @@ function handleFilesize(){
 }
 
 function setDepositor(email, name){
+
     $('#depositor_email').val(email);
     $('#depositor_name').val(name);
+    $('.save').show();
     $('#new-save-button').show();
     $('#new-save-button').text('Save & Review');
-    $('.form-control').removeAttr("disabled");
+    $('.dataset').removeAttr("disabled");
     $('.file-field').removeAttr("disabled");
     $('.add-attachment-subform-button').show();
     $('.deposit-agreement-warning').hide();

@@ -40,8 +40,9 @@
     <hr/>
     <div class="row">
       <span class="col-md-9">
-        <%= link_to "#{dataset.creator_list} (#{dataset.publication_year}): #{dataset.title}. #{dataset.publisher}.", dataset_path(dataset.key) %>
-        <%= (dataset.identifier && !dataset.identifier.empty?) ? (link_to "doi:#{dataset.identifier}", dataset_path(dataset.key)) : "" %><br />
+        <% (dataset.identifier && !dataset.identifier.empty?) ? doi_part = "doi:#{dataset.identifier}" : doi_part = "" %>
+        <%= link_to "#{dataset.creator_list} (#{dataset.publication_year}): #{dataset.title}. #{dataset.publisher}. #{doi_part}", dataset_path(dataset.key) %>
+        <br />
         <% if dataset.description && !dataset.description.empty? %>
           <%= dataset.description.first(230) %><%if dataset.description.length > 230 %>[...]<%end%><br />
         <% end %>
