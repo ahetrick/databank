@@ -1,8 +1,8 @@
 - if params[:action] == 'new'
   .deposit-agreement-warning
     You must agree to the Deposit Agreement before depositing data into Illinois Data Bank.
-    %button(type="button" id="show-agreement-modal-link" class="btn btn-primary .deposit-agreement-btn" data-toggle="modal" data-target="#agreement") Deposit Agreement
-    %button(type="button" class="btn btn-primary" name="cancel" onclick='window.location = "/"' ) Cancel
+    %button(type="button" id="show-agreement-modal-link" class="btn btn-primary .deposit-agreement-btn" data-toggle="modal" data-target="#agreement") Review Deposit Agreement
+    %button(type="button" class="btn btn-danger" name="cancel" onclick='window.location = "/"' )Cancel
 
 = form_for(@dataset, :html => { :multipart => true, :role => "form", :enctype => "multipart/form-data", "data-toggle"=>"validator", :class => "container-fluid input-append dataset-form"}) do |f|
   - if @dataset.errors.any?
@@ -101,28 +101,28 @@
             %span(class="col-md-1")
               - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
                 = link_to "#{request.base_url}/datasets/#{@dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-sm btn-danger" do
-                  = %Q[<span class="glyphicon glyphicon-remove"> Delete File</span>].html_safe
+                  = %Q[<span class="glyphicon glyphicon-remove">  Delete File</span>].html_safe
       %br
     - if params[:action] == 'new'
       = f.fields_for :binaries do |binary|
         = render 'binary_fields', f: binary
     - if ((params[:action] == 'new') ||  (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)))
       .links
-        = link_to_add_association %Q[<button type="button" class="btn btn-primary add-attachment-subform-button"><span class="glyphicon glyphicon-plus dataset"> Add File</span></button>].html_safe, f, :binaries
+        = link_to_add_association %Q[<button type="button" class="btn btn-primary btn-sm add-attachment-subform-button"><span class="glyphicon glyphicon-plus dataset">  Add File</span></button>].html_safe, f, :binaries
 
 
   .container-fluid.save
-    %span(class="pull-right" )
-      %button(type="button" class="btn btn-primary" name="cancel" onclick='window.location = "/"' ) Cancel
-      - if @dataset && @dataset.depositor_email
-        = render :partial => "review_deposit_button"
-      - else
-        %button(type="button" id="show-agreement-modal-link" class="btn btn-primary" data-toggle="modal" data-target="#agreement") Deposit Agreement
-      -if params[:action] == 'new'
-        %button(type="button" class="btn btn-primary save-button" id="new-save-button")
-      -else
-        %button(type="button" class="btn btn-primary update save-button") Update Dataset
-      %button(type = "submit" class="hidden" id="dataset-submit-button" ) Submit
+    .row
+      %span(class="col-md-2" )
+        %button(type="button" id="show-agreement-modal-link" class="btn btn-primary" data-toggle="modal" data-target="#agreement") Review Deposit Agreement
+      %span(class="pull-right" )
+        %button(type="button" class="btn btn-danger" name="cancel" onclick='window.location = "/"' )Cancel
+
+        -if params[:action] == 'new'
+          %button(type="button" class="btn btn-primary save-button" id="new-save-button")
+        -else
+          %button(type="button" class="btn btn-primary update save-button") Update Dataset
+        %button(type = "submit" class="hidden" id="dataset-submit-button" ) Submit
 
 - if !@dataset.depositor_email
   %script
