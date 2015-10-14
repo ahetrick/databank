@@ -95,6 +95,7 @@ function handleNotAgreed(){
     $('#show-agreement-modal-link').show();
     $('#new-save-button').hide();
     $('.deposit-agreement-warning').show();
+    $('.search').removeAttr("disabled");
 }
 
 function handleFilesize(){
