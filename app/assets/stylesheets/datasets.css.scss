@@ -75,16 +75,19 @@ fieldset.metadata-border {
   background-color: #F0F0F0;
 }
 
-legend.metadata-border{
+legend.metadata-border {
   width:inherit; /* Or auto */
   padding:0 10px; /* To give a bit of padding on the left and right */
   border-bottom:none;
   background-color: #FFFFFF;
 }
-.deposit-agreement-warning{
+.deposit-agreement-warning {
   color:red;
   font-weight: bold;
   font-style: italic;
   padding-bottom: 20px;
   font-size: 120%;
+}
+.selected-button {
+  outline: solid 5px #dfdfb8;
 }

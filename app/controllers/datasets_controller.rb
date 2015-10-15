@@ -92,7 +92,7 @@ class DatasetsController < ApplicationController
   # PATCH/PUT /datasets/1
   # PATCH/PUT /datasets/1.json
   def update
-    
+
     respond_to do |format|
       if @dataset.update(dataset_params)
         if @dataset.complete?

@@ -66,15 +66,13 @@ ready = function() {
 
     $(document).on('change', '.file-field', handleFilesize );
 
-    $('#show-all-radio, #show-my-radio').change(function() {
-        var selectedVal = $('input[name=filterOpt]:checked').val();
-        if (selectedVal == 'all'){
-            window.location.assign('/datasets');
-        }
-        else {
-            window.location.assign('/datasets?depositor_email=' + selectedVal);
-        }
+    $('#show-all-button').click(function () {
+        window.location.assign('/datasets');
+    });
 
+    $('#show-my-button').click(function () {
+        var current_user_email = $('input#current_user_email').val();
+        window.location.assign('/datasets?depositor_email=' + current_user_email);
     });
 
     $('[data-toggle="tooltip"]').tooltip();
@@ -82,6 +80,7 @@ ready = function() {
     var clip = new ZeroClipboard($("#d_clip_button"))
 
     $("#login-prompt").modal('show');
+
 
 }
 
