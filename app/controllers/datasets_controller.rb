@@ -13,8 +13,9 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :stream_file
   skip_load_and_authorize_resource :only => :show_agreement
   skip_load_and_authorize_resource :only => :review_deposit_agreement
+  skip_load_and_authorize_resource :only => :datacite_record
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi, :datacite_record]
 
   # enable streaming responses
   include ActionController::Streaming
@@ -37,6 +38,7 @@ class DatasetsController < ApplicationController
   # GET /datasets/1
   # GET /datasets/1.json
   def show
+
     if params.keys.include?("selected_files")
       download_datafiles
     end
@@ -46,6 +48,9 @@ class DatasetsController < ApplicationController
       datafile.destroy if (!datafile.master_bytestream || datafile.master_bytestream.nil?)
     end
     Solr::Solr.client.commit
+
+
+    @datacite_record = datacite_record_hash
 
   end
 
@@ -382,6 +387,47 @@ class DatasetsController < ApplicationController
 
   end
 
+
+  def datacite_record_hash
+
+    return {"status" => "dataset incomplete"} if !@dataset.complete?
+
+    response_hash = Hash.new
+
+    begin
+
+      response = ezid_metadata_response
+      response_body_hash = Hash.new
+      response_lines = response.body.to_s.split("\n")
+      response_lines.each do |line|
+        split_line = line.split(": ")
+        response_body_hash["#{split_line[0]}"] = "#{split_line[1]}"
+      end
+
+      clean_metadata_xml_string = (response_body_hash["datacite"]).gsub("%0A", '')
+      metadata_doc = Nokogiri::XML(clean_metadata_xml_string)
+
+      response_hash["target"] = response_body_hash["_target"]
+      response_hash["created"]= (Time.at(Integer(response_body_hash["_created"])).to_datetime).strftime("%Y-%m-%d at %I:%M%p")
+      response_hash["updated"]= (Time.at(Integer(response_body_hash["_updated"])).to_datetime).strftime("%Y-%m-%d at %I:%M%p")
+      response_hash["owner"] = response_body_hash["_owner"]
+      response_hash["status"] = response_body_hash["_status"]
+      response_hash["datacenter"] = response_body_hash["_datacenter"]
+      response_hash["metadata"] = metadata_doc
+
+      return response_hash
+
+
+    rescue StandardError => error
+
+      return {"error" => error.message}
+
+
+    end
+
+  end
+
+
   private
 
   # Use callbacks to share common setup or constraints between actions.
@@ -399,13 +445,12 @@ class DatasetsController < ApplicationController
     params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :creator_text, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, :search, binaries_attributes: [:attachment, :description, :dataset_id, :id, :_destory ])
   end
 
-
-  def mint_doi
-
+  def  handle_doi(operation)
     host = IDB_CONFIG[:ezid_host]
     shoulder = IDB_CONFIG[:ezid_shoulder]
     user = IDB_CONFIG[:ezid_username]
     password = IDB_CONFIG[:ezid_password]
+    last_segment = shoulder
 
     target = "#{request.base_url}#{dataset_path(@dataset.key)}"
 
@@ -414,6 +459,12 @@ class DatasetsController < ApplicationController
     metadata['datacite'] = @dataset.to_datacite_xml
 
     Rails.logger.warn metadata
+
+    case operation
+      when :update
+        last_segment = "#doi:{@dataset.identifier}"
+
+    end
 
     uri = URI.parse("https://#{host}/shoulder/#{shoulder}")
 
@@ -450,6 +501,88 @@ class DatasetsController < ApplicationController
         Rails.logger.warn response.to_yaml
         raise "error minting DOI"
     end
+  end
+
+
+  def ezid_metadata_response
+
+    if @dataset.complete?
+
+      host = IDB_CONFIG[:ezid_host]
+
+      uri = URI.parse("http://#{host}/id/doi:#{@dataset.identifier}")
+      response = Net::HTTP.get_response(uri)
+
+      # Rails.logger.warn response.to_yaml
+
+      case response
+        when Net::HTTPSuccess, Net::HTTPRedirection
+          return response
+
+        else
+          Rails.logger.warn response.to_yaml
+          raise "error getting DataCite metadata record from EZID"
+      end
+
+    else
+
+      raise "incomplete dataset"
+
+    end
+  end
+
+  def mint_doi
+
+    host = IDB_CONFIG[:ezid_host]
+    shoulder = IDB_CONFIG[:ezid_shoulder]
+    user = IDB_CONFIG[:ezid_username]
+    password = IDB_CONFIG[:ezid_password]
+
+    target = "#{request.base_url}#{dataset_path(@dataset.key)}"
+
+    metadata = {}
+    metadata['_target'] = target
+    metadata['datacite'] = @dataset.to_datacite_xml
+
+    uri = URI.parse("https://#{host}/shoulder/#{shoulder}")
+
+    request = Net::HTTP::Post.new(uri.request_uri)
+    request.basic_auth(user, password)
+    request.content_type = "text/plain"
+    request.body = make_anvl(metadata)
+
+    sock = Net::HTTP.new(uri.host, uri.port)
+    # sock.set_debug_output $stderr
+
+    if uri.scheme == 'https'
+      sock.use_ssl = true
+    end
+
+    begin
+
+      response = sock.start { |http| http.request(request) }
+
+    rescue Net::HTTPBadResponse, Net::HTTPServerError => error
+      Rails.logger.warn error.message
+      Rails.logger.warn response.body
+    end
+
+    case response
+      when Net::HTTPSuccess, Net::HTTPRedirection
+        response_split = response.body.split(" ")
+        Rails.logger.warn response_split
+        response_split2 = response_split[1].split(":")
+        Rails.logger.warn response_split2
+        doi = response_split2[1]
+
+      else
+        Rails.logger.warn response.to_yaml
+        raise "error minting DOI"
+    end
+
+  end
+
+  def update_datacite_metadata
 
   end
 

@@ -200,6 +200,26 @@
     </div>
   </div>
 
+  <% if can? :manage, @dataset && @dataset.complete? %>
+    <h2>DataCite Record:</h2>
+    <% @datacite_record.each do |key, value| %>
+
+      <div class="row">
+        <span class="col-md-1"><%= key %>:</span>
+        <% if key == "metadata" %>
+
+          <span class="col-md-11"><pre><code><%= value %></code></pre></span>
+
+        <% else %>
+
+          <span class="col-md-11"><%= value %></span>
+
+        <% end %>
+      </div>
+    <% end %>
+
+  <% end %>
+
   <% localtitle = @dataset.title.downcase %>
 
   <% if localtitle.include? 'unicorn' %>

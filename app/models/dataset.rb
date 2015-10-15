@@ -76,7 +76,7 @@ class Dataset < ActiveRecord::Base
     publicationYearNode.content = self.publication_year || "2015"
     publicationYearNode.parent = resourceNode
 
-    if self.keywords && keywordArr.length > 0
+    if self.keywords
 
       subjectsNode = doc.create_element('subjects')
       subjectsNode.parent = resourceNode
