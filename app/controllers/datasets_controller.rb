@@ -15,7 +15,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :review_deposit_agreement
   skip_load_and_authorize_resource :only => :datacite_record
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi, :datacite_record]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi, :datacite_record, :update_datacite_metadata]
 
   # enable streaming responses
   include ActionController::Streaming
@@ -92,9 +92,12 @@ class DatasetsController < ApplicationController
   # PATCH/PUT /datasets/1
   # PATCH/PUT /datasets/1.json
   def update
-
+    
     respond_to do |format|
       if @dataset.update(dataset_params)
+        if @dataset.complete?
+          update_datacite_metadata
+        end
         format.html { redirect_to dataset_path(@dataset.key), notice: 'Dataset was successfully updated.' }
         format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
       else
@@ -422,7 +425,6 @@ class DatasetsController < ApplicationController
 
       return {"error" => error.message}
 
-
     end
 
   end
@@ -444,65 +446,6 @@ class DatasetsController < ApplicationController
   def dataset_params
     params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :creator_text, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, :search, binaries_attributes: [:attachment, :description, :dataset_id, :id, :_destory ])
   end
-
-  def  handle_doi(operation)
-    host = IDB_CONFIG[:ezid_host]
-    shoulder = IDB_CONFIG[:ezid_shoulder]
-    user = IDB_CONFIG[:ezid_username]
-    password = IDB_CONFIG[:ezid_password]
-    last_segment = shoulder
-
-    target = "#{request.base_url}#{dataset_path(@dataset.key)}"
-
-    metadata = {}
-    metadata['_target'] = target
-    metadata['datacite'] = @dataset.to_datacite_xml
-
-    Rails.logger.warn metadata
-
-    case operation
-      when :update
-        last_segment = "#doi:{@dataset.identifier}"
-
-    end
-
-    uri = URI.parse("https://#{host}/shoulder/#{shoulder}")
-
-    request = Net::HTTP::Post.new(uri.request_uri)
-    request.basic_auth(user, password)
-    request.content_type = "text/plain"
-    request.body = make_anvl(metadata)
-
-    sock = Net::HTTP.new(uri.host, uri.port)
-    # sock.set_debug_output $stderr
-
-    if uri.scheme == 'https'
-      sock.use_ssl = true
-    end
-
-    begin
-
-      response = sock.start { |http| http.request(request) }
-
-    rescue Net::HTTPBadResponse, Net::HTTPServerError => error
-      Rails.logger.warn error.message
-      Rails.logger.warn response.body
-    end
-
-    case response
-      when Net::HTTPSuccess, Net::HTTPRedirection
-        response_split = response.body.split(" ")
-        Rails.logger.warn response_split
-        response_split2 = response_split[1].split(":")
-        Rails.logger.warn response_split2
-        doi = response_split2[1]
-
-      else
-        Rails.logger.warn response.to_yaml
-        raise "error minting DOI"
-    end
-  end
-
 
   def ezid_metadata_response
 
@@ -583,6 +526,55 @@ class DatasetsController < ApplicationController
   end
 
   def update_datacite_metadata
+
+    if @dataset.complete?
+
+      host = IDB_CONFIG[:ezid_host]
+      user = IDB_CONFIG[:ezid_username]
+      password = IDB_CONFIG[:ezid_password]
+
+      target = "#{request.base_url}#{dataset_path(@dataset.key)}"
+
+      metadata = {}
+      metadata['_target'] = target
+      metadata['datacite'] = @dataset.to_datacite_xml
+
+      Rails.logger.warn metadata.to_yaml
+
+      uri = URI.parse("https://#{host}/id/doi:#{@dataset.identifier}")
+
+      request = Net::HTTP::Post.new(uri.request_uri)
+      request.basic_auth(user, password)
+      request.content_type = "text/plain"
+      request.body = make_anvl(metadata)
+
+      sock = Net::HTTP.new(uri.host, uri.port)
+      # sock.set_debug_output $stderr
+
+      if uri.scheme == 'https'
+        sock.use_ssl = true
+      end
+
+      begin
+
+        response = sock.start { |http| http.request(request) }
+
+      rescue Net::HTTPBadResponse, Net::HTTPServerError => error
+        Rails.logger.warn error.message
+        Rails.logger.warn response.body
+      end
+
+      case response
+        when Net::HTTPSuccess, Net::HTTPRedirection
+          #OK
+
+        else
+          Rails.logger.warn response.to_yaml
+          raise "error updating DataCite metadata"
+      end
+    else
+      Rails.logger.warn "dataset not detected as complete"
+    end
 
   end
 
