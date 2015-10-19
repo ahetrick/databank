@@ -64,6 +64,8 @@ module Repository
 
     before_create { self.web_id ||= generate_web_id }
     before_create :set_pcdm_class
+    before_destroy :destroy_bytestreams
+    after_destroy { Solr::Solr.client.commit }
 
     def set_pcdm_class
       self.pcdm_class = 'http://pcdm.org/models#Object'
@@ -136,6 +138,12 @@ module Repository
         break unless self.class.find_by_web_id(proposed_id)
       end
       proposed_id
+    end
+
+    def destroy_bytestreams
+      self.bytestreams.each do |bytestream|
+        bytestream.destroy
+      end
     end
 
     ##

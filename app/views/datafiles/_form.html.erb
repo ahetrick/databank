@@ -1,0 +1,8 @@
+<%= form_for :datafile do |f| %>
+
+  <%= f.file_field :file_upload %>
+  Description: <%= f.text_field :description %><br/>
+  <%= f.hidden_field :dataset_id, value: @dataset.id, :disabled=>true %>
+  <%= f.submit %>
+
+<% end %>

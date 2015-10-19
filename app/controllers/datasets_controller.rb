@@ -58,12 +58,10 @@ class DatasetsController < ApplicationController
   # GET /datasets/new
   def new
     @dataset = Dataset.new
-    @binary = @dataset.binaries.build
   end
 
   # GET /datasets/1/edit
   def edit
-    @binary = @dataset.binaries.build
   end
 
   # POST /datasets
@@ -73,6 +71,27 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       if @dataset.save
+
+        params[:file_uploads].each{ |file_upload|
+          @datafile = Repository::Datafile.new(
+              repo_dataset: @dataset.repo_dataset,
+              parent_url: (@dataset.repo_dataset).id,
+              published: true)
+
+          @datafile.save!
+
+          upload_io = file_upload.tempfile
+
+          bytestream = Repository::Bytestream.new(
+              parent_url: @datafile.id,
+              type: Repository::Bytestream::Type::MASTER,
+              datafile: @datafile,
+              upload_filename:  file_upload.original_filename,
+              upload_io: upload_io)
+
+          bytestream.save!
+        }
+
         if @dataset.complete?
           success_msg = 'Dataset was successfully deposited.'
         else
@@ -95,6 +114,41 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       if @dataset.update(dataset_params)
+
+        if(params.has_key?(:file_uploads))
+          params[:file_uploads].each{ |file_upload|
+            datafile = Repository::Datafile.new(
+                repo_dataset: @dataset.repo_dataset,
+                parent_url: (@dataset.repo_dataset).id,
+                published: true)
+
+            datafile.save!
+
+            upload_io = file_upload.tempfile
+
+            bytestream = Repository::Bytestream.new(
+                parent_url: datafile.id,
+                type: Repository::Bytestream::Type::MASTER,
+                datafile: datafile,
+                upload_filename:  file_upload.original_filename,
+                upload_io: upload_io)
+
+            bytestream.save!
+          }
+        end
+
+        if(params.has_key?(:datafile_description_updates))
+          datafile_web_ids = params[:datafile_description_updates].keys
+          datafile_web_ids.each do |datafile_web_id|
+            datafile = Repository::Datafile.find_by_web_id(datafile_web_id)
+            raise ActiveRecord::RecordNotFound, 'Datafile not found' unless datafile
+            datafile.description = params[:datafile_description_updates][datafile_web_id]
+            datafile.save!
+          end
+        end
+
+
+
         if @dataset.complete?
           update_datacite_metadata
         end
@@ -211,7 +265,7 @@ class DatasetsController < ApplicationController
           else
             response.content_type = bs.media_type if bs.media_type
             response.header['Content-Disposition'] =
-                "attachment; filename=#{bs.filename || 'binary'}"
+                "attachment; filename=#{bs.filename || 'file'}"
             res.read_body do |chunk|
               response.stream.write chunk
             end
@@ -440,11 +494,9 @@ class DatasetsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   # def dataset_params
-  #   params.require(:dataset).permit(:input_title, :input_identifier, :input_publication_year, :input_license, :input_description, :input_creator_name_list, :file_id, :selected_files, binaries_attributes: [:datafile, :dataset_id])
-  # end
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :creator_text, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, :search, binaries_attributes: [:attachment, :description, :dataset_id, :id, :_destory ])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :creator_text, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, :search, datafiles_attributes: [:datafile, :description, :dataset_id, :id, :_destory, :_update ])
   end
 
   def ezid_metadata_response

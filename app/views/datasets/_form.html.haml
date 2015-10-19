@@ -87,29 +87,17 @@
     %span(class="help-block")
       For files larger than 2 GB, contact the
       %a(href="http://researchdataservice.illinois.edu/")Research Data Service
-    - if @dataset.datafiles
 
+    - if @dataset.datafiles
       - @dataset.datafiles.each do |datafile|
 
         - if datafile.master_bytestream
-          .row
-            - binary = datafile.master_bytestream
-            %span(class="col-md-6" )
-              = binary.filename
-            %span(class="col-md-4")
-              = datafile.description
-            %span(class="col-md-1")
-              - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
-                = link_to "#{request.base_url}/datasets/#{@dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-sm btn-danger" do
-                  = %Q[<span class="glyphicon glyphicon-remove">  Delete File</span>].html_safe
-          %br
+          = render :partial => "datafile_update_fields", locals: {:datafile => datafile, :dataset => @dataset}
 
-    - if params[:action] == 'new'
-      = f.fields_for :binaries do |binary|
-        = render 'binary_fields', f: binary
     - if ((params[:action] == 'new') ||  (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)))
-      .links
-        = link_to_add_association %Q[<button type="button" class="btn btn-primary btn-sm add-attachment-subform-button"><span class="glyphicon glyphicon-plus dataset">  Add File</span></button>].html_safe, f, :binaries
+      %input(type="file" id="dataset_upload" multiple="multiple" name="file_uploads[]")
+
+
 
 
   .container-fluid.save

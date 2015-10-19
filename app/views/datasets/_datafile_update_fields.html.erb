@@ -1,0 +1,22 @@
+<div class="row">
+  <span class="col-md-6">
+    <%= (datafile.master_bytestream).filename %>
+
+  </span>
+
+  <span class="col-md-4">
+
+    <input type="text" value="<%= datafile.description %>" name="datafile_description_updates[<%= datafile.web_id %>]">
+
+
+  </span>
+
+  <span class="col-md-1">
+    <% if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?)) %>
+      <%= link_to "#{request.base_url}/datasets/#{@dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-sm btn-danger" do %>
+        <%= %Q[<span class="glyphicon glyphicon-remove">  Delete File</span>].html_safe %>
+      <% end %>
+    <% end %>
+  </span>
+</div>
+

@@ -5,9 +5,8 @@ class Dataset < ActiveRecord::Base
   MIN_FILES = 1
   MAX_FILES = 10000
 
-
-  has_many :binaries, dependent: :destroy
-  accepts_nested_attributes_for :binaries, :reject_if => :all_blank, allow_destroy: true
+  has_many :datafiles
+  accepts_nested_attributes_for :datafiles, :reject_if => :all_blank, allow_destroy: true
 
   before_create 'set_key'
   after_save 'save_to_repo'
@@ -132,12 +131,15 @@ class Dataset < ActiveRecord::Base
   end
 
   def repo_dataset
+
     if !self.key || self.key.empty?
       nil
     else
       repo_dataset = Repository::RepoDataset.find_by_key(self.key)
       raise ActiveRecord::RecordNotFound unless repo_dataset
     end
+
+    repo_dataset
 
   end
 
@@ -169,51 +171,6 @@ class Dataset < ActiveRecord::Base
     repo_dataset.save!
     Solr::Solr.client.commit
 
-    binaries.each do |binary|
-      unless binary.attachment.nil? || binary.attachment.current_path.nil?
-         begin
-          # make datafile
-          datafile = Repository::Datafile.new(
-              repo_dataset: repo_dataset,
-              parent_url: repo_dataset.id,
-              published: true,
-              description: binary.description)
-          datafile.save!
-
-          Solr::Solr.client.commit
-
-          path = binary.attachment.current_path
-          if File.exists?(path)
-            bs = Repository::Bytestream.new(
-                parent_url: datafile.id,
-                type: Repository::Bytestream::Type::MASTER,
-                datafile: datafile,
-                upload_pathname: path)
-
-            bs.media_type = binary.attachment.file.content_type
-            bs.save!
-            Solr::Solr.client.commit
-
-            binary.destroy
-
-          else
-            Rails.logger.debug "Did not find path #{path}"
-          end
-
-         rescue Exception => ex
-
-           datafile.destroy if datafile
-           bs.destroy if bs
-           binary.destroy if binary
-           raise ex
-
-         end #end make datafile/bytestream transaction
-
-      end
-    end
-    #clean upload directory
-    FileUtils.rm_rf('public/uploads/tmp')
-    FileUtils.rm_rf('public/uploads/binary')
   end
 
   def delete_repository_entity
@@ -221,9 +178,9 @@ class Dataset < ActiveRecord::Base
     if !repo_dataset.nil?
       datafiles.each do |datafile|
         datafile.destroy
-        Solr::Solr.client.commit
       end
       repo_dataset.destroy
+      Solr::Solr.client.commit
     end
   end
 

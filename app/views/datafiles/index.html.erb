@@ -1,0 +1,18 @@
+<%= debug(params) %>
+<p id="notice"><%= notice %></p>
+
+<h1>Datafiles</h1>
+
+<table>
+  <tbody>
+  <% @datafiles.each do |datafile| %>
+    <tr>
+      <td><%= datafile.web_id %></td>
+      <td><%= datafile.description %></td>
+      <td><%= datafile.id %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<br>

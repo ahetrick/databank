@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   resources :users
   resources :identities
   resources :datasets do
-    resources :binaries
+    :datafiles
   end
 
   # The priority is based upon order of creation: first created -> highest priority.
@@ -26,6 +26,26 @@ Rails.application.routes.draw do
   get '/datasets/:id/destroy_file/:web_id', to: 'datasets#destroy_file'
 
   get '/binaries/:id/download', to: 'binaries#download'
+
+
+  # datafiles
+  get '/datafiles', to: 'datafiles#index'
+  get '/datasets/:dataset_key/datafiles', to: 'datafiles#index'
+
+  get '/datasets/:dataset_key/datafiles/new', to: 'datafiles#new'
+  post '/datasets/:dataset_key/datafiles/new', to: 'datafiles#create'
+
+  post '/datasets/:dataset_key/datafiles', to: 'datafiles#create'
+
+  get '/datafiles/:web_id', to: 'datafiles#show'
+
+  patch '/datafiles/:web_id', to: 'datafiles#update'
+  put '/datafiles/:web_id', to: 'datafiles#update'
+
+  get '/datafiles/:web_id/edit', to: 'datafiles#edit'
+  get '/datafiles/:web_id/edit', to: 'datafiles#edit'
+
+  delete '/datafiles/:web_id', to: 'datafiles#destroy'
 
   # deposit
   get '/datasets/:id/deposit', to: 'datasets#deposit'

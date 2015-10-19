@@ -81,6 +81,8 @@ ready = function() {
 
     $("#login-prompt").modal('show');
 
+    $('#dataset_upload').fileupload();
+
 
 }
 
