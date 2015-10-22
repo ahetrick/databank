@@ -95,7 +95,7 @@
 
   %div(id="datafiles-form")
 
-    - if ((params[:action] != 'new')
+    - if (params[:action] != 'new')
       .container-fluid
         %fieldset(class = "metadata-border")
           %legend(class = "metadata-border")File(s) -- at least one required for deposit
@@ -114,7 +114,7 @@
                         = link_to "#{request.base_url}/datasets/#{@dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-sm btn-danger" do
                           = %Q[<span class="glyphicon glyphicon-remove">  File</span>].html_safe
           %div(id="new_datafiles")
-          - if ((can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)))
+          - if ( (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)) )
             %form(id= "new_datafile" enctype = "multipart/form-data" action= "/datasets/#{@dataset.key}/datafiles/new" remote=true accept-charset = "UFT-8" method = "post" multipart = true role = "form" id="new_datafile" class = "container-fluid input-append datafile-form")
               %input(type="hidden" name="dataset_key" value="#{@dataset.key}" )
               /# The fileinput-button span is used to style the file input field as button
