@@ -114,6 +114,7 @@
                         = link_to "#{request.base_url}/datasets/#{@dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-sm btn-danger" do
                           = %Q[<span class="glyphicon glyphicon-remove">  File</span>].html_safe
           %div(id="new_datafiles")
+          %div(id="datafiles_upload_progress")
           - if ( (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)) )
             %form(id= "new_datafile" enctype = "multipart/form-data" action= "/datasets/#{@dataset.key}/datafiles/new" remote=true accept-charset = "UFT-8" method = "post" multipart = true role = "form" id="new_datafile" class = "container-fluid input-append datafile-form")
               %input(type="hidden" name="dataset_key" value="#{@dataset.key}" )
@@ -123,12 +124,11 @@
                 %span Add files...
                 /# The file input field used as target for the file upload widget
                 %input(id="datafile-file-upload" type="file" name="file_upload" multiple)
-            /= The global progress bar
-            -#%div(id="progress" class="progress")
-              .progress-bar.progress-bar-success
-            /= The container for the uploaded files
-            -#%div(id="files" class="files")
-
+%script(id="template-upload" type="text/x-tmpl")
+  .upload
+    {%=o.name%}
+    .progress
+      %div(class="bar progress-bar" style="width: 0%;")
 
 - if !@dataset.depositor_email
   %script

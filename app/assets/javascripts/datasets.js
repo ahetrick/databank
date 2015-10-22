@@ -89,8 +89,20 @@ ready = function() {
     //alert("pre-validity check");
     //alert("dataset key: "+ dataset_key)
     $("#new_datafile").fileupload({
-           dataType: "script"
-        });
+        dataType: "script",
+        add: function(e, data) {
+            data.context = $(tmpl("template-upload", data.files[0]));
+            $('#datafiles_upload_progress').append(data.context);
+            return data.submit();
+        },
+        progress: function(e, data) {
+            var progress;
+            if (data.context) {
+                progress = parseInt(data.loaded / data.total * 100, 10);
+                return data.context.find('.bar').css('width', progress + '%');
+            }
+        }
+    });
 }
 
 function handleNotAgreed(){
