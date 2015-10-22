@@ -78,9 +78,9 @@ class DatasetsController < ApplicationController
           success_msg = 'Dataset was saved but not deposited.'
         end
        
-        format.html { redirect_to dataset_path(@dataset.key), notice: success_msg }
+        format.html { redirect_to edit_dataset_path(@dataset.key) }
 
-        format.json { render :show, status: :created, location: dataset_path(@dataset.key) }
+        format.json { render :edit, status: :created, location: edit_dataset_path(@dataset.key) }
       else
         format.html { render :new }
         format.json { render json: @dataset.errors, status: :unprocessable_entity }
