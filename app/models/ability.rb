@@ -31,6 +31,7 @@ class Ability
       can :download_BibTeX, Dataset
       can :download_RIS, Dataset
       can :show, Dataset
+      can :review_deposit_agreement, Dataset
     else
       can :read, :all
       can :stream_file, Dataset

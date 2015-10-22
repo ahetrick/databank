@@ -1,18 +1,54 @@
 <%= debug(params) %>
 <p id="notice"><%= notice %></p>
+<% if params.has_key?(:dataset_key) %>
+  <% dataset = @dataset %>
+  <h1>Datafiles for <%= @dataset.title %></h1>
+  <% if ((can? :update, dataset) || dataset.complete?) %>
 
-<h1>Datafiles</h1>
+    <div class="row">
+      <span class="col-md-9">
+        <% (dataset.identifier && !dataset.identifier.empty?) ? doi_part = "doi:#{dataset.identifier}" : doi_part = "" %>
+        <%= link_to "#{dataset.creator_list} (#{dataset.publication_year}): #{dataset.title}. #{dataset.publisher}. #{doi_part}", dataset_path(dataset.key) %>
+        <br />
+        <% if dataset.description && !dataset.description.empty? %>
+          <%= dataset.description.first(230) %><%if dataset.description.length > 230 %>[...]<%end%><br />
+        <% end %>
+        <% if dataset.keywords && !dataset.keywords.empty? %>
+          <span class="metadata-label">Keyword(s): </span><%= dataset.keywords %>
+        <% end %>
+      </span>
 
-<table>
-  <tbody>
-  <% @datafiles.each do |datafile| %>
-    <tr>
-      <td><%= datafile.web_id %></td>
-      <td><%= datafile.description %></td>
-      <td><%= datafile.id %></td>
-    </tr>
+      <span class="col-md-3">
+
+        <%= link_to dataset_path(dataset.key), :class => "btn btn-primary btn-sm" do %>
+          <span class="glyphicon glyphicon-zoom-in"></span> View
+        <% end %>
+
+        <% if can? :update, dataset %>
+          <%= link_to edit_dataset_path(dataset.key), :class => "btn btn-info btn-sm" do %>
+            <span class="glyphicon glyphicon-edit"></span> Edit
+          <% end %>
+        <% end %>
+
+        <% if (((can? :destroy, dataset) && (!dataset.complete?))||(can? :manage, dataset) )%>
+          <%= link_to dataset_path(dataset.key), method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn btn-danger btn-sm" do %>
+            <span class="glyphicon glyphicon-remove"></span> Delete
+          <% end %>
+        <% end %>
+
+      </span>
+    </div>
+    <hr/>
+
+    <% @datafiles.each do |datafile| %>
+      <tr>
+        <%= render partial: 'detail', :layout => false, locals: {dataset: @dataset, datafile: datafile} %>
+      </tr>
+      <hr/>
+    <% end %>
+
+    <br>
+
   <% end %>
-  </tbody>
-</table>
+<% end %>
 
-<br>

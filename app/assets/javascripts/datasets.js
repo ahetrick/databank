@@ -53,10 +53,16 @@ ready = function() {
         }
     });
 
-    $('.save-button').click(function () {
+    $('#new-save-button').click(function () {
         window.onbeforeunload = null;
-        $('#dataset-submit-button').click();
-        //$('.dataset-form')[0].submit();
+        $('#new_dataset').submit();
+
+    });
+
+    $('#update-save-button').click(function () {
+        window.onbeforeunload = null;
+        $("[id^=edit_dataset]").submit();
+
     });
 
     $('input.dataset').change(function() {
@@ -80,10 +86,11 @@ ready = function() {
     var clip = new ZeroClipboard($("#d_clip_button"))
 
     $("#login-prompt").modal('show');
-
-    $('#dataset_upload').fileupload();
-
-
+    //alert("pre-validity check");
+    //alert("dataset key: "+ dataset_key)
+    $("#new_datafile").fileupload({
+           dataType: "script"
+        });
 }
 
 function handleNotAgreed(){
@@ -123,7 +130,6 @@ function setDepositor(email, name){
     $('#depositor_name').val(name);
     $('.save').show();
     $('#new-save-button').show();
-    $('#new-save-button').text('Save & Review Dataset');
     $('.dataset').removeAttr("disabled");
     $('.file-field').removeAttr("disabled");
     $('.add-attachment-subform-button').show();

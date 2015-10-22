@@ -1,117 +1,140 @@
-- if params[:action] == 'new'
-  .deposit-agreement-warning
-    You must agree to the Deposit Agreement before depositing data into Illinois Data Bank.
-    %button(type="button" id="show-agreement-modal-link" class="btn btn-primary .deposit-agreement-btn" data-toggle="modal" data-target="#agreement") Review Deposit Agreement
-    %button(type="button" class="btn btn-danger" name="cancel" onclick='window.location = "/"' )Cancel
-
-= form_for(@dataset, :html => { :multipart => true, :role => "form", :enctype => "multipart/form-data", "data-toggle"=>"validator", :class => "container-fluid input-append dataset-form"}) do |f|
-  - if @dataset.errors.any?
-    .error_explaination
-      = "#{pluralize(@dataset.errors.count, "error")} prohibited this dataset from being deposited."
-      %ul
-        - @dataset.errors.full_messages.each do |msg|
-          %li
-            = msg
-
-  - if can? :manage, @dataset
-    .form-group
-      = f.label :identifier, "DOI", :class => "control-label"
-      %br
-      = f.text_field :identifier, :class => "form-control dataset", :placeholder => "[Leave blank if requesting a DOI.]"
-
-  %fieldset(class = "metadata-border")
-    %legend(class = "metadata-border")Required to Deposit Dataset
-    .form-group
-      = f.label :title, "Dataset Title", :class => "control-label"
-      %br
-      = f.text_field :title, :class => "form-control dataset", :placeholder => "[The Title]"
-    .form-group
-      = f.label :creator_text, "Creator(s)", :class => "control-label"
-      %br
-      = f.text_field :creator_text, :class => "form-control dataset", :placeholder => "[Semi-colon spearated list of names (e.g.: Verfasser, Maria; Auteur, Henri)]"
-      %span(class="help-block") The personal name format for each name in the semi-colon separted list should be: family, given, (e.g.: Verfasser, Maria; Auteur, Henri).
-    .row
-      %span(class="col-md-6")
-        .form-group
-          = f.label :corresponding_creator_name, "Corresponding Creator", :class => "control-label"
-          %a(href="#" data-toggle="tooltip" title = "The personal name for the person who serves as the point of contact for inquiries about the dataset (e.g. Verfasser, Maria)." tabindex="-1")
-            %span(class="glyphicon glyphicon-question-sign")
-          %br
-          = f.text_field :corresponding_creator_name, :class => "form-control dataset" , :placeholder => "[The personal name for the dataset contact (e.g. Verfasser, Maria).]"
-      %span(class="col-md-6")
-        .form-group
-          = f.label :corresponding_creator_email, "Corresponding Creator Email Address", :class => "control-label"
-          %a(href="#" data-toggle="tooltip" title = "Correspondence about this dataset, including notice of deposit, will route to this email address." tabindex="-1" )
-            %span(class="glyphicon glyphicon-question-sign")
-          %br
-
-          = f.email_field :corresponding_creator_email, :class => "form-control dataset", :placeholder => "[For correspondence about this dataset, including notice of deposit.]"
-          .help-block.with-errors
-
-    .field
-      = f.hidden_field :publisher, :value=>"University of Illinois at Urbana-Champaign"
-
-    - if can? :manage, @dataset
-      .form-group
-        = f.label :publication_year, "Publication Year", :class => "control-label"
-        %br
-        = f.number_field :publication_year, :value => '2015', :class => "form-control dataset", :min => "1800", :max => "#{Time.now.year + 1}", :maxlength => 4
-        %span(class="help-block") Four digit year (YYYY)
-    - else
-      = f.hidden_field :publication_year, :value => "#{Time.now.year}"
-
-  %fieldset(class = "metadata-border")
-    %legend(class = "metadata-border")Recommended
-    .form-group
-      = f.label :description, "Dataset Description", :class => "control-label"
-      %br
-      = f.text_area :description, :rows => 3,  :class => "form-control dataset", :placeholder => "[Description of this dataset, including an overview of content, structure, and format.]"
-
-    .form-group
-      = f.label :keywords, "Keywords (Semi-colon delimted list)", :class => "control-label"
-      %br
-      = f.text_field :keywords, :class => "form-control dataset", :placeholder => "[Semi-colon separated list of keywords or phrases, e.g.: (institutional repositories; file formats)]"
-      %span(class="help-block") Use a semi-colon (;) to separate keywords or phrases (e.g.: institutional repositories; file formats).
-
-    .form-group
-      = f.label :license, "License", :class => "control-label"
-      %br
-      = f.text_field :license, :class => "form-control dataset"
-
-  = f.hidden_field :depositor_email, :class => "form-control", :id => "depositor_email", :title => "Must agree to deposit agreement to deposit data.", :required => true
-
-  = f.hidden_field :depositor_name, :class => "form-control", :id => "depositor_name"
-
-  %fieldset(class = "metadata-border")
-    %legend(class = "metadata-border")File(s) -- at least one required for deposit
-    %span(class="help-block")
-      For files larger than 2 GB, contact the
-      %a(href="http://researchdataservice.illinois.edu/")Research Data Service
-
-    - if @dataset.datafiles
-      - @dataset.datafiles.each do |datafile|
-
-        - if datafile.master_bytestream
-          = render :partial => "datafile_update_fields", locals: {:datafile => datafile, :dataset => @dataset}
-
-    - if ((params[:action] == 'new') ||  (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)))
-      %input(type="file" id="dataset_upload" multiple="multiple" name="file_uploads[]")
-
-
-
-
-  .container-fluid.save
-    .row
-      %span(class="col-md-2" )
-        %button(type="button" id="show-agreement-modal-link" class="btn btn-primary" data-toggle="modal" data-target="#agreement") Review Deposit Agreement
-      %span(class="pull-right" )
+%div(id="wrapper")
+  %div(id="main-form-top")
+    - if params[:action] == 'new'
+      .deposit-agreement-warning
+        You must agree to the Deposit Agreement before depositing data into Illinois Data Bank.
+        %button(type="button" id="show-agreement-modal-link" class="btn btn-primary .deposit-agreement-btn" data-toggle="modal" data-target="#agreement") Review Deposit Agreement
         %button(type="button" class="btn btn-danger" name="cancel" onclick='window.location = "/"' )Cancel
 
-        -if params[:action] == 'new'
-          %button(type="button" class="btn btn-primary save-button" id="new-save-button")
-        -else
-          %button(type="button" class="btn btn-primary update save-button") Update Dataset
-        %button(type = "submit" class="hidden" id="dataset-submit-button" ) Submit
+    = form_for(@dataset, :html => { :multipart => true, :role => "form", :enctype => "multipart/form-data", "data-toggle"=>"validator", :class => "container-fluid input-append dataset-form"}) do |f|
+      - if @dataset.errors.any?
+        .error_explaination
+          = "#{pluralize(@dataset.errors.count, "error")} prohibited this dataset from being deposited."
+          %ul
+            - @dataset.errors.full_messages.each do |msg|
+              %li
+                = msg
+
+      - if can? :manage, @dataset
+        .form-group
+          = f.label :identifier, "DOI", :class => "control-label"
+          %br
+          = f.text_field :identifier, :class => "form-control dataset", :placeholder => "[Leave blank if requesting a DOI.]"
+
+      %fieldset(class = "metadata-border")
+        %legend(class = "metadata-border")Required to Deposit Dataset
+        .form-group
+          = f.label :title, "Dataset Title", :class => "control-label"
+          %br
+          = f.text_field :title, :class => "form-control dataset", :placeholder => "[The Title]"
+        .form-group
+          = f.label :creator_text, "Creator(s)", :class => "control-label"
+          %br
+          = f.text_field :creator_text, :class => "form-control dataset", :placeholder => "[Semi-colon spearated list of names (e.g.: Verfasser, Maria; Auteur, Henri)]"
+          %span(class="help-block") The personal name format for each name in the semi-colon separted list should be: family, given, (e.g.: Verfasser, Maria; Auteur, Henri).
+        .row
+          %span(class="col-md-6")
+            .form-group
+              = f.label :corresponding_creator_name, "Corresponding Creator", :class => "control-label"
+              = f.text_field :corresponding_creator_name, :class => "form-control dataset" , :placeholder => "[The personal name for the person who serves as point of contact for inquiries about the dataset (e.g. Verfasser, Maria).]"
+          %span(class="col-md-6")
+            .form-group
+              = f.label :corresponding_creator_email, "Corresponding Creator Email Address", :class => "control-label"
+              = f.email_field :corresponding_creator_email, :class => "form-control dataset", :placeholder => "[Correspondence about this dataset, including notice of deposit, will route to this email address.]"
+              .help-block.with-errors
+
+        .field
+          = f.hidden_field :publisher, :value=>"University of Illinois at Urbana-Champaign"
+
+        - if can? :manage, @dataset
+          .form-group
+            = f.label :publication_year, "Publication Year", :class => "control-label"
+            %br
+            = f.number_field :publication_year, :value => '2015', :class => "form-control dataset", :min => "1800", :max => "#{Time.now.year + 1}", :maxlength => 4
+            %span(class="help-block") Four digit year (YYYY)
+        - else
+          = f.hidden_field :publication_year, :value => "#{Time.now.year}"
+
+      %fieldset(class = "metadata-border")
+        %legend(class = "metadata-border")Recommended
+        .form-group
+          = f.label :description, "Dataset Description", :class => "control-label"
+          %br
+          = f.text_area :description, :rows => 3,  :class => "form-control dataset", :placeholder => "[Description of this dataset, including an overview of content, structure, and format.]"
+
+        .form-group
+          = f.label :keywords, "Keywords (Semi-colon delimted list)", :class => "control-label"
+          %br
+          = f.text_field :keywords, :class => "form-control dataset", :placeholder => "[Semi-colon separated list of keywords or phrases, e.g.: (institutional repositories; file formats)]"
+          %span(class="help-block") Use a semi-colon (;) to separate keywords or phrases (e.g.: institutional repositories; file formats).
+
+        .form-group
+          = f.label :license, "License", :class => "control-label"
+          %br
+          = f.text_field :license, :class => "form-control dataset"
+
+      = f.hidden_field :depositor_email, :class => "form-control", :id => "depositor_email", :title => "Must agree to deposit agreement to deposit data.", :required => true
+
+      = f.hidden_field :depositor_name, :class => "form-control", :id => "depositor_name"
+
+  %div(id="main-form-bottom")
+
+    .container-fluid.save
+      .row
+        %span(class="col-md-2" )
+          - if params[:action] == 'new'
+            %button(type="button" id="show-agreement-modal-link" class="btn btn-primary" data-toggle="modal" data-target="#agreement") Review Deposit Agreement
+          -else
+            %button(type="button" class="btn btn-primary" onclick='window.location="/datasets/#{@dataset.key}/review_deposit_agreement"' ) Review Deposit Agreement
+        %span(class="pull-right" )
+          %button(type="button" class="btn btn-danger" name="cancel" onclick='window.location = "/"' )Cancel
+          - if params[:action] == 'new'
+            %button(type="button" class="btn btn-primary save-button" id="new-save-button") Next (Upload Files) ->
+          - else
+            %button(type="button" class="btn btn-primary update save-button" id="update-save-button") Save & Review Dataset
+
+  %div(id="datafiles-form")
+    .container-fluid
+
+      %fieldset(class = "metadata-border")
+        %legend(class = "metadata-border")File(s) -- at least one required for deposit
+
+        %span(class="help-block")
+          For files larger than 2 GB, contact the
+          %a(href="http://researchdataservice.illinois.edu/")Research Data Service
+
+        - if @dataset.datafiles
+          %div(id="old_datafiles")
+            - @dataset.datafiles.each do |datafile|
+
+              - if datafile.master_bytestream
+                .row
+                  %span(class="col-md-10")
+                    = (datafile.master_bytestream).filename
+                  %span(class="col-md-2")
+                    - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
+                      = link_to "#{request.base_url}/datasets/#{@dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-sm btn-danger" do
+                        = %Q[<span class="glyphicon glyphicon-remove">  File</span>].html_safe
+        %div(id="new_datafiles")
+
+        - if ((params[:action] == 'new') ||  (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)))
+          %form(id= "new_datafile" enctype = "multipart/form-data" action= "/datasets/#{@dataset.key}/datafiles/new" remote=true accept-charset = "UFT-8" method = "post" multipart = true role = "form" id="new_datafile" class = "container-fluid input-append datafile-form")
+            %input(type="hidden" name="dataset_key" value="#{@dataset.key}" )
+            /# The fileinput-button span is used to style the file input field as button
+            %span(class="btn btn-success fileinput-button")
+              %i(class="glyphicon glyphicon-plus")
+              %span Add files...
+              /# The file input field used as target for the file upload widget
+              %input(id="datafile-file-upload" type="file" name="file_upload" multiple)
+            -#%input(type="file" name="file_upload" id="datafile-file-upload" multiple=true)
+            -#%input(type="submit" name="commit" value="Upload Datafiles" )
+
+          /= The global progress bar
+          -#%div(id="progress" class="progress")
+            .progress-bar.progress-bar-success
+          /= The container for the uploaded files
+          -#%div(id="files" class="files")
+
 
 - if !@dataset.depositor_email
   %script

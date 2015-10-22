@@ -36,20 +36,25 @@
   <% end %>
 </head>
 <body>
+<div id="body" class="container">
+  <%= render :partial => 'shared/header_navbar' %>
+  <div id="main-container" class="container-fluid tab-content">
 
-<%= render :partial => 'shared/header_navbar' %>
-<div id="main-container" class="container tab-content">
-
-  <div class="row">
-    <div class="container">
+    <div class="row">
       <% flash.each do |key, value| %>
         <div class="alert alert-info"><%= sanitize(value) %></div>
       <% end %>
       <%= yield %>
     </div>
   </div>
-</div>
 
-<%= render :partial => 'shared/footer' %>
+  <%= render :partial => 'shared/footer' %>
+</div>
+<% if @dataset %>
+  <%= javascript_tag do %>
+    window.dataset_key = '<%= j @dataset.key %>';
+  <% end%>
+<% end %>
+
 </body>
 </html>

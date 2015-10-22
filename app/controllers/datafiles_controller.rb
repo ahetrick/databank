@@ -4,6 +4,7 @@ class DatafilesController < ApplicationController
 
   before_action :set_dataset, only: [:new, :create, :edit, :show]
   before_action :set_datafile, only: [:edit, :show, :destroy, :master_bytestream]
+  skip_before_filter  :verify_authenticity_token
 
   ##
   # Redirects to an datafile's master bytestream in the repository.
@@ -51,34 +52,32 @@ class DatafilesController < ApplicationController
 
 
   def create
+    #TODO handle errors
 
-    if params[:datafile][:file_upload]
-
+    if params.has_key?(:file_upload)
       @datafile = Repository::Datafile.new(
-          repo_dataset: @dataset.repo_dataset,
-          parent_url: (@dataset.repo_dataset).id,
-          published: true,
-          description: params[:datafile][:description])
+                  repo_dataset: @dataset.repo_dataset,
+                  parent_url: (@dataset.repo_dataset).id,
+                  published: true)
 
       @datafile.save!
 
-      upload_io = params[:datafile][:file_upload].tempfile
+      upload_io = params[:file_upload].tempfile
 
       bytestream = Repository::Bytestream.new(
           parent_url: @datafile.id,
           type: Repository::Bytestream::Type::MASTER,
           datafile: @datafile,
-          upload_filename:  params[:datafile][:file_upload].original_filename,
+          upload_filename: params[:file_upload].original_filename,
           upload_io: upload_io)
 
       bytestream.save!
 
-      redirect_to dataset_path(@dataset.key)
-
-    else
-      raise "no file detected"
+      Solr::Solr.client.commit
     end
 
+    @datafile
+    # redirect_to edit_dataset_path(@dataset.key)
 
   end
 
@@ -133,6 +132,10 @@ class DatafilesController < ApplicationController
 
   private
 
+  def dataset_params
+    params.require(:datafile).permit(:description, :dataset_id, :file_upload, :dataset_key, :web_id, :id)
+  end
+
   def set_dataset
     @dataset = Dataset.find_by_key(params[:dataset_key])
     raise ActiveRecord::RecordNotFound, 'Dataset not found' unless @dataset
@@ -143,7 +146,5 @@ class DatafilesController < ApplicationController
     raise ActiveRecord::RecordNotFound, 'Datafile not found' unless @datafile
   end
 
-  def dataset_params
-    params.require(:datafile).permit(:description, :dataset_id, :file_upload)
-  end
+
 end
