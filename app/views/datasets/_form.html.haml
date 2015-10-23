@@ -87,11 +87,14 @@
           -else
             %button(type="button" class="btn btn-primary" onclick='window.location="/datasets/#{@dataset.key}/review_deposit_agreement"' ) Review Deposit Agreement
         %span(class="pull-right" )
-          %button(type="button" class="btn btn-danger" name="cancel" onclick='window.location = "/"' )Cancel
+          %button(type="button" class="btn btn-danger" name="cancel" onclick='window.location = "/"' )
+            %span(class="glyphicon glyphicon-ban-circle" )
+            Cancel
           - if params[:action] == 'new'
             %button(type="button" class="btn btn-primary save-button" id="new-save-button") Next (Upload Files) ->
           - else
-            %button(type="button" class="btn btn-primary update save-button" id="update-save-button") Save & Review Dataset
+            %button(type="button" class="btn btn-primary update save-button" id="update-save-button") Save & Review Dataset ->
+
 
   %div(id="datafiles-form")
 
@@ -103,7 +106,7 @@
             For files larger than 2 GB, contact the
             %a(href="http://researchdataservice.illinois.edu/")Research Data Service
           - if @dataset.datafiles
-            %div(id="old_datafiles")
+            %div(id="datafiles")
               - @dataset.datafiles.each do |datafile|
                 - if datafile.master_bytestream
                   .row
@@ -112,8 +115,7 @@
                     %span(class="col-md-2")
                       - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
                         = link_to "#{request.base_url}/datasets/#{@dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-sm btn-danger" do
-                          = %Q[<span class="glyphicon glyphicon-remove">  File</span>].html_safe
-          %div(id="new_datafiles")
+                          = %Q[<span class="glyphicon glyphicon-trash"></span> File].html_safe
           %div(id="datafiles_upload_progress")
           - if ( (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)) )
             %form(id= "new_datafile" enctype = "multipart/form-data" action= "/datasets/#{@dataset.key}/datafiles/new" remote=true accept-charset = "UFT-8" method = "post" multipart = true role = "form" id="new_datafile" class = "container-fluid input-append datafile-form")
@@ -124,11 +126,18 @@
                 %span Add files...
                 /# The file input field used as target for the file upload widget
                 %input(id="datafile-file-upload" type="file" name="file_upload" multiple)
+
 %script(id="template-upload" type="text/x-tmpl")
   .upload
     {%=o.name%}
     .progress
       %div(class="bar progress-bar" style="width: 0%;")
+
+
+-#%script(id="template-download" type="text/x-tmpl")
+-#  .list
+-#    %span(class="col-md-10" ) filename
+-#    %span(class="col-md-2" ) button
 
 - if !@dataset.depositor_email
   %script

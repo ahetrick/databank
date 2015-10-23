@@ -1,5 +1,5 @@
-var MAX_FILESIZE = 2147483648;
-var MIN_FILESIZE = 1;
+MAX_CHUNK_SIZE = 1000000;
+MAX_NUM_CHUNKS = 10000;
 
 var confirmOnPageExit
 confirmOnPageExit = function (e)
@@ -70,8 +70,6 @@ ready = function() {
             window.onbeforeunload = confirmOnPageExit;
     });
 
-    $(document).on('change', '.file-field', handleFilesize );
-
     $('#show-all-button').click(function () {
         window.location.assign('/datasets');
     });
@@ -89,20 +87,62 @@ ready = function() {
     //alert("pre-validity check");
     //alert("dataset key: "+ dataset_key)
     $("#new_datafile").fileupload({
-        dataType: "script",
+        downloadTemplate: null,
+        downloadTemplateId: null,
+        maxChunkSize: MAX_CHUNK_SIZE,
+        maxFileSize: MAX_NUM_CHUNKS * MAX_CHUNK_SIZE,
         add: function(e, data) {
-            data.context = $(tmpl("template-upload", data.files[0]));
-            $('#datafiles_upload_progress').append(data.context);
-            return data.submit();
-        },
+            file = data.files[0];
+            num_bytes = file.size||file.fileSize;
+            if (num_bytes < (MAX_NUM_CHUNKS * MAX_CHUNK_SIZE) ){
+                data.context = $(tmpl("template-upload", data.files[0]));
+                $('#datafiles_upload_progress').append(data.context);
+                return data.submit();
+            } else {
+                alert("For files larger than 2GB, please contact the Research Data Service.");
+            }
+      },
         progress: function(e, data) {
             var progress;
             if (data.context) {
                 progress = parseInt(data.loaded / data.total * 100, 10);
                 return data.context.find('.bar').css('width', progress + '%');
             }
+        },
+        downloadTemplate: function (o) {
+            var file = o.files[0];
+            var reflector = new Reflector(file);
+            //document.write('<p>File class properties:</p>');
+            //document.write(reflector.getProperties().join('<br/>'));
+            var row = '<div class = "row"><span class="col-md-10">' + file.name + '</span><span class="col-md-2">';
+            if (file.error){
+                row = row + '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-warning-sign"></span>';
+            } else {
+                row = row + '<a class="btn btn-sm btn-danger" href="' + file.delete_url + '"><span class="glyphicon glyphicon-trash"></span> File</a></span>';
+            }
+
+            row = row + '</span></div>';
+            if (file.error){
+                $("#datafiles").append('<div class="row"><p>' + file.name + ': ' +  file.error + '</p></div>');
+            } else {
+                $("#datafiles").append(row);
+            }
         }
     });
+
+    //alert("javascript working");
+}
+
+var Reflector = function(obj) {
+    this.getProperties = function() {
+        var properties = [];
+        for (var prop in obj) {
+            if (typeof obj[prop] != 'function') {
+                properties.push(prop);
+            }
+        }
+        return properties;
+    };
 }
 
 function handleNotAgreed(){
@@ -117,23 +157,6 @@ function handleNotAgreed(){
     $('.search').removeAttr("disabled");
     $('.deposit-agreement-btn').removeAttr("disabled");
     window.scrollTo(0,0);
-}
-
-function handleFilesize(){
-    f = this.files[0];
-    num_bytes = f.size||f.fileSize;
-    if (num_bytes > MAX_FILESIZE){
-        alert("For files larger than 2GB, please contact the Research Data Service.");
-        this.value = '';
-    }
-    else if (num_bytes == null || num_bytes < MIN_FILESIZE){
-        alert("No file contents found, please contact the Research Data Service for assistance.");
-        this.value = '';
-    }
-    else {
-        //alert(num_bytes);
-    }
-
 }
 
 function setDepositor(email, name){

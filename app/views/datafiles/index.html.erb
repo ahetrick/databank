@@ -40,15 +40,14 @@
     </div>
     <hr/>
 
-    <% @datafiles.each do |datafile| %>
-      <tr>
-        <%= render partial: 'detail', :layout => false, locals: {dataset: @dataset, datafile: datafile} %>
-      </tr>
-      <hr/>
-    <% end %>
-
-    <br>
-
   <% end %>
+
 <% end %>
+
+<% @datafiles.each do |datafile| %>
+  <% @dataset ||= datafile.repo_dataset %>
+  <%= render partial: 'detail', :layout => false, locals: {dataset: @dataset , datafile: datafile} %>
+  <hr/>
+<% end %>
+
 

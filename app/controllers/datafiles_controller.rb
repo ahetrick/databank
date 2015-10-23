@@ -2,8 +2,8 @@ class DatafilesController < ApplicationController
   
   RESULTS_PER_PAGE = 10
 
-  before_action :set_dataset, only: [:new, :create, :edit, :show]
-  before_action :set_datafile, only: [:edit, :show, :destroy, :master_bytestream]
+  before_action :set_dataset, only: [:new, :create, :edit, :show, :to_fileupload]
+  before_action :set_datafile, only: [:edit, :show, :destroy, :master_bytestream, :to_fileupload]
   skip_before_filter  :verify_authenticity_token
 
   ##
@@ -53,31 +53,51 @@ class DatafilesController < ApplicationController
 
   def create
     #TODO handle errors
+    begin
+      if params.has_key?(:file_upload)
+        @datafile = Repository::Datafile.new(
+                    repo_dataset: @dataset.repo_dataset,
+                    parent_url: (@dataset.repo_dataset).id,
+                    published: true)
 
-    if params.has_key?(:file_upload)
-      @datafile = Repository::Datafile.new(
-                  repo_dataset: @dataset.repo_dataset,
-                  parent_url: (@dataset.repo_dataset).id,
-                  published: true)
+        @datafile.save!
 
-      @datafile.save!
+        upload_io = params[:file_upload].tempfile
 
-      upload_io = params[:file_upload].tempfile
+        bytestream = Repository::Bytestream.new(
+            parent_url: @datafile.id,
+            type: Repository::Bytestream::Type::MASTER,
+            datafile: @datafile,
+            upload_filename: params[:file_upload].original_filename,
+            upload_io: upload_io)
 
-      bytestream = Repository::Bytestream.new(
-          parent_url: @datafile.id,
-          type: Repository::Bytestream::Type::MASTER,
-          datafile: @datafile,
-          upload_filename: params[:file_upload].original_filename,
-          upload_io: upload_io)
+        bytestream.save!
 
-      bytestream.save!
+        Solr::Solr.client.commit
+      end
 
-      Solr::Solr.client.commit
+      render(json: to_fileupload, content_type: request.format )
+    rescue StandardError => error
+      Rails.logger.warn error.message
+      Rails.logger.warn @datafile.to_yaml
+      render(json: {files:[error: "#{error.message}" ]})
     end
-
-    @datafile
     # redirect_to edit_dataset_path(@dataset.key)
+
+  end
+
+  def to_fileupload
+    {
+        files:
+            [
+                {
+                    url: "http://url.to/file/or/page",
+                    name: "#{@datafile.master_bytestream.filename}",
+                    delete_url: "/datasets/#{@dataset.key}/destroy_file/#{@datafile.web_id}",
+                    delete_type: "DELETE"
+                }
+            ]
+    }
 
   end
 
@@ -126,6 +146,7 @@ class DatafilesController < ApplicationController
         @pages = @datafile.parent_datafile.kind_of?(Repository::Datafile) ?
             @datafile.parent_datafile.datafiles : @datafile.datafiles
       end
+      format.json { render json: @datafile}
 
     end
   end

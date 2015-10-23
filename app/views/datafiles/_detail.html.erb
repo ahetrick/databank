@@ -1,10 +1,15 @@
 <div class="row">
-	<span class="col-md-10">
+  <span class="col-md-2">
+    <span class="metadata-label">web_id:</span> <%=datafile.web_id%>
+  </span>
+	<span class="col-md-4">
 		<%= (datafile.master_bytestream).filename %>
 	</span>
+
 	<span class="col-md-2">
 		<%= link_to "#{request.base_url}/datasets/#{dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-sm btn-danger" do %>
       <span class="glyphicon glyphicon-remove"></span> File
     <% end %>
 	</span>
+
 </div>
