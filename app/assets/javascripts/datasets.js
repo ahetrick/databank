@@ -89,12 +89,11 @@ ready = function() {
     $("#new_datafile").fileupload({
         downloadTemplate: null,
         downloadTemplateId: null,
-        maxChunkSize: MAX_CHUNK_SIZE,
-        maxFileSize: MAX_NUM_CHUNKS * MAX_CHUNK_SIZE,
+
         add: function(e, data) {
             file = data.files[0];
             num_bytes = file.size||file.fileSize;
-            if (num_bytes < (MAX_NUM_CHUNKS * MAX_CHUNK_SIZE) ){
+            if (num_bytes < 2147483648 ){
                 data.context = $(tmpl("template-upload", data.files[0]));
                 $('#datafiles_upload_progress').append(data.context);
                 return data.submit();
