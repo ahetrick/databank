@@ -113,18 +113,18 @@ ready = function() {
             var reflector = new Reflector(file);
             //document.write('<p>File class properties:</p>');
             //document.write(reflector.getProperties().join('<br/>'));
-            var row = '<div class = "row"><span class="col-md-10">' + file.name + '</span><span class="col-md-2">';
+            var row = '<tr><td><div class = "row"><span class="col-md-8">' + file.name + '</span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
             if (file.error){
                 row = row + '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-warning-sign"></span>';
             } else {
                 row = row + '<a class="btn btn-sm btn-danger" href="' + file.delete_url + '"><span class="glyphicon glyphicon-trash"></span> File</a></span>';
             }
 
-            row = row + '</span></div>';
+            row = row + '</span></div></td></tr>';
             if (file.error){
-                $("#datafiles").append('<div class="row"><p>' + file.name + ': ' +  file.error + '</p></div>');
+                $("#datafiles > tbody:last-child").append('<tr><td><div class="row"><p>' + file.name + ': ' +  file.error + '</p></div></td></tr>');
             } else {
-                $("#datafiles").append(row);
+                $("#datafiles > tbody:last-child").append(row);
             }
         }
     });

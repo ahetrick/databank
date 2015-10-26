@@ -105,17 +105,22 @@
           %span(class="help-block")
             For files larger than 2 GB, contact the
             %a(href="http://researchdataservice.illinois.edu/")Research Data Service
-          - if @dataset.datafiles
-            %div(id="datafiles")
+          %table(class="table table-striped" id="datafiles")
+            %tbody
+            - if @dataset.datafiles
               - @dataset.datafiles.each do |datafile|
                 - if datafile.master_bytestream
-                  .row
-                    %span(class="col-md-10")
-                      = (datafile.master_bytestream).filename
-                    %span(class="col-md-2")
-                      - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
-                        = link_to "#{request.base_url}/datasets/#{@dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-sm btn-danger" do
-                          = %Q[<span class="glyphicon glyphicon-trash"></span> File].html_safe
+                  %tr
+                    %td
+                      .row
+                        %span(class="col-md-8")
+                          = (datafile.master_bytestream).filename
+                        %span(class="col-md-2")
+                          = number_to_human_size((datafile.master_bytestream).byte_size)
+                        %span(class="col-md-2")
+                          - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
+                            = link_to "#{request.base_url}/datasets/#{@dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-sm btn-danger" do
+                              = %Q[<span class="glyphicon glyphicon-trash"></span> File].html_safe
           %div(id="datafiles_upload_progress")
           - if ( (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)) )
             %form(id= "new_datafile" enctype = "multipart/form-data" action= "/datasets/#{@dataset.key}/datafiles/new" remote=true accept-charset = "UFT-8" method = "post" multipart = true role = "form" id="new_datafile" class = "container-fluid input-append datafile-form")

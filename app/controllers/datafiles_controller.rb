@@ -1,3 +1,5 @@
+include ActionView::Helpers::NumberHelper #because I need to pass a value to a javascript function that will display
+
 class DatafilesController < ApplicationController
   
   RESULTS_PER_PAGE = 10
@@ -93,7 +95,8 @@ class DatafilesController < ApplicationController
                     url: "http://url.to/file/or/page",
                     name: "#{@datafile.master_bytestream.filename}",
                     delete_url: "/datasets/#{@dataset.key}/destroy_file/#{@datafile.web_id}",
-                    delete_type: "DELETE"
+                    delete_type: "DELETE",
+                    size: "#{number_to_human_size(@datafile.master_bytestream.byte_size)}"
                 }
             ]
     }
