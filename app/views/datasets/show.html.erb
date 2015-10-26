@@ -20,7 +20,7 @@
             <% end %>
             <% if (((can? :destroy, @dataset) && (!@dataset.complete?))||(can? :manage, @dataset) )%>
               <%= link_to dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn btn-danger" do %>
-                <span class="glyphicon glyphicon-remove"></span> Delete
+                <span class="glyphicon glyphicon-trash"></span> Delete
               <% end %>
             <% end %>
           </span>
