@@ -50,7 +50,6 @@ class DatafilesController < ApplicationController
     end
   end
 
-
   def create
     #TODO handle errors
     begin
@@ -76,7 +75,7 @@ class DatafilesController < ApplicationController
         Solr::Solr.client.commit
       end
 
-      render(json: to_fileupload, content_type: request.format )
+      render(json: to_fileupload, content_type: request.format, :layout => false )
     rescue StandardError => error
       Rails.logger.warn error.message
       Rails.logger.warn @datafile.to_yaml
