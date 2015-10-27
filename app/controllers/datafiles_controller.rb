@@ -80,13 +80,12 @@ class DatafilesController < ApplicationController
       render(json: to_fileupload, content_type: request.format, :layout => false )
     rescue StandardError => error
       Rails.logger.warn "failure during attempted file upload for dataset #{@dataset.key} - #{error.message}"
-
+      render(json: {files:[error: "#{error.message}" ]})
+    ensure
       @files = Dir.glob('/tmp/RackMultipart*')
       @files.each do |file|
         FileUtil.rm_f(file)
       end
-
-      render(json: {files:[error: "#{error.message}" ]})
     end
     # redirect_to edit_dataset_path(@dataset.key)
 
