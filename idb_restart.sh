@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 echo "Removing temp files for failed uploads..."
-for f in /tmp/RailsMulipart*
+FILES = /tmp/RailsMulipart*
+for f in $FILES
 do
   echo $f
   rm -f f
