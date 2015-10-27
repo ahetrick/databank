@@ -36,11 +36,18 @@
           %span(class="col-md-6")
             .form-group
               = f.label :corresponding_creator_name, "Corresponding Creator", :class => "control-label"
-              = f.text_field :corresponding_creator_name, :class => "form-control dataset" , :placeholder => "[The personal name for the person who serves as point of contact for inquiries about the dataset (e.g. Verfasser, Maria).]"
+              %a(href="#" data-toggle="tooltip" title = "The personal name for the person who serves as the point of contact for inquiries about the dataset (e.g. Verfasser, Maria)." tabindex="-1")
+                %span(class="glyphicon glyphicon-question-sign")
+              %br
+              = f.text_field :corresponding_creator_name, :class => "form-control dataset" , :placeholder => "[The personal name for the dataset contact (e.g. Verfasser, Maria).]"
           %span(class="col-md-6")
             .form-group
               = f.label :corresponding_creator_email, "Corresponding Creator Email Address", :class => "control-label"
-              = f.email_field :corresponding_creator_email, :class => "form-control dataset", :placeholder => "[Correspondence about this dataset, including notice of deposit, will route to this email address.]"
+              %a(href="#" data-toggle="tooltip" title = "Correspondence about this dataset, including notice of deposit, will route to this email address." tabindex="-1" )
+                %span(class="glyphicon glyphicon-question-sign")
+              %br
+
+              = f.email_field :corresponding_creator_email, :class => "form-control dataset", :placeholder => "[For correspondence about this dataset, including notice of deposit.]"
               .help-block.with-errors
 
         .field
