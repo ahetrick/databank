@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-echo "Removing temp files for failed uploads..."
-FILES=/tmp/RailsMulipart*
+FILES=/tmp/RackMulti*
 for f in $FILES
 do
-  echo "$f"
-  rm -f "$f"
+  echo "Removing temporary file $f ..."
+  # take action on each file. $f store current file name
+  cat $f
 done
 
 echo "Killing all unicorn processes..."
