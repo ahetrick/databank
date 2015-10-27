@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-echo "Removing temp files for failed uploads..."
-for f in /tmp/RailsMulipart*
+FILES=/tmp/RackMulti*
+for f in $FILES
 do
-  rm -f f
+  echo "Removing temporary file $f ..."
+  rm -f "$f"
 done
 echo "Starting unicorn rails server..."
 unicorn_rails -c config/unicorn.rb -D
