@@ -2,7 +2,7 @@
 echo "Removing temp files for failed uploads..."
 for f in /tmp/RailsMulipart*
 do
-  echo f
+  echo $f
   rm -f f
 done
 
