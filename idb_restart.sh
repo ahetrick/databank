@@ -3,7 +3,7 @@ FILES=/tmp/RackMulti*
 for f in $FILES
 do
   echo "Removing temporary file $f ..."
-
+  rm -f "$f"
 done
 
 echo "Killing all unicorn processes..."
