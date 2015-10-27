@@ -84,7 +84,7 @@ class DatafilesController < ApplicationController
     ensure
       @files = Dir.glob('/tmp/RackMultipart*')
       @files.each do |file|
-        FileUtil.rm_f(file)
+        FileUtils.rm_f(file)
       end
     end
     # redirect_to edit_dataset_path(@dataset.key)
