@@ -171,6 +171,26 @@ function setDepositor(email, name){
     //$('#show-agreement-modal-link').hide();
 }
 
+function handleAgreeModal(email, name){
+
+    var agreement = $('input[name="agreement"]:checked').val();
+    //alert('agreement: ' + agreement);
+    var owner = $('input[name="owner"]:checked').val();
+    //alert('owner: ' + owner);
+    var public = $('input[name="public"]:checked').val();
+    //alert('public:' + public);
+
+    if (agreement == 'yes' && owner == 'yes' && (public == 'yes' || public == 'na')){
+        setDepositor(email, name);
+    } else {
+        handleNotAgreed();
+    }
+
+
+}
+
+
+
 $(document).ready(ready);
 $(document).on('page:load', ready);
 

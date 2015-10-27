@@ -1,100 +1,180 @@
 <div class="modal-content">
-  <div class="modal-header">
-    <h4 class="modal-title" id="agreement-title">Deposit Agreement</h4>
-  </div>
   <div class="modal-body">
-    <p class="ds-paragraph heading">
-      Illinois Data Bank Deposit Agreement: Non-Exclusive Distribution and Preservation License
-    </p>
 
-    <p class="ds-paragraph">
-      To properly administer the Illinois Data Bank and preserve the contents for future use, the Board of
-      Trustees of the University of Illinois on behalf of its Urbana-Champaign campus
-      (the "University") requires certain permissions and warrants from you, the author(s)
-      and/or copyright owner. If you are the copyright owner, by accepting this license,
-      you still retain copyright to your work and do not give up the right to submit the
-      work to publishers or other repositories. If you are not the copyright owner, you
-      represent that the copyright owner has given you permission to deposit the work.
-    </p>
+    <% if @dataset && !@dataset.depositor_email %>
+      <h5>Before you get started on your deposit, please review the deposit agreement and answer the following questions:</h5>
+    <% end %>
 
-    <p class="ds-paragraph">
-<span class="bold">By accepting (clicking through) this license, you grant to the University
-the non-exclusive right to reproduce, translate (as described below), and distribute
-the submission, including the descriptive information (metadata) and abstract, in any
-format or medium worldwide and royalty-free, including, but not limited to, publication
-over the Internet, except as provided for by an addendum to this agreement.
-</span>
-    </p>
-
-    <p class="ds-paragraph">
-      When provided, the University will clearly identify your name(s) as the author(s) or
-      copyright owner(s) of the submission as well as the name(s) of the copyright owner(s) if
-      different from your name(s), include a statement of your copyright, and will not make any
-      alteration, other than as allowed by this license, to your submission.
-    </p>
-
-    <p class="ds-paragraph">
-      You agree that the University may translate the submission to any medium or format for
-      the purposes of security, back-up, and preservation. You agree that the University may make
-      multiple copies of the submission for the purposes of security, back-up, and preservation.
-    </p>
-
-    <p class="ds-paragraph">
-<span class="bold">
-If you cannot make all of the following representations, then you shall contact the Illinois Data Bank Staff
-at researchdata [at] library [dot] illinois [dot] edu before proceeding further. In order to make this submission, you represent that:
-</span>
-    </p>
-    <ol class="ds-ordered-list">
-      <li>You have the right to grant the rights contained in the license.</li>
-      <li>This submission does not, to the best of your knowledge, infringe on
-        anyone's copyright or other intellectual property rights.
-      </li>
-      <li>If the submission does contain material for which you do not hold copyright
-        and that exceeds fair use, you have obtained the unrestricted permission of
-        the copyright owner to grant the University the rights required by this license
-        and that such third-party owned material is clearly identified and acknowledged
-        within the text or content of the submission.
-      </li>
-      <li>The submission does not contain any confidential information, proprietary
-        information of others or export controlled information.
-      </li>
-      <li>There are not any restrictions or required publication delays on the
-        distribution of the submission by the University.
-      </li>
-      <li>The information you provide about the submission is accurate.</li>
-    </ol>
-    <p class="ds-paragraph">
-<span class="bold">
-You understand that if copyright terms for, or ownership of, the submission change, it
-is your responsibility to notify the University of these changes.
-</span>
-    </p>
-
-    <p class="ds-paragraph">
-      If the submission is based upon work that has been sponsored or supported by an agency or
-      organization other than the University, you must fulfill any right of review or other obligations
-      required by the contract or agreement with such an agency or organization before depositing into Illinois
-      Data Bank.
-    </p>
-
-    <p class="ds-paragraph">
-      By accepting this license, you acknowledge that you have read and agreed to the terms of this agreement
-      and all related Illinois Data Bank and University policies.
-    </p>
-  </div>
-  <div class="modal-footer container-fluid">
-
-    <% if @dataset && @dataset.depositor_email %>
-      <p>Agreement on file.</p>
-    <% elsif @dataset %>
-      <div class="row">
-        <span class="col-md-2 col-md-offset-8"><button onclick="setDepositor('<%= current_user.email %>', '<%= current_user.name %>')" , type="button" class="btn btn-primary" data-dismiss="modal" id="agree-button">I
-          Agree
-        </button></span>
-        <span class="col-md-2"><button type="button" class="btn btn-danger" data-dismiss="modal" id="cancel-button">Cancel</button></span>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne ">Deposit Agreement</a>
+        </h4>
       </div>
+      <div id="collapseOne" class="panel-collapse collapse <% if @dataset && @dataset.depositor_email %>in<% end %> ">
+        <div class="panel-body">
+          <p class="ds-paragraph heading">
+            Illinois Data Bank Deposit Agreement: Non-Exclusive Distribution and Preservation License
+          </p>
+          <p class="ds-paragraph">To properly administer the Illinois Data Bank and preserve the contents for future
+            use,
+            the Board of Trustees of the University of Illinois on behalf of its Urbana-Champaign campus (the
+            "University")
+            requires certain permissions and warrants from you, the creator(s) and/or copyright owner. If copyright law
+            is
+            applicable to your dataset submission (see Guidance for Data Copyright TBA) and you are the copyright owner,
+            by
+            accepting this license, you still retain copyright to your work and do not give up the right to submit the
+            work
+            to publishers or other repositories. If you are not the copyright owner, you represent that the copyright
+            owner
+            has given you permission to deposit the work.
+          </p>
 
+          <p class="ds-paragraph">By accepting (clicking through) this license, you grant to the University the
+            non-exclusive right to reproduce, translate (as described below), and distribute the submission, including
+            the
+            descriptive information (metadata) and abstract, in any format or medium worldwide and royalty-free,
+            including,
+            but not limited to, publication over the Internet, except as provided for by an addendum to this
+            agreement.</p>
+
+          <p class="ds-paragraph">You agree that the University may translate the submission to any medium or format and
+            make multiple copies of the submission for the purposes of security, back-up, and preservation. You
+            understand
+            and agree that the University may correct inaccurate metadata but will not otherwise alter the
+            submission.</p>
+
+          <p class="ds-paragraph">The University will clearly identify your name(s) as the creator(s) as well as the
+            corresponding creator for the submission as well as the name(s) of the copyright owner(s) if different from
+            your
+            name(s). The University will also display the copyright license you choose for the submission.</p>
+
+          <p class="ds-paragraph">You understand that the University commits to preserving your submission in accordance
+            with our Preservation Policy (TBA). The University also commits to public access through maintenance of
+            persistent Illinois Data Bank webpages, metadata records, and identifiers and to providing access metrics
+            (such
+            as pageviews, downloads, and citations). The University commits to this level of preservation, access, and
+            reporting for a period of at least 5 years from the date of deposit. The University will endeavor to retain
+            the
+            data beyond the initial commitment, but reserve the right to review the long-term viability of the deposit
+            beyond the initial 5 year commitment. To learn more about how to enable the long-term preservation of your
+            submission, please see our Preservation Review Guidelines (TBA).</p>
+
+          <p class="ds-paragraph">If you cannot make all of the following representations, then you must contact the
+            Research Data Service at researchdata [at] library [dot] illinois [dot] edu before proceeding further. In
+            order
+            to make this submission, you represent that:</p>
+          <ol class="ds-ordered-list">
+            <li>You have the right to grant the rights contained in the license.</li>
+            <li>This submission does not, to the best of your knowledge, infringe on anyone's copyright or other
+              intellectual property rights.
+            </li>
+            <li>If the submission does contain material for which you do not hold copyright and that exceeds fair use,
+              you
+              have obtained the unrestricted permission of the copyright owner to grant the University the rights
+              required
+              by this license and that such third-party owned material is clearly identified and acknowledged within the
+              text or content of the submission.
+            </li>
+            <li>The submission does not contain any private information, confidential information, proprietary
+              information
+              of others, export controlled information, or otherwise protected data or information that should not be
+              publicly shared.
+            </li>
+            <li>There are not any restrictions or required publication delays on the distribution of the submission by
+              the
+              University.
+            </li>
+            <li>The information you provide about the submission is accurate.</li>
+            <li>Where applicable, you agree to release and hold harmless the University from any and all liability from
+              claims arising out of any legal action concerning identification of research subjects, breaches of
+              confidentiality, or invasions of privacy by or on behalf of said subjects.
+            </li>
+            <li>The submission does not contain any software viruses or computer codes, files, or programs capable of
+              allowing unauthorized access or disrupting, damaging, limiting or interfering with the proper functioning
+              of
+              the Illinois Data Bank or other users' software, hardware, or telecommunications equipment.
+            </li>
+          </ol>
+          <p class="ds-paragraph">You understand that if copyright terms for, or ownership of, the submission change, it
+            is
+            your responsibility to notify the University of these changes.</p>
+
+          <p class="ds-paragraph">If the submission is based upon work that has been sponsored or supported by an agency
+            or
+            organization other than the University, you must fulfill any right of review or other obligations required
+            by
+            the contract or agreement with such an agency or organization before depositing into the Illinois Data
+            Bank.</p>
+
+          <p class="ds-paragraph">By accepting this license, you acknowledge that you have read and agreed to the terms
+            of
+            this agreement and all related Illinois Data Bank and University policies.</p>
+        </div>
+      </div>
+    </div>
+
+    <% if @dataset && !@dataset.depositor_email %>
+
+      <form role="form" id="agree-form">
+        <div class="form-group">
+          <p class="metadata-label">Do you agree to the deposit agreement?</p>
+          <div class="radio">
+            <label><input type="radio" name="agreement" value="yes">Yes</label>
+          </div>
+          <div class="radio">
+            <label><input type="radio" name="agreement" value="no" checked >No</label>
+          </div>
+          <div class="radio">
+            <label><input type="radio" name="agreement" value="dk">Don't know</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <p class="metadata-label">Are you a creator of this dataset or have you been granted permission by the creator to deposit this dataset?</p>
+          <div class="radio">
+            <label><input type="radio" name="owner" value="yes">Yes</label>
+          </div>
+          <div class="radio">
+            <label><input type="radio" name="owner" value="no" checked >No</label>
+          </div>
+          <div class="radio">
+            <label><input type="radio" name="owner" value="dk">Dont't know</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <p class="metadata-label">Have you removed any private, confidential, or other legally protected information from the dataset?</p>
+          <div class="radio">
+            <label><input type="radio" name="public" value="yes">Yes</label>
+          </div>
+          <div class="radio">
+            <label><input type="radio" name="public" value="no" checked >No</label>
+          </div>
+          <div class="radio">
+            <label><input type="radio" name="public" value="dk">Don't know</label>
+          </div>
+          <div class="radio">
+            <label><input type="radio" name="public" value="na">Not applicable</label>
+          </div>
+        </div>
+      </form>
     <% end %>
   </div>
+  <% if @dataset %>
+    <div class="modal-footer container-fluid">
+      <div class="pull-right">
+        <% if @dataset.depositor_email %>
+          <p>Agreement on file</p>
+        <% else %>
+          <button onclick="handleAgreeModal('<%= current_user.email %>', '<%= current_user.name %>')", type="button" class="btn btn-primary" data-dismiss="modal" id="agree-button">
+            <span class="glyphicon glyphicon-check"></span> Submit</button>
+          <a href="http://researchdataservice.illinois.edu/contact-us/" class="btn btn-success" role="button">
+            <span class="glyphicon glyphicon-question-sign"></span> Get Help
+          </a>
+          <button type="button" class="btn btn-danger" data-dismiss="modal" id="cancel-button"><span class="glyphicon glyphicon-ban-circle"></span> Cancel</button>
+        <% end %>
+
+      </div>
+    </div>
+  <% end %>
 </div>

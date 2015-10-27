@@ -3,7 +3,10 @@
     - if params[:action] == 'new'
       .deposit-agreement-warning
         You must agree to the Deposit Agreement before depositing data into Illinois Data Bank.
-        %button(type="button" id="show-agreement-modal-link" class="btn btn-primary .deposit-agreement-btn" data-toggle="modal" data-target="#agreement") Review Deposit Agreement
+        %button(type="button" id="show-agreement-modal-link" class="btn btn-primary .deposit-agreement-btn" data-toggle="modal" data-target="#agreement") Deposit Agreement
+        %a(href="http://researchdataservice.illinois.edu/contact-us/" class="btn btn-success" role="button")
+          %span(class="glyphicon glyphicon-question-sign")
+          Help
         %button(type="button" class="btn btn-danger" name="cancel" onclick='window.location = "/"' )Cancel
 
     = form_for(@dataset, :html => { :multipart => true, :role => "form", :enctype => "multipart/form-data", "data-toggle"=>"validator", :class => "container-fluid input-append dataset-form"}) do |f|

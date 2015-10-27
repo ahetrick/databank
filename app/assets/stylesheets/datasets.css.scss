@@ -105,3 +105,42 @@ legend.metadata-border {
   background-color: white;
   margin: 50px;
 }
+.modal-dialog {
+  position: relative;
+  width: auto;
+  max-width: 600px;
+  margin: 10px;
+}
+.modal-sm {
+  max-width: 300px;
+}
+.modal-lg {
+  max-width: 900px;
+}
+@media (min-width: 768px) {
+  .modal-dialog {
+    margin: 30px auto;
+  }
+}
+@media (min-width: 320px) {
+  .modal-sm {
+    margin-right: auto;
+    margin-left: auto;
+  }
+}
+@media (min-width: 620px) {
+  .modal-dialog {
+    margin-right: auto;
+    margin-left: auto;
+  }
+  .modal-lg {
+    margin-right: 10px;
+    margin-left: 10px;
+  }
+}
+@media (min-width: 920px) {
+  .modal-lg {
+    margin-right: auto;
+    margin-left: auto;
+  }
+}
