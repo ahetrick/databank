@@ -3,8 +3,8 @@ echo "Removing temp files for failed uploads..."
 FILES=/tmp/RailsMulipart*
 for f in $FILES
 do
-  echo $f
-  rm -f f
+  echo "$f"
+  rm -f "$f"
 done
 
 echo "Killing all unicorn processes..."
