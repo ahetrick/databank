@@ -119,7 +119,9 @@
 
       <form role="form" id="agree-form">
         <div class="form-group">
-          <p class="metadata-label">Do you agree to the deposit agreement?</p>
+          <span class="metadata-label">Do you agree to the deposit agreement?</span>
+          <a href="#" data-toggle="tooltip" title = "Deposit into Illinois Data Bank requires agreement to the Deposit Agreement. Click on the Deposit Agreement heading above to view the full agreement." tabindex="-1")>
+          <span class="glyphicon glyphicon-info-sign"></span></a>
           <div class="radio">
             <label><input type="radio" name="agreement" value="yes">Yes</label>
           </div>
@@ -131,7 +133,9 @@
           </div>
         </div>
         <div class="form-group">
-          <p class="metadata-label">Are you a creator of this dataset or have you been granted permission by the creator to deposit this dataset?</p>
+          <span class="metadata-label">Are you a creator of this dataset or have you been granted permission by the creator to deposit this dataset?</span>
+          <a href="#" data-toggle="tooltip" title = "Deposit into the Illinois Data Bank requires that the depositor be the creator of the dataset or have permssion." tabindex="-1")>
+            <span class="glyphicon glyphicon-info-sign"></span></a>
           <div class="radio">
             <label><input type="radio" name="owner" value="yes">Yes</label>
           </div>
@@ -143,7 +147,9 @@
           </div>
         </div>
         <div class="form-group">
-          <p class="metadata-label">Have you removed any private, confidential, or other legally protected information from the dataset?</p>
+          <span class="metadata-label">Have you removed any private, confidential, or other legally protected information from the dataset?</span>
+          <a href="#" data-toggle="tooltip" title = "Deposit into Illinois Data Bank requires removal of any private, confidential or legally protected information that is in the dataset. A selection of Yes indicates that either the dataset never included any such information, or that such informaiton has been removed." tabindex="-1")>
+            <span class="glyphicon glyphicon-info-sign"></span></a>
           <div class="radio">
             <label><input type="radio" name="public" value="yes">Yes</label>
           </div>
