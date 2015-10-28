@@ -53,6 +53,11 @@ class DatafilesController < ApplicationController
   end
 
   def create
+    @files = Dir.glob('/tmp/RackMultipart*')
+    @files.each do |file|
+      FileUtils.rm_f(file)
+    end
+
     #TODO handle errors
     begin
       if params.has_key?(:file_upload)
