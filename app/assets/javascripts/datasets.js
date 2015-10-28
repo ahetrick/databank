@@ -173,18 +173,24 @@ function setDepositor(email, name){
 
 function handleAgreeModal(email, name){
 
-    var agreement = $('input[name="agreement"]:checked').val();
-    //alert('agreement: ' + agreement);
-    var owner = $('input[name="owner"]:checked').val();
-    //alert('owner: ' + owner);
-    var public = $('input[name="public"]:checked').val();
-    //alert('public:' + public);
-
-    if (agreement == 'yes' && owner == 'yes' && (public == 'yes' || public == 'na')){
+    if ($('#owner-yes').is(":checked") && $('#agree-yes').is(":checked") && ($('#public-yes').is(":checked") ||$('#public-na').is(":checked") ) )  {
         setDepositor(email, name);
     } else {
         handleNotAgreed();
     }
+
+    //var agreement = $('input[name="agreement"]:checked').val();
+    ////alert('agreement: ' + agreement);
+    //var owner = $('input[name="owner"]:checked').val();
+    ////alert('owner: ' + owner);
+    //var public = $('input[name="public"]:checked').val();
+    ////alert('public:' + public);
+    //
+    //if (agreement == 'yes' && owner == 'yes' && (public == 'yes' || public == 'na')){
+    //    setDepositor(email, name);
+    //} else {
+    //    handleNotAgreed();
+    //}
 
 
 }

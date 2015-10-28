@@ -2,13 +2,14 @@
   <div class="modal-body">
 
     <% if @dataset && !@dataset.depositor_email %>
-      <h5>Before you get started on your deposit, please review the deposit agreement and answer the following questions:</h5>
+      <p class="metadata-label">Deposit into Illinois Data Bank requires agreement to the Deposit Agreement, which includes a requirement that the depositor have the right to deposit the data, and a requirement that any private, confidential, or other legally protected information be removed from the dataset.</p>
+      <p>Before you get started on your deposit, please review the deposit agreement and answer the following questions:</p>
     <% end %>
 
     <div class="panel panel-default">
       <div class="panel-heading">
         <h4 class="panel-title">
-          <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne ">Deposit Agreement</a>
+          <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne ">Deposit Agreement (click to expand)</a>
         </h4>
       </div>
       <div id="collapseOne" class="panel-collapse collapse <% if @dataset && @dataset.depositor_email %>in<% end %> ">
@@ -118,51 +119,35 @@
     <% if @dataset && !@dataset.depositor_email %>
 
       <form role="form" id="agree-form">
-        <div class="form-group">
-          <span class="metadata-label">Do you agree to the deposit agreement?</span>
-          <a href="#" data-toggle="tooltip" title = "Deposit into Illinois Data Bank requires agreement to the Deposit Agreement. Click on the Deposit Agreement heading above to view the full agreement." tabindex="-1")>
-          <span class="glyphicon glyphicon-info-sign"></span></a>
-          <div class="radio">
-            <label><input type="radio" name="agreement" value="yes">Yes</label>
-          </div>
-          <div class="radio">
-            <label><input type="radio" name="agreement" value="no" checked >No</label>
-          </div>
-          <div class="radio">
-            <label><input type="radio" name="agreement" value="dk">Don't know</label>
-          </div>
-        </div>
+
         <div class="form-group">
           <span class="metadata-label">Are you a creator of this dataset or have you been granted permission by the creator to deposit this dataset?</span>
           <a href="#" data-toggle="tooltip" title = "Deposit into the Illinois Data Bank requires that the depositor be the creator of the dataset or have permssion." tabindex="-1")>
             <span class="glyphicon glyphicon-info-sign"></span></a>
-          <div class="radio">
-            <label><input type="radio" name="owner" value="yes">Yes</label>
-          </div>
-          <div class="radio">
-            <label><input type="radio" name="owner" value="no" checked >No</label>
-          </div>
-          <div class="radio">
-            <label><input type="radio" name="owner" value="dk">Dont't know</label>
+          <div class="checkbox">
+            <label><input type="checkbox" name="agree" id="owner-yes">Yes</label>
           </div>
         </div>
         <div class="form-group">
           <span class="metadata-label">Have you removed any private, confidential, or other legally protected information from the dataset?</span>
           <a href="#" data-toggle="tooltip" title = "Deposit into Illinois Data Bank requires removal of any private, confidential or legally protected information that is in the dataset. A selection of Yes indicates that either the dataset never included any such information, or that such informaiton has been removed." tabindex="-1")>
             <span class="glyphicon glyphicon-info-sign"></span></a>
-          <div class="radio">
-            <label><input type="radio" name="public" value="yes">Yes</label>
+          <div class="checkbox">
+            <label><input type="checkbox" name="agree" id="public-yes" >Yes</label>
           </div>
-          <div class="radio">
-            <label><input type="radio" name="public" value="no" checked >No</label>
-          </div>
-          <div class="radio">
-            <label><input type="radio" name="public" value="dk">Don't know</label>
-          </div>
-          <div class="radio">
-            <label><input type="radio" name="public" value="na">Not applicable</label>
+          <div class="checkbox">
+            <label><input type="checkbox" name="agree" id="public-na">Not applicable</label>
           </div>
         </div>
+        <div class="form-group">
+          <span class="metadata-label">Do you agree to the full deposit agreement?</span>
+          <a href="#" data-toggle="tooltip" title = "Deposit into Illinois Data Bank requires agreement to the Deposit Agreement. Click on the Deposit Agreement heading above to view the full agreement." tabindex="-1")>
+            <span class="glyphicon glyphicon-info-sign"></span></a>
+          <div class="checkbox">
+            <label><input type="checkbox" name="agree" id="agree-yes">Yes</label>
+          </div>
+        </div>
+
       </form>
     <% end %>
   </div>
