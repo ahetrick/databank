@@ -20,12 +20,38 @@ class Dataset < ActiveRecord::Base
 
   def self.search(search)
     if search
-      lower_search = search.downcase
-      where('lower(title) LIKE :search OR lower(keywords) LIKE :search OR lower(creator_text) LIKE :search OR lower(identifier) LIKE :search OR lower(description) LIKE :search', search: "%#{lower_search}%")
-    else
-      Dataset.all
-    end
-  end
+
+      #start with an empty relation
+      search_result = Array.new
+
+      search_terms = search.split(" ")
+
+      search_terms.each do |term|
+
+        #Rails.logger.warn "term class is: #{term.class}"
+
+        clean_term = term.strip.downcase
+
+        if !clean_term.empty?
+
+          term_relations = Dataset.where('lower(title) LIKE :search OR lower(keywords) LIKE :search OR lower(creator_text) LIKE :search OR lower(identifier) LIKE :search OR lower(description) LIKE :search', search: "%#{clean_term}%")
+
+          term_relations.each do |tr|
+
+            search_result << tr
+
+          end # end of term_realtions each do
+
+        end # end of if clean term is not empty
+      end # end of search term each do
+
+      Dataset.where(id: search_result.map(&:id))
+    else # else of if search
+       Dataset.all
+    end # end if search
+
+
+  end # end search
 
   def to_datacite_xml
 
