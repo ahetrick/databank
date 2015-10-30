@@ -190,7 +190,7 @@ function download_selected(){
     //$('#frametest').append(testurl);
 
     $.each(file_ids, function(i, file_id){
-        fileURL = "<iframe class='hidden' src='" + file_id + "'></iframe>";
+        fileURL = "<iframe class='hidden' src='/datasets/" + dataset_key + "/stream_file/" + file_id + "'></iframe>";
         $('#frames').append(fileURL);
     });
 

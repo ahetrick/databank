@@ -180,10 +180,10 @@
                       <td>
                         <div class="row checkbox">
 
-            <span class="col-md-8"><label><input type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="<%= binary.id %>"><%= binary.filename %>
+            <span class="col-md-8"><label><input type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="<%= datafile.web_id %>"><%= binary.filename %>
             </label></span>
                           <span class="col-md-2"><%= number_to_human_size(binary.byte_size) %></span>
-                        <span class="col-md-2"><a class="stream" id="<%= datafile.web_id %>" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/stream_file/<%= datafile.web_id %>"' class="btn btn-primary btn-sm" role="button">
+                        <span class="col-md-2"><a href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/stream_file/<%= datafile.web_id %>"' class="btn btn-primary btn-sm" role="button">
                           <span class="glyphicon glyphicon-download"></span> File
                         </a></span>
                         </div>
