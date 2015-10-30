@@ -39,9 +39,9 @@ class DatasetsController < ApplicationController
   # GET /datasets/1.json
   def show
 
-    if params.keys.include?("selected_files")
-      download_datafiles
-    end
+    # if params.keys.include?("selected_files")
+    #   download_datafiles
+    # end
 
     # clean up after failed uploads
     @dataset.datafiles.each do |datafile|
@@ -231,34 +231,36 @@ class DatasetsController < ApplicationController
     end
   end
 
-  def download_datafiles
-
-  (@dataset.identifier && !@dataset.identifier.empty?) ? filename = "DOI-#{@dataset.identifier}.zip" : filename = "datafiles.zip"
-
-    datafiles = Array.new
-
-    params[:selected_files].each do |file_id|
-
-      bs = Repository::Bytestream.find(file_id)
-      raise ActiveRecord::RecordNotFound, 'Bytestream not found' unless bs
-
-      if bs and bs.id
-
-        file_url = bs.id
-        zip_path = bs.filename
-        datafiles << [file_url, zip_path]
-      end
-
-    end
-
-    file_mappings = datafiles
-                        .lazy # Lazy allows us to begin sending the download immediately instead of waiting to download everything
-                        .map { |url, path| [open(url), path] }
-
-    zipline(file_mappings, filename)
-
-
-  end
+  # def download_datafiles
+  #
+  # (@dataset.identifier && !@dataset.identifier.empty?) ? filename = "DOI-#{@dataset.identifier}.zip" : filename = "datafiles.zip"
+  #
+  #   datafiles = Array.new
+  #
+  #   params[:selected_files].each do |file_id|
+  #
+  #     bs = Repository::Bytestream.find(file_id)
+  #     raise ActiveRecord::RecordNotFound, 'Bytestream not found' unless bs
+  #
+  #     web_id = bs.datafile.web_id
+  #
+  #     if bs and bs.id
+  #
+  #       file_url = "#{request.base_url}/datasets/#{@dataset.key}/stream_file/#{web_id}"
+  #       zip_path = bs.filename
+  #       datafiles << [file_url, zip_path]
+  #     end
+  #
+  #   end
+  #
+  #   file_mappings = datafiles
+  #                       .lazy # Lazy allows us to begin sending the download immediately instead of waiting to download everything
+  #                       .map { |url, path| [open(url), path] }
+  #
+  #   zipline(file_mappings, filename)
+  #
+  #
+  # end
 
   def download_endNote_XML
 

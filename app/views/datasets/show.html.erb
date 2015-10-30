@@ -155,8 +155,12 @@
                   <td>
                     <div class="row">
               <span class="col-md-4">
-                <button class="btn btn-primary" type="submit">
-                  <span class="glyphicon glyphicon-download"></span> Zip and Download Selected
+                <!--<button class="btn btn-primary" type="submit">-->
+                  <!--<span class="glyphicon glyphicon-download"></span> Zip and Download Selected-->
+                  <!--(<span id="checkFileSelectedCount"></span>)-->
+                <!--</button>-->
+                <button class="btn btn-primary" type="button" onclick="download_selected()">
+                  <span class="glyphicon glyphicon-download"></span> Download Selected
                   (<span id="checkFileSelectedCount"></span>)
                 </button>
               </span>
@@ -179,7 +183,7 @@
             <span class="col-md-8"><label><input type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="<%= binary.id %>"><%= binary.filename %>
             </label></span>
                           <span class="col-md-2"><%= number_to_human_size(binary.byte_size) %></span>
-                        <span class="col-md-2"><a href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/stream_file/<%= datafile.web_id %>"' class="btn btn-primary btn-sm" role="button">
+                        <span class="col-md-2"><a class="stream" id="<%= datafile.web_id %>" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/stream_file/<%= datafile.web_id %>"' class="btn btn-primary btn-sm" role="button">
                           <span class="glyphicon glyphicon-download"></span> File
                         </a></span>
                         </div>
@@ -230,3 +234,4 @@
   <div class="jumbotron"><h2>Must be logged in as the depositor or a curator to view this dataset.</h2></div>
 
 <% end %>
+<div id="frames"></div>

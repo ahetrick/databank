@@ -179,23 +179,29 @@ function handleAgreeModal(email, name){
         handleNotAgreed();
     }
 
-    //var agreement = $('input[name="agreement"]:checked').val();
-    ////alert('agreement: ' + agreement);
-    //var owner = $('input[name="owner"]:checked').val();
-    ////alert('owner: ' + owner);
-    //var public = $('input[name="public"]:checked').val();
-    ////alert('public:' + public);
-    //
-    //if (agreement == 'yes' && owner == 'yes' && (public == 'yes' || public == 'na')){
-    //    setDepositor(email, name);
-    //} else {
-    //    handleNotAgreed();
-    //}
-
-
 }
 
+function download_selected(){
+    var file_ids = $("input[name='selected_files[]']:checked").map(function(index,domElement) {
+        return $(domElement).val();
+    });
+    //testurl = "<iframe src='" + "http://www.w3schools.com" + "'></iframe>";
+    //$('#frametest').append("<iframe src='http://www.w3schools.com'></iframe>");
+    //$('#frametest').append(testurl);
 
+    $.each(file_ids, function(i, file_id){
+        fileURL = "<iframe class='hidden' src='" + file_id + "'></iframe>";
+        $('#frames').append(fileURL);
+    });
+
+
+    //var zip = new JSZip();
+
+    //var reflector = new Reflector(file_ids);
+    //document.write('<p>file_id collection properties:</p>');
+    //document.write(reflector.getProperties().join('<br/>'));
+
+}
 
 $(document).ready(ready);
 $(document).on('page:load', ready);
