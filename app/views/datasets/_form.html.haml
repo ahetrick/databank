@@ -147,7 +147,11 @@
                 %h4 Box Items
                 - @box_items.each do |box_item|
                   = debug(box_item)
-                = link_to "test", "/datasets/#{@dataset.key}/download_box_file/42675142301"
+                %button(type="button" class="btn btn-primary" id="test-id" ) test
+
+                %div(id="box-upload-in-progress" )
+                  Uploading ...
+                  %i(class="fa fa-spinner fa-spin fa-5x")
 
 
 %script(id="template-upload" type="text/x-tmpl")

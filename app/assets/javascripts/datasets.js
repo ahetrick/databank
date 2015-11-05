@@ -65,6 +65,11 @@ ready = function() {
 
     });
 
+    $('#test-id').click(function () {
+        $('#box-upload-in-progress').show();
+        window.location.assign('/datasets/' + dataset_key + '/download_box_file/42384177089');
+    });
+
     $('input.dataset').change(function() {
         if( $(this).val() != "" )
             window.onbeforeunload = confirmOnPageExit;
@@ -128,6 +133,8 @@ ready = function() {
             }
         }
     });
+
+    $('#box-upload-in-progress').hide();
 
     //alert("javascript working");
 }

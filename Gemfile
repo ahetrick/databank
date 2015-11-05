@@ -43,10 +43,10 @@ gem 'haml'
 
 gem 'simple_form'
 
-gem 'zipline', path: "vendor/zipline"
+# gem 'zipline', path: "vendor/zipline"
 
 # use carrierwave for file upload to temporary location before ingest into fedora
-gem 'carrierwave'
+# gem 'carrierwave'
 
 # use will_paginate to handle paging results on datasets index
 gem 'will_paginate', '~> 3.0.5'
@@ -81,6 +81,9 @@ gem 'omniauth-shibboleth'
 
 # Use Boxr to interact with Box API
 gem 'boxr'
+
+# Use delayed_job during upload and ingest from box to avoid timeout failures
+gem 'delayed_job_active_record'
 
 # Use canan to restrict what resources a given user is allowed to access
 gem 'cancancan'

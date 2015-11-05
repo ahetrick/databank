@@ -65,7 +65,7 @@ class DatasetsController < ApplicationController
   # GET /datasets/1/edit
   def edit
 
-    client = Boxr::Client.new('dqclSxKIFM5r9YqPOWjOVLv08g9vJ9hB')
+    client = Boxr::Client.new('MK3nWfPiI933zVDiKduLcQr5FBSTnw7X')
     @box_items = client.folder_items(Boxr::ROOT)
 
   end
@@ -197,8 +197,8 @@ class DatasetsController < ApplicationController
 
     if params.has_key?(:box_file_id)
 
-      client = Boxr::Client.new('dqclSxKIFM5r9YqPOWjOVLv08g9vJ9hB')
-      test_file = client.file_from_id("42675142301")
+      client = Boxr::Client.new('MK3nWfPiI933zVDiKduLcQr5FBSTnw7X')
+      test_file = client.file_from_id("23708346967")
 
       # box_list = client.
 
@@ -217,6 +217,8 @@ class DatasetsController < ApplicationController
 
       datafile.save!
 
+      Rails.logger.warn datafile.to_yaml
+
       upload_io = client.download_file(test_file)
 
       bytestream = Repository::Bytestream.new(
@@ -228,10 +230,10 @@ class DatasetsController < ApplicationController
 
       bytestream.save!
 
+      Rails.logger.warn bytestream.to_yaml
+
       Solr::Solr.client.commit
-
     end
-
     redirect_to action: "edit"
 
   end
