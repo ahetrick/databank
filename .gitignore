@@ -23,5 +23,7 @@ config/secrets.yml
 config/shibboleth.yml
 public/uploads
 
+prod_start.sh
+prod_restart.sh
 
 

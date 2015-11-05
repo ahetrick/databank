@@ -65,10 +65,10 @@ ready = function() {
 
     });
 
-    $('#test-id').click(function () {
-        $('#box-upload-in-progress').show();
-        window.location.assign('/datasets/' + dataset_key + '/download_box_file/42384177089');
-    });
+    //$('#test-id').click(function () {
+    //    $('#box-upload-in-progress').show();
+    //    window.location.assign('/datasets/' + dataset_key + '/download_box_file/42384177089');
+    //});
 
     $('input.dataset').change(function() {
         if( $(this).val() != "" )
@@ -134,7 +134,7 @@ ready = function() {
         }
     });
 
-    $('#box-upload-in-progress').hide();
+    //$('#box-upload-in-progress').hide();
 
     //alert("javascript working");
 }

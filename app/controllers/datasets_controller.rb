@@ -65,8 +65,8 @@ class DatasetsController < ApplicationController
   # GET /datasets/1/edit
   def edit
 
-    client = Boxr::Client.new('MK3nWfPiI933zVDiKduLcQr5FBSTnw7X')
-    @box_items = client.folder_items(Boxr::ROOT)
+    # client = Boxr::Client.new('MK3nWfPiI933zVDiKduLcQr5FBSTnw7X')
+    # @box_items = client.folder_items(Boxr::ROOT)
 
   end
 
@@ -193,50 +193,50 @@ class DatasetsController < ApplicationController
 
   end
 
-  def download_box_file
-
-    if params.has_key?(:box_file_id)
-
-      client = Boxr::Client.new('MK3nWfPiI933zVDiKduLcQr5FBSTnw7X')
-      test_file = client.file_from_id("23708346967")
-
-      # box_list = client.
-
-      # test_file = client.file_from_id("21776834029")
-      #
-      # file = client.download_file(test_file)
-      # f = File.open("./public/downloads/#{test_file.name}", 'w+')
-      # f.write(file)
-      # f.close
-
-
-      datafile = Repository::Datafile.new(
-          repo_dataset: @dataset.repo_dataset,
-          parent_url: (@dataset.repo_dataset).id,
-          published: true)
-
-      datafile.save!
-
-      Rails.logger.warn datafile.to_yaml
-
-      upload_io = client.download_file(test_file)
-
-      bytestream = Repository::Bytestream.new(
-          parent_url: datafile.id,
-          type: Repository::Bytestream::Type::MASTER,
-          datafile: datafile,
-          upload_filename: test_file.name,
-          upload_io: upload_io)
-
-      bytestream.save!
-
-      Rails.logger.warn bytestream.to_yaml
-
-      Solr::Solr.client.commit
-    end
-    redirect_to action: "edit"
-
-  end
+  # def download_box_file
+  #
+  #   if params.has_key?(:box_file_id)
+  #
+  #     client = Boxr::Client.new('MK3nWfPiI933zVDiKduLcQr5FBSTnw7X')
+  #     test_file = client.file_from_id("23708346967")
+  #
+  #     # box_list = client.
+  #
+  #     # test_file = client.file_from_id("21776834029")
+  #     #
+  #     # file = client.download_file(test_file)
+  #     # f = File.open("./public/downloads/#{test_file.name}", 'w+')
+  #     # f.write(file)
+  #     # f.close
+  #
+  #
+  #     datafile = Repository::Datafile.new(
+  #         repo_dataset: @dataset.repo_dataset,
+  #         parent_url: (@dataset.repo_dataset).id,
+  #         published: true)
+  #
+  #     datafile.save!
+  #
+  #     Rails.logger.warn datafile.to_yaml
+  #
+  #     upload_io = client.download_file(test_file)
+  #
+  #     bytestream = Repository::Bytestream.new(
+  #         parent_url: datafile.id,
+  #         type: Repository::Bytestream::Type::MASTER,
+  #         datafile: datafile,
+  #         upload_filename: test_file.name,
+  #         upload_io: upload_io)
+  #
+  #     bytestream.save!
+  #
+  #     Rails.logger.warn bytestream.to_yaml
+  #
+  #     Solr::Solr.client.commit
+  #   end
+  #   redirect_to action: "edit"
+  #
+  # end
 
   def destroy_file
     datafile = Repository::Datafile.find_by_web_id(params[:web_id])
