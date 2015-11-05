@@ -142,6 +142,13 @@
                 %span Select Files
                 /# The file input field used as target for the file upload widget
                 %input(id="datafile-file-upload" type="file" name="file_upload" multiple)
+              - if current_user.email = 'mfall3@illinois.edu'
+                %br
+                %h4 Box Items
+                - @box_items.each do |box_item|
+                  = debug(box_item)
+                = link_to "test", "/datasets/#{@dataset.key}/download_box_file/42675142301"
+
 
 %script(id="template-upload" type="text/x-tmpl")
   .upload

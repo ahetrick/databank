@@ -23,8 +23,7 @@ Rails.application.routes.draw do
   get '/datasets/:id/stream_file/:web_id', to: 'datasets#stream_file'
   get '/datasets/:id/destroy_file/:web_id', to: 'datasets#destroy_file'
 
-  get '/binaries/:id/download', to: 'binaries#download'
-
+  get '/datasets/:id/download_box_file/:box_file_id', to: 'datasets#download_box_file'
 
   # datafiles
   get '/datafiles', to: 'datafiles#index'

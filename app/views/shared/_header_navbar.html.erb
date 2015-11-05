@@ -28,7 +28,7 @@
 
         <ul class="nav navbar-nav navbar-right">
           <% if current_user %>
-            <li><span class="navbar-user"><%= current_user.name %></span></li>
+            <li><a href="/datasets?depositor_email=<%= current_user.email %>"> <%= current_user.name %></a></li>
             <li><%= link_to "Log out", :logout %></li>
 
 

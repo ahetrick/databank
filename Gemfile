@@ -72,9 +72,6 @@ gem 'bcrypt', '~> 3.1.7'
 # Use Unicorn as the app server
 gem 'unicorn'
 
-# Use cocoon to helep with nested forms
-gem "cocoon"
-
 # Use email validator
 gem 'valid_email'
 
@@ -82,6 +79,8 @@ gem 'valid_email'
 gem 'omniauth-identity'
 gem 'omniauth-shibboleth'
 
+# Use Boxr to interact with Box API
+gem 'boxr'
 
 # Use canan to restrict what resources a given user is allowed to access
 gem 'cancancan'

@@ -1,5 +1,7 @@
 require 'open-uri'
-require "net/http"
+require 'net/http'
+require 'boxr'
+
 
 class DatasetsController < ApplicationController
 
@@ -15,7 +17,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :review_deposit_agreement
   skip_load_and_authorize_resource :only => :datacite_record
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi, :datacite_record, :update_datacite_metadata]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi, :datacite_record, :update_datacite_metadata, :download_box_file]
 
   # enable streaming responses
   include ActionController::Streaming
@@ -62,6 +64,10 @@ class DatasetsController < ApplicationController
 
   # GET /datasets/1/edit
   def edit
+
+    client = Boxr::Client.new('fA1sqzUcK1JVVR1ajQGtkB0rBadHqrLS')
+    @box_items = client.folder_items(Boxr::ROOT)
+
   end
 
   # POST /datasets
@@ -187,6 +193,49 @@ class DatasetsController < ApplicationController
 
   end
 
+  def download_box_file
+
+    if params.has_key?(:box_file_id)
+
+      client = Boxr::Client.new('fA1sqzUcK1JVVR1ajQGtkB0rBadHqrLS')
+      test_file = client.file_from_id("42675142301")
+
+      # box_list = client.
+
+      # test_file = client.file_from_id("21776834029")
+      #
+      # file = client.download_file(test_file)
+      # f = File.open("./public/downloads/#{test_file.name}", 'w+')
+      # f.write(file)
+      # f.close
+
+
+      datafile = Repository::Datafile.new(
+          repo_dataset: @dataset.repo_dataset,
+          parent_url: (@dataset.repo_dataset).id,
+          published: true)
+
+      datafile.save!
+
+      upload_io = client.download_file(test_file)
+
+      bytestream = Repository::Bytestream.new(
+          parent_url: datafile.id,
+          type: Repository::Bytestream::Type::MASTER,
+          datafile: datafile,
+          upload_filename: test_file.name,
+          upload_io: upload_io)
+
+      bytestream.save!
+
+      Solr::Solr.client.commit
+
+    end
+
+    redirect_to action: "edit"
+
+  end
+
   def destroy_file
     datafile = Repository::Datafile.find_by_web_id(params[:web_id])
     raise ActiveRecord::RecordNotFound, 'Datafile not found' unless datafile
@@ -216,7 +265,12 @@ class DatasetsController < ApplicationController
               response.stream.write chunk
             end
           end
-          response.stream.close
+          response.content_type = bs.media_type if bs.media_type
+          response.header['Content-Disposition'] =
+              "attachment; filename=#{bs.filename || 'file'}"
+          res.read_body do |chunk|
+            response.stream.write chunk
+          end
         end
       end
 
