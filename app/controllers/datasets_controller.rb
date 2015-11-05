@@ -21,8 +21,6 @@ class DatasetsController < ApplicationController
 
   # enable streaming responses
   include ActionController::Streaming
-  # enable zipline
-  include Zipline
 
   # GET /datasets
   # GET /datasets.json
