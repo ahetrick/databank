@@ -65,7 +65,7 @@ class DatasetsController < ApplicationController
   # GET /datasets/1/edit
   def edit
 
-    client = Boxr::Client.new('fA1sqzUcK1JVVR1ajQGtkB0rBadHqrLS')
+    client = Boxr::Client.new('dqclSxKIFM5r9YqPOWjOVLv08g9vJ9hB')
     @box_items = client.folder_items(Boxr::ROOT)
 
   end
@@ -197,7 +197,7 @@ class DatasetsController < ApplicationController
 
     if params.has_key?(:box_file_id)
 
-      client = Boxr::Client.new('fA1sqzUcK1JVVR1ajQGtkB0rBadHqrLS')
+      client = Boxr::Client.new('dqclSxKIFM5r9YqPOWjOVLv08g9vJ9hB')
       test_file = client.file_from_id("42675142301")
 
       # box_list = client.
