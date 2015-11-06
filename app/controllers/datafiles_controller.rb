@@ -61,6 +61,17 @@ class DatafilesController < ApplicationController
     #TODO handle errors
     begin
       if params.has_key?(:file_upload)
+        source_filename = params[:file_upload].original_filename
+        upload_io = params[:file_upload].tempfile
+      elsif params.has_key?(:name) && params.has_key?(:url)
+        source_filename = params[:name]
+        box_uri = URI.parse(params[:url])
+        upload_io = box_uri.open
+
+      end
+
+      if !upload_io.nil?
+
         @datafile = Repository::Datafile.new(
                     repo_dataset: @dataset.repo_dataset,
                     parent_url: (@dataset.repo_dataset).id,
@@ -68,21 +79,20 @@ class DatafilesController < ApplicationController
 
         @datafile.save!
 
-        upload_io = params[:file_upload].tempfile
-
         bytestream = Repository::Bytestream.new(
             parent_url: @datafile.id,
             type: Repository::Bytestream::Type::MASTER,
             datafile: @datafile,
-            upload_filename: params[:file_upload].original_filename,
+            upload_filename: source_filename,
             upload_io: upload_io)
 
         bytestream.save!
 
         Solr::Solr.client.commit
+
+        render(json: to_fileupload, content_type: request.format, :layout => false )
       end
 
-      render(json: to_fileupload, content_type: request.format, :layout => false )
     rescue StandardError => error
       Rails.logger.warn "failure during attempted file upload for dataset #{@dataset.key} - #{error.message}"
       render(json: {files:[error: "#{error.message}" ]})
@@ -91,6 +101,7 @@ class DatafilesController < ApplicationController
       @files.each do |file|
         FileUtils.rm_f(file)
       end
+
     end
     # redirect_to edit_dataset_path(@dataset.key)
 

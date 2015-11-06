@@ -136,12 +136,20 @@
             %form(id= "new_datafile" enctype = "multipart/form-data" action= "/datasets/#{@dataset.key}/datafiles/new" remote=true accept-charset = "UFT-8" method = "post" multipart = true role = "form" id="new_datafile" class = "container-fluid input-append datafile-form")
               %input(type="hidden" name="dataset_key" value="#{@dataset.key}" )
               /# The fileinput-button span is used to style the file input field as button
-              %span(class="metadata-label")Drop files anywhere on this page or
-              %span(class="btn btn-success fileinput-button")
-                %i(class="glyphicon glyphicon-plus")
-                %span Select Files
-                /# The file input field used as target for the file upload widget
-                %input(id="datafile-file-upload" type="file" name="file_upload" multiple)
+              .container
+                .row
+                  .col-md-3
+                    %span(class="metadata-label" )Drop files anywhere on this page or
+                  .col-md-2
+                    .btn.btn-success.fileinput-button
+                      %i(class="glyphicon glyphicon-plus")
+                      %span Select Files
+                      /# The file input field used as target for the file upload widget
+                      %input(id="datafile-file-upload" type="file" name="file_upload" multiple)
+                    %span(class="metadata-label")or
+                  .col-md-3
+                    %div(id="box-select" data-link-type="direct" data-multiselect="true" data-client-id="r5tgofc05460skm84yjepz1ck16ptotr")
+
               -#- if current_user.email = 'mfall3@illinois.edu'
               -#  %br
               -#  %h4 Box Items
@@ -149,9 +157,9 @@
               -#    = debug(box_item)
               -#  %button(type="button" class="btn btn-primary" id="test-id" ) test
               -#
-              -#  %div(id="box-upload-in-progress" )
-              -#    Uploading ...
-              -#    %i(class="fa fa-spinner fa-spin fa-5x")
+            %div(id="box-upload-in-progress" )
+              Uploading ...
+              %i(class="fa fa-spinner fa-spin fa-5x")
 
 
 %script(id="template-upload" type="text/x-tmpl")

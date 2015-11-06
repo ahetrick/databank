@@ -115,7 +115,7 @@ ready = function() {
         },
         downloadTemplate: function (o) {
             var file = o.files[0];
-            var reflector = new Reflector(file);
+            //var reflector = new Reflector(file);
             //document.write('<p>File class properties:</p>');
             //document.write(reflector.getProperties().join('<br/>'));
             var row = '<tr><td><div class = "row"><span class="col-md-8">' + file.name + '</span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
@@ -134,7 +134,65 @@ ready = function() {
         }
     });
 
-    //$('#box-upload-in-progress').hide();
+    var boxSelect = new BoxSelect();
+    // Register a success callback handler
+    boxSelect.success(function(response) {
+        //console.log(response);
+
+        $('#box-upload-in-progress').show();
+
+        $.each(response, function(i, boxItem){
+            $.post( "/datasets/" + dataset_key+ "/datafiles/new", boxItem )
+                .done(function( data ) {
+
+                    //console.log(data);
+
+                    parsed_response = $.parseJSON(data);
+
+                    //console.log(parsed_response);
+
+                    file = parsed_response.files[0];
+
+                    //console.log(file);
+
+                    var row = '<tr><td><div class = "row"><span class="col-md-8">' + file.name + '</span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
+                    if (file.error){
+                        row = row + '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-warning-sign"></span>';
+                    } else {
+                        row = row + '<a class="btn btn-sm btn-danger" href="' + file.delete_url + '"><span class="glyphicon glyphicon-trash"></span> File</a></span>';
+                    }
+
+                    row = row + '</span></div></td></tr>';
+                    if (file.error){
+                        $("#datafiles > tbody:last-child").append('<tr><td><div class="row"><p>' + file.name + ': ' +  file.error + '</p></div></td></tr>');
+                    } else {
+                        $("#datafiles > tbody:last-child").append(row);
+                    }
+                    $('#box-upload-in-progress').hide();
+                }, "json");
+        });
+
+        //window.location.assign('/datasets/' + dataset_key + '/edit');
+
+
+
+        // $.post( "/datasets/" + dataset_key+ "/datafiles/new"
+
+        //$.each(response, function(i, boxItem){
+            //alert(boxItem.name);
+            //fileURL = "<iframe class='hidden' src='"+ boxItem.url + "'></iframe>";
+            //console.log(fileURL);
+            //$('#frames').append(fileURL);
+        //});
+
+
+    });
+    // Register a cancel callback handler
+    boxSelect.cancel(function() {
+        console.log("The user clicked cancel or closed the popup");
+    });
+
+    $('#box-upload-in-progress').hide();
 
     //alert("javascript working");
 }

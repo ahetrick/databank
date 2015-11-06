@@ -26,6 +26,9 @@
   <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
 
+  <!--support import from box-->
+  <script type="text/javascript" src="https://app.box.com/js/static/select.js"></script>
+
   <% if @dataset %>
     <meta name="citation_title" content="<%= @dataset.title %>"/>
     <meta name="citation_author" content="<%= @dataset.creator_list %>"/>
