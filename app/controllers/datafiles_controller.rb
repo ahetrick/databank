@@ -65,11 +65,12 @@ class DatafilesController < ApplicationController
   # DELETE /datafiles/1
   # DELETE /datafiles/1.json
   def destroy
+    stored_web_id = @datafile.web_id
     @dataset = Dataset.find(@datafile.dataset_id)
 
     @datafile.destroy
 
-    # Dir['**/'].reverse_each { |d| Dir.rmdir d if Dir.entries(d).size == 2 }
+    FileUtils.rm_rf(Rails.root.join('uploads', stored_web_id))
 
     redirect_to edit_dataset_path(@dataset.key)
     # respond_to do |format|
