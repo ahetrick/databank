@@ -44,12 +44,14 @@ class ApplicationController < ActionController::Base
 
     else
 
-      Rails.logger.error "\n***---***"
-      Rails.logger.error exception.class
-      Rails.logger.error exception.message
-      exception.backtrace.each { |line| Rails.logger.error line }
+      raise exception
 
-      render :file => File.join(Rails.root, 'public', '500.html')
+      # Rails.logger.error "\n***---***"
+      # Rails.logger.error exception.class
+      # Rails.logger.error exception.message
+      # exception.backtrace.each { |line| Rails.logger.error line }
+      #
+      # render :file => File.join(Rails.root, 'public', '500.html')
     end
 
   end

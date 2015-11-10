@@ -11,28 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151105213438) do
+ActiveRecord::Schema.define(version: 20151109183319) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "binaries", force: :cascade do |t|
-    t.string   "attachment"
-    t.string   "description"
-    t.integer  "dataset_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-  end
-
   create_table "datafiles", force: :cascade do |t|
     t.string   "description"
-    t.string   "repo_url"
+    t.string   "binary"
+    t.string   "web_id"
     t.integer  "dataset_id"
-    t.string   "dataset_key"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
-    t.string   "web_id"
-    t.string   "attachment"
   end
 
   create_table "datasets", force: :cascade do |t|

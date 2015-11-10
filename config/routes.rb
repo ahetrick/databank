@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :datafiles
   resources :users
   resources :identities
   resources :datasets
@@ -26,23 +27,23 @@ Rails.application.routes.draw do
   get '/datasets/:id/download_box_file/:box_file_id', to: 'datasets#download_box_file'
 
   # datafiles
-  get '/datafiles', to: 'datafiles#index'
-  get '/datasets/:dataset_key/datafiles', to: 'datafiles#index'
-
-  get '/datasets/:dataset_key/datafiles/new', to: 'datafiles#new'
-  post '/datasets/:dataset_key/datafiles/new', to: 'datafiles#create'
-
-  post '/datasets/:dataset_key/datafiles', to: 'datafiles#create'
-
-  get '/datafiles/:web_id', to: 'datafiles#show'
-
-  patch '/datafiles/:web_id', to: 'datafiles#update'
-  put '/datafiles/:web_id', to: 'datafiles#update'
-
-  get '/datafiles/:web_id/edit', to: 'datafiles#edit'
-  get '/datafiles/:web_id/edit', to: 'datafiles#edit'
-
-  delete '/datafiles/:web_id', to: 'datafiles#destroy'
+  # get '/datafiles', to: 'datafiles#index'
+  # get '/datasets/:dataset_key/datafiles', to: 'datafiles#index'
+  #
+  # get '/datasets/:dataset_key/datafiles/new', to: 'datafiles#new'
+  # post '/datasets/:dataset_key/datafiles/new', to: 'datafiles#create'
+  #
+  # post '/datasets/:dataset_key/datafiles', to: 'datafiles#create'
+  #
+  # get '/datafiles/:web_id', to: 'datafiles#show'
+  #
+  # patch '/datafiles/:web_id', to: 'datafiles#update'
+  # put '/datafiles/:web_id', to: 'datafiles#update'
+  #
+  # get '/datafiles/:web_id/edit', to: 'datafiles#edit'
+  # get '/datafiles/:web_id/edit', to: 'datafiles#edit'
+  #
+  # delete '/datafiles/:web_id', to: 'datafiles#destroy'
 
   # deposit
   get '/datasets/:id/deposit', to: 'datasets#deposit'
@@ -58,6 +59,12 @@ Rails.application.routes.draw do
   match '/logout', to: 'sessions#destroy', as: :logout, via: [:get, :post]
 
   match '/auth/failure', to: 'sessions#unauthorized', as: :unauthorized, via: [:get, :post]
+
+  # route binary downloads
+  get "/datafiles/:id/download", :controller => "datafiles", :action => "download"
+
+  # create from box file select widget
+  post "/datafiles/create_from_box", to: 'datafiles#create_from_box'
 
 
 end

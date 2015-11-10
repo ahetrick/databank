@@ -26,4 +26,7 @@ public/uploads
 prod_start.sh
 prod_restart.sh
 
+/uploads
+
+
 

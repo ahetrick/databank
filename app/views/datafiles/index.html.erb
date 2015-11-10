@@ -1,53 +1,52 @@
-<%= debug(params) %>
 <p id="notice"><%= notice %></p>
-<% if params.has_key?(:dataset_key) %>
-  <% dataset = @dataset %>
-  <h1>Datafiles for <%= @dataset.title %></h1>
-  <% if ((can? :update, dataset) || dataset.complete?) %>
 
-    <div class="row">
-      <span class="col-md-9">
-        <% (dataset.identifier && !dataset.identifier.empty?) ? doi_part = "doi:#{dataset.identifier}" : doi_part = "" %>
-        <%= link_to "#{dataset.creator_list} (#{dataset.publication_year}): #{dataset.title}. #{dataset.publisher}. #{doi_part}", dataset_path(dataset.key) %>
-        <br />
-        <% if dataset.description && !dataset.description.empty? %>
-          <%= dataset.description.first(230) %><%if dataset.description.length > 230 %>[...]<%end%><br />
-        <% end %>
-        <% if dataset.keywords && !dataset.keywords.empty? %>
-          <span class="metadata-label">Keyword(s): </span><%= dataset.keywords %>
-        <% end %>
-      </span>
+<h1>Listing Datafiles</h1>
 
-      <span class="col-md-3">
+<table>
+  <thead>
+    <tr>
+      <th>Description</th>
+      <th>Binary</th>
+      <th>Web_id</th>
+      <th>Dataset</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
 
-        <%= link_to dataset_path(dataset.key), :class => "btn btn-primary btn-sm" do %>
-          <span class="glyphicon glyphicon-zoom-in"></span> View
-        <% end %>
+  <tbody>
+    <% @datafiles.each do |datafile| %>
+      <tr>
+        <td><%= link_to "datafile/#{datafile.web_id}/download", :class => "btn btn-primary btn-sm" do %>
+            <span class="glyphicon glyphicon-download"></span> Download
+          <% end %></td>
+        <td><%= datafile.binary %></td>
+        <td><%= datafile.web_id %></td>
+        <td><%= datafile.dataset_id %></td>
+        <td>
 
-        <% if can? :update, dataset %>
-          <%= link_to edit_dataset_path(dataset.key), :class => "btn btn-info btn-sm" do %>
+          <%= link_to datafile_path(datafile.web_id), :class => "btn btn-primary btn-sm" do %>
+            <span class="glyphicon glyphicon-zoom-in"></span> View
+          <% end %>
+
+        </td>
+        <td>
+
+          <%= link_to edit_datafile_path(datafile.web_id), :class => "btn btn-info btn-sm" do %>
             <span class="glyphicon glyphicon-edit"></span> Edit
           <% end %>
-        <% end %>
 
-        <% if (((can? :destroy, dataset) && (!dataset.complete?))||(can? :manage, dataset) )%>
-          <%= link_to dataset_path(dataset.key), method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn btn-danger btn-sm" do %>
-            <span class="glyphicon glyphicon-remove"></span> Delete
+        </td>
+        <td>
+          <%= link_to datafile_path(datafile.web_id), method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn btn-danger btn-sm" do %>
+            <span class="glyphicon glyphicon-trash"></span> Delete
           <% end %>
-        <% end %>
+        </td>
 
-      </span>
-    </div>
-    <hr/>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 
-  <% end %>
+<br>
 
-<% end %>
-
-<% @datafiles.each do |datafile| %>
-  <% @dataset ||= datafile.repo_dataset %>
-  <%= render partial: 'detail', :layout => false, locals: {dataset: @dataset , datafile: datafile} %>
-  <hr/>
-<% end %>
-
-
+<%= link_to 'New Datafile', new_datafile_path %>

@@ -1,1 +1,0 @@
-json.extract! @datafile, :description, :dataset_id, :file_upload, :dataset_key, :web_id, :id, :created_at, :updated_at

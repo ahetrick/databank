@@ -45,18 +45,13 @@ gem 'simple_form'
 
 # gem 'zipline', path: "vendor/zipline"
 
-# use carrierwave for file upload to temporary location before ingest into fedora
-# gem 'carrierwave'
+# use carrierwave for file upload
+gem 'carrierwave'
 
 # use will_paginate to handle paging results on datasets index
 gem 'will_paginate', '~> 3.0.5'
 
-# Use ActiveMedusa to interact with Fedora repository
-gem 'active-medusa', github: 'medusa-project/active-medusa', tag: '2.0.0'
-gem 'httpclient', git: 'git://github.com/medusa-project/httpclient.git'
-
-# Use rsolr to interact with Solr core
-gem 'rsolr'
+#gem 'httpclient', git: 'git://github.com/medusa-project/httpclient.git'
 
 # Use rdf to handle RDF stuff
 gem 'rdf'

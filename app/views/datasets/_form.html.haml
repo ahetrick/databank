@@ -117,25 +117,24 @@
             %a(href="http://researchdataservice.illinois.edu/")Research Data Service
           %table(class="table table-striped" id="datafiles")
             %tbody
-            - if @dataset.datafiles
               - @dataset.datafiles.each do |datafile|
-                - if datafile.master_bytestream
-                  %tr
-                    %td
-                      .row
-                        %span(class="col-md-8")
-                          = (datafile.master_bytestream).filename
-                        %span(class="col-md-2")
-                          = number_to_human_size((datafile.master_bytestream).byte_size)
-                        %span(class="col-md-2")
-                          - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
-                            = link_to "#{request.base_url}/datasets/#{@dataset.key}/destroy_file/#{datafile.web_id}", :class=>"btn btn-sm btn-danger" do
-                              = %Q[<span class="glyphicon glyphicon-trash"></span> File].html_safe
+                %tr
+                  %td
+                    .row
+                      %span(class="col-md-8")
+                        = datafile.binary.file.filename
+                        -#= datafile.binary.filename ? datafile.binary.filename : "filename not found"
+                      %span(class="col-md-2")
+                        = number_to_human_size(datafile.binary.size)
+                      %span(class="col-md-2")
+                        - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
+                          %a(data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" data-method="delete" href="/datafiles/#{datafile.web_id}")
+                            %span(class="glyphicon glyphicon-trash")
+                            File
           %div(id="datafiles_upload_progress")
           - if ( (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)) )
-            %form(id= "new_datafile" enctype = "multipart/form-data" action= "/datasets/#{@dataset.key}/datafiles/new" remote=true accept-charset = "UFT-8" method = "post" multipart = true role = "form" id="new_datafile" class = "container-fluid input-append datafile-form")
-              %input(type="hidden" name="dataset_key" value="#{@dataset.key}" )
-              /# The fileinput-button span is used to style the file input field as button
+            = form_for Datafile.new do |df|
+              = df.hidden_field :dataset_id, value: @dataset.id
               .container
                 .row
                   .col-md-3
@@ -145,10 +144,28 @@
                       %i(class="glyphicon glyphicon-plus")
                       %span Select Files
                       /# The file input field used as target for the file upload widget
-                      %input(id="datafile-file-upload" type="file" name="file_upload" multiple)
+                      = df.file_field :binary, name: "datafile[binary]", multiple: true
                     %span(class="metadata-label")or
                   .col-md-3
                     %div(id="box-select" data-link-type="direct" data-multiselect="true" data-client-id="r5tgofc05460skm84yjepz1ck16ptotr")
+
+
+            -#%form(id= "new_datafile" enctype = "multipart/form-data" action= "/datasets/#{@dataset.key}/datafiles/new" remote=true accept-charset = "UFT-8" method = "post" multipart = true role = "form" id="new_datafile" class = "container-fluid input-append datafile-form")
+            -#  %input(type="hidden" name="dataset_key" value="#{@dataset.key}" )
+            -#  /# The fileinput-button span is used to style the file input field as button
+            -#  .container
+            -#    .row
+            -#      .col-md-3
+            -#        %span(class="metadata-label" )Drop files anywhere on this page or
+            -#      .col-md-2
+            -#        .btn.btn-success.fileinput-button
+            -#          %i(class="glyphicon glyphicon-plus")
+            -#          %span Select Files
+            -#          /# The file input field used as target for the file upload widget
+            -#          %input(id="datafile-file-upload" type="file" name="file_upload" multiple)
+            -#        %span(class="metadata-label")or
+            -#      .col-md-3
+            -#        %div(id="box-select" data-link-type="direct" data-multiselect="true" data-client-id="r5tgofc05460skm84yjepz1ck16ptotr")
 
               -#- if current_user.email = 'mfall3@illinois.edu'
               -#  %br

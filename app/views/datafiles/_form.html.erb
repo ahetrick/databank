@@ -1,6 +1,9 @@
-<%= form_for :datafile do |f| %>
+<%= form_for Datafile.new do |f| %>
+  <%= f.label :binary, "Upload datafiles:" %>
+  <%= f.file_field :binary, name: "datafile[binary]" %>
 
-  <%= f.file_field :file_upload %>
-  <%= f.submit %>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
 
 <% end %>

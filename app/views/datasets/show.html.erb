@@ -171,30 +171,23 @@
                     </div>
                   </td>
                 </tr>
-
-                <% @dataset.datafiles.each do |datafile| %>
-                  <% if datafile.master_bytestream && !datafile.master_bytestream.nil? %>
-
-                    <% binary = datafile.master_bytestream %>
+                  <% @dataset.datafiles.each do |datafile| %>
                     <tr>
                       <td>
                         <div class="row checkbox">
 
-            <span class="col-md-8"><label><input type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="<%= datafile.web_id %>"><%= binary.filename %>
+            <span class="col-md-8"><label><input type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="<%= datafile.web_id %>"><%= datafile.binary.file.filename %>
             </label></span>
-                          <span class="col-md-2"><%= number_to_human_size(binary.byte_size) %></span>
-                        <span class="col-md-2"><a href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/stream_file/<%= datafile.web_id %>"' class="btn btn-primary btn-sm" role="button">
+                          <span class="col-md-2"><%= number_to_human_size(datafile.binary.size) %></span>
+                        <span class="col-md-2"><a href="#" onclick='window.location = "/datafiles/<%= datafile.web_id %>/download"' class="btn btn-primary btn-sm" role="button">
                           <span class="glyphicon glyphicon-download"></span> File
                         </a></span>
                         </div>
                       </td>
                     </tr>
                   <% end %>
-
-                <% end %>
                 </tbody>
               </table>
-
             </div>
             <!-- end select-files-form-group -->
           </form>

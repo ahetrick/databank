@@ -9,8 +9,6 @@ class Dataset < ActiveRecord::Base
   accepts_nested_attributes_for :datafiles, :reject_if => :all_blank, allow_destroy: true
 
   before_create 'set_key'
-  after_save 'save_to_repo'
-  before_destroy 'delete_repository_entity'
 
   KEY_LENGTH = 5
 
@@ -154,60 +152,6 @@ class Dataset < ActiveRecord::Base
     citation_id = (identifier && !identifier.empty?) ? "http://dx.doi.org/#{identifier}" : ""
 
     return "#{creator_list} (#{publication_year}): #{title}. #{publisher}. #{citation_id}"
-  end
-
-  def repo_dataset
-
-    if !self.key || self.key.empty?
-      nil
-    else
-      repo_dataset = Repository::RepoDataset.find_by_key(self.key)
-      raise ActiveRecord::RecordNotFound unless repo_dataset
-    end
-
-    repo_dataset
-
-  end
-
-  def datafiles
-    if !self.key || self.key.empty?
-      nil
-    else
-      repo_dataset = Repository::RepoDataset.find_by_key(self.key)
-      raise ActiveRecord::RecordNotFound unless repo_dataset
-      Repository::Datafile.where(Solr::Fields::DATASET => repo_dataset.id).limit(MAX_FILES)
-    end
-  end
-
-  def save_to_repo
-    repo_dataset = Repository::RepoDataset.find_by_key(self.key)
-    if repo_dataset.nil?
-      repo_dataset = Repository::RepoDataset.new :parent_url => IDB_CONFIG[:fedora_url]
-    end
-    repo_dataset.key = self.key
-    repo_dataset.published = self.complete?
-    repo_dataset.title = self.title
-    repo_dataset.creator_list = self.creator_list
-    repo_dataset.description = self.description
-    repo_dataset.identifier = self.identifier
-    repo_dataset.license = self.license
-    repo_dataset.publication_year = self.publication_year
-    repo_dataset.publisher = self.publisher
-    repo_dataset.keywords = self.keywords
-    repo_dataset.save!
-    Solr::Solr.client.commit
-
-  end
-
-  def delete_repository_entity
-    repo_dataset = Repository::RepoDataset.find_by_key(self.key)
-    if !repo_dataset.nil?
-      datafiles.each do |datafile|
-        datafile.destroy
-      end
-      repo_dataset.destroy
-      Solr::Solr.client.commit
-    end
   end
 
   def set_key

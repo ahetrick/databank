@@ -38,20 +38,7 @@ class DatasetsController < ApplicationController
   # GET /datasets/1
   # GET /datasets/1.json
   def show
-
-    # if params.keys.include?("selected_files")
-    #   download_datafiles
-    # end
-
-    # clean up after failed uploads
-    @dataset.datafiles.each do |datafile|
-      datafile.destroy if (!datafile.master_bytestream || datafile.master_bytestream.nil?)
-    end
-    Solr::Solr.client.commit
-
-
     @datacite_record = datacite_record_hash
-
   end
 
 
@@ -62,10 +49,6 @@ class DatasetsController < ApplicationController
 
   # GET /datasets/1/edit
   def edit
-
-    # client = Boxr::Client.new('MK3nWfPiI933zVDiKduLcQr5FBSTnw7X')
-    # @box_items = client.folder_items(Boxr::ROOT)
-
   end
 
   # POST /datasets
@@ -191,130 +174,6 @@ class DatasetsController < ApplicationController
 
   end
 
-  # def download_box_file
-  #
-  #   if params.has_key?(:box_file_id)
-  #
-  #     client = Boxr::Client.new('MK3nWfPiI933zVDiKduLcQr5FBSTnw7X')
-  #     test_file = client.file_from_id("23708346967")
-  #
-  #     # box_list = client.
-  #
-  #     # test_file = client.file_from_id("21776834029")
-  #     #
-  #     # file = client.download_file(test_file)
-  #     # f = File.open("./public/downloads/#{test_file.name}", 'w+')
-  #     # f.write(file)
-  #     # f.close
-  #
-  #
-  #     datafile = Repository::Datafile.new(
-  #         repo_dataset: @dataset.repo_dataset,
-  #         parent_url: (@dataset.repo_dataset).id,
-  #         published: true)
-  #
-  #     datafile.save!
-  #
-  #     Rails.logger.warn datafile.to_yaml
-  #
-  #     upload_io = client.download_file(test_file)
-  #
-  #     bytestream = Repository::Bytestream.new(
-  #         parent_url: datafile.id,
-  #         type: Repository::Bytestream::Type::MASTER,
-  #         datafile: datafile,
-  #         upload_filename: test_file.name,
-  #         upload_io: upload_io)
-  #
-  #     bytestream.save!
-  #
-  #     Rails.logger.warn bytestream.to_yaml
-  #
-  #     Solr::Solr.client.commit
-  #   end
-  #   redirect_to action: "edit"
-  #
-  # end
-
-  def destroy_file
-    datafile = Repository::Datafile.find_by_web_id(params[:web_id])
-    raise ActiveRecord::RecordNotFound, 'Datafile not found' unless datafile
-    datafile.destroy
-    redirect_to action: "edit", id: [params[:id]]
-  end
-
-  def stream_file
-
-    datafile = Repository::Datafile.find_by_web_id(params[:web_id])
-    raise ActiveRecord::RecordNotFound, 'Datafile not found' unless datafile
-
-    bs = datafile.master_bytestream
-
-    if bs and bs.id
-      repo_url = URI(bs.id)
-      Net::HTTP.start(repo_url.host, repo_url.port) do |http|
-        request = Net::HTTP::Get.new(repo_url)
-        http.request(request) do |res|
-          if res.kind_of?(Net::HTTPTemporaryRedirect)
-            redirect_to res.header['Location']
-          else
-            response.content_type = bs.media_type if bs.media_type
-            response.header['Content-Disposition'] =
-                "attachment; filename=#{bs.filename || 'file'}"
-            res.read_body do |chunk|
-              response.stream.write chunk
-            end
-          end
-          response.content_type = bs.media_type if bs.media_type
-          response.header['Content-Disposition'] =
-              "attachment; filename=#{bs.filename || 'file'}"
-          res.read_body do |chunk|
-            response.stream.write chunk
-          end
-        end
-      end
-
-      # The following is simpler but may be less efficient due to open() not
-      # streaming its input
-      #options = {}
-      #options[:type] = bs.media_type if bs.media_type
-      #options[:filename] = bs.filename if bs.filename
-      #send_file(open(bs.id), options)
-    else
-      render text: '404 Not Found', status: 404
-    end
-  end
-
-  # def download_datafiles
-  #
-  # (@dataset.identifier && !@dataset.identifier.empty?) ? filename = "DOI-#{@dataset.identifier}.zip" : filename = "datafiles.zip"
-  #
-  #   datafiles = Array.new
-  #
-  #   params[:selected_files].each do |file_id|
-  #
-  #     bs = Repository::Bytestream.find(file_id)
-  #     raise ActiveRecord::RecordNotFound, 'Bytestream not found' unless bs
-  #
-  #     web_id = bs.datafile.web_id
-  #
-  #     if bs and bs.id
-  #
-  #       file_url = "#{request.base_url}/datasets/#{@dataset.key}/stream_file/#{web_id}"
-  #       zip_path = bs.filename
-  #       datafiles << [file_url, zip_path]
-  #     end
-  #
-  #   end
-  #
-  #   file_mappings = datafiles
-  #                       .lazy # Lazy allows us to begin sending the download immediately instead of waiting to download everything
-  #                       .map { |url, path| [open(url), path] }
-  #
-  #   zipline(file_mappings, filename)
-  #
-  #
-  # end
 
   def download_endNote_XML
 
@@ -498,7 +357,7 @@ class DatasetsController < ApplicationController
   # def dataset_params
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :creator_text, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, :search, datafiles_attributes: [:datafile, :description, :dataset_id, :id, :_destory, :_update ])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :creator_text, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, :search, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ])
   end
 
   def ezid_metadata_response

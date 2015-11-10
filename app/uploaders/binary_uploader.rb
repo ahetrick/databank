@@ -2,7 +2,7 @@
 
 require 'carrierwave/processing/mime_types'
 
-class AttachmentUploader < CarrierWave::Uploader::Base
+class BinaryUploader < CarrierWave::Uploader::Base
 
   include CarrierWave::MimeTypes
 
@@ -19,10 +19,8 @@ class AttachmentUploader < CarrierWave::Uploader::Base
   before :store, :remember_cache_id
   after :store, :delete_tmp_dir
 
-  # Override the directory where uploaded files will be stored.
-  # This is a sensible default for uploaders that are meant to be mounted:
   def store_dir
-    "uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
+    Rails.root.join('uploads', model.web_id)
   end
 
   def move_to_store
@@ -49,7 +47,7 @@ class AttachmentUploader < CarrierWave::Uploader::Base
   #   # For Rails 3.1+ asset pipeline compatibility:
   #   # ActionController::Base.helpers.asset_path("fallback/" + [version_name, "default.png"].compact.join('_'))
   #
-  #   "/images/fallback/" + [version_name, "default.png"].compact.join('_')
+  #   Rails.root.join('public', 'binary_fallback.txt')
   # end
 
   # Process files as they are uploaded:

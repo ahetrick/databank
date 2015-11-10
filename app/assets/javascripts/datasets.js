@@ -91,6 +91,9 @@ ready = function() {
     $("#login-prompt").modal('show');
     //alert("pre-validity check");
     //alert("dataset key: "+ dataset_key)
+
+
+
     $("#new_datafile").fileupload({
         downloadTemplate: null,
         downloadTemplateId: null,
@@ -122,7 +125,7 @@ ready = function() {
             if (file.error){
                 row = row + '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-warning-sign"></span>';
             } else {
-                row = row + '<a class="btn btn-sm btn-danger" href="' + file.delete_url + '"><span class="glyphicon glyphicon-trash"></span> File</a></span>';
+                row = row + '<a data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" data-method="delete" href="/datafiles/' + file.web_id + '"><span class="glyphicon glyphicon-trash"></span> File</a></span>';
             }
 
             row = row + '</span></div></td></tr>';
@@ -142,7 +145,16 @@ ready = function() {
         $('#box-upload-in-progress').show();
 
         $.each(response, function(i, boxItem){
-            $.post( "/datasets/" + dataset_key+ "/datafiles/new", boxItem )
+
+            /*console.log(boxItem);
+            var reflector = new Reflector(boxItem);
+            document.write('<p>boxItem class properties:</p>');
+            document.write(reflector.getProperties().join('<br/>'));
+            document.write(typeof boxItem)*/
+
+            boxItem.dataset_key = dataset_key;
+
+            $.post( "/datafiles/create_from_box", boxItem )
                 .done(function( data ) {
 
                     //console.log(data);
@@ -159,7 +171,7 @@ ready = function() {
                     if (file.error){
                         row = row + '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-warning-sign"></span>';
                     } else {
-                        row = row + '<a class="btn btn-sm btn-danger" href="' + file.delete_url + '"><span class="glyphicon glyphicon-trash"></span> File</a></span>';
+                        row = row + '<a data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" data-method="delete" href="/datafiles/' + file.web_id + '"><span class="glyphicon glyphicon-trash"></span> File</a></span>';
                     }
 
                     row = row + '</span></div></td></tr>';
