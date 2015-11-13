@@ -140,9 +140,9 @@ ready = function() {
     var boxSelect = new BoxSelect();
     // Register a success callback handler
     boxSelect.success(function(response) {
-        //console.log(response);
+        console.log(response);
 
-        $('#box-upload-in-progress').show();
+        // $('#box-upload-in-progress').show();
 
         $.each(response, function(i, boxItem){
 
@@ -154,34 +154,44 @@ ready = function() {
 
             boxItem.dataset_key = dataset_key;
 
-            $.post( "/datafiles/create_from_box", boxItem )
-                .done(function( data ) {
+            $.ajax({
+                type: "POST",
+                url: "/datafiles/create_from_box",
+                data: boxItem,
+                success: function(data) {
+                    eval($(data).text());
+                },
+                dataType: 'script'
+            });
 
-                    //console.log(data);
-
-                    parsed_response = $.parseJSON(data);
-
-                    //console.log(parsed_response);
-
-                    file = parsed_response.files[0];
-
-                    //console.log(file);
-
-                    var row = '<tr><td><div class = "row"><span class="col-md-8">' + file.name + '</span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
-                    if (file.error){
-                        row = row + '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-warning-sign"></span>';
-                    } else {
-                        row = row + '<a data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" data-method="delete" href="/datafiles/' + file.web_id + '"><span class="glyphicon glyphicon-trash"></span> File</a></span>';
-                    }
-
-                    row = row + '</span></div></td></tr>';
-                    if (file.error){
-                        $("#datafiles > tbody:last-child").append('<tr><td><div class="row"><p>' + file.name + ': ' +  file.error + '</p></div></td></tr>');
-                    } else {
-                        $("#datafiles > tbody:last-child").append(row);
-                    }
-                    $('#box-upload-in-progress').hide();
-                }, "json");
+            //$.post( "/datafiles/create_from_box", boxItem )
+            //    .done(function( data ) {
+            //
+            //        console.log(data);
+            //
+            //        //parsed_response = $.parseJSON(data);
+            //        //
+            //        ////console.log(parsed_response);
+            //        //
+            //        //file = parsed_response.files[0];
+            //        //
+            //        ////console.log(file);
+            //        //
+            //        //var row = '<tr><td><div class = "row"><span class="col-md-8">' + file.name + '</span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
+            //        //if (file.error){
+            //        //    row = row + '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-warning-sign"></span>';
+            //        //} else {
+            //        //    row = row + '<a data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" data-method="delete" href="/datafiles/' + file.web_id + '"><span class="glyphicon glyphicon-trash"></span> File</a></span>';
+            //        //}
+            //        //
+            //        //row = row + '</span></div></td></tr>';
+            //        //if (file.error){
+            //        //    $("#datafiles > tbody:last-child").append('<tr><td><div class="row"><p>' + file.name + ': ' +  file.error + '</p></div></td></tr>');
+            //        //} else {
+            //        //    $("#datafiles > tbody:last-child").append(row);
+            //        //}
+            //        //$('#box-upload-in-progress').hide();
+            //    }, "script");
         });
 
         //window.location.assign('/datasets/' + dataset_key + '/edit');

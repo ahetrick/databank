@@ -16,6 +16,11 @@ class Dataset < ActiveRecord::Base
     self.key
   end
 
+  # def create_datafile_from_remote(remote_url)
+  #   Datafile.create(:remote_binary_url => remote_url, :dataset_id => self.id)
+  # end
+  # handle_asynchronously :create_datafile_from_remote
+
   def self.search(search)
     if search
 

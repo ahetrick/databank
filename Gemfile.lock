@@ -76,6 +76,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.9.1.1)
+    daemons (1.2.3)
     database_cleaner (1.5.0)
     debug_inspector (0.0.2)
     delayed_job (4.1.1)
@@ -152,6 +153,8 @@ GEM
     omniauth-shibboleth (1.2.1)
       omniauth (>= 1.0.0)
     pg (0.18.2)
+    progress_job (0.0.4)
+      delayed_job
     rack (1.6.4)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -280,6 +283,7 @@ DEPENDENCIES
   capybara
   carrierwave
   coffee-rails (~> 4.1.0)
+  daemons
   database_cleaner
   delayed_job_active_record
   equivalent-xml
@@ -297,6 +301,7 @@ DEPENDENCIES
   omniauth-identity
   omniauth-shibboleth
   pg
+  progress_job
   rails (= 4.2.3)
   rdf
   rdf-rdfxml

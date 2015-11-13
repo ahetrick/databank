@@ -43,9 +43,31 @@ class DatafilesController < ApplicationController
 
   def create_from_box
 
-    dataset = Dataset.find_by_key(params[:dataset_key])
-    @datafile = Datafile.create(:remote_binary_url => params[:url], :dataset_id => dataset.id)
-    render(json: to_fileupload, content_type: request.format, :layout => false )
+    # Rails.logger.warn params[:url]
+
+
+    # Rails.logger.warn params.to_yaml
+
+    # File.open("#{Rails.root}/public/uploads/test.txt", 'w+') { |file| file.write("your text") }
+
+    @dataset = Dataset.find_by_key(params[:dataset_key])
+
+    #@job = Delayed::Job.enqueue CreateDatafileFromRemoteJob.new(progress_max: 100 )
+
+    # @datafile = Datafile.create(:remote_binary_url => params[:url], :dataset_id => dataset.id)
+
+    # CreateDatafileFromRemoteJob.perform_later(params[:url], dataset.id)
+
+    @filename = params[:name]
+    @filesize = params[:size]
+
+    @job = Delayed::Job.enqueue CreateDatafileFromRemoteJob.new(@dataset.id, params[:url], @filename, @filesize)
+
+    # @job = Delayed::Job.enqueue CreateDatafileFromRemoteJob.new(dataset.id, params[:url], 100)
+
+    # CreateDatafileFromRemoteJob.perform_later(params[:dataset_key], params[:url], 100 )
+
+    # render(json: to_fileupload, content_type: request.format, :layout => false )
   end
 
   # PATCH/PUT /datafiles/1
