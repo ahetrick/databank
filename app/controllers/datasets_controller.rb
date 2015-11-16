@@ -181,37 +181,41 @@ class DatasetsController < ApplicationController
 
   def zip_and_download_selected
 
-    dir_name = "#{Rails.root}/public/downloads/#{@dataset_id}"
-
-    FileUtils.mkdir_p(dir_name) unless File.directory?(dir_name)
-    
-    raise "directory not found" unless File.directory?(dir_name)
-
+   
     if @dataset.identifier && !@dataset.identifier.empty?
-      file_name = "DOI-#{@dataset.identifier}.zip"
+      file_name = "DOI-#{@dataset.identifier}".parameterize + ".zip"
     else
       file_name = "datafiles.zip"
     end
 
-    zipfile_path = "#{dir_name}/#{file_name}"
+    temp_zipfile = Tempfile.new("#{@dataset.key}.zip")
 
-
-    Zip::Archive.open(zipfile_path, Zip::CREATE, Zip::BEST_SPEED) do |ar|
+    begin
       
       web_ids = params[:selected_files]
+
       
-      web_ids.each do |web_id|
-      
-        df = Datafile.find_by_web_id(web_id)
-        ar.add_file(df.binary.path) # add file to zip archive
+      Zip::Archive.open(temp_zipfile.path, Zip::CREATE, Zip::BEST_SPEED) do |ar|
+  
+        web_ids.each do |web_id|
+    
+          df = Datafile.find_by_web_id(web_id)
+          ar.add_file(df.binary.path) # add file to zip archive
+    
+        end
 
       end
-    end
-
-
-    send_file zipfile_path, :x_sendfile=>true
     
-    FileUtils.rmdir dir_name
+      zip_data = File.read(temp_zipfile.path)
+    
+      send_data(zip_data, :type => 'application/zip', :filename => file_name)
+      
+      
+    ensure
+      temp_zipfile.close
+      temp_zipfile.unlink
+    end
+    
 
   end
 
