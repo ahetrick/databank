@@ -194,7 +194,7 @@ class DatasetsController < ApplicationController
     zipfile_path = "#{dir_name}/#{file_name}"
 
 
-    Zip::Archive.open(zipfile_path, Zip::CREATE | Zip::TRUNC, Zip::BEST_SPEED) do |ar|
+    Zip::Archive.open(zipfile_path, Zip::CREATE, Zip::BEST_SPEED) do |ar|
       
       web_ids = params[:selected_files]
       
