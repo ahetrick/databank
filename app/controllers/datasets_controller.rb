@@ -1,6 +1,7 @@
 require 'open-uri'
 require 'net/http'
 require 'boxr'
+require 'zipruby'
 
 
 class DatasetsController < ApplicationController
@@ -17,7 +18,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :review_deposit_agreement
   skip_load_and_authorize_resource :only => :datacite_record
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi, :datacite_record, :update_datacite_metadata, :download_box_file]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi, :datacite_record, :update_datacite_metadata, :zip_and_download_selected ]
 
   # enable streaming responses
   include ActionController::Streaming
@@ -39,6 +40,9 @@ class DatasetsController < ApplicationController
   # GET /datasets/1.json
   def show
     @datacite_record = datacite_record_hash
+    if params.has_key?(:selected_files)
+      zip_and_download_selected
+    end
   end
 
 
@@ -173,6 +177,42 @@ class DatasetsController < ApplicationController
     end
 
   end
+
+
+  def zip_and_download_selected
+
+    dir_name = "#{Rails.root}/public/downloads/#{@dataset_id}"
+
+    FileUtils.mkdir_p(dir_name) unless File.directory?(dir_name)
+
+    if @dataset.identifier && !@dataset.identifier.empty?
+      file_name = "DOI-#{@dataset.identifier}.zip"
+    else
+      file_name = "datafiles.zip"
+    end
+
+    zipfile_path = "#{dir_name}/#{file_name}"
+
+
+    Zip::Archive.open(zipfile_path, Zip::CREATE | Zip::TRUNC, Zip::BEST_SPEED) do |ar|
+      
+      web_ids = params[:selected_files]
+      
+      web_ids.each do |web_id|
+      
+        df = Datafile.find_by_web_id(web_id)
+        ar.add_file(df.binary.path) # add file to zip archive
+
+      end
+    end
+
+
+    send_file zipfile_path, :x_sendfile=>true
+    
+    FileUtils.rmdir dir_name
+
+  end
+
 
 
   def download_endNote_XML
