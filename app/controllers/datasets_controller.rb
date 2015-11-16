@@ -184,6 +184,8 @@ class DatasetsController < ApplicationController
     dir_name = "#{Rails.root}/public/downloads/#{@dataset_id}"
 
     FileUtils.mkdir_p(dir_name) unless File.directory?(dir_name)
+    
+    raise "directory not found" unless File.directory?(dir_name)
 
     if @dataset.identifier && !@dataset.identifier.empty?
       file_name = "DOI-#{@dataset.identifier}.zip"
