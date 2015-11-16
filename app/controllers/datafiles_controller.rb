@@ -60,8 +60,11 @@ class DatafilesController < ApplicationController
 
     @filename = params[:name]
     @filesize = params[:size]
+    @filesize_display = "#{number_to_human_size(@filesize)}"
 
-    @job = Delayed::Job.enqueue CreateDatafileFromRemoteJob.new(@dataset.id, params[:url], @filename, @filesize)
+    @datafile = Datafile.create(:dataset_id => @dataset.id)
+
+    @job = Delayed::Job.enqueue CreateDatafileFromRemoteJob.new(@dataset.id, @datafile, params[:url], @filename, @filesize)
 
     # @job = Delayed::Job.enqueue CreateDatafileFromRemoteJob.new(dataset.id, params[:url], 100)
 

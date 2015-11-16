@@ -6,9 +6,10 @@ require 'net/http'
 class CreateDatafileFromRemoteJob < ProgressJob::Base
   # queue_as :default
 
-  def initialize(dataset_id, remote_url, filename, filesize)
+  def initialize(dataset_id, datafile, remote_url, filename, filesize)
     @remote_url = remote_url
     @dataset_id = dataset_id
+    @datafile = datafile
     @filename = filename
     @filesize = filesize
     super progress_max: Integer(filesize)
@@ -60,9 +61,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
 
     if File.file?(filepath)
-      df = Datafile.create(:dataset_id => @dataset_id)
-      df.binary = Rails.root.join("public/uploads/#{@dataset_id}/#{@filename}").open
-      df.save!
+      @datafile.binary = Rails.root.join("public/uploads/#{@dataset_id}/#{@filename}").open
+      @datafile.save!
     end
 
 
