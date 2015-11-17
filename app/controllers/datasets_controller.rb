@@ -44,6 +44,10 @@ class DatasetsController < ApplicationController
     if params.has_key?(:selected_files)
       zip_and_download_selected
     end
+
+    Rails.logger.warn @dataset.datafiles.to_yaml
+
+
   end
 
   # GET /datasets/new
