@@ -6,6 +6,7 @@ development:
   :ezid_password: apitest
   :ezid_shoulder: doi:10.5072/FK2
   :ezid_placeholder_identifier: 10.5072/FK2
+  :datafile_store_dir:  /uploads
 
 test:
   :admin_list: admin
@@ -15,6 +16,7 @@ test:
   :ezid_password: apitest
   :ezid_shoulder: doi:10.5072/FK2
   :ezid_placeholder_identifier: 10.5072/FK2
+  :datafile_store_dir:  /uploads
 
 production:
   :admin_list: <%= ENV["ADMIN_LIST"] %>
@@ -24,3 +26,4 @@ production:
   :ezid_password: <%= ENV["EZID_PASSWORD"] %>
   :ezid_shoulder: <%= ENV["EZID_SHOULDER"] %>
   :ezid_placeholder_identifier: 10.5072/FK2
+  :datafile_store_dir:  <%= ENV["DATAFILE_STORE_DIR"] %>

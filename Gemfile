@@ -24,8 +24,13 @@ gem 'highcharts-rails'
 # Use zeroclipboard-rails to copy text to clipboards
 gem 'zeroclipboard-rails'
 
-# Use zipruby to create custom archieves for download
-gem 'zipruby'
+# Use Zipline with rubyzip to stream dynamically generated zip files
+# gem 'rubyzip', '>= 1.0.0' # will load new rubyzip version
+# gem 'zipline', path: "vendor/zipline"
+
+# Use zipruby to make temp zip file
+gem 'zipruby', '~> 0.3.6'
+
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'turbolinks'
@@ -45,8 +50,6 @@ gem 'autoprefixer-rails'
 gem 'haml'
 
 gem 'simple_form'
-
-# gem 'zipline', path: "vendor/zipline"
 
 # use carrierwave for file upload
 gem 'carrierwave'

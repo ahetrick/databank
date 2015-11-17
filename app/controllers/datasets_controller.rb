@@ -3,7 +3,6 @@ require 'net/http'
 require 'boxr'
 require 'zipruby'
 
-
 class DatasetsController < ApplicationController
 
   load_resource :find_by => :key
@@ -22,6 +21,8 @@ class DatasetsController < ApplicationController
 
   # enable streaming responses
   include ActionController::Streaming
+  # enable zipline
+  # include Zipline
 
   # GET /datasets
   # GET /datasets.json
@@ -44,7 +45,6 @@ class DatasetsController < ApplicationController
       zip_and_download_selected
     end
   end
-
 
   # GET /datasets/new
   def new
@@ -178,10 +178,9 @@ class DatasetsController < ApplicationController
 
   end
 
-
   def zip_and_download_selected
 
-   
+
     if @dataset.identifier && !@dataset.identifier.empty?
       file_name = "DOI-#{@dataset.identifier}".parameterize + ".zip"
     else
@@ -191,31 +190,31 @@ class DatasetsController < ApplicationController
     temp_zipfile = Tempfile.new("#{@dataset.key}.zip")
 
     begin
-      
+
       web_ids = params[:selected_files]
 
-      
+
       Zip::Archive.open(temp_zipfile.path, Zip::CREATE, Zip::BEST_SPEED) do |ar|
-  
+
         web_ids.each do |web_id|
-    
+
           df = Datafile.find_by_web_id(web_id)
           ar.add_file(df.binary.path) # add file to zip archive
-    
+
         end
 
       end
-    
+
       zip_data = File.read(temp_zipfile.path)
-    
+
       send_data(zip_data, :type => 'application/zip', :filename => file_name)
-      
-      
+
+
     ensure
       temp_zipfile.close
       temp_zipfile.unlink
     end
-    
+
 
   end
 

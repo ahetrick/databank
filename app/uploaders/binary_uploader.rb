@@ -20,7 +20,7 @@ class BinaryUploader < CarrierWave::Uploader::Base
   after :store, :delete_tmp_dir
 
   def store_dir
-    Rails.root.join('uploads', model.web_id)
+    "#{IDB_CONFIG[:datafile_store_dir]}/#{model.web_id}"
   end
 
   def move_to_store

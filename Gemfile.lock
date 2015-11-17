@@ -319,7 +319,7 @@ DEPENDENCIES
   web-console (~> 2.0)
   will_paginate (~> 3.0.5)
   zeroclipboard-rails
-  zipruby
+  zipruby (~> 0.3.6)
 
 BUNDLED WITH
    1.10.6
