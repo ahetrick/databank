@@ -45,8 +45,28 @@ class DatasetsController < ApplicationController
       zip_and_download_selected
     end
 
-    Rails.logger.warn @dataset.datafiles.to_yaml
+    @license_expanded = ""
+    @license_header = ""
 
+    case @dataset.license
+      when "CC01"
+        @license_header = "CC0 1.0 waiver"
+        File.open("#{Rails.root}/public/CC01.txt"){ |f| f.each_line {|row| @license_expanded << row } }
+
+      when "CCBY4"
+        @license_header = "CC BY 4.0 license"
+        File.open("#{Rails.root}/public/CCBY4.txt"){ |f| f.each_line {|row| @license_expanded << row} }
+
+      when "license.txt"
+        @license_header = "See license.txt file in dataset"
+        @dataset.datafiles.each do |datafile|
+          if (datafile.binary.file.filename).downcase == "license.txt"
+            @license_expanded = open("#{request.base_url}/datafiles/#{datafile.web_id}/download") { |io| io.read }
+          end
+        end
+      else
+        @license_expanded = @datset.license
+    end
 
   end
 

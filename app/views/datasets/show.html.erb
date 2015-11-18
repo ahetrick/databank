@@ -124,13 +124,14 @@
       <div class="panel-heading" role="tab" id="rightsHeading">
         <h4 class="panel-title">
           <a class="collapsed" role="button" data-toggle="collapse" data-parent="#license" href="#collapseRights" aria-expanded="false" aria-controls="collapseRights">
-            License
+            <span class="metadata-label">License:</span>
+            <%= @license_header %>
           </a>
         </h4>
       </div>
       <div id="collapseRights" class="panel-collapse collapse" role="tabpanel" aria-labelledby="rightsHeading">
         <div class="panel-body">
-          <%= @dataset.license.empty? ? "[license information not provided]" : @dataset.license %>
+          <%= simple_format @license_expanded %>
         </div>
       </div>
     </div>
