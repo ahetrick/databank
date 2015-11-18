@@ -65,7 +65,7 @@ class DatasetsController < ApplicationController
           end
         end
       else
-        @license_expanded = @datset.license
+        @license_expanded = @dataset.license
     end
 
   end
