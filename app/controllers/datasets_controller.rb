@@ -75,6 +75,8 @@ class DatasetsController < ApplicationController
                 https.request(req)
               end
 
+              Rails.logger.warn req.to_yaml
+              
               @license_expanded = req.body
 
             else
