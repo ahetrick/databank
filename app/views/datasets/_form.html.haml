@@ -81,7 +81,7 @@
         .form-group
           = f.label :license, "License", :class => "control-label"
           %br
-          = f.select :license, [['CC0 1.0 waiver', 'CC01'],['CC BY 4.0 license', 'CCBY4'], ['See license.txt file in dataset', 'license.txt']], :class => "form-control dataset"
+          = f.collection_select :license, License.all, :code, :name, :prompt => true
 
       = f.hidden_field :depositor_email, :class => "form-control", :id => "depositor_email", :title => "Must agree to deposit agreement to deposit data.", :required => true
 

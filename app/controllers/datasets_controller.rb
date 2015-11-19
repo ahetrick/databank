@@ -61,7 +61,26 @@ class DatasetsController < ApplicationController
         @license_header = "See license.txt file in dataset"
         @dataset.datafiles.each do |datafile|
           if (datafile.binary.file.filename).downcase == "license.txt"
-            @license_expanded = open("#{request.base_url}/datafiles/#{datafile.web_id}/download") { |io| io.read }
+
+            # deal with https for servers and http for local mode
+            if request.protocol.include? "s"
+
+              uri = URI.parse("#{request.base_url}/datafiles/#{datafile.web_id}/download")
+              req = Net::HTTP::Get.new(uri.path)
+
+              res = Net::HTTP.start(
+                  uri.host, uri.port,
+                  :use_ssl => uri.scheme == 'https',
+                  :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |https|
+                https.request(req)
+              end
+
+              @license_expanded = req.body
+
+            else
+              @license_expanded = open("#{request.base_url}/datafiles/#{datafile.web_id}/download") { |io| io.read }
+            end
+
           end
         end
       else

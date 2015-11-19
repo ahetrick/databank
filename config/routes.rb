@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :licenses
   resources :datafiles
   resources :users
   resources :identities
