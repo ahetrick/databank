@@ -75,9 +75,9 @@ class DatasetsController < ApplicationController
                 https.request(req)
               end
 
-              Rails.logger.warn req.to_yaml
-              
-              @license_expanded = req.body
+              Rails.logger.warn res.to_yaml
+
+              @license_expanded = res.body
 
             else
               @license_expanded = open("#{request.base_url}/datafiles/#{datafile.web_id}/download") { |io| io.read }
