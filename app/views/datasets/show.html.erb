@@ -116,26 +116,20 @@
         </span>
       </div>
     <% end %>
-
-  </div>
-
-  <div class="panel-group" id="rights" role="tablist" aria-multiselectable="true">
-    <div class="panel panel-default">
-      <div class="panel-heading" role="tab" id="rightsHeading">
-        <h4 class="panel-title">
-          <a class="collapsed" role="button" data-toggle="collapse" data-parent="#license" href="#collapseRights" aria-expanded="false" aria-controls="collapseRights">
-            <span class="metadata-label">License:</span>
-            <%= @license_header %>
-          </a>
-        </h4>
-      </div>
-      <div id="collapseRights" class="panel-collapse collapse" role="tabpanel" aria-labelledby="rightsHeading">
-        <div class="panel-body">
-          <%= simple_format @license_expanded %>
-        </div>
-      </div>
+    <div class="row">
+      <span class="col-md-6">
+        <span class="metadata-label">License:</span>
+        <% if @license_link == "" %>
+           <%= @dataset.license %>
+        <% else %>
+          <a href="<%= @license_link %>"><%= @license.name %></a>
+        <% end %>
+      </span>
     </div>
+
   </div>
+
+
 
   <div class="panel-group" id="files" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">

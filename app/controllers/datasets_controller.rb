@@ -45,46 +45,50 @@ class DatasetsController < ApplicationController
       zip_and_download_selected
     end
 
-    @license_expanded = ""
-    @license_header = ""
+    # @license_header = ""
+    # @license_expanded = ""
+    @license_link = ""
 
+    @license = License.where(:code => @dataset.license).first
     case @dataset.license
-      when "CC01"
-        @license_header = "CC0 1.0 waiver"
-        File.open("#{Rails.root}/public/CC01.txt"){ |f| f.each_line {|row| @license_expanded << row } }
-
-      when "CCBY4"
-        @license_header = "CC BY 4.0 license"
-        File.open("#{Rails.root}/public/CCBY4.txt"){ |f| f.each_line {|row| @license_expanded << row} }
+      when "CC01", "CCBY4"
+        # @license_header = @license.name
+        # File.open(@license.full_text_url){ |f| f.each_line {|row| @license_expanded << row } }
+        @license_link = @license.external_info_url
 
       when "license.txt"
-        @license_header = "See license.txt file in dataset"
+        # @license_header = "See license.txt file in dataset"
         @dataset.datafiles.each do |datafile|
           if (datafile.binary.file.filename).downcase == "license.txt"
 
-            # deal with https for servers and http for local mode
-            if request.protocol.include? "s"
+            @license_link = "#{request.base_url}/datafiles/#{datafile.web_id}/download"
 
-              uri = URI.parse("#{request.base_url}/datafiles/#{datafile.web_id}/download")
-              req = Net::HTTP::Get.new(uri.path)
-
-              res = Net::HTTP.start(
-                  uri.host, uri.port,
-                  :use_ssl => uri.scheme == 'https',
-                  :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |https|
-                https.request(req)
-              end
-
-              Rails.logger.warn res.to_yaml
-
-              @license_expanded = res.body
-
-            else
-              @license_expanded = open("#{request.base_url}/datafiles/#{datafile.web_id}/download") { |io| io.read }
-            end
+            # # deal with https for servers and http for local mode
+            # if request.protocol.include? "s"
+            #
+            #   uri = URI.parse("#{request.base_url}/datafiles/#{datafile.web_id}/download")
+            #   req = Net::HTTP::Get.new(uri.path)
+            #
+            #   res = Net::HTTP.start(
+            #       uri.host, uri.port,
+            #       :use_ssl => uri.scheme == 'https',
+            #       :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |https|
+            #     https.request(req)
+            #   end
+            #
+            #   Rails.logger.warn res.to_yaml
+            #
+            #   @license_expanded = res.body
+            #
+            # else
+            #   @license_expanded = open("#{request.base_url}/datafiles/#{datafile.web_id}/download") { |io| io.read }
+            # end
 
           end
         end
+
+
+
       else
         @license_expanded = @dataset.license
     end
