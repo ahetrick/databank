@@ -11,8 +11,14 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
     @dataset_id = dataset_id
     @datafile = datafile
     @filename = filename
-    @filesize = filesize
-    super progress_max: Integer(filesize)
+
+    if filesize.to_f < 10000
+      progress_max = 2
+    else
+      progress_max = (filesize.to_f/10000).to_i + 1
+    end
+
+    super progress_max: progress_max
   end
 
   def perform
@@ -22,12 +28,6 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
     FileUtils.mkdir_p(dir_name) unless File.directory?(dir_name)
 
     filepath = "#{dir_name}/#{@filename}"
-
-    if @progress_max < 10000
-      stepsize = @progress_max/2
-    else
-      stepsize = 10000
-    end
 
     File.open(filepath, 'wb+') do |outfile|
       uri = URI.parse(@remote_url)
@@ -45,7 +45,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
             #Rails.logger.warn "seg_count: #{seg_count}"
             outfile << seg
             #seg_count = seg_count + 1
-            update_progress(step: stepsize)
+            update_progress()
           }
         }
       }

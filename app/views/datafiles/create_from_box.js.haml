@@ -8,7 +8,7 @@
   $("#datafiles > tbody:last-child").append("<tr id='" + "job#{@job.id}" + "'></tr>");
 
   $("#job#{@job.id}").html(progressDiv);
-  $("#progress#{@job.id} div.progress-status").text("#{@filename}");
+  $("#progress#{@job.id} div.progress-status").text("#{@filename} (#{@filesize_display})");
 
 
   $("#progress#{@job.id} div.well").show();
@@ -18,7 +18,7 @@
       success: function(job){
 
         console.log(job)
-        var stage, progress;
+        var stage, progress, progressText;
 
         // If there are errors
         if (job.last_error != null) {
@@ -31,8 +31,9 @@
         progress = job.progress_current / job.progress_max * 100;
         // In job stage
         if (progress.toString() !== 'NaN'){
-          $("#progress#{@job.id} div.progress-status").text(job.progress_current + '/' + job.progress_max);
-          $("#progress#{@job.id} div.progress-bar").css('width', progress + '%').text(progress + '%');
+          // $("#progress#{@job.id} div.progress-status").text(job.progress_current + '/' + job.progress_max);
+
+          $("#progress#{@job.id} div.progress-bar").css('width', progress + '%').text( (Math.round(progress)) + '%');
         }
       },
       error: function(){
