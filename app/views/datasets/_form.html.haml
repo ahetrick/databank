@@ -102,7 +102,7 @@
           %a(href="#" data-toggle="modal" data-target="#licenseModal" tabindex="-1")
             %span(class="glyphicon glyphicon-question-sign")
 
-          = f.collection_select :license, License.all, :code, :name, :prompt => true
+          = f.collection_select :license, License.all, :code, :name, {:prompt => true}, {:class => "form-control dataset"}
 
       = f.hidden_field :depositor_email, :class => "form-control", :id => "depositor_email", :title => "Must agree to deposit agreement to deposit data.", :required => true
 
