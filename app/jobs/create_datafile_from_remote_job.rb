@@ -17,12 +17,6 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
   def perform
 
-    # Rails.logger.warn "anything!"
-
-    # @progress_max.times do |count|
-    #   update_progress
-    # end
-
     dir_name = "#{Rails.root}/public/uploads/#{@dataset_id}"
 
     FileUtils.mkdir_p(dir_name) unless File.directory?(dir_name)

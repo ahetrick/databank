@@ -45,6 +45,11 @@ class DatasetsController < ApplicationController
       zip_and_download_selected
     end
 
+    # clean up incomplete datasfiles
+    @dataset.datafiles.each do |datafile|
+      datafile.destroy unless (datafile.binary && datafile.binary.file && datafile.binary.file.filename)
+    end
+
     # @license_header = ""
     # @license_expanded = ""
     @license_link = ""
@@ -102,6 +107,10 @@ class DatasetsController < ApplicationController
 
   # GET /datasets/1/edit
   def edit
+    # clean up incomplete datasfiles
+    @dataset.datafiles.each do |datafile|
+      datafile.destroy unless (datafile.binary && datafile.binary.file && datafile.binary.file.filename)
+    end
   end
 
   # POST /datasets
