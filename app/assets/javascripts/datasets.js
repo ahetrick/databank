@@ -118,9 +118,7 @@ ready = function() {
         },
         downloadTemplate: function (o) {
             var file = o.files[0];
-            //var reflector = new Reflector(file);
-            //document.write('<p>File class properties:</p>');
-            //document.write(reflector.getProperties().join('<br/>'));
+
             var row = '<tr><td><div class = "row"><span class="col-md-8">' + file.name + '</span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
             if (file.error){
                 row = row + '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-warning-sign"></span>';
@@ -142,15 +140,8 @@ ready = function() {
     boxSelect.success(function(response) {
         console.log(response);
 
-        // $('#box-upload-in-progress').show();
 
         $.each(response, function(i, boxItem){
-
-            /*console.log(boxItem);
-            var reflector = new Reflector(boxItem);
-            document.write('<p>boxItem class properties:</p>');
-            document.write(reflector.getProperties().join('<br/>'));
-            document.write(typeof boxItem)*/
 
             boxItem.dataset_key = dataset_key;
 
@@ -164,49 +155,7 @@ ready = function() {
                 dataType: 'script'
             });
 
-            //$.post( "/datafiles/create_from_box", boxItem )
-            //    .done(function( data ) {
-            //
-            //        console.log(data);
-            //
-            //        //parsed_response = $.parseJSON(data);
-            //        //
-            //        ////console.log(parsed_response);
-            //        //
-            //        //file = parsed_response.files[0];
-            //        //
-            //        ////console.log(file);
-            //        //
-            //        //var row = '<tr><td><div class = "row"><span class="col-md-8">' + file.name + '</span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
-            //        //if (file.error){
-            //        //    row = row + '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-warning-sign"></span>';
-            //        //} else {
-            //        //    row = row + '<a data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" data-method="delete" href="/datafiles/' + file.web_id + '"><span class="glyphicon glyphicon-trash"></span> File</a></span>';
-            //        //}
-            //        //
-            //        //row = row + '</span></div></td></tr>';
-            //        //if (file.error){
-            //        //    $("#datafiles > tbody:last-child").append('<tr><td><div class="row"><p>' + file.name + ': ' +  file.error + '</p></div></td></tr>');
-            //        //} else {
-            //        //    $("#datafiles > tbody:last-child").append(row);
-            //        //}
-            //        //$('#box-upload-in-progress').hide();
-            //    }, "script");
         });
-
-        //window.location.assign('/datasets/' + dataset_key + '/edit');
-
-
-
-        // $.post( "/datasets/" + dataset_key+ "/datafiles/new"
-
-        //$.each(response, function(i, boxItem){
-            //alert(boxItem.name);
-            //fileURL = "<iframe class='hidden' src='"+ boxItem.url + "'></iframe>";
-            //console.log(fileURL);
-            //$('#frames').append(fileURL);
-        //});
-
 
     });
     // Register a cancel callback handler

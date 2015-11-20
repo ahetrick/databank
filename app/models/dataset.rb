@@ -5,7 +5,7 @@ class Dataset < ActiveRecord::Base
   MIN_FILES = 1
   MAX_FILES = 10000
 
-  has_many :datafiles
+  has_many :datafiles, dependent: :destroy
   accepts_nested_attributes_for :datafiles, :reject_if => :all_blank, allow_destroy: true
 
   before_create 'set_key'
