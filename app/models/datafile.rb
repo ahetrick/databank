@@ -6,8 +6,16 @@ class Datafile < ActiveRecord::Base
 
   before_create { self.web_id ||= generate_web_id }
 
+  before_destroy 'remove_directory'
+
   def to_param
     self.web_id
+  end
+
+  def remove_directory
+
+    Rails.logger.warn "#{IDB_CONFIG[:datafile_store_dir]}/#{self.web_id}"
+    FileUtils.remove_dir("#{IDB_CONFIG[:datafile_store_dir]}/#{self.web_id}")
   end
 
   ##

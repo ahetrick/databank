@@ -90,12 +90,9 @@ class DatafilesController < ApplicationController
   # DELETE /datafiles/1
   # DELETE /datafiles/1.json
   def destroy
-    stored_web_id = @datafile.web_id
     @dataset = Dataset.find(@datafile.dataset_id)
 
     @datafile.destroy
-
-    FileUtils.rmdir("#{IDB_CONFIG[:datafile_store_dir]}/#{stored_web_id}")
 
     redirect_to edit_dataset_path(@dataset.key)
     # respond_to do |format|
