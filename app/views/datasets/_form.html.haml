@@ -80,7 +80,28 @@
 
         .form-group
           = f.label :license, "License", :class => "control-label"
-          %br
+          .modal.fade(id="licenseModal" role="dialog" )
+            .modal-dialog
+              .modal-content
+                .modal-header
+                  %button(class="close" data-dismiss="modal")
+                    &times;
+                .modal-body
+                  %h4 CC0 1.0 waiver
+                  %p
+                    Selecting the
+                    %a(href="https://creativecommons.org/about/cc0") CC0 1.0 waiver
+                    dedicates the copyrightable content of your work to the public domain. This offers the most potential for re-use as it lets others distribute, remix, tweak, and build upon your work, even commercially, all without asking permission and with no requirement to attribute you.
+                  %h4 CC BY 4.0 license
+                  %p
+                    Selecting the
+                    %a(href="https://creativecommons.org/licenses/by/4.0") CC BY 4.0 license
+                    lets others distribute, remix, tweak, and build upon your work, even commercially, as long as they credit you for the original creation.
+                  %h4 No selection
+                  %p Not specifying a license reserves all rights.  This offers the least potential for re-use.
+          %a(href="#" data-toggle="modal" data-target="#licenseModal" tabindex="-1")
+            %span(class="glyphicon glyphicon-question-sign")
+
           = f.collection_select :license, License.all, :code, :name, :prompt => true
 
       = f.hidden_field :depositor_email, :class => "form-control", :id => "depositor_email", :title => "Must agree to deposit agreement to deposit data.", :required => true
