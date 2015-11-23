@@ -23,7 +23,6 @@ class Datafile < ActiveRecord::Base
 
   def job_status
     if self.job_id
-      Rails.logger.warn "job_id: #{@datafile.job_id}"
       job = Delayed::Job.find(job_id)
       raise ActiveRecord::RecordNotFound unless job
 
