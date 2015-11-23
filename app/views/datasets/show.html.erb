@@ -5,7 +5,7 @@
     <div class="row">
       <span class="col-md-6" id="title"><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></span>
 
-      <% if (can? :update, @dataset)%>
+      <% if (can? :update, @dataset) %>
           <span class="pull-right">
             <a href="http://researchdataservice.illinois.edu/contact-us/" class="btn btn-success" role="button">
               <span class="glyphicon glyphicon-question-sign"></span> Get Help
@@ -16,9 +16,11 @@
             <% end %>
 
             <% if !@dataset.complete? %>
-              <button type="button" id="show-confirm-modal-link" class="btn btn-primary" data-toggle="modal" data-target="#deposit">Confirm & Deposit</button>
+              <button type="button" id="show-confirm-modal-link" class="btn btn-primary" data-toggle="modal" data-target="#deposit">Confirm
+                & Deposit
+              </button>
             <% end %>
-            <% if (((can? :destroy, @dataset) && (!@dataset.complete?))||(can? :manage, @dataset) )%>
+            <% if (((can? :destroy, @dataset) && (!@dataset.complete?))||(can? :manage, @dataset)) %>
               <%= link_to dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn btn-danger" do %>
                 <span class="glyphicon glyphicon-trash"></span> Delete
               <% end %>
@@ -69,7 +71,7 @@
       </span>
     </div>
 
-    <%if @dataset.complete?%>
+    <% if @dataset.complete? %>
       <div class="row bg-muted">
         <span id="citation-standards" class="col-md-9 text-muted small"><button class='my_clip_button btn btn-sm btn-default' data-clipboard-target='fe_text' data-clipboard-text="http://dx.doi.org/<%= @dataset.identifier %>" id='d_clip_button' title='Click me to copy to clipboard.'>
           <span class="glyphicon glyphicon-copy"></span>
@@ -108,11 +110,11 @@
       <div class="row">
         <span class="col-md-6">
           <span class="metadata-label">Corresponding Creator Email: </span>
-             <%= (!@dataset.corresponding_creator_email || @dataset.corresponding_creator_email.empty?) ? "[corresponding creator email not provided]" : @dataset.corresponding_creator_email %>
+          <%= (!@dataset.corresponding_creator_email || @dataset.corresponding_creator_email.empty?) ? "[corresponding creator email not provided]" : @dataset.corresponding_creator_email %>
         </span>
       <span class="col-md-6">
           <span class="metadata-label">Depositor Email:</span>
-          <%= @dataset.depositor_email %>
+        <%= @dataset.depositor_email %>
         </span>
       </div>
     <% end %>
@@ -164,20 +166,25 @@
                     </div>
                   </td>
                 </tr>
-                  <% @dataset.datafiles.each do |datafile| %>
-                    <tr>
-                      <td>
+                <% @dataset.datafiles.each do |datafile| %>
+                  <tr>
+                    <td>
+                      <% if datafile.job_status == :complete %>
+
                         <div class="row checkbox">
 
-                          <span class="col-md-8"><label><input type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="<%= datafile.web_id %>"><%= datafile.binary.file.filename %></label></span>
+                          <span class="col-md-8"><label><input type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="<%= datafile.web_id %>"><%= datafile.binary.file.filename %>
+                          </label></span>
                           <span class="col-md-2"><%= number_to_human_size(datafile.binary.size) %></span>
-                        <span class="col-md-2"><a href="#" onclick='window.location = "/datafiles/<%= datafile.web_id %>/download"' class="btn btn-primary btn-sm" role="button">
-                          <span class="glyphicon glyphicon-download"></span> File
-                        </a></span>
+                          <span class="col-md-2"><a href="#" onclick='window.location = "/datafiles/<%= datafile.web_id %>/download"' class="btn btn-primary btn-sm" role="button">
+                            <span class="glyphicon glyphicon-download"></span> File
+                          </a></span>
                         </div>
-                      </td>
-                    </tr>
-                  <% end %>
+                      <% end %>
+
+                    </td>
+                  </tr>
+                <% end %>
                 </tbody>
               </table>
             </div>

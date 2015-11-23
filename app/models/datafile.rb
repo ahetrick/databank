@@ -14,9 +14,31 @@ class Datafile < ActiveRecord::Base
 
   def remove_directory
 
-    Rails.logger.warn "#{IDB_CONFIG[:datafile_store_dir]}/#{self.web_id}"
-    FileUtils.remove_dir("#{IDB_CONFIG[:datafile_store_dir]}/#{self.web_id}")
+    # Rails.logger.warn "#{IDB_CONFIG[:datafile_store_dir]}/#{self.web_id}"
+    dir = "#{IDB_CONFIG[:datafile_store_dir]}/#{self.web_id}"
+    if Dir.exists? dir
+      FileUtils.remove_dir(dir)
+    end
   end
+
+  def job_status
+    if self.job_id
+      Rails.logger.warn "job_id: #{@datafile.job_id}"
+      job = Delayed::Job.find(job_id)
+      raise ActiveRecord::RecordNotFound unless job
+
+      if job.locked_by.nil?
+        return :pending
+      else
+        return :running
+      end
+    else
+      return :complete
+    end
+
+  end
+
+
 
   ##
   # Generates a guaranteed-unique web ID, of which there are

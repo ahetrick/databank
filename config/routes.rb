@@ -61,10 +61,13 @@ Rails.application.routes.draw do
   match '/auth/failure', to: 'sessions#unauthorized', as: :unauthorized, via: [:get, :post]
 
   # route binary downloads
-  get "/datafiles/:id/download", :controller => "datafiles", :action => "download"
+  get "/datafiles/:id/download", to: "datafiles#download"
 
   # create from box file select widget
   post "/datafiles/create_from_box", to: 'datafiles#create_from_box'
+
+  # cancel box upload
+  get "/datafiles/:id/cancel_box_upload", to: 'datafiles#cancel_box_uplad'
 
 
 end

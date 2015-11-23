@@ -139,20 +139,36 @@
           %table(class="table table-striped" id="datafiles")
             %tbody
               - @dataset.datafiles.each do |datafile|
-                %tr
-                  %td
-                    .row
-                      %span(class="col-md-8")
-                        -#= debug(datafile.binary)
-                        = datafile.binary.file.filename
+                -if datafile.job_status == :complete
+                  %tr
+                    %td
+                      .row
+                        %span(class="col-md-8")
+                          -#= debug(datafile.binary)
+                          = datafile.binary.file.filename
+                          -#= datafile.binary.filename ? datafile.binary.filename : "filename not found"
+                        %span(class="col-md-2")
+                          = number_to_human_size(datafile.binary.size)
+                        %span(class="col-md-2")
+                          - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
+                            %a(data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" data-method="delete" href="/datafiles/#{datafile.web_id}")
+                              %span(class="glyphicon glyphicon-trash")
+                              File
+                -else
+                  %tr
+                    %td
+                      .row
+                        %span(class="col-md-8")
+                          -#= debug(datafile.binary)
+                          = datafile.box_filename
                         -#= datafile.binary.filename ? datafile.binary.filename : "filename not found"
-                      %span(class="col-md-2")
-                        = number_to_human_size(datafile.binary.size)
-                      %span(class="col-md-2")
-                        - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
-                          %a(data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" data-method="delete" href="/datafiles/#{datafile.web_id}")
-                            %span(class="glyphicon glyphicon-trash")
-                            File
+                        %span(class="col-md-2")
+                          = datafile.box_filesize_display
+                        %span(class="col-md-2")
+                          - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
+                            %a(data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" href="#")
+                              %span(class="glyphicon glyphicon-ban-circle")
+                              Cancel
           %div(id="datafiles_upload_progress")
           - if ( (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)) )
             = form_for Datafile.new do |df|
