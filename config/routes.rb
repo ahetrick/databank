@@ -67,7 +67,7 @@ Rails.application.routes.draw do
   post "/datafiles/create_from_box", to: 'datafiles#create_from_box'
 
   # cancel box upload
-  get "/datafiles/:id/cancel_box_upload", to: 'datafiles#cancel_box_uplad'
+  get "/datasets/:id/datafiles/:web_id/cancel_box_upload", to: 'datasets#cancel_box_upload', defaults: { format: 'js' }
 
 
 end

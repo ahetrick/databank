@@ -9,10 +9,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from Exception::StandardError, with: :error_occurred
 
-  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
-
   after_filter :store_location
-
 
   def store_location
     return unless request.get?
@@ -50,24 +47,23 @@ class ApplicationController < ActionController::Base
 
     else
 
-      #raise exception
+      raise exception
 
-      Rails.logger.error "\n***---***"
-      Rails.logger.error exception.class
-      Rails.logger.error exception.message
-      exception.backtrace.each { |line| Rails.logger.error line }
-
-      render :file => File.join(Rails.root, 'public', '500.html')
+      # Rails.logger.error "\n***---***"
+      # Rails.logger.error exception.class
+      # Rails.logger.error exception.message
+      # exception.backtrace.each { |line| Rails.logger.error line }
+      #
+      # render :file => File.join(Rails.root, 'public', '500.html')
     end
 
   end
 
-    def record_not_found(exception)
+  def record_not_found(exception)
 
-    # progress job uses not found error to detect job completion, so lots of these are generated
-    if !exception.message.include? "Couldn't find Delayed::Backend::ActiveRecord::Job"
-      raise "Record Not Found"
-    end
+    Rails.logger.warn exception
+
+    redirect_to request.fullpath, :alert => "An error occurred and has been logged for review by Research Data Service Staff."
 
   end
 

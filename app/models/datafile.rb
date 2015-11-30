@@ -6,6 +6,7 @@ class Datafile < ActiveRecord::Base
 
   before_create { self.web_id ||= generate_web_id }
 
+  before_destroy 'destroy_job'
   before_destroy 'remove_directory'
 
   def to_param
@@ -13,7 +14,6 @@ class Datafile < ActiveRecord::Base
   end
 
   def remove_directory
-
     # Rails.logger.warn "#{IDB_CONFIG[:datafile_store_dir]}/#{self.web_id}"
     dir = "#{IDB_CONFIG[:datafile_store_dir]}/#{self.web_id}"
     if Dir.exists? dir
@@ -21,23 +21,29 @@ class Datafile < ActiveRecord::Base
     end
   end
 
-  def job_status
+  def job
     if self.job_id
-      job = Delayed::Job.find(job_id)
-      raise ActiveRecord::RecordNotFound unless job
-
-      if job.locked_by.nil?
-        return :pending
-      else
-        return :running
-      end
-    else
-      return :complete
+      Delayed::Job.where(id: self.job_id).first
     end
-
   end
 
+  def job_status
+      if self.job
+        if job.locked_by
+          return :processing
+        else
+          return :pending
+        end
+      else
+        return :complete
+      end
+  end
 
+  def destroy_job
+    if self.job
+      self.job.destroy
+    end
+  end
 
   ##
   # Generates a guaranteed-unique web ID, of which there are

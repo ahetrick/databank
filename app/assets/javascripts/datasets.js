@@ -168,6 +168,7 @@ ready = function() {
     //alert("javascript working");
 }
 
+
 var Reflector = function(obj) {
     this.getProperties = function() {
         var properties = [];
@@ -178,6 +179,20 @@ var Reflector = function(obj) {
         }
         return properties;
     };
+}
+
+
+function cancelUpload(datafile, job) {
+
+    $("#job" + job).hide();
+
+    $.ajax({
+        type : 'GET',
+        url : '/datasets/'+ dataset_key + '/datafiles/' + datafile + '/cancel_box_upload',
+        dataType : 'script'
+    });
+
+    return false;
 }
 
 function handleNotAgreed(){

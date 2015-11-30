@@ -5,6 +5,8 @@ require 'zipruby'
 
 class DatasetsController < ApplicationController
 
+  protect_from_forgery except: :cancel_box_upload
+
   load_resource :find_by => :key
   authorize_resource
   skip_load_and_authorize_resource :only => :download_datafiles
@@ -17,7 +19,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :review_deposit_agreement
   skip_load_and_authorize_resource :only => :datacite_record
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi, :datacite_record, :update_datacite_metadata, :zip_and_download_selected ]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload ]
 
   # enable streaming responses
   include ActionController::Streaming
@@ -45,10 +47,10 @@ class DatasetsController < ApplicationController
       zip_and_download_selected
     end
 
-    # clean up incomplete datasfiles
-    @dataset.datafiles.each do |datafile|
-      datafile.destroy unless (datafile.binary && datafile.binary.file && datafile.binary.file.filename)
-    end
+    # # clean up incomplete datasfiles
+    # @dataset.datafiles.each do |datafile|
+    #   datafile.destroy unless (datafile.binary && datafile.binary.file && datafile.binary.file.filename)
+    # end
 
     # @license_header = ""
     # @license_expanded = ""
@@ -65,40 +67,64 @@ class DatasetsController < ApplicationController
         # @license_header = "See license.txt file in dataset"
         @dataset.datafiles.each do |datafile|
           if (datafile.binary.file.filename).downcase == "license.txt"
-
             @license_link = "#{request.base_url}/datafiles/#{datafile.web_id}/download"
-
-            # # deal with https for servers and http for local mode
-            # if request.protocol.include? "s"
-            #
-            #   uri = URI.parse("#{request.base_url}/datafiles/#{datafile.web_id}/download")
-            #   req = Net::HTTP::Get.new(uri.path)
-            #
-            #   res = Net::HTTP.start(
-            #       uri.host, uri.port,
-            #       :use_ssl => uri.scheme == 'https',
-            #       :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |https|
-            #     https.request(req)
-            #   end
-            #
-            #   Rails.logger.warn res.to_yaml
-            #
-            #   @license_expanded = res.body
-            #
-            # else
-            #   @license_expanded = open("#{request.base_url}/datafiles/#{datafile.web_id}/download") { |io| io.read }
-            # end
-
           end
         end
-
-
 
       else
         @license_expanded = @dataset.license
     end
 
   end
+
+  def cancel_box_upload
+
+    @job_id_string = "0"
+
+    @datafile = Datafile.find_by_web_id(params[:web_id])
+
+    if @datafile
+      if @datafile.job_id
+        @job_id_string = @datafile.job_id.to_s
+        job = Delayed::Job.where(id: @datafile.job_id).first
+        if job  && !job.locked_by.empty?
+          locked_by_text = job.locked_by.to_s
+
+          Rails.logger.warn "***\n   locked_by_text #{locked_by_text}"
+
+          pid = locked_by_text.split(":").last
+
+          Rails.logger.warn "***\n    pid: #{pid}"
+
+          job.destroy
+          @datafile.destroy
+
+          if !pid.empty?
+
+            begin
+
+              Process.kill('QUIT', Integer(pid))
+              Dir.foreach(IDB_CONFIG[:delayed_job_pid_dir]) do |item|
+                next if item == '.' or item == '..'
+                file_contents = IO.read(filename)
+                pid_file_path = item.path
+                if file_contents.include? pid.to_s
+                  File.delete(pid_file_path)
+                end
+              end
+
+            rescue Errno::ESRCH => ex
+              Rails.logger.warn ex.message
+            end
+          end
+          if ((Dir.glob(IDB_CONFIG[:delayed_job_pid_dir])).count < 5) || Delayed::Job.all.count == 0
+            system "cd #{Rails.root} && RAILS_ENV=#{::Rails.env} bin/delayed_job -n 5 restart"
+          end
+        end
+      end
+    end
+  end
+
 
   # GET /datasets/new
   def new
@@ -108,9 +134,9 @@ class DatasetsController < ApplicationController
   # GET /datasets/1/edit
   def edit
     # clean up incomplete datasfiles
-    @dataset.datafiles.each do |datafile|
-      datafile.destroy unless (datafile.binary && datafile.binary.file && datafile.binary.file.filename)
-    end
+    # @dataset.datafiles.each do |datafile|
+    #   datafile.destroy unless (datafile.binary && datafile.binary.file && datafile.binary.file.filename)
+    # end
   end
 
   # POST /datasets

@@ -26,38 +26,12 @@ class DatafilesController < ApplicationController
   # POST /datafiles
   # POST /datafiles.json
   def create
-
     @datafile = Datafile.create(datafile_params)
     render(json: to_fileupload, content_type: request.format, :layout => false )
-
-    # respond_to do |format|
-    #   if @datafile.save
-    #     format.html { redirect_to @datafile, notice: 'Datafile was successfully created.' }
-    #     format.json { render :show, status: :created, location: @datafile }
-    #   else
-    #     format.html { render :new }
-    #     format.json { render json: @datafile.errors, status: :unprocessable_entity }
-    #   end
-    # end
   end
 
   def create_from_box
-
-    # Rails.logger.warn params[:url]
-
-
-    # Rails.logger.warn params.to_yaml
-
-    # File.open("#{Rails.root}/public/uploads/test.txt", 'w+') { |file| file.write("your text") }
-
     @dataset = Dataset.find_by_key(params[:dataset_key])
-
-    #@job = Delayed::Job.enqueue CreateDatafileFromRemoteJob.new(progress_max: 100 )
-
-    # @datafile = Datafile.create(:remote_binary_url => params[:url], :dataset_id => dataset.id)
-
-    # CreateDatafileFromRemoteJob.perform_later(params[:url], dataset.id)
-
     @filename = params[:name]
     @filesize = params[:size]
     @filesize_display = "#{number_to_human_size(@filesize)}"
@@ -66,11 +40,10 @@ class DatafilesController < ApplicationController
 
     @job = Delayed::Job.enqueue CreateDatafileFromRemoteJob.new(@dataset.id, @datafile, params[:url], @filename, @filesize)
 
-    # @job = Delayed::Job.enqueue CreateDatafileFromRemoteJob.new(dataset.id, params[:url], 100)
-
-    # CreateDatafileFromRemoteJob.perform_later(params[:dataset_key], params[:url], 100 )
-
-    # render(json: to_fileupload, content_type: request.format, :layout => false )
+    @datafile.job_id = @job.id
+    @datafile.box_filename = @filename
+    @datafile.box_filesize_display = @filesize_display
+    @datafile.save
   end
 
   # PATCH/PUT /datafiles/1
@@ -91,14 +64,8 @@ class DatafilesController < ApplicationController
   # DELETE /datafiles/1.json
   def destroy
     @dataset = Dataset.find(@datafile.dataset_id)
-
     @datafile.destroy
-
     redirect_to edit_dataset_path(@dataset.key)
-    # respond_to do |format|
-    #   format.html { redirect_to datafiles_url, notice: 'Datafile was successfully destroyed.' }
-    #   format.json { head :no_content }
-    # end
   end
 
   def download
@@ -118,10 +85,6 @@ class DatafilesController < ApplicationController
                 }
             ]
     }
-
-  end
-
-  def cancel_box_upload
 
   end
 

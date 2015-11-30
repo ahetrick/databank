@@ -7,6 +7,7 @@ development:
   :ezid_shoulder: doi:10.5072/FK2
   :ezid_placeholder_identifier: 10.5072/FK2
   :datafile_store_dir:  /uploads
+  :delayed_job_pid_dir: /tmp/pids
 
 test:
   :admin_list: admin
@@ -17,6 +18,7 @@ test:
   :ezid_shoulder: doi:10.5072/FK2
   :ezid_placeholder_identifier: 10.5072/FK2
   :datafile_store_dir:  /uploads
+  :delayed_job_pid_dir: /tmp/pids
 
 production:
   :admin_list: <%= ENV["ADMIN_LIST"] %>
@@ -27,3 +29,4 @@ production:
   :ezid_shoulder: <%= ENV["EZID_SHOULDER"] %>
   :ezid_placeholder_identifier: 10.5072/FK2
   :datafile_store_dir:  <%= ENV["DATAFILE_STORE_DIR"] %>
+  :delayed_job_pid_dir: <%= ENV["PIDS_DIR"] %>

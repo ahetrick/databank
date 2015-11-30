@@ -1,7 +1,7 @@
 / app/views/datafiles/create_from_box.js.haml
 :plain
 
-  var progressDiv = "<td><div id='" + "progress#{@job.id}" + "'><div class='export'><div class='well' style='display:none'><div class='row'><div class='col-xs-12'><div class='progress-status text-primary'></div></div></div><div class='row'><div class='col-xs-12'><div class='progress progress-striped active'><div class='progress-bar'><div class='text-primary'> 0% </div></div></div></div></div> </div></div></div></td>";
+  var progressDiv = "<td><div class='row'><div class='col-md-10'><div id='" + "progress#{@job.id}" + "'><div class='export'><div class='well' style='display:none'><div class='row'><div class='col-xs-12'><div class='progress-status text-primary'></div></div></div><div class='row'><div class='col-xs-12'><div class='progress progress-striped active'><div class='progress-bar'><div class='text-primary'> 0% </div></div></div></div></div> </div></div></div></div><div class='col-md-2'><button class='cancel-upload-btn btn btn-danger btn-sm' onclick=\"cancelUpload('"+ "#{@datafile.web_id}" + "', '" + "#{@job.id}" + "')\">Cancel</button></div></div></td>";
 
   window["row#{@job.id}"] = '<td><div class = "row"><span class="col-md-8">' + "#{@filename}" + '</span><span class="col-md-2">' + "#{@filesize_display}" + '</span><span class="col-md-2"><a data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" data-method="delete" href="/datafiles/' + "#{@datafile.web_id}" + '"><span class="glyphicon glyphicon-trash"></span> File</a></span></span></div></td>';
 
