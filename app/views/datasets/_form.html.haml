@@ -112,12 +112,12 @@
 
     .container-fluid.save
       .row
-        %span(class="col-md-2" )
+        %span(class="col-md-6" )
           - if params[:action] == 'new'
             %button(type="button" id="show-agreement-modal-link" class="btn btn-primary" data-toggle="modal" data-target="#agreement") Review Deposit Agreement
           -else
             %button(type="button" class="btn btn-primary" onclick='window.location="/datasets/#{@dataset.key}/review_deposit_agreement"' ) Review Deposit Agreement
-        %span(class="pull-right" )
+        %span(class="col-md-6" )
           %button(type="button" class="btn btn-danger" name="cancel" onclick='window.location = "/"' )
             %span(class="glyphicon glyphicon-ban-circle" )
             Cancel
