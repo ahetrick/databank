@@ -13,7 +13,7 @@ module ProgressJob
 
       rescue ActiveRecord::RecordNotFound => ex
 
-        # This happens three times every time a job completes, because of how the deamons funciton
+        # This happens three times every time a job completes, because of how the deamons function
         render json: {
                    "id":Integer(params[:job_id]),
                    "priority":0,
