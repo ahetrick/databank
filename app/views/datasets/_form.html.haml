@@ -19,10 +19,19 @@
                 = msg
 
       - if can? :manage, @dataset
-        .form-group
-          = f.label :identifier, "DOI", :class => "control-label"
-          %br
-          = f.text_field :identifier, :class => "form-control dataset", :placeholder => "[Leave blank if requesting a DOI.]"
+        .row
+          %span(class="col-md-6" )
+            .form-group.curator-only
+              = f.label :identifier, "DOI", :class => "control-label"
+              %br
+              = f.text_field :identifier, :class => "form-control dataset", :placeholder => "[Leave blank if requesting a DOI.]"
+          %span(class="col-md-6" )
+            .form-group.curator-only
+              = f.label :publication_year, "Publication Year", :class => "control-label"
+              %br
+              = f.number_field :publication_year, :value => '2015', :class => "form-control dataset", :min => "1800", :max => "#{Time.now.year + 1}", :maxlength => 4
+      - else
+        = f.hidden_field :publication_year, :value => "#{Time.now.year}"
 
       %fieldset(class = "metadata-border")
         %legend(class = "metadata-border")Required to Deposit Dataset
@@ -55,16 +64,6 @@
 
         .field
           = f.hidden_field :publisher, :value=>"University of Illinois at Urbana-Champaign"
-
-        - if can? :manage, @dataset
-          .form-group
-            = f.label :publication_year, "Publication Year", :class => "control-label"
-            %br
-            = f.number_field :publication_year, :value => '2015', :class => "form-control dataset", :min => "1800", :max => "#{Time.now.year + 1}", :maxlength => 4
-            %span(class="help-block") Four digit year (YYYY)
-        - else
-          = f.hidden_field :publication_year, :value => "#{Time.now.year}"
-
       %fieldset(class = "metadata-border")
         %legend(class = "metadata-border")Recommended
         .form-group
@@ -134,7 +133,7 @@
         %fieldset(class = "metadata-border")
           %legend(class = "metadata-border")File(s) -- at least one required for deposit
           %span(class="help-block")
-            For files larger than 500 MB, Importing from Box is recommended.  For files larger than Box supports, contact the
+            For files larger than 500 MB, importing from Box is recommended.  For files larger than Box supports, contact the
             %a(href="http://researchdataservice.illinois.edu/")Research Data Service
             %br
             Importing from Box happens in the background, so it is not necessary to keep your browser window open, but processing may be delayed at times of heavy system usage.
