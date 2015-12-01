@@ -1,6 +1,3 @@
-MAX_CHUNK_SIZE = 1000000;
-MAX_NUM_CHUNKS = 10000;
-
 var confirmOnPageExit
 confirmOnPageExit = function (e)
 {
@@ -236,21 +233,11 @@ function download_selected(){
     var file_ids = $("input[name='selected_files[]']:checked").map(function(index,domElement) {
         return $(domElement).val();
     });
-    //testurl = "<iframe src='" + "http://www.w3schools.com" + "'></iframe>";
-    //$('#frametest').append("<iframe src='http://www.w3schools.com'></iframe>");
-    //$('#frametest').append(testurl);
 
     $.each(file_ids, function(i, file_id){
         fileURL = "<iframe class='hidden' src='/datasets/" + dataset_key + "/stream_file/" + file_id + "'></iframe>";
         $('#frames').append(fileURL);
     });
-
-
-    //var zip = new JSZip();
-
-    //var reflector = new Reflector(file_ids);
-    //document.write('<p>file_id collection properties:</p>');
-    //document.write(reflector.getProperties().join('<br/>'));
 
 }
 

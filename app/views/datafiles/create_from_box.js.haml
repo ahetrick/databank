@@ -21,10 +21,21 @@
         var stage, progress, progressText;
 
         // If there are errors
-        if (job.last_error != null) {
+        if (job.last_error != null && job.last_error != 'complete') {
           $("#progress#{@job.id} div.progress-status").addClass('text-danger').text(job.progress_stage);
           $("#progress#{@job.id} div.progress-bar").addClass('progress-bar-danger');
           $("#progress#{@job.id} div.progress").removeClass('active');
+          clearInterval(window["interval#{@job.id}"]);
+        }
+        if (job.last_error != null && job.last_error == 'complete')  {
+        // Job is no loger in database which means it finished successfuly
+          $("#progress#{@job.id} div.progress").removeClass('active');
+          $("#progress#{@job.id} div.progress-bar").css('width', '100%').text('100%');
+          $("#progress#{@job.id} div.progress-status").text('Successfully imported!');
+          $("#progress#{@job.id} div.export-link").show();
+
+          $("#job#{@job.id}").html(window["row#{@job.id}"]);
+
           clearInterval(window["interval#{@job.id}"]);
         }
 

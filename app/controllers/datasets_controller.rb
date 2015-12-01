@@ -90,14 +90,11 @@ class DatasetsController < ApplicationController
         if job  && !job.locked_by.empty?
           locked_by_text = job.locked_by.to_s
 
-          Rails.logger.warn "***\n   locked_by_text #{locked_by_text}"
+          # Rails.logger.warn "***\n   locked_by_text #{locked_by_text}"
 
           pid = locked_by_text.split(":").last
 
-          Rails.logger.warn "***\n    pid: #{pid}"
-
-          job.destroy
-          @datafile.destroy
+          # Rails.logger.warn "***\n    pid: #{pid}"
 
           if !pid.empty?
 
@@ -117,6 +114,11 @@ class DatasetsController < ApplicationController
               Rails.logger.warn ex.message
             end
           end
+
+          job.destroy
+
+          @datafile.destroy
+
           if ((Dir.glob(IDB_CONFIG[:delayed_job_pid_dir])).count < 5) || Delayed::Job.all.count == 0
             system "cd #{Rails.root} && RAILS_ENV=#{::Rails.env} bin/delayed_job -n 5 restart"
           end

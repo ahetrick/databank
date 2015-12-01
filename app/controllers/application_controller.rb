@@ -43,7 +43,7 @@ class ApplicationController < ActionController::Base
 
     elsif exception.message.include? "undefined method `filename' for nil:NilClass"
 
-      redirect_to request.fullpath, :alert => "Incomplete or failed datafile upload found and cleared."
+      redirect_to redirect_path, :alert => "Incomplete or failed datafile upload found and cleared."
 
     else
 
@@ -63,7 +63,7 @@ class ApplicationController < ActionController::Base
 
     Rails.logger.warn exception
 
-    redirect_to request.fullpath, :alert => "An error occurred and has been logged for review by Research Data Service Staff."
+    redirect_to redirect_path, :alert => "An error occurred and has been logged for review by Research Data Service Staff."
 
   end
 
