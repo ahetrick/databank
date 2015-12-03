@@ -1,6 +1,6 @@
 class Datafile < ActiveRecord::Base
   mount_uploader :binary, BinaryUploader
-  # belongs_to :dataset
+  belongs_to :dataset
 
   WEB_ID_LENGTH = 5
 

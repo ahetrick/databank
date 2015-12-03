@@ -51,6 +51,9 @@ gem 'haml'
 
 gem 'simple_form'
 
+# Use cocoon to make it easier to handle nested forms
+gem 'cocoon'
+
 # use carrierwave for file upload
 gem 'carrierwave'
 
