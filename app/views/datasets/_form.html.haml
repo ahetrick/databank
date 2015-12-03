@@ -17,7 +17,7 @@
           %a(role="button" data-toggle="collapse" data-parent="#description" href="#descriptionPanel" aria-expanded="true" aria-controls="descriptionPanel")
             %span( class="metadata-label" )
               Description
-              (expand to edit)
+            (expand to edit)
         %br
         %span( class="metadata-label" )
           citation preview:
@@ -78,18 +78,6 @@
               %br
               = f.text_field :creator_text, :class => "form-control dataset", :placeholder => "[Semi-colon spearated list of names (e.g.: Verfasser, Maria; Auteur, Henri)]"
               %span(class="help-block") The personal name format for each name in the semi-colon separted list should be: family, given, (e.g.: Verfasser, Maria; Auteur, Henri).
-            .row
-              %span(class="col-md-6")
-                .form-group.required
-                  = f.label :corresponding_creator_name, "Corresponding Creator", :class => "control-label"
-                  %br
-                  = f.text_field :corresponding_creator_name, :class => "form-control dataset" , :placeholder => "[The personal name for the dataset contact (e.g. Verfasser, Maria).]"
-              %span(class="col-md-6")
-                .form-group.required
-                  = f.label :corresponding_creator_email, "Corresponding Creator Email Address", :class => "control-label"
-                  %br
-                  = f.email_field :corresponding_creator_email, :class => "form-control dataset", :placeholder => "[For correspondence about this dataset, including notice of deposit.]"
-                  .help-block.with-errors
 
             .field
               = f.hidden_field :publisher, :value=>"University of Illinois at Urbana-Champaign"

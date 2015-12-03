@@ -6,7 +6,9 @@ class Dataset < ActiveRecord::Base
   MAX_FILES = 10000
 
   has_many :datafiles, dependent: :destroy
+  has_many :creators, dependent: :destroy
   accepts_nested_attributes_for :datafiles, :reject_if => :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :creators, :reject_if => :all_blank, allow_destroy: true
 
   before_create 'set_key'
 
