@@ -70,6 +70,22 @@ ready = function() {
     $('input.dataset').change(function() {
         if( $(this).val() != "" )
             window.onbeforeunload = confirmOnPageExit;
+     });
+
+    $('#dataset_title').change(function() {
+        $('#title-preview').html($(this).val() + '.');
+    });
+
+    $('#dataset_creator_text').change(function() {
+        $('#creator-preview').html($(this).val());
+    });
+
+    $('#dataset_publication_year').change(function() {
+        $('#year-preview').html('(' + $(this).val() + '):');
+    });
+
+    $('#dataset_identifier').change(function() {
+        $('#doi-preview').html("http://dx.doi.org/" + $(this).val());
     });
 
     $('#show-all-button').click(function () {

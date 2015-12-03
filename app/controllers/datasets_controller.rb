@@ -19,7 +19,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :review_deposit_agreement
   skip_load_and_authorize_resource :only => :datacite_record
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload ]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text ]
 
   # enable streaming responses
   include ActionController::Streaming
@@ -123,7 +123,10 @@ class DatasetsController < ApplicationController
             system "cd #{Rails.root} && RAILS_ENV=#{::Rails.env} bin/delayed_job -n 5 restart"
           end
         end
+      else
+        @datafile.destroy
       end
+
     end
   end
 
@@ -135,10 +138,6 @@ class DatasetsController < ApplicationController
 
   # GET /datasets/1/edit
   def edit
-    # clean up incomplete datasfiles
-    # @dataset.datafiles.each do |datafile|
-    #   datafile.destroy unless (datafile.binary && datafile.binary.file && datafile.binary.file.filename)
-    # end
   end
 
   # POST /datasets
@@ -148,12 +147,6 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       if @dataset.save
-
-        if @dataset.complete?
-          success_msg = 'Dataset was successfully deposited.'
-        else
-          success_msg = 'Dataset was saved but not deposited.'
-        end
        
         format.html { redirect_to edit_dataset_path(@dataset.key) }
 
@@ -475,6 +468,10 @@ class DatasetsController < ApplicationController
 
   end
 
+  def citation_text
+    render json:{"citation": @dataset.plain_text_citation}
+  end
+
 
   private
 
@@ -634,8 +631,5 @@ class DatasetsController < ApplicationController
     # avoid adding it in the first place. if you know it, please fix.
     anvl.strip.encode!('UTF-8')
   end
-
-
-
 
 end

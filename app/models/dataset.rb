@@ -154,9 +154,21 @@ class Dataset < ActiveRecord::Base
 
   def plain_text_citation
 
+    if creator_list == ""
+      creator_list = "[Creator List]"
+    end
+
+
+    if title && title != ""
+      citationTitle = title
+    else
+      citationTitle = "[Title]"
+
+    end
+
     citation_id = (identifier && !identifier.empty?) ? "http://dx.doi.org/#{identifier}" : ""
 
-    return "#{creator_list} (#{publication_year}): #{title}. #{publisher}. #{citation_id}"
+    return "#{creator_list} (#{publication_year}): #{citationTitle}. #{publisher}. #{citation_id}"
   end
 
   def set_key
