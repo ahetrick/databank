@@ -25,10 +25,8 @@
         <td><%= creator.institution_name %></td>
         <td><%= creator.identifier %></td>
         <td><%= creator.type %></td>
-        <td><%= creator.position %></td>
-        <td><%= link_to 'Show', creator %></td>
-        <td><%= link_to 'Edit', edit_creator_path(creator) %></td>
-        <td><%= link_to 'Destroy', creator, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= creator.row_order %></td>
+
       </tr>
     <% end %>
   </tbody>
@@ -36,4 +34,4 @@
 
 <br>
 
-<%= link_to 'New Creator', new_creator_path %>
+

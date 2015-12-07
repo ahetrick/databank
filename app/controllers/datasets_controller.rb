@@ -134,15 +134,21 @@ class DatasetsController < ApplicationController
   # GET /datasets/new
   def new
     @dataset = Dataset.new
+    @dataset.creators.build
+
   end
 
   # GET /datasets/1/edit
   def edit
+    @ordered_creators = @dataset.creators.rank(:row_order)
   end
 
   # POST /datasets
   # POST /datasets.json
   def create
+
+    Rails.logger.warn params
+
     @dataset = Dataset.new(dataset_params)
 
     respond_to do |format|
@@ -198,14 +204,14 @@ class DatasetsController < ApplicationController
       validation_error_messages << "title"
     end
 
-    if !@dataset.creator_text || @dataset.creator_text.empty?
+    if @dataset.creator_list.empty?
       @dataset.complete = false
-      validation_error_messages << "creator(s)"
+      validation_error_messages << "at least one creator"
     end
 
     if !@dataset.corresponding_creator_name || @dataset.corresponding_creator_name.empty?
       @dataset.complete = false
-      validation_error_messages << "corresponding creator name"
+      validation_error_messages << "at least one corresponding creator"
     end
 
     if !@dataset.corresponding_creator_email || @dataset.corresponding_creator_email.empty?
@@ -325,7 +331,7 @@ class DatasetsController < ApplicationController
 
 
     authorNode = doc.create_element('author')
-    authorNode.content = @dataset.creator_text
+    authorNode.content = @dataset.creator_list
     authorNode.parent = authorsNode
 
     titlesNode = doc.create_element('titles')
@@ -418,7 +424,7 @@ class DatasetsController < ApplicationController
     t = Tempfile.new("#{@dataset.key}_endNote")
     citekey = SecureRandom.uuid
 
-    t.write("@data{#{citekey},\ndoi = {#{@dataset.identifier}},\nurl = {http://dx.doi.org/#{@dataset.identifier}},\nauthor = {#{@dataset.creator_text}},\npublisher = {#{@dataset.publisher}},\ntitle = {#{@dataset.title} ﻿},\nyear = {#{@dataset.publication_year}}
+    t.write("@data{#{citekey},\ndoi = {#{@dataset.identifier}},\nurl = {http://dx.doi.org/#{@dataset.identifier}},\nauthor = {#{@dataset.creator_list}},\npublisher = {#{@dataset.publisher}},\ntitle = {#{@dataset.title} ﻿},\nyear = {#{@dataset.publication_year}}
 }")
 
     send_file t.path, :type => 'application/application/x-bibtex',
@@ -485,7 +491,7 @@ class DatasetsController < ApplicationController
   # def dataset_params
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :creator_text, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, :search, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, :search, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :type_of, :row_order, :id, :_destroy])
   end
 
   def ezid_metadata_response

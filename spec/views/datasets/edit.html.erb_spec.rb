@@ -26,9 +26,6 @@ RSpec.describe "datasets/edit", :type => :view do
     ))
   end
 
-
-
-
   it "renders the edit dataset form" do
 
     render
@@ -53,8 +50,6 @@ RSpec.describe "datasets/edit", :type => :view do
       # assert_select "input#dataset_key[name=?]", "dataset[key]"
 
       assert_select "input#dataset_description[name=?]", "dataset[description]"
-
-      assert_select "input#dataset_creator_text[name=?]", "dataset[creator_text]"
 
       # depositor is a hidden attribute
       # assert_select "input#dataset_depositor_name[name=?]", "dataset[depositor_name]"

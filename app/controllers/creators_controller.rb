@@ -61,6 +61,25 @@ class CreatorsController < ApplicationController
     end
   end
 
+  def update_row_order
+
+    @creator = Creator.find(creator_params[:creator_id])
+    Rails.logger.warn "creator name: #{@creator.family_name}"
+    Rails.logger.warn "row_order before: #{@creator.row_order}"
+
+    row_order_position_integer = Integer(creator_params[:row_order_position])
+    Rails.logger.warn "row_order_position_integer: #{row_order_position_integer}"
+    Rails.logger.warn "creator_params[:row_order_position] : #{creator_params[:row_order_position]}"
+
+    @creator.update_attribute :row_order_position, row_order_position_integer
+
+    Rails.logger.warn "row_order after: #{@creator.row_order}"
+    @creator.save!
+    render nothing: true # this is a POST action, updates sent via AJAX, no view rendered
+
+  end
+
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_creator
@@ -69,6 +88,6 @@ class CreatorsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def creator_params
-      params.require(:creator).permit(:dataset_id, :family_name, :given_name, :institution_name, :identifier, :type, :position)
+      params.require(:creator).permit(:dataset_id, :family_name, :given_name, :institution_name, :identifier, :type_of, :row_order_position, :creator_id )
     end
 end

@@ -8,7 +8,7 @@ class Dataset < ActiveRecord::Base
   has_many :datafiles, dependent: :destroy
   has_many :creators, dependent: :destroy
   accepts_nested_attributes_for :datafiles, :reject_if => :all_blank, allow_destroy: true
-  accepts_nested_attributes_for :creators, :reject_if => :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :creators, reject_if: proc { |attributes| (attributes['family_name'].blank?  && attributes['institution_name'].blank? )}, allow_destroy: true
 
   before_create 'set_key'
 
@@ -38,7 +38,8 @@ class Dataset < ActiveRecord::Base
         clean_term = term.strip.downcase
 
         if !clean_term.empty?
-
+          
+          #TODO search creators
           term_relations = Dataset.where('lower(title) LIKE :search OR lower(keywords) LIKE :search OR lower(creator_text) LIKE :search OR lower(identifier) LIKE :search OR lower(description) LIKE :search', search: "%#{clean_term}%")
 
           term_relations.each do |tr|
@@ -64,7 +65,7 @@ class Dataset < ActiveRecord::Base
       raise 'Dataset is not complete; a valid datacite xml document cannot be generated.'
     end
 
-    creatorArr = self.creator_text.split(";")
+    creatorArr = self.creator_list.split(";")
 
     if self.keywords
       keywordArr = self.keywords.split(";")
@@ -151,13 +152,33 @@ class Dataset < ActiveRecord::Base
   end
 
   def creator_list
-    creator_text
+      return_list = ""
+
+      self.creators.each_with_index  do |creator, i|
+
+      return_list << "; " unless i == 0
+
+      case creator.type_of
+        when Creator::PERSON
+          return_list << creator.family_name
+          return_list << ", "
+          return_list << creator.given_name
+        when Creator::INSTITUTION
+          return_list << creator.institution_name
+      end
+
+    end
+
+    return_list
+
   end
 
   def plain_text_citation
 
-    if creator_list == ""
+    if self.creator_list == ""
       creator_list = "[Creator List]"
+    else
+      creator_list = self.creator_list
     end
 
 

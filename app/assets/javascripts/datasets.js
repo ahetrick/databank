@@ -76,9 +76,8 @@ ready = function() {
         $('#title-preview').html($(this).val() + '.');
     });
 
-    $('#dataset_creator_text').change(function() {
-        $('#creator-preview').html($(this).val());
-    });
+    //TODO creator preview
+
 
     $('#dataset_publication_year').change(function() {
         $('#year-preview').html('(' + $(this).val() + '):');
@@ -178,6 +177,52 @@ ready = function() {
 
     $('#box-upload-in-progress').hide();
 
+    var cells, desired_width, table_width;
+    if ($("#creator_table tr").length > 0) {
+        table_width = $('#creator_table').width();
+        cells = $('#creator_table').find('tr')[0].cells.length;
+        desired_width = table_width / cells + 'px';
+        setCreatorRowNums();
+        placeAddCreatorButton();
+        set_creator_form_id_list();
+        $('#creator_table td').css('width', desired_width);
+        return $('#creator_table').sortable({
+
+            axis: 'y',
+            items: '.item',
+            cursor: 'move',
+            sort: function (e, ui) {
+                return ui.item.addClass('active-item-shadow');
+            },
+            stop: function (e, ui) {
+                ui.item.removeClass('active-item-shadow');
+                return ui.item.children('td').effect('highlight', {}, 1000);
+            },
+            update: function (e, ui) {
+                var item_id, position;
+                item_id = ui.item.data('item-id');
+                console.log(item_id);
+                position = ui.item.index();
+                console.log("position: " + position)
+                setCreatorRowNums();
+                placeAddCreatorButton();
+                return $.ajax({
+                    type: 'POST',
+                    url: '/creators/update_row_order',
+                    dataType: 'json',
+                    data: {
+                        creator: {
+                            creator_id: item_id,
+                            row_order_position: position
+                        }
+                    }
+                });
+            }
+        });
+
+    }
+
+
     //alert("javascript working");
 }
 
@@ -194,6 +239,11 @@ var Reflector = function(obj) {
     };
 }
 
+function setCreatorRowNums(){
+    $('#creator_table tr').each(function (i) {
+        $("td:first", this).html("Creator #" + i);
+    });
+}
 
 function cancelUpload(datafile, job) {
 
@@ -256,6 +306,62 @@ function download_selected(){
     });
 
 }
+
+function add_creator_row(){
+
+    var listStr = $('#creator_form_id_list').val();
+    var listArr = listStr.split(",").map(Number);
+
+    var maxId = Math.max(...listArr);
+    var newId = maxId + 1;
+    var creator_row = "<tr class='item' data-item-id='25'>" +
+        "<td></td>" +
+        "<td><input value='0' type='hidden' name='dataset[creators_attributes][" + newId + "][type_of]' id='dataset_creators_attributes_" + newId + "_type_of' />" +
+        "<input class='form-control dataset creator' type='text' name='dataset[creators_attributes][" + newId + "][family_name]' id='dataset_creators_attributes_" + newId + "_family_name' /></td>" +
+        "<td><input class='form-control dataset creator' type='text' name='dataset[creators_attributes][" + newId + "][given_name]' id='dataset_creators_attributes_" + newId + "_given_name' /></td>" +
+        "<td><input name='dataset[creators_attributes][" + newId + "][is_contact]' type='hidden' value='0' />" +
+        "<input class='form-control dataset' type='checkbox' value='1' name='dataset[creators_attributes][" + newId + "][is_contact]' id='dataset_creators_attributes_" + newId + "_is_contact' /></td>" +
+        "<td><input class='form-control dataset' type='text' name='dataset[creators_attributes][" + newId + "][email]' id='dataset_creators_attributes_" + newId + "_email' /></td>" +
+        "<td></td></tr>";
+    $("#creator_table tbody:last-child").append(creator_row);
+    setCreatorRowNums();
+    placeAddCreatorButton();
+    var newList = listStr + "," + newId;
+    $('#creator_form_id_list').val(newList);
+
+
+}
+
+function placeAddCreatorButton(){
+
+
+    $('#creator_table tr').each(function (i) {
+        if ((i + 1) == ($("#creator_table tr").length)){
+            $("td:last-child", this).html("<button class='btn btn-success btn-sm' onclick='add_creator_row()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
+        } else
+        {
+            $("td:last-child", this).empty();
+        }
+
+    });
+}
+
+function set_creator_form_id_list(){
+
+    var listStr = "";
+
+    for (i = 0; i < $("#creator_table tr").length; i++) {
+
+        if (i > 0) {
+            listStr += ",";
+        }
+
+        listStr += i;
+    }
+
+    $('#creator_form_id_list').val(listStr);
+}
+
 
 $(document).ready(ready);
 $(document).on('page:load', ready);

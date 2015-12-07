@@ -52,7 +52,10 @@ gem 'haml'
 gem 'simple_form'
 
 # Use cocoon to make it easier to handle nested forms
-gem 'cocoon'
+#gem 'cocoon'
+
+# Use ranked-model to support ordering resources
+gem 'ranked-model'
 
 # use carrierwave for file upload
 gem 'carrierwave'

@@ -1,11 +1,13 @@
 Rails.application.routes.draw do
 
-  resources :creators
+
   resources :licenses
   resources :datafiles
   resources :users
   resources :identities
-  resources :datasets
+  resources :datasets do
+    resources :creators
+  end
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
@@ -72,6 +74,8 @@ Rails.application.routes.draw do
 
   # get citation text
   get "datasets/:id/citation_text", to: 'datasets#citation_text', defaults: {format: 'json'}
+
+  post "/creators/update_row_order", to: 'creators#update_row_order'
 
 
 end

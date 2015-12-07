@@ -73,11 +73,45 @@
                   %a(href="#" data-toggle="modal" data-target="#licenseModal" tabindex="-1")
                     %span(class="glyphicon glyphicon-question-sign")
                   = f.collection_select :license, License.all, :code, :name, {:prompt => true}, {:class => "form-control dataset"}
-            .form-group.required
-              = f.label :creator_text, "Creator(s)", :class => "control-label"
-              %br
-              = f.text_field :creator_text, :class => "form-control dataset", :placeholder => "[Semi-colon spearated list of names (e.g.: Verfasser, Maria; Auteur, Henri)]"
-              %span(class="help-block") The personal name format for each name in the semi-colon separted list should be: family, given, (e.g.: Verfasser, Maria; Auteur, Henri).
+
+            %span(class="metadata-label" )
+              Creators
+            (Primay Contact required)
+            %br
+            %input(type="hidden" name="creator_form_id_list" id="creator_form_id_list" value="" )
+
+            %table(id="creator_table" class="table table-striped" )
+              %thead
+                %tr
+                  %th
+                  %th
+                    Family Name
+                  %th
+                    Given Name
+                  %th
+                    Primary Contact?
+                  %th
+                    Email
+                  %th
+
+              %tbody
+
+              = f.fields_for :creators do |cf|
+                %tr(class="item" data-item-id="#{cf.object.id}" )
+
+                  %td
+                    -# Creator #[position] value inserted via ajax
+                  %td
+                    = cf.hidden_field :type_of, value: Creator::PERSON
+                    = cf.text_field :family_name, class: "form-control dataset creator"
+                  %td
+                    = cf.text_field :given_name, class: "form-control dataset creator"
+                  %td
+                    = cf.check_box :is_contact, class: "form-control dataset"
+                  %td
+                    = cf.text_field :email, class: "form-control dataset"
+                  %td
+                    -# Add Creator button inserted via ajax
 
             .field
               = f.hidden_field :publisher, :value=>"University of Illinois at Urbana-Champaign"
@@ -143,7 +177,6 @@
                 %span(class="metadata-label" ) Files
           .panel-collapse.collapse.in(id="collapseFiles" role="tabpanel" aria-labelledby="filesHeading" )
             .panel-body
-
               .container-fluid
                 For files larger than 500 MB, importing from Box is recommended.  For files larger than Box supports, contact the
                 %a(href="http://researchdataservice.illinois.edu/")Research Data Service
