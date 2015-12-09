@@ -9,10 +9,17 @@ namespace :databank do
     end
   end
 
-  desc 'Clear datafiles'
+  desc 'delete all datafiles'
   task :delete_files => :environment do
     Datafile.all.each do |datafile|
       datafile.destroy
+    end
+  end
+
+  desc 'delete all creators'
+  task :delete_creators => :environment do
+    Creator.all.each do |creator|
+      creator.destroy
     end
   end
 

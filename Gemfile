@@ -55,7 +55,7 @@ gem 'simple_form'
 #gem 'cocoon'
 
 # Use ranked-model to support ordering resources
-gem 'ranked-model'
+# gem 'ranked-model'
 
 # use carrierwave for file upload
 gem 'carrierwave'

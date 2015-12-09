@@ -5,9 +5,9 @@ Rails.application.routes.draw do
   resources :datafiles
   resources :users
   resources :identities
-  resources :datasets do
-    resources :creators
-  end
+  resources :datasets
+  resources :creators
+
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
@@ -76,6 +76,7 @@ Rails.application.routes.draw do
   get "datasets/:id/citation_text", to: 'datasets#citation_text', defaults: {format: 'json'}
 
   post "/creators/update_row_order", to: 'creators#update_row_order'
+  post "/creators/create_for_form", to: 'creators#create_for_form', defaults: {format: 'json'}
 
 
 end

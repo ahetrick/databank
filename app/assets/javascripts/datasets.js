@@ -135,7 +135,7 @@ ready = function() {
             if (file.error){
                 row = row + '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-warning-sign"></span>';
             } else {
-                row = row + '<a data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" data-method="delete" href="/datafiles/' + file.web_id + '"><span class="glyphicon glyphicon-trash"></span> File</a></span>';
+                row = row + '<a data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" data-method="delete" href="/datafiles/' + file.web_id + '"><span class="glyphicon glyphicon-trash"></span></a></span>';
             }
 
             row = row + '</span></div></td></tr>';
@@ -182,9 +182,8 @@ ready = function() {
         table_width = $('#creator_table').width();
         cells = $('#creator_table').find('tr')[0].cells.length;
         desired_width = table_width / cells + 'px';
-        setCreatorRowNums();
-        placeAddCreatorButton();
-        set_creator_form_id_list();
+        initialize_creator_index_list();
+        handleCreatorTable();
         $('#creator_table td').css('width', desired_width);
         return $('#creator_table').sortable({
 
@@ -204,25 +203,22 @@ ready = function() {
                 console.log(item_id);
                 position = ui.item.index();
                 console.log("position: " + position)
-                setCreatorRowNums();
-                placeAddCreatorButton();
-                return $.ajax({
-                    type: 'POST',
-                    url: '/creators/update_row_order',
-                    dataType: 'json',
-                    data: {
-                        creator: {
-                            creator_id: item_id,
-                            row_order_position: position
-                        }
-                    }
-                });
+                handleCreatorTable();
+                //return $.ajax({
+                //    type: 'POST',
+                //    url: '/creators/update_row_order',
+                //    dataType: 'json',
+                //    data: {
+                //        creator: {
+                //            creator_id: item_id,
+                //            row_order_position: position
+                //        }
+                //    }
+                //});
             }
         });
 
     }
-
-
     //alert("javascript working");
 }
 
@@ -237,12 +233,6 @@ var Reflector = function(obj) {
         }
         return properties;
     };
-}
-
-function setCreatorRowNums(){
-    $('#creator_table tr').each(function (i) {
-        $("td:first", this).html("Creator #" + i);
-    });
 }
 
 function cancelUpload(datafile, job) {
@@ -292,7 +282,6 @@ function handleAgreeModal(email, name){
     } else {
         handleNotAgreed();
     }
-
 }
 
 function download_selected(){
@@ -304,64 +293,101 @@ function download_selected(){
         fileURL = "<iframe class='hidden' src='/datasets/" + dataset_key + "/stream_file/" + file_id + "'></iframe>";
         $('#frames').append(fileURL);
     });
+}
 
+function handle_contact_change(){
+    var selectedVal = $("input[type='radio'][name='primary_contact']:checked").val();
+    $("input[name='dataset[creators_attributes][" + selectedVal + "][is_contact]']").val('true');
 }
 
 function add_creator_row(){
+    $.ajax({
+        type: "POST",
+        url: "/creators/create_for_form",
+        data: {dataset_key: dataset_key},
+        success: function(data) {
+            var listStr = $('#creator_index_list').val();
+            var listArr = listStr.split(",").map(Number);
 
-    var listStr = $('#creator_form_id_list').val();
-    var listArr = listStr.split(",").map(Number);
-
-    var maxId = Math.max(...listArr);
-    var newId = maxId + 1;
-    var creator_row = "<tr class='item' data-item-id='25'>" +
-        "<td></td>" +
-        "<td><input value='0' type='hidden' name='dataset[creators_attributes][" + newId + "][type_of]' id='dataset_creators_attributes_" + newId + "_type_of' />" +
-        "<input class='form-control dataset creator' type='text' name='dataset[creators_attributes][" + newId + "][family_name]' id='dataset_creators_attributes_" + newId + "_family_name' /></td>" +
-        "<td><input class='form-control dataset creator' type='text' name='dataset[creators_attributes][" + newId + "][given_name]' id='dataset_creators_attributes_" + newId + "_given_name' /></td>" +
-        "<td><input name='dataset[creators_attributes][" + newId + "][is_contact]' type='hidden' value='0' />" +
-        "<input class='form-control dataset' type='checkbox' value='1' name='dataset[creators_attributes][" + newId + "][is_contact]' id='dataset_creators_attributes_" + newId + "_is_contact' /></td>" +
-        "<td><input class='form-control dataset' type='text' name='dataset[creators_attributes][" + newId + "][email]' id='dataset_creators_attributes_" + newId + "_email' /></td>" +
-        "<td></td></tr>";
-    $("#creator_table tbody:last-child").append(creator_row);
-    setCreatorRowNums();
-    placeAddCreatorButton();
-    var newList = listStr + "," + newId;
-    $('#creator_form_id_list').val(newList);
-
-
-}
-
-function placeAddCreatorButton(){
-
-
-    $('#creator_table tr').each(function (i) {
-        if ((i + 1) == ($("#creator_table tr").length)){
-            $("td:last-child", this).html("<button class='btn btn-success btn-sm' onclick='add_creator_row()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
-        } else
-        {
-            $("td:last-child", this).empty();
-        }
-
+            var maxId = Math.max(...listArr);
+            var newId = maxId + 1;
+            var creator_row = "<tr class='item' data-item-id='" + data.creator_id + "'>" +
+                "<td></td>" +
+                "<td><input value='0' type='hidden' name='dataset[creators_attributes][" + newId + "][type_of]' id='dataset_creators_attributes_" + newId + "_type_of' />" +
+                "<input class='form-control dataset creator' placeholder='[Family Name, e.g.: Smith]'  type='text' name='dataset[creators_attributes][" + newId + "][family_name]' id='dataset_creators_attributes_" + newId + "_family_name' /></td>" +
+                "<td><input class='form-control dataset creator' placeholder='[Given Name, e.g.: John W., Jr. ]' type='text' name='dataset[creators_attributes][" + newId + "][given_name]' id='dataset_creators_attributes_" + newId + "_given_name' /></td>" +
+                "<td><input class='form-control dataset creator' placeholder='[orcid.org/0000-0002-1825-0097]' type='text' name='dataset[creators_attributes][" + newId + "][identifier]' id='dataset_creators_attributes_" + newId + "_identifier' /></td>" +
+                "<td><input class='form-control dataset' placeholder='[Email, e.g.: jwsmith42@illinois.edu]'  type='text' name='dataset[creators_attributes][" + newId + "][email]' id='dataset_creators_attributes_" + newId + "_email' /></td>" +
+                "<td align='center' ><input name='dataset[creators_attributes][" + newId + "][is_contact]' type='hidden' value='0' />" +
+                "<input class='dataset' type='radio' value='" + newId  + "' name='primary_contact' onchange='handle_contact_change()'  /></td>" +
+                "<td></td></tr>";
+            $("#creator_table tbody:last-child").append(creator_row);
+            handleCreatorTable();
+            var newList = listStr + "," + newId;
+            $('#creator_index_list').val(newList);
+        },
+        dataType: 'json'
     });
 }
 
-function set_creator_form_id_list(){
+function remove_creator_row(creator_id) {
+
+    $.ajax({
+        type: "POST",
+        url: "/creators/" + creator_id,
+        dataType: "json",
+        data: {"_method":"delete"},
+        complete: function(){
+            $("#creator_row_for_"+creator_id).remove();
+        }
+    });
+}
+
+function initialize_creator_index_list(){
+
+    // when the table is first formed, the creator.index is in the range 0..(number of table rows minus one because of header row)
 
     var listStr = "";
 
-    for (i = 0; i < $("#creator_table tr").length; i++) {
-
+    for (i = 0; i < ($('#creator_table tr').length) - 1 ; i++) {
         if (i > 0) {
             listStr += ",";
         }
-
-        listStr += i;
+        listStr += i ;
     }
 
-    $('#creator_form_id_list').val(listStr);
+    // set creator form id list value
+    $('#creator_index_list').val(listStr);
 }
 
+function handleCreatorTable(){
+
+    $('#creator_table tr').each(function (i) {
+
+        // for all but header row, set the row_position value of the input to match the table row position
+        if (i > 0) {
+            var creator_index = $(this).find('td').first().next().find('input').first().attr('id').split('_')[3];
+            $("#dataset_creators_attributes_" + creator_index + "_row_position").val(i);
+        }
+
+        var split_id = (this.id).split('_');
+        var creator_id = split_id[3];
+
+        // set creator row num display
+        $("td:first", this).html("<span style='display:inline;'>  " + i + "     </span><span style='display:inline;' class='glyphicon glyphicon-resize-vertical'></span>" );
+
+      // place add creator button
+        if ((i + 1) == ($("#creator_table tr").length)){
+            $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_id  +  "\x22)' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_creator_row()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
+        } else
+        {
+            $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_id  +  "\x22)' type='button'><span class='glyphicon glyphicon-trash'></span></button>");
+        }
+
+        $("#dataset_creators_attributes_" +  + "_row_position")
+
+    });
+}
 
 $(document).ready(ready);
 $(document).on('page:load', ready);

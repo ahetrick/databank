@@ -11,6 +11,7 @@ class Dataset < ActiveRecord::Base
   accepts_nested_attributes_for :creators, reject_if: proc { |attributes| (attributes['family_name'].blank?  && attributes['institution_name'].blank? )}, allow_destroy: true
 
   before_create 'set_key'
+  before_save 'set_primary_contact'
 
   KEY_LENGTH = 5
 
@@ -168,7 +169,6 @@ class Dataset < ActiveRecord::Base
       end
 
     end
-
     return_list
 
   end
@@ -180,7 +180,6 @@ class Dataset < ActiveRecord::Base
     else
       creator_list = self.creator_list
     end
-
 
     if title && title != ""
       citationTitle = title
@@ -210,6 +209,15 @@ class Dataset < ActiveRecord::Base
       break unless self.class.find_by_key(proposed_key)
     end
     proposed_key
+  end
+
+  def set_primary_contact
+    self.creators.each do |creator|
+      if creator.is_contact?
+        self.corresponding_creator_name = "#{creator.given_name} #{creator.family_name}"
+        self.corresponding_creator_email = creator.email
+      end
+    end
   end
 
 end

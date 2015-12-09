@@ -135,12 +135,11 @@ class DatasetsController < ApplicationController
   def new
     @dataset = Dataset.new
     @dataset.creators.build
-
   end
 
   # GET /datasets/1/edit
   def edit
-    @ordered_creators = @dataset.creators.rank(:row_order)
+    @dataset.creators.build unless @dataset.creators.count > 0
   end
 
   # POST /datasets
@@ -491,7 +490,7 @@ class DatasetsController < ApplicationController
   # def dataset_params
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, :search, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :type_of, :row_order, :id, :_destroy])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, :search, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :type_of, :row_position, :is_contact, :email, :id, :_destroy])
   end
 
   def ezid_metadata_response
