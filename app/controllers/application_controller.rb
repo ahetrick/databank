@@ -54,7 +54,7 @@ class ApplicationController < ActionController::Base
       # Rails.logger.error exception.message
       # exception.backtrace.each { |line| Rails.logger.error line }
       #
-      # render :file => File.join(Rails.root, 'public', '500.html')
+      #render :file => File.join(Rails.root, 'public', '500.html')
     end
 
   end

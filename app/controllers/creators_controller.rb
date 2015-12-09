@@ -72,8 +72,6 @@ class CreatorsController < ApplicationController
   end
 
   def create_for_form
-    Rails.logger.warn "\n*** inside create_for_form"
-    Rails.logger.warn params.to_yaml
     @dataset = Dataset.find_by_key(params[:dataset_key])
     @creator = Creator.new(dataset_id: @dataset.id, is_contact: false)
     render(json: {"creator_id": @creator.id}, content_type: request.format, :layout => false )

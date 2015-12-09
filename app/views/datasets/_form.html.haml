@@ -76,7 +76,7 @@
 
             %span(class="metadata-label" )
               Author List
-            (Primary contact required, email required for primary contact.)
+            (One primary long term contact required -- email required for primary contact.)
             %br
             %input(type="hidden" name="creator_index_list" id="creator_index_list" value="" )
 
@@ -85,15 +85,18 @@
                 %tr
                   %th(class="col-md-1")
                   %th(class="col-md-2")
-                    Family Name
+                    .form-heading-required
+                      Family Name
                   %th(class="col-md-2")
-                    Given Name
+                    .form-heading-required
+                      Given Name
                   %th(class="col-md-3")
                     ORCID® iD
                   %th(class="col-md-2")
                     Email
                   %th(class="col-md-1")
-                    Primary Contact
+                    .form-heading-required
+                      Contact
                   %th(class="col-md-1")
 
               %tbody

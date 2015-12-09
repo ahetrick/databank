@@ -165,6 +165,12 @@ legend.metadata-border {
 #creator_table{
   border: 1px solid grey;
 }
+.form-heading-required:after {
+  content:"*";color:red;
+}
+.input-field-required{
+  background-color: yellow;
+}
 
 //#box-select{
 //  display: inline;

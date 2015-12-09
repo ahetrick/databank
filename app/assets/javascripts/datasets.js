@@ -298,6 +298,21 @@ function download_selected(){
 function handle_contact_change(){
     var selectedVal = $("input[type='radio'][name='primary_contact']:checked").val();
     $("input[name='dataset[creators_attributes][" + selectedVal + "][is_contact]']").val('true');
+
+
+    $('#creator_table tr').each(function (i) {
+        // for all but header row, set the email class to match the contact status
+        if (i > 0) {
+            var creator_index = $(this).find('td').first().next().find('input').first().attr('id').split('_')[3];
+            if (selectedVal != creator_index) {
+                $("#dataset_creators_attributes_" + creator_index + "_email").parent().removeClass('input-field-required');
+            }
+        }
+    });
+
+    $("input[name='dataset[creators_attributes][" + selectedVal + "][email]']").parent().addClass('input-field-required');
+    $("input[name='dataset[creators_attributes][" + selectedVal + "][email]']").focus();
+
 }
 
 function add_creator_row(){
