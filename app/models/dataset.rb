@@ -62,7 +62,7 @@ class Dataset < ActiveRecord::Base
 
   def to_datacite_xml
 
-    if !self.title || self.creator_list = ""
+    if !self.title || self.creator_list == ""
       raise 'Dataset is not complete; a valid datacite xml document cannot be generated.'
     end
 
