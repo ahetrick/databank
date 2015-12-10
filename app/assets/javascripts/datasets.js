@@ -73,7 +73,7 @@ ready = function() {
         }
      });
 
-    $('input.input-field-required').change(function(){
+    $('input.creator-email').change(function(){
         if ($(this).val() != "") {
             $(this).parent().removeClass('input-field-required');
             $("#email_required_span").removeClass('highlight');
@@ -331,33 +331,28 @@ function handle_contact_change(){
 }
 
 function add_creator_row(){
-    $.ajax({
-        type: "POST",
-        url: "/creators/create_for_form",
-        data: {dataset_key: dataset_key},
-        success: function(data) {
-            var listStr = $('#creator_index_list').val();
-            var listArr = listStr.split(",").map(Number);
 
-            var maxId = Math.max(...listArr);
-            var newId = maxId + 1;
-            var creator_row = "<tr class='item row' data-item-id='" + data.creator_id + "' id='creator_id_" + data.creator_id + "_index_" + newId + "' >" +
-                "<td class='col-md-1'></td>" +
-                "<td class='col-md-2'><input value='0' type='hidden' name='dataset[creators_attributes][" + newId + "][type_of]' id='dataset_creators_attributes_" + newId + "_type_of' />" +
-                "<input class='form-control dataset creator' placeholder='[Family Name, e.g.: Smith]'  type='text' name='dataset[creators_attributes][" + newId + "][family_name]' id='dataset_creators_attributes_" + newId + "_family_name' /></td>" +
-                "<td class='col-md-2'><input class='form-control dataset creator' placeholder='[Given Name, e.g.: John W., Jr. ]' type='text' name='dataset[creators_attributes][" + newId + "][given_name]' id='dataset_creators_attributes_" + newId + "_given_name' /></td>" +
-                "<td class='col-md-3'><input class='form-control dataset creator' placeholder='[orcid.org/0000-0002-1825-0097]' type='text' name='dataset[creators_attributes][" + newId + "][identifier]' id='dataset_creators_attributes_" + newId + "_identifier' /></td>" +
-                "<td class='col-md-2'><input class='form-control dataset' placeholder='[Email, e.g.: jwsmith42@illinois.edu]'  type='text' name='dataset[creators_attributes][" + newId + "][email]' id='dataset_creators_attributes_" + newId + "_email' /></td>" +
-                "<td class='col-md-1' align='center' ><input name='dataset[creators_attributes][" + newId + "][is_contact]' type='hidden' value='0' />" +
-                "<input class='dataset' type='radio' value='" + newId  + "' name='primary_contact' onchange='handle_contact_change()'  /></td>" +
-                "<td class='col-md-1'></td></tr>";
-            $("#creator_table tbody:last-child").append(creator_row);
-            handleCreatorTable();
-            var newList = listStr + "," + newId;
-            $('#creator_index_list').val(newList);
-        },
-        dataType: 'json'
-    });
+    var listStr = $('#creator_index_list').val();
+    var listArr = listStr.split(",").map(Number);
+
+    var maxId = Math.max(...listArr);
+
+    var newId = maxId + 1;
+    var creator_row = "<tr class='item row' id='creator_id_null_index_" + newId + "' >" +
+        "<td class='col-md-1'></td>" +
+        "<td class='col-md-2'><input value='0' type='hidden' name='dataset[creators_attributes][" + newId + "][type_of]' id='dataset_creators_attributes_" + newId + "_type_of' />" +
+        "<input class='form-control dataset creator' placeholder='[Family Name, e.g.: Smith]'  type='text' name='dataset[creators_attributes][" + newId + "][family_name]' id='dataset_creators_attributes_" + newId + "_family_name' /></td>" +
+        "<td class='col-md-2'><input class='form-control dataset creator' placeholder='[Given Name, e.g.: John W., Jr. ]' type='text' name='dataset[creators_attributes][" + newId + "][given_name]' id='dataset_creators_attributes_" + newId + "_given_name' /></td>" +
+        "<td class='col-md-3'><input class='form-control dataset creator' placeholder='[orcid.org/0000-0002-1825-0097]' type='text' name='dataset[creators_attributes][" + newId + "][identifier]' id='dataset_creators_attributes_" + newId + "_identifier' /></td>" +
+        "<td class='col-md-2'><input class='form-control dataset creator-email' placeholder='[Email, e.g.: jwsmith42@illinois.edu]'  type='text' name='dataset[creators_attributes][" + newId + "][email]' id='dataset_creators_attributes_" + newId + "_email' /></td>" +
+        "<td class='col-md-1' align='center' ><input name='dataset[creators_attributes][" + newId + "][is_contact]' type='hidden' value='0' />" +
+        "<input class='dataset' type='radio' value='" + newId  + "' name='primary_contact' onchange='handle_contact_change()'  /></td>" +
+        "<td class='col-md-1'></td></tr>";
+    $("#creator_table tbody:last-child").append(creator_row);
+    handleCreatorTable();
+    var newList = listStr + "," + newId;
+    $('#creator_index_list').val(newList);
+
 }
 
 function remove_creator_row(creator_index) {
@@ -405,7 +400,7 @@ function handleCreatorTable(){
         // set creator row num display
         $("td:first", this).html("<span style='display:inline;'>  " + i + "     </span><span style='display:inline;' class='glyphicon glyphicon-resize-vertical'></span>" );
 
-      // place add creator button
+        // place add creator button
         if ((i + 1) == ($("#creator_table tr").length)){
             $("td:last-child", this).html("<button id='creator_remove_button_" + creator_index +  "' class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_index  +  "\x22 ),' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_creator_row()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
         } else

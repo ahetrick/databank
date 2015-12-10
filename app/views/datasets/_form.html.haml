@@ -104,7 +104,7 @@
               - @dataset.creators.each_with_index do |creator, i|
 
                 = f.fields_for :creators, creator do |cf|
-                  %tr(class="item row" data-item-id="#{creator.id}" id="creator_index_#{i}" )
+                  %tr(class="item row" id="creator_index_#{i}" )
 
                     %td(class="col-md-1")
                     -# row position handle and author position value inserted via AJAX
@@ -118,7 +118,7 @@
                     %td(class="col-md-3")
                       = cf.text_field :identifier, class: "form-control dataset", placeholder: "[orcid.org/0000-0002-1825-0097]"
                     %td(class="col-md-2")
-                      = cf.text_field :email, class: "form-control dataset", placeholder: "[Email, e.g.: jws@example.edu]"
+                      = cf.text_field :email, class: "form-control dataset creator-email", placeholder: "[Email, e.g.: jws@example.edu]"
                     %td(align="center" class="col-md-1")
                       %input(name="dataset[creators_attributes][#{i}][is_contact]" type="hidden" value="#{creator.is_contact?}")
                       - if creator.is_contact?
