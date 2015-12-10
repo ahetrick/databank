@@ -198,6 +198,7 @@ class DatasetsController < ApplicationController
     validation_error_messages = Array.new
     validation_error_message = ""
 
+
     if !@dataset.title || @dataset.title.empty?
       @dataset.complete = false
       validation_error_messages << "title"
@@ -206,6 +207,11 @@ class DatasetsController < ApplicationController
     if @dataset.creator_list.empty?
       @dataset.complete = false
       validation_error_messages << "at least one creator"
+    end
+
+    if !@dataset.license || @dataset.license.empty?
+      @dataset.complete = false
+      validation_error_messages << "license"
     end
 
     if !@dataset.corresponding_creator_name || @dataset.corresponding_creator_name.empty?
