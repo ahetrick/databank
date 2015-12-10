@@ -68,16 +68,25 @@ ready = function() {
     //});
 
     $('input.dataset').change(function() {
-        if( $(this).val() != "" )
+        if ($(this).val() != ""){
             window.onbeforeunload = confirmOnPageExit;
+        }
      });
+
+    $('input.input-field-required').change(function(){
+        if ($(this).val() != "") {
+            $(this).parent().removeClass('input-field-required');
+            $("#email_required_span").removeClass('highlight');
+        }
+    });
+
+    $('input.creator').change(function(){
+        generate_creator_preview();
+    });
 
     $('#dataset_title').change(function() {
         $('#title-preview').html($(this).val() + '.');
     });
-
-    //TODO creator preview
-
 
     $('#dataset_publication_year').change(function() {
         $('#year-preview').html('(' + $(this).val() + '):');
@@ -204,6 +213,7 @@ ready = function() {
                 position = ui.item.index();
                 console.log("position: " + position)
                 handleCreatorTable();
+                generate_creator_preview();
                 //return $.ajax({
                 //    type: 'POST',
                 //    url: '/creators/update_row_order',
@@ -296,23 +306,28 @@ function download_selected(){
 }
 
 function handle_contact_change(){
+    // set is_contact value to match selection staus and highlight required email input field if blank
+
     var selectedVal = $("input[type='radio'][name='primary_contact']:checked").val();
     $("input[name='dataset[creators_attributes][" + selectedVal + "][is_contact]']").val('true');
 
-
     $('#creator_table tr').each(function (i) {
-        // for all but header row, set the email class to match the contact status
+
         if (i > 0) {
             var creator_index = $(this).find('td').first().next().find('input').first().attr('id').split('_')[3];
+
             if (selectedVal != creator_index) {
                 $("#dataset_creators_attributes_" + creator_index + "_email").parent().removeClass('input-field-required');
+                $("input[name='dataset[creators_attributes][" + creator_index + "][is_contact]']").val('false');
             }
         }
     });
 
-    $("input[name='dataset[creators_attributes][" + selectedVal + "][email]']").parent().addClass('input-field-required');
-    $("input[name='dataset[creators_attributes][" + selectedVal + "][email]']").focus();
-
+    if ($("input[name='dataset[creators_attributes][" + selectedVal + "][email]']").val() == ""){
+        $("#email_required_span").addClass('highlight');
+        $("input[name='dataset[creators_attributes][" + selectedVal + "][email]']").parent().addClass('input-field-required');
+        $("input[name='dataset[creators_attributes][" + selectedVal + "][email]']").focus();
+    }
 }
 
 function add_creator_row(){
@@ -326,16 +341,16 @@ function add_creator_row(){
 
             var maxId = Math.max(...listArr);
             var newId = maxId + 1;
-            var creator_row = "<tr class='item' data-item-id='" + data.creator_id + "'>" +
-                "<td></td>" +
-                "<td><input value='0' type='hidden' name='dataset[creators_attributes][" + newId + "][type_of]' id='dataset_creators_attributes_" + newId + "_type_of' />" +
+            var creator_row = "<tr class='item row' data-item-id='" + data.creator_id + "' id='creator_id_" + data.creator_id + "_index_" + newId + "' >" +
+                "<td class='col-md-1'></td>" +
+                "<td class='col-md-2'><input value='0' type='hidden' name='dataset[creators_attributes][" + newId + "][type_of]' id='dataset_creators_attributes_" + newId + "_type_of' />" +
                 "<input class='form-control dataset creator' placeholder='[Family Name, e.g.: Smith]'  type='text' name='dataset[creators_attributes][" + newId + "][family_name]' id='dataset_creators_attributes_" + newId + "_family_name' /></td>" +
-                "<td><input class='form-control dataset creator' placeholder='[Given Name, e.g.: John W., Jr. ]' type='text' name='dataset[creators_attributes][" + newId + "][given_name]' id='dataset_creators_attributes_" + newId + "_given_name' /></td>" +
-                "<td><input class='form-control dataset creator' placeholder='[orcid.org/0000-0002-1825-0097]' type='text' name='dataset[creators_attributes][" + newId + "][identifier]' id='dataset_creators_attributes_" + newId + "_identifier' /></td>" +
-                "<td><input class='form-control dataset' placeholder='[Email, e.g.: jwsmith42@illinois.edu]'  type='text' name='dataset[creators_attributes][" + newId + "][email]' id='dataset_creators_attributes_" + newId + "_email' /></td>" +
-                "<td align='center' ><input name='dataset[creators_attributes][" + newId + "][is_contact]' type='hidden' value='0' />" +
+                "<td class='col-md-2'><input class='form-control dataset creator' placeholder='[Given Name, e.g.: John W., Jr. ]' type='text' name='dataset[creators_attributes][" + newId + "][given_name]' id='dataset_creators_attributes_" + newId + "_given_name' /></td>" +
+                "<td class='col-md-3'><input class='form-control dataset creator' placeholder='[orcid.org/0000-0002-1825-0097]' type='text' name='dataset[creators_attributes][" + newId + "][identifier]' id='dataset_creators_attributes_" + newId + "_identifier' /></td>" +
+                "<td class='col-md-2'><input class='form-control dataset' placeholder='[Email, e.g.: jwsmith42@illinois.edu]'  type='text' name='dataset[creators_attributes][" + newId + "][email]' id='dataset_creators_attributes_" + newId + "_email' /></td>" +
+                "<td class='col-md-1' align='center' ><input name='dataset[creators_attributes][" + newId + "][is_contact]' type='hidden' value='0' />" +
                 "<input class='dataset' type='radio' value='" + newId  + "' name='primary_contact' onchange='handle_contact_change()'  /></td>" +
-                "<td></td></tr>";
+                "<td class='col-md-1'></td></tr>";
             $("#creator_table tbody:last-child").append(creator_row);
             handleCreatorTable();
             var newList = listStr + "," + newId;
@@ -345,17 +360,16 @@ function add_creator_row(){
     });
 }
 
-function remove_creator_row(creator_id) {
+function remove_creator_row(creator_index) {
 
-    $.ajax({
-        type: "POST",
-        url: "/creators/" + creator_id,
-        dataType: "json",
-        data: {"_method":"delete"},
-        complete: function(){
-            $("#creator_row_for_"+creator_id).remove();
-        }
-    });
+    console.log(creator_index);
+
+    if (creator_id != "null"){
+        $("#dataset_creators_attributes_" + creator_index + "__destroy]").val(true);
+    }
+    $("#creator_id_" + creator_id  + "_index_" + creator_index).remove();
+
+
 }
 
 function initialize_creator_index_list(){
@@ -379,30 +393,53 @@ function handleCreatorTable(){
 
     $('#creator_table tr').each(function (i) {
 
+        var split_id = (this.id).split('_');
+        var creator_index = split_id[2];
+
         // for all but header row, set the row_position value of the input to match the table row position
         if (i > 0) {
-            var creator_index = $(this).find('td').first().next().find('input').first().attr('id').split('_')[3];
+            //var creator_index = $(this).find('td').first().next().find('input').first().attr('id').split('_')[2];
             $("#dataset_creators_attributes_" + creator_index + "_row_position").val(i);
         }
-
-        var split_id = (this.id).split('_');
-        var creator_id = split_id[3];
 
         // set creator row num display
         $("td:first", this).html("<span style='display:inline;'>  " + i + "     </span><span style='display:inline;' class='glyphicon glyphicon-resize-vertical'></span>" );
 
       // place add creator button
         if ((i + 1) == ($("#creator_table tr").length)){
-            $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_id  +  "\x22)' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_creator_row()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
+            $("td:last-child", this).html("<button id='creator_remove_button_" + creator_index +  "' class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_index  +  "\x22 ),' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_creator_row()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
         } else
         {
-            $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_id  +  "\x22)' type='button'><span class='glyphicon glyphicon-trash'></span></button>");
+            $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_index  +  "\x22 )' type='button'><span class='glyphicon glyphicon-trash'></span></button>");
         }
 
         $("#dataset_creators_attributes_" +  + "_row_position")
 
     });
 }
+
+function generate_creator_preview(){
+    var creator_list_preview = "";
+    var listStr = $('#creator_index_list').val();
+    var listArr = listStr.split(",");
+
+    $.each(listArr, function(i, creatorIndex) {
+
+        if (i > 0) {
+            creator_list_preview = creator_list_preview + "; ";
+        }
+        console.log($("#dataset_creators_attributes_" + creatorIndex + "_family_name").val());
+        creator_list_preview = creator_list_preview + $("#dataset_creators_attributes_" + creatorIndex + "_family_name").val();
+        creator_list_preview = creator_list_preview + ", "
+        creator_list_preview = creator_list_preview + $("#dataset_creators_attributes_" + creatorIndex + "_given_name").val();
+    });
+
+
+
+    $('#creator-preview').html(creator_list_preview);
+
+}
+
 
 $(document).ready(ready);
 $(document).on('page:load', ready);

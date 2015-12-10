@@ -3,12 +3,11 @@
     - if params[:action] == 'new'
       .deposit-agreement-warning
         You must agree to the Deposit Agreement before depositing data into Illinois Data Bank.
-        %button(type="button" id="show-agreement-modal-link" class="btn btn-primary .deposit-agreement-btn" data-toggle="modal" data-target="#agreement") Deposit Agreement
+        %button(type="button" id="show-agreement-modal-link" class="btn btn-primary deposit-agreement-btn" data-toggle="modal" data-target="#agreement") Deposit Agreement
         %a(href="http://researchdataservice.illinois.edu/contact-us/" class="btn btn-success" role="button")
           %span(class="glyphicon glyphicon-question-sign")
           Help
         %button(type="button" class="btn btn-danger" name="cancel" onclick='window.location = "/"' )Cancel
-
 
   .panel-group(id="description" role="tablist" aria-multiselectable="true")
     .panel.panel-default
@@ -17,7 +16,7 @@
           %a(role="button" data-toggle="collapse" data-parent="#description" href="#descriptionPanel" aria-expanded="true" aria-controls="descriptionPanel")
             %span( class="metadata-label" )
               Description
-            (expand to edit dataset description values)
+            (expand to edit dataset description fields)
         %br
         %span( class="metadata-label" )
           citation preview:
@@ -30,7 +29,6 @@
         University of Illinois at Urbana-Champaign.
         %span( id="doi-preview" )
           = @dataset.identifier && @dataset.identifier != "" ? "http://dx.doi.org/#{@dataset.identifier}" : ""
-
 
       .panel-collapse.collapse.in(id="descriptionPanel" role="tabpanel" aria-labelledby="descriptionHeading" )
         .panel-body
@@ -76,13 +74,15 @@
 
             %span(class="metadata-label" )
               Author List
-            (One primary long term contact required -- email required for primary contact.)
+            (One primary long term contact required --
+            %span(id="email_required_span") email required for primary contact.
+            )
             %br
             %input(type="hidden" name="creator_index_list" id="creator_index_list" value="" )
 
             %table(id="creator_table" class="table table-striped" )
               %thead
-                %tr
+                %tr(class="row" )
                   %th(class="col-md-1")
                   %th(class="col-md-2")
                     .form-heading-required
@@ -96,7 +96,7 @@
                     Email
                   %th(class="col-md-1")
                     .form-heading-required
-                      Contact
+                      Primary Contact
                   %th(class="col-md-1")
 
               %tbody
@@ -104,27 +104,28 @@
               - @dataset.creators.each_with_index do |creator, i|
 
                 = f.fields_for :creators, creator do |cf|
-                  %tr(class="item" data-item-id="#{creator.id}" id="creator_row_for_#{creator.id}" )
+                  %tr(class="item row" data-item-id="#{creator.id}" id="creator_index_#{i}" )
 
-                    %td
+                    %td(class="col-md-1")
                     -# row position handle and author position value inserted via AJAX
-                    %td
+                    %td(class="col-md-2")
+                      = cf.hidden_field :_destroy, value: false
                       = cf.hidden_field :row_position # value set via AJAX
                       = cf.hidden_field :type_of, value: Creator::PERSON
                       = cf.text_field :family_name, class: "form-control dataset creator", placeholder: "[Family Name, e.g.: Smith]"
-                    %td
+                    %td(class="col-md-2")
                       = cf.text_field :given_name, class: "form-control dataset creator", placeholder: "[Given Name, e.g.: John W., Jr. ]"
-                    %td
+                    %td(class="col-md-3")
                       = cf.text_field :identifier, class: "form-control dataset", placeholder: "[orcid.org/0000-0002-1825-0097]"
-                    %td
+                    %td(class="col-md-2")
                       = cf.text_field :email, class: "form-control dataset", placeholder: "[Email, e.g.: jws@example.edu]"
-                    %td(align="center" )
+                    %td(align="center" class="col-md-1")
                       %input(name="dataset[creators_attributes][#{i}][is_contact]" type="hidden" value="#{creator.is_contact?}")
                       - if creator.is_contact?
                         %input(type="radio" name="primary_contact" class="dataset contact_radio" value="#{i}" onchange="handle_contact_change()" checked="true" )
                       -else
                         %input(type="radio" name="primary_contact" class="dataset contact_radio" value="#{i}" onchange="handle_contact_change()" )
-                    %td
+                    %td(class="col-md-1")
                       -# Add/Remove Creator buttons inserted via ajax
 
             .field

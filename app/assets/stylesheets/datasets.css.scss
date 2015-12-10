@@ -169,7 +169,14 @@ legend.metadata-border {
   content:"*";color:red;
 }
 .input-field-required{
-  background-color: yellow;
+  background-color: yellow !important;
+}
+.test{
+  border: 2px solid red;
+}
+.highlight{
+  color: red;
+  font-weight: bold;
 }
 
 //#box-select{
