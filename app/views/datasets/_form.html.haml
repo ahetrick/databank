@@ -113,10 +113,17 @@
                       = cf.hidden_field :row_position # value set via AJAX
                       = cf.hidden_field :type_of, value: Creator::PERSON
                       = cf.text_field :family_name, class: "form-control dataset creator", placeholder: "[Family Name, e.g.: Smith]"
+                      -#.input-group
+                      -#  = cf.text_field :family_name, size:25, class: "input-share-td dataset creator", placeholder: "[Family Name, e.g.: Smith]"
+                      -#  = image_tag('comma.png', size:"16x10", alt: "comma")
                     %td(class="col-md-2")
                       = cf.text_field :given_name, class: "form-control dataset creator", placeholder: "[Given Name, e.g.: John W., Jr. ]"
                     %td(class="col-md-3")
-                      = cf.text_field :identifier, class: "form-control dataset", placeholder: "[orcid.org/0000-0002-1825-0097]"
+                      .input-group
+                        = cf.text_field :identifier, size: 45, class: "input-share-td dataset", placeholder: "[ORCID iD, e.g.: orcid.org/0000-0002-1825-0097]"
+                        %button(type="button" class="btn btn-primary addon-share input-group-addon" )
+                          %span(class="glyphicon glyphicon-search" )
+
                     %td(class="col-md-2")
                       = cf.text_field :email, class: "form-control dataset creator-email", placeholder: "[Email, e.g.: jws@example.edu]"
                     %td(align="center" class="col-md-1")
