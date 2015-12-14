@@ -120,9 +120,12 @@
                       = cf.text_field :given_name, class: "form-control dataset creator", placeholder: "[Given Name, e.g.: John W., Jr. ]"
                     %td(class="col-md-3")
                       .input-group
-                        = cf.text_field :identifier, size: 45, class: "input-share-td dataset", placeholder: "[ORCID iD, e.g.: orcid.org/0000-0002-1825-0097]"
-                        %button(type="button" class="btn btn-primary addon-share input-group-addon" )
+                        =cf.hidden_field :identifier_scheme, value: "ORCID"
+                        http://orcid.org/
+                        = cf.text_field :identifier, size: 20, class: "dataset orcid_widget", placeholder: "xxxx-xxxx-xxxx-xxxx", title: "ORCID iD"
+                        %button(type="button" class="btn btn-primary orcid_search" title="search" )
                           %span(class="glyphicon glyphicon-search" )
+                          Search
 
                     %td(class="col-md-2")
                       = cf.text_field :email, class: "form-control dataset creator-email", placeholder: "[Email, e.g.: jws@example.edu]"

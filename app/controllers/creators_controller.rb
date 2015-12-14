@@ -86,6 +86,6 @@ class CreatorsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def creator_params
-      params.require(:creator).permit(:dataset_id, :family_name, :given_name, :institution_name, :identifier, :email, :type_of, :is_contact, :row_position, :creator_id )
+      params.require(:creator).permit(:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :email, :type_of, :is_contact, :row_position, :creator_id )
     end
 end

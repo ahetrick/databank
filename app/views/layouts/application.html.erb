@@ -28,6 +28,10 @@
 
   <!--support import from box-->
   <script type="text/javascript" src="https://app.box.com/js/static/select.js"></script>
+  <!--support lookup ORCID iD-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.js"></script>
+  <script type="text/javascript" src="//researchdata.ands.org.au/apps/assets/orcid_widget/js/orcid_widget.js"></script>
+  <link rel="stylesheet" type="text/css" href="//researchdata.ands.org.au/apps/assets/orcid_widget/css/orcid_widget.css" />
 
   <% if @dataset %>
     <meta name="citation_title" content="<%= @dataset.title %>"/>
