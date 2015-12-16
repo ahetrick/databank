@@ -381,13 +381,19 @@ function add_creator_row(){
 
 function remove_creator_row(creator_index) {
 
-    console.log(creator_index);
-    console.log("id: " + $("#dataset_creators_attributes_" + creator_index + "_id").val() );
+
+    if($("#dataset_creators_attributes_" + creator_index + "_id").val() != undefined) {
+        $("#dataset_creators_attributes_" + creator_index + "__destroy").val("true");
+    }
 
     $("#deleted_creator_table > tbody:last-child").append($("#creator_index_" + creator_index));
 
     $("#creator_index_" + creator_index).hide();
     $('#creator_table').sortable('refresh');
+    console.log("creator table length: " +  $("#creator_table tr").length);
+    if ($("#creator_table tr").length < 2){
+        add_creator_row();
+    }
     handleCreatorTable();
     generate_creator_preview();
 
@@ -413,8 +419,6 @@ function initialize_creator_index_list(){
 
 function handleCreatorTable(){
 
-    var hidden_row_count = $('#creator_table tr:hidden').length;
-
     $('#creator_table tr').each(function (i) {
 
         // for all but header row, set the row_position value of the input to match the table row position
@@ -432,7 +436,7 @@ function handleCreatorTable(){
             //console.log("hidden_row_count: " + hidden_row_count);
             //console.log("table row count: " + $("#creator_table tr").length );
 
-            if ((i + 1 + hidden_row_count ) == ($("#creator_table tr").length)){
+            if ((i + 1 ) == ($("#creator_table tr").length)){
                 $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_index  +  "\x22 )' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_creator_row()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
             } else
             {
