@@ -73,17 +73,6 @@ ready = function() {
         }
      });
 
-    $('input.creator-email').change(function(){
-        if ($(this).val() != "") {
-            $(this).parent().removeClass('input-field-required');
-            $("#email_required_span").removeClass('highlight');
-        }
-    });
-
-    $('input.creator').change(function(){
-        generate_creator_preview();
-    });
-
     $('#dataset_title').change(function() {
         $('#title-preview').html($(this).val() + '.');
     });
@@ -186,6 +175,17 @@ ready = function() {
 
     $('#box-upload-in-progress').hide();
 
+    $(".orcid-search-btn").click(function(){
+        //alert("orcid-search-btn clicked");
+        var creator_index = $(this).data('id');
+        $("#creator-index").val(creator_index);
+        var creatorFamilyName =  $("#dataset_creators_attributes_" + creator_index + "_family_name").val();
+        var creatorGivenName = $("#dataset_creators_attributes_" + creator_index + "_given_name").val();
+        $("#creator-family").val(creatorFamilyName);
+        $("#creator-given").val(creatorGivenName);
+        $('#orcid_search').modal('show');
+    });
+
     var cells, desired_width, table_width;
     if ($("#creator_table tr").length > 0) {
         table_width = $('#creator_table').width();
@@ -194,6 +194,7 @@ ready = function() {
         initialize_creator_index_list();
         handleCreatorTable();
         $('#creator_table td').css('width', desired_width);
+
         return $('#creator_table').sortable({
 
             axis: 'y',
@@ -209,9 +210,9 @@ ready = function() {
             update: function (e, ui) {
                 var item_id, position;
                 item_id = ui.item.data('item-id');
-                console.log(item_id);
+                //console.log(item_id);
                 position = ui.item.index();
-                console.log("position: " + position)
+                //console.log("position: " + position)
                 handleCreatorTable();
                 generate_creator_preview();
                 //return $.ajax({
@@ -229,7 +230,10 @@ ready = function() {
         });
 
     }
+
     //alert("javascript working");
+
+
 }
 
 
@@ -332,22 +336,40 @@ function handle_contact_change(){
 
 function add_creator_row(){
 
+
     var listStr = $('#creator_index_list').val();
     var listArr = listStr.split(",").map(Number);
 
     var maxId = Math.max(...listArr);
-
     var newId = maxId + 1;
-    var creator_row = "<tr class='item row' id='creator_index_" + newId + "' >" +
-        "<td class='col-md-1'></td>" +
-        "<td class='col-md-2'><input value='0' type='hidden' name='dataset[creators_attributes][" + newId + "][type_of]' id='dataset_creators_attributes_" + newId + "_type_of' />" +
-        "<input class='form-control dataset creator' placeholder='[Family Name, e.g.: Smith]'  type='text' name='dataset[creators_attributes][" + newId + "][family_name]' id='dataset_creators_attributes_" + newId + "_family_name' /></td>" +
-        "<td class='col-md-2'><input class='form-control dataset creator' placeholder='[Given Name, e.g.: John W., Jr. ]' type='text' name='dataset[creators_attributes][" + newId + "][given_name]' id='dataset_creators_attributes_" + newId + "_given_name' /></td>" +
-        "<td class='col-md-3'><div class='input-group'><input class='input-share-td dataset creator', size='45' placeholder='[ORCID iD, e.g.: orcid.org/0000-0002-1825-0097]' type='text' name='dataset[creators_attributes][" + newId + "][identifier]' id='dataset_creators_attributes_" + newId + "_identifier' /><button type='button' class='btn btn-primary input-group-addon addon-share'><span class='glyphicon glyphicon-search'></span></button></div></td>" +
-        "<td class='col-md-2'><input class='form-control dataset creator-email' placeholder='[Email, e.g.: jws@illinois.edu]'  type='text' name='dataset[creators_attributes][" + newId + "][email]' id='dataset_creators_attributes_" + newId + "_email' /></td>" +
-        "<td class='col-md-1' align='center' ><input name='dataset[creators_attributes][" + newId + "][is_contact]' type='hidden' value='0' />" +
-        "<input class='dataset' type='radio' value='" + newId  + "' name='primary_contact' onchange='handle_contact_change()'  /></td>" +
-        "<td class='col-md-1'></td></tr>";
+
+    var creator_row = '<tr class="item row" id="creator_index_' + newId + '">' +
+        '<td class="col-md-1"></td>' +
+
+        '<td class="col-md-2">' +
+        '<input type="hidden" value="' + $('#creator_table tr').length + '" name="dataset[creators_attributes][' + newId + '][row_position]" id="dataset_creators_attributes_' + newId + '_row_position" />' +
+        '<input value="0" type="hidden" name="dataset[creators_attributes][' + newId + '][type_of]" id="dataset_creators_attributes_' + newId + '_type_of" />' +
+        '<input onchange="generate_creator_preview()" class="form-control dataset creator family-name" placeholder="[Family Name, e.g.: Smith]" type="text" name="dataset[creators_attributes][' + newId + '][family_name]" id="dataset_creators_attributes_' + newId + '_family_name" /><strong>,</strong>' +
+        '</td>' +
+
+        '<td class="col-md-2">' +
+       '<input onchange="generate_creator_preview()" class="form-control dataset creator" placeholder="[Given Name, e.g.: John W., Jr. ]" type="text" name="dataset[creators_attributes][' + newId + '][given_name]" id="dataset_creators_attributes_' + newId + '_given_name" />' +
+        '</td>' +
+
+        '<td class="col-md-2">' +
+        '<input value="ORCID" type="hidden" name="dataset[creators_attributes][' + newId + '][identifier_scheme]" id="dataset_creators_attributes_' + newId + '_identifier_scheme" />' +
+         '<input class="form-control dataset" placeholder="[xxxx-xxxx-xxxx-xxxx]" type="text" name="dataset[creators_attributes][' + newId + '][identifier]" id="dataset_creators_attributes_' + newId + '_identifier" />' +
+        '</td>'+
+
+        '<td class="col-md-1">' +
+        '<a class="btn btn-primary btn-sm orcid-search-btn" data-id="' + newId + '" data-toggle="modal"><span class="glyphicon glyphicon-search"></span>&nbsp;Look Up</a>' +
+        '</td>' +
+        '<td class="col-md-2">' +
+        '<input onchange="handle_creator_email_change()" class="form-control dataset creator-email" placeholder="[Email, e.g.: jws@example.edu]" type="text" name="dataset[creators_attributes][' + newId + '][email]" id="dataset_creators_attributes_' + newId + '_email" />' +
+        '</td>' +
+        '<td class="col-md-1" align="center"><input name="dataset[creators_attributes][' +  newId + '][is_contact]" type="hidden" value="false"><input class="dataset contact_radio" name="primary_contact" onchange="handle_contact_change()" type="radio" value="false"></td>' +
+        '<td class="col-md-1"></td>' +
+        '</tr>';
     $("#creator_table tbody:last-child").append(creator_row);
 
     var newList = listStr + "," + newId;
@@ -362,13 +384,7 @@ function remove_creator_row(creator_index) {
     console.log(creator_index);
     console.log("id: " + $("#dataset_creators_attributes_" + creator_index + "_id").val() );
 
-    if ($("#dataset_creators_attributes_" + creator_index + "_id").val() != undefined){
-        $("#dataset_creators_attributes_" + creator_index + "__destroy").val(true);
-    } else {
-        console.log("undefined detected");
-    }
-
-    $("#creator_table > tbody:last-child").append($("#creator_index_" + creator_index));
+    $("#deleted_creator_table > tbody:last-child").append($("#creator_index_" + creator_index));
 
     $("#creator_index_" + creator_index).hide();
     $('#creator_table').sortable('refresh');
@@ -397,6 +413,8 @@ function initialize_creator_index_list(){
 
 function handleCreatorTable(){
 
+    var hidden_row_count = $('#creator_table tr:hidden').length;
+
     $('#creator_table tr').each(function (i) {
 
         // for all but header row, set the row_position value of the input to match the table row position
@@ -404,14 +422,18 @@ function handleCreatorTable(){
 
             var split_id = (this.id).split('_');
             var creator_index = split_id[2];
+
             $("#dataset_creators_attributes_" + creator_index + "_row_position").val(i);
 
             // set creator row num display
             $("td:first", this).html("<span style='display:inline;'>  " + i + "     </span><span style='display:inline;' class='glyphicon glyphicon-resize-vertical'></span>" );
 
-            // place add creator button
-            if ((i + 1) == ($("#creator_table tr").length)){
-                $("td:last-child", this).html("<button id='creator_remove_button_" + creator_index +  "' class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_index  +  "\x22 ),' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_creator_row()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
+            //console.log("i: " + i);
+            //console.log("hidden_row_count: " + hidden_row_count);
+            //console.log("table row count: " + $("#creator_table tr").length );
+
+            if ((i + 1 + hidden_row_count ) == ($("#creator_table tr").length)){
+                $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_index  +  "\x22 )' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_creator_row()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
             } else
             {
                 $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_index  +  "\x22 )' type='button'><span class='glyphicon glyphicon-trash'></span></button>");
@@ -420,9 +442,16 @@ function handleCreatorTable(){
     });
 }
 
+function handle_creator_email_change(){
+    if ($(this).val() != "") {
+        $(this).parent().removeClass('input-field-required');
+        $("#email_required_span").removeClass('highlight');
+    }
+}
+
 function generate_creator_preview(){
 
-    console.log("inside generate creator 1");
+    //console.log("inside generate creator 1");
 
     var creator_list_preview = "";
 
@@ -431,14 +460,14 @@ function generate_creator_preview(){
         var split_id = (this.id).split('_');
         var creator_index = split_id[2];
 
-        console.log("inside tr each for creator index " + creator_index);
+        //console.log("inside tr each for creator index " + creator_index);
 
-        console.log($("#dataset_creators_attributes_" + creator_index + "__destroy").val());
+        //console.log($("#dataset_creators_attributes_" + creator_index + "__destroy").val());
 ;
-        if ( (i > 0) && ($("#dataset_creators_attributes_" + creator_index + "__destroy").val() != 'true')  ) {
+        if ((i > 0) ){
 
-            console.log("inside generate creator 2");
-            console.log($("#dataset_creators_attributes_" + creator_index + "_family_name").val());
+            //console.log("inside generate creator 2");
+            //console.log($("#dataset_creators_attributes_" + creator_index + "_family_name").val());
 
             if (i > 1){
                 creator_list_preview = creator_list_preview + "; ";
@@ -452,6 +481,59 @@ function generate_creator_preview(){
     });
 
     $('#creator-preview').html(creator_list_preview);
+
+}
+
+function set_orcid_from_search_modal(){
+    var creator_index = $("#creator-index").val();
+    var selected_id = $("#selected-id").val();
+
+    $("#dataset_creators_attributes_" + creator_index  + "_identifier").val(selected_id);
+}
+
+
+
+function search_orcid(){
+    var search_url = 'http://pub.orcid.org/';
+    var bio_segment = 'v1.2/search/orcid-bio?q='
+    var search_query = 'family-name:' + $("#creator-family").val() + '+AND+given-names:' + $("#creator-given").val();
+
+    var search_string = search_url + bio_segment + search_query + '&start=0&rows=5&wt=json';
+
+    console.log(search_string);
+
+    $.ajax({
+        url: search_string,
+        dataType: 'jsonp',
+        success: function(data){
+            var people = data["orcid-search-results"]["orcid-search-result"];
+            people_minified = [];
+            found_number = people.length;
+            for (var person in people){
+                console.log(person);
+                var given_name = person['orcid-profile']['orcid-bio']['personal-details']['given-names']['value'];
+                var family_name = person['orcid-profile']['orcid-bio']['personal-details']['family-name']['value'];
+                var orcid = person['orcid-profile']['orcid-identifier']['path'];
+
+                people_minified.push(given_name + ' ' + family_name + ', ' + orcid);
+
+                if(people_minified.length >= found_number){
+
+                    $.each(people_minified, function( index, value ) {
+                        $(".response").append("<div class='row'>" + family_name + ", " + given_name + ": " + orcid + "</div>");
+                    });
+
+                    clearInterval(timeout);
+                }
+
+
+            };
+            timeout = setInterval(function(){response(people_minified)}, 100);
+        },
+        error: function(xhr){
+            console.error(xhr);
+        }
+    });
 
 }
 
