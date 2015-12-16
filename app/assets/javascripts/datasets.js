@@ -390,7 +390,7 @@ function remove_creator_row(creator_index) {
 
     $("#creator_index_" + creator_index).hide();
     $('#creator_table').sortable('refresh');
-    console.log("creator table length: " +  $("#creator_table tr").length);
+
     if ($("#creator_table tr").length < 2){
         add_creator_row();
     }
@@ -472,8 +472,9 @@ function generate_creator_preview(){
 
             //console.log("inside generate creator 2");
             //console.log($("#dataset_creators_attributes_" + creator_index + "_family_name").val());
+           
+            if (creator_list_preview.length > 0) {
 
-            if (i > 1){
                 creator_list_preview = creator_list_preview + "; ";
             }
 
