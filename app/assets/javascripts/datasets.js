@@ -464,7 +464,7 @@ function generate_creator_preview(){
 
         //console.log($("#dataset_creators_attributes_" + creator_index + "__destroy").val());
 ;
-        if ((i > 0) ){
+        if ((i > 0) && (($("#dataset_creators_attributes_" + creator_index + "_family_name").val() != "") || ($("#dataset_creators_attributes_" + creator_index + "_given_name").val() != "") )){
 
             //console.log("inside generate creator 2");
             //console.log($("#dataset_creators_attributes_" + creator_index + "_family_name").val());
