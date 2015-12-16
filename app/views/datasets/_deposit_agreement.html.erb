@@ -1,10 +1,10 @@
 <div class="modal-content">
-  <div class="modal-body">
-
+  <div class="modal-header">
     <% if @dataset && !@dataset.depositor_email %>
-      <p class="metadata-label">Deposit into Illinois Data Bank requires agreement to the Deposit Agreement, which includes a requirement that the depositor have the right to deposit the data, and a requirement that any private, confidential, or other legally protected information be removed from the dataset.</p>
-      <p>Before you get started on your deposit, please review the deposit agreement and answer the following questions:</p>
+      <stong>Before you get started on your deposit, please review the deposit agreement and answer the following questions:</stong>
     <% end %>
+  </div>
+  <div class="modal-body">
 
     <div class="panel panel-default">
       <div class="panel-heading">
