@@ -182,6 +182,10 @@ legend.metadata-border {
   display: inline;
   width: 95%;
 }
+
+.control-label.required:after{
+  content:"*";color:red;
+}
 //#box-select{
 //  display: inline;
 //}

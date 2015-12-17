@@ -73,11 +73,9 @@
                     %span(class="glyphicon glyphicon-question-sign")
                   = f.collection_select :license, License.all, :code, :name, {:prompt => true}, {:class => "form-control dataset"}
 
-            %span(class="metadata-label" )
+            %label(class="control-label required")
               Author List
-            (One primary long term contact required --
-            %span(id="email_required_span") email required for primary contact.
-            )
+            (One primary long term contact required.)
             %br
             %input(type="hidden" name="creator_index_list" id="creator_index_list" value="" )
 
@@ -96,6 +94,7 @@
                   %th(class="col-md-1" )
                   %th(class="col-md-2")
                     Email
+                    %span(id="email_required_span") (Required for primary contact.)
                   %th(class="col-md-1")
                     .form-heading-required
                       Primary Contact
@@ -129,7 +128,7 @@
                         %span(class="glyphicon glyphicon-search" )
                         Look Up
                     %td(class="col-md-2")
-                      = cf.text_field :email, class: "form-control dataset creator-email", placeholder: "[Email, e.g.: jws@example.edu]", onchange: "handle_creator_email_change()"
+                      = cf.email_field :email, class: "form-control dataset creator-email", placeholder: "[Email, e.g.: jws@example.edu]", onchange: "handle_creator_email_change(this)"
                     %td(align="center" class="col-md-1")
                       %input(name="dataset[creators_attributes][#{i}][is_contact]" type="hidden" value="#{creator.is_contact?}")
                       - if creator.is_contact?

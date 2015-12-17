@@ -365,7 +365,7 @@ function add_creator_row(){
         '<a class="btn btn-primary btn-sm orcid-search-btn" data-id="' + newId + '" data-toggle="modal"><span class="glyphicon glyphicon-search"></span>&nbsp;Look Up</a>' +
         '</td>' +
         '<td class="col-md-2">' +
-        '<input onchange="handle_creator_email_change()" class="form-control dataset creator-email" placeholder="[Email, e.g.: jws@example.edu]" type="text" name="dataset[creators_attributes][' + newId + '][email]" id="dataset_creators_attributes_' + newId + '_email" />' +
+        '<input onchange="handle_creator_email_change(this)" class="form-control dataset creator-email" placeholder="[Email, e.g.: jws@example.edu]" type="text" name="dataset[creators_attributes][' + newId + '][email]" id="dataset_creators_attributes_' + newId + '_email" />' +
         '</td>' +
         '<td class="col-md-1" align="center"><input name="dataset[creators_attributes][' +  newId + '][is_contact]" type="hidden" value="false"><input class="dataset contact_radio" name="primary_contact" onchange="handle_contact_change()" type="radio" value="false"></td>' +
         '<td class="col-md-1"></td>' +
@@ -446,9 +446,10 @@ function handleCreatorTable(){
     });
 }
 
-function handle_creator_email_change(){
-    if ($(this).val() != "") {
-        $(this).parent().removeClass('input-field-required');
+function handle_creator_email_change(input){
+
+    if ($(input).val() != "") {
+        $(input).parent().removeClass('input-field-required');
         $("#email_required_span").removeClass('highlight');
     }
 }
