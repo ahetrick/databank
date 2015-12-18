@@ -33,7 +33,7 @@
 
       .panel-collapse.collapse.in(id="descriptionPanel" role="tabpanel" aria-labelledby="descriptionHeading" )
         .panel-body
-          = form_for(@dataset, :html => { :multipart => true, :role => "form", :enctype => "multipart/form-data", "data-toggle"=>"validator", :class => "container-fluid input-append dataset-form"}) do |f|
+          = form_for(@dataset, :html => {"data-toggle" => "validator", :multipart => true, :role => "form", :enctype => "multipart/form-data", :class => "container-fluid input-append dataset-form" }) do |f|
             - if @dataset.errors.any?
               .error_explaination
                 = "#{pluralize(@dataset.errors.count, "error")} prohibited this dataset from being deposited."
@@ -115,9 +115,6 @@
                       = cf.hidden_field :type_of, value: Creator::PERSON
                       = cf.text_field :family_name, class: "form-control dataset creator family-name", placeholder: "[Family Name, e.g.: Smith]", onchange: "generate_creator_preview()"
                       %strong ,
-                      -#.input-group
-                      -#  = cf.text_field :family_name, size:25, class: "input-share-td dataset creator", placeholder: "[Family Name, e.g.: Smith]"
-                      -#  = image_tag('comma.png', size:"16x10", alt: "comma")
                     %td(class="col-md-2")
                       = cf.text_field :given_name, class: "form-control dataset creator", placeholder: "[Given Name, e.g.: John W., Jr. ]", onchange: "generate_creator_preview()"
                     %td(class="col-md-2")
@@ -128,7 +125,9 @@
                         %span(class="glyphicon glyphicon-search" )
                         Look Up
                     %td(class="col-md-2")
-                      = cf.email_field :email, class: "form-control dataset creator-email", placeholder: "[Email, e.g.: jws@example.edu]", onchange: "handle_creator_email_change(this)"
+                      .form-group
+                        = cf.email_field :email, class: "form-control dataset creator-email", placeholder: "[Email, e.g.: jws@example.edu]", onchange: "handle_creator_email_change(this)"
+                        .help-block.with-errors
                     %td(align="center" class="col-md-1")
                       %input(name="dataset[creators_attributes][#{i}][is_contact]" type="hidden" value="#{creator.is_contact?}")
                       - if creator.is_contact?

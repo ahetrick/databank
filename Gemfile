@@ -79,8 +79,11 @@ gem 'bcrypt', '~> 3.1.7'
 # Use Unicorn as the app server
 gem 'unicorn'
 
-# Use email validator
+# Use email validator for model
 gem 'valid_email'
+
+#Use validator for interface
+gem 'bootstrap-validator-rails'
 
 # Use identity strategy to create local accounts for testing
 gem 'omniauth-identity'

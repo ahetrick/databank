@@ -102,8 +102,6 @@ ready = function() {
     //alert("pre-validity check");
     //alert("dataset key: "+ dataset_key)
 
-
-
     $("#new_datafile").fileupload({
         downloadTemplate: null,
         downloadTemplateId: null,
@@ -168,6 +166,7 @@ ready = function() {
         });
 
     });
+
     // Register a cancel callback handler
     boxSelect.cancel(function() {
         console.log("The user clicked cancel or closed the popup");
@@ -193,6 +192,7 @@ ready = function() {
         desired_width = table_width / cells + 'px';
         initialize_creator_index_list();
         handleCreatorTable();
+
         $('#creator_table td').css('width', desired_width);
 
         return $('#creator_table').sortable({
@@ -210,29 +210,15 @@ ready = function() {
             update: function (e, ui) {
                 var item_id, position;
                 item_id = ui.item.data('item-id');
-                //console.log(item_id);
                 position = ui.item.index();
-                //console.log("position: " + position)
                 handleCreatorTable();
                 generate_creator_preview();
-                //return $.ajax({
-                //    type: 'POST',
-                //    url: '/creators/update_row_order',
-                //    dataType: 'json',
-                //    data: {
-                //        creator: {
-                //            creator_id: item_id,
-                //            row_order_position: position
-                //        }
-                //    }
-                //});
             }
         });
 
     }
 
     //alert("javascript working");
-
 
 }
 
@@ -365,7 +351,7 @@ function add_creator_row(){
         '<a class="btn btn-primary btn-sm orcid-search-btn" data-id="' + newId + '" data-toggle="modal"><span class="glyphicon glyphicon-search"></span>&nbsp;Look Up</a>' +
         '</td>' +
         '<td class="col-md-2">' +
-        '<input onchange="handle_creator_email_change(this)" class="form-control dataset creator-email" placeholder="[Email, e.g.: jws@example.edu]" type="text" name="dataset[creators_attributes][' + newId + '][email]" id="dataset_creators_attributes_' + newId + '_email" />' +
+        '<input onchange="handle_creator_email_change(this)" class="form-control dataset creator-email" placeholder="[Email, e.g.: jws@example.edu]" type="email" name="dataset[creators_attributes][' + newId + '][email]" id="dataset_creators_attributes_' + newId + '_email" />' +
         '</td>' +
         '<td class="col-md-1" align="center"><input name="dataset[creators_attributes][' +  newId + '][is_contact]" type="hidden" value="false"><input class="dataset contact_radio" name="primary_contact" onchange="handle_contact_change()" type="radio" value="false"></td>' +
         '<td class="col-md-1"></td>' +
