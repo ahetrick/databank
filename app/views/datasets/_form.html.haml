@@ -118,7 +118,7 @@
                     %td(class="col-md-2")
                       = cf.text_field :given_name, class: "form-control dataset creator", placeholder: "[Given Name, e.g.: John W., Jr. ]", onchange: "generate_creator_preview()"
                     %td(class="col-md-2")
-                      = cf.text_field :identifier, class: "form-control dataset", placeholder: "[xxxx-xxxx-xxxx-xxxx]"
+                      = cf.text_field :identifier, class: "form-control dataset", "data-mask" => "9999-9999-9999-9999", placeholder: "[xxxx-xxxx-xxxx-xxxx]"
                       = cf.hidden_field :identifier_scheme, value: "ORCID"
                     %td(class="col-md-1" )
                       %a(class="btn btn-primary btn-sm orcid-search-btn" data-toggle="modal" data-id="#{i}" )
