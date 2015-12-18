@@ -277,7 +277,7 @@ function setDepositor(email, name){
 
 function handleAgreeModal(email, name){
 
-    if ($('#owner-yes').is(":checked") && $('#agree-yes').is(":checked") && ($('#public-yes').is(":checked") ||$('#public-na').is(":checked") ) )  {
+    if ($('#owner-yes').is(":checked") && $('#agree-yes').is(":checked") && ($('#private-yes').is(":checked") ||$('#private-na').is(":checked") ) )  {
         setDepositor(email, name);
     } else {
         handleNotAgreed();
@@ -529,6 +529,12 @@ function search_orcid(){
 
 }
 
+function uncheckPrivateNA(){
+    $('#private-na').attr('checked', false);
+}
+function uncheckPrivateYes(){
+    $('#private-yes').attr('checked', false);
+}
 
 $(document).ready(ready);
 $(document).on('page:load', ready);

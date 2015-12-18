@@ -125,7 +125,7 @@
           <a href="#" data-toggle="tooltip" title = "Deposit into the Illinois Data Bank requires that the depositor be the creator of the dataset or have permssion." tabindex="-1")>
             <span class="glyphicon glyphicon-info-sign"></span></a>
           <div class="checkbox">
-            <label><input type="checkbox" name="agree" id="owner-yes">Yes</label>
+            <label><input type="checkbox" class="agree" id="owner-yes">Yes</label>
           </div>
         </div>
         <div class="form-group">
@@ -133,10 +133,10 @@
           <a href="#" data-toggle="tooltip" title = "Deposit into Illinois Data Bank requires removal of any private, confidential or legally protected information that is in the dataset. A selection of Not applicable indicates that either the dataset never included any such information, while a selection of yes indicates that such informaiton has been removed." tabindex="-1")>
             <span class="glyphicon glyphicon-info-sign"></span></a>
           <div class="checkbox">
-            <label><input type="checkbox" name="agree" id="public-yes" >Yes</label>
+            <label><input type="checkbox" class="private-checkbox agree" id="private-yes" onclick="uncheckPrivateNA()" >Yes</label>
           </div>
           <div class="checkbox">
-            <label><input type="checkbox" name="agree" id="public-na">Not applicable</label>
+            <label><input type="checkbox" class="private-checkbox agree" id="private-na" onclick="uncheckPrivateYes()">Not applicable</label>
           </div>
         </div>
         <div class="form-group">
@@ -144,7 +144,7 @@
           <a href="#" data-toggle="tooltip" title = "Deposit into Illinois Data Bank requires agreement to the Deposit Agreement. Click on the Deposit Agreement heading above to view the full agreement." tabindex="-1")>
             <span class="glyphicon glyphicon-info-sign"></span></a>
           <div class="checkbox">
-            <label><input type="checkbox" name="agree" id="agree-yes">Yes</label>
+            <label><input type="checkbox" class="agree" id="agree-yes">Yes</label>
           </div>
         </div>
 
