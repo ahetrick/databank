@@ -82,9 +82,6 @@ gem 'unicorn'
 # Use email validator for model
 gem 'valid_email'
 
-#Use validator for interface
-gem 'bootstrap-validator-rails'
-
 # Use identity strategy to create local accounts for testing
 gem 'omniauth-identity'
 gem 'omniauth-shibboleth'

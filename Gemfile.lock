@@ -49,9 +49,6 @@ GEM
     bootstrap-sass (3.3.4.1)
       autoprefixer-rails (>= 5.0.0.1)
       sass (>= 3.2.19)
-    bootstrap-validator-rails (0.5.3)
-      jquery-rails (>= 3.0)
-      railties (>= 3.0)
     boxr (1.0.0)
       addressable (~> 2.3)
       hashie (~> 3.3)
@@ -281,7 +278,6 @@ DEPENDENCIES
   autoprefixer-rails
   bcrypt (~> 3.1.7)
   bootstrap-sass (~> 3.3.4.1)
-  bootstrap-validator-rails
   boxr
   byebug
   cancancan
