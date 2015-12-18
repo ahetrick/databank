@@ -17,7 +17,7 @@
 
             <% if !@dataset.complete? %>
               <button type="button" id="show-confirm-modal-link" class="btn btn-primary" data-toggle="modal" data-target="#deposit">Confirm
-                & Deposit
+                & Publish
               </button>
             <% end %>
             <% if (((can? :destroy, @dataset) && (!@dataset.complete?))||(can? :manage, @dataset)) %>

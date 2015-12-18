@@ -3,18 +3,19 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title" id="prompt-title">Confirm & Deposit</h4>
+        <h4 class="modal-title" id="prompt-title">Confirm & Publish</h4>
       </div>
 
       <div class="modal-body">
         <p class="ds-paragraph">
-          This action will make your dataset public and create a DOI. You will be able to edit the description for the dataset, but you will not be able to edit, add to, or delete your uploaded files.
+          This action will make your dataset public and create a DOI. You will be able to edit the description for the dataset to correct an error, but you would need to contact the <a href=" http://researchdataservice.illinois.edu/contact-us">Research Data Service</a> directly if there is an error in the files that needs to be corrected.
         </p>
       </div>
 
       <div class="modal-footer container-fluid">
 
-        <button onclick='window.location = "/datasets/<%=@dataset.key%>/deposit"', type="button" class="btn btn-primary" data-dismiss="modal" id="login-button"> Deposit
+        <button onclick='window.location = "/datasets/<%=@dataset.key%>/deposit"', type="button" class="btn btn-primary" data-dismiss="modal" id="login-button">
+          <span class="glyphicon glyphicon-send"></span> Publish
         </button>
 
         <button onclick='window.location = "http://researchdataservice.illinois.edu/contact-us/"', type="button" class="btn btn-success" data-dismiss="modal" id="help-button">
