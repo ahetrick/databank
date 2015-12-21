@@ -216,12 +216,12 @@ class DatasetsController < ApplicationController
 
     if !@dataset.corresponding_creator_name || @dataset.corresponding_creator_name.empty?
       @dataset.complete = false
-      validation_error_messages << "at least one corresponding creator"
+      validation_error_messages << "at least one primary long term contact"
     end
 
     if !@dataset.corresponding_creator_email || @dataset.corresponding_creator_email.empty?
       @dataset.complete = false
-      validation_error_messages << "corresponding creator email"
+      validation_error_messages << "email address for primary long term contact"
     end
 
     if @dataset.datafiles.count < 1
