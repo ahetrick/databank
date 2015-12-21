@@ -486,7 +486,10 @@ function set_orcid_from_search_modal(){
 function search_orcid(){
     var search_url = 'http://pub.orcid.org/';
     var bio_segment = 'v1.2/search/orcid-bio?q='
-    var search_query = 'family-name:' + $("#creator-family").val() + '+AND+given-names:' + $("#creator-given").val();
+    if($("#creator-family").val()) {
+
+        var search_query = 'family-name:' + $("#creator-family").val() + '+AND+given-names:' + $("#creator-given").val();
+    }
 
     var search_string = search_url + bio_segment + search_query + '&start=0&rows=5&wt=json';
 
