@@ -129,7 +129,7 @@
                       .form-group
                         = cf.email_field :email, class: "form-control dataset creator-email", placeholder: "[Email, e.g.: jws@example.edu]", onchange: "handle_creator_email_change(this)"
                         .help-block.with-errors
-                    %td(class="col-md-1")
+                    %td(class="col-md-1" align="center" )
                       %input(name="dataset[creators_attributes][#{i}][is_contact]" type="hidden" value="#{creator.is_contact?}")
                       - if creator.is_contact?
                         %input(type="radio" name="primary_contact" class="dataset contact_radio" value="#{i}" onchange="handle_contact_change()" checked="true" )
