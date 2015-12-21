@@ -75,7 +75,9 @@
 
             %label(class="control-label required")
               Author List
-            (One primary long term contact required.)
+            (One primary long term contact required.
+            %span(id="email_required_span") Email Required for primary contact.
+            )
             %br
             %input(type="hidden" name="creator_index_list" id="creator_index_list" value="" )
 
@@ -94,10 +96,9 @@
                   %th(class="col-md-1" )
                   %th(class="col-md-2")
                     Email
-                    %span(id="email_required_span") (Required for primary contact.)
-                  %th(class="col-md-1")
+                  %th(class="col-md-1" )
                     .form-heading-required
-                      Primary Contact
+                      Contact
                   %th(class="col-md-1")
 
               %tbody
@@ -128,7 +129,7 @@
                       .form-group
                         = cf.email_field :email, class: "form-control dataset creator-email", placeholder: "[Email, e.g.: jws@example.edu]", onchange: "handle_creator_email_change(this)"
                         .help-block.with-errors
-                    %td(align="center" class="col-md-1")
+                    %td(class="col-md-1")
                       %input(name="dataset[creators_attributes][#{i}][is_contact]" type="hidden" value="#{creator.is_contact?}")
                       - if creator.is_contact?
                         %input(type="radio" name="primary_contact" class="dataset contact_radio" value="#{i}" onchange="handle_contact_change()" checked="true" )

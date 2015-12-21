@@ -312,10 +312,10 @@ function handle_contact_change(){
             }
         }
     });
-
+    
     if ($("input[name='dataset[creators_attributes][" + selectedVal + "][email]']").val() == ""){
         $("#email_required_span").addClass('highlight');
-        $("input[name='dataset[creators_attributes][" + selectedVal + "][email]']").parent().addClass('input-field-required');
+        $("input[name='dataset[creators_attributes][" + selectedVal + "][email]']").closest('td').addClass('input-field-required');
         $("input[name='dataset[creators_attributes][" + selectedVal + "][email]']").focus();
     }
 }
