@@ -297,22 +297,20 @@ function download_selected(){
 
 function handle_contact_change(){
     // set is_contact value to match selection staus and highlight required email input field if blank
-
     var selectedVal = $("input[type='radio'][name='primary_contact']:checked").val();
-    $("input[name='dataset[creators_attributes][" + selectedVal + "][is_contact]']").val('true');
+    $("#email_required_span").removeClass('highlight');
 
     $('#creator_table tr').each(function (i) {
-
         if (i > 0) {
-            var creator_index = $(this).find('td').first().next().find('input').first().attr('id').split('_')[3];
-
-            if (selectedVal != creator_index) {
-                $("#dataset_creators_attributes_" + creator_index + "_email").parent().removeClass('input-field-required');
-                $("input[name='dataset[creators_attributes][" + creator_index + "][is_contact]']").val('false');
-            }
+        var creator_index = $(this).find('td').first().next().find('input').first().attr('id').split('_')[3];
+            //mark all as not the contact -- then later mark the contact as the contact.
+            $("input[name='dataset[creators_attributes][" + creator_index + "][email]']").closest('td').removeClass('input-field-required');
+            $("input[name='dataset[creators_attributes][" + creator_index + "][is_contact]']").val('false');
         }
     });
-    
+
+    $("input[name='dataset[creators_attributes][" + selectedVal + "][is_contact]']").val('true');
+
     if ($("input[name='dataset[creators_attributes][" + selectedVal + "][email]']").val() == ""){
         $("#email_required_span").addClass('highlight');
         $("input[name='dataset[creators_attributes][" + selectedVal + "][email]']").closest('td').addClass('input-field-required');
@@ -435,7 +433,7 @@ function handleCreatorTable(){
 function handle_creator_email_change(input){
 
     if ($(input).val() != "") {
-        $(input).parent().removeClass('input-field-required');
+        $(input).closest('td').removeClass('input-field-required');
         $("#email_required_span").removeClass('highlight');
     }
 }
