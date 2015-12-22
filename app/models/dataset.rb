@@ -66,11 +66,13 @@ class Dataset < ActiveRecord::Base
       raise 'Dataset is not complete; a valid datacite xml document cannot be generated.'
     end
 
-    creatorArr = self.creator_list.split(";")
+    # creatorArr = self.creator_list.split(";")
 
     if self.keywords
       keywordArr = self.keywords.split(";")
     end
+
+    contact = Creator.where(dataset_id: self.id, is_contact: true).first
 
     doc = Nokogiri::XML::Document.parse(%Q(<?xml version="1.0"?><resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd"></resource>))
     resourceNode = doc.first_element_child
@@ -83,13 +85,23 @@ class Dataset < ActiveRecord::Base
     creatorsNode = doc.create_element('creators')
     creatorsNode.parent = resourceNode
 
-    creatorArr.each do |creator|
+    self.creators.each do |creator|
       creatorNode = doc.create_element('creator')
       creatorNode.parent = creatorsNode
 
       creatorNameNode = doc.create_element('creatorName')
-      creatorNameNode.content = creator.strip
+
+      creatorNameNode.content = "#{creator.family_name.strip}, #{creator.given_name.strip}"
       creatorNameNode.parent = creatorNode
+
+      # ORCID assumption hard-coded here, but in the model there is a field for identifier_scheme
+      if creator.identifier && creator.identifier != ""
+        creatorIdentifierNode = doc.create_element('nameIdentifier')
+        creatorIdentifierNode['schemeURI'] = "http://orcid.org/"
+        creatorIdentifierNode['nameIdentifierScheme'] = "ORCID"
+        creatorIdentifierNode.content = "#{creator.identifier}"
+        creatorIdentifierNode.parent = creatorNode
+      end
 
     end
 
@@ -99,6 +111,25 @@ class Dataset < ActiveRecord::Base
     titleNode = doc.create_element('title')
     titleNode.content = self.title || "Dataset Title"
     titleNode.parent = titlesNode
+
+    contributorsNode = doc.create_element('contributors')
+    contributorsNode.parent = resourceNode
+
+    contributorNode = doc.create_element('contributor')
+    contributorNode['contributorType'] = "ContactPerson"
+    contributorNode.parent = contributorsNode
+
+    contributorNameNode = doc.create_element('contributorName')
+    contributorNameNode.content = "#{contact.family_name}, #{contact.given_name}"
+    contributorNameNode.parent = contributorNode
+
+    if contact.identifier && contact.identifier != ""
+      contributorIdentifierNode = doc.create_element('nameIdentifier')
+      contributorIdentifierNode["schemeURI"] = "http://orcid.org/"
+      contributorIdentifierNode["nameIdentifierScheme"] = "ORCID"
+      contributorIdentifierNode.content = "#{contact.identifier}"
+      contributorIdentifierNode.parent = contributorNode
+    end
 
     publisherNode = doc.create_element('publisher')
     publisherNode.content = self.publisher || "University of Illinois at Urbana-Champaign"
