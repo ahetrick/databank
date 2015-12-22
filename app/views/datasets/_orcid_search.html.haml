@@ -28,6 +28,8 @@
             %button(type="button" class="btn btn-primary" onclick="search_orcid()" )
               %span(class="glyphicon glyphicon-search" )
               Search
+        .loading.text-center
+          %i(class="fa fa-spinner fa-spin fa-4x orcid-search-spinner" )
         .container-fluid
           .results(id="orcid-search-results")
 
@@ -35,9 +37,12 @@
     .modal-footer
       .control-group
         .controls
-          %input(type="button" class="btn btn-danger" data-dismiss="modal" value="Cancel" )
+          %button(type="button" class="btn btn-danger" data-dismiss="modal" )
+            %span(class="glyphicon glyphicon-ban-circle" )
+            Cancel
           %button(type='button' class='btn btn-success' data-dismiss="modal" onclick='set_orcid_from_search_modal()')
-            Import
+            %span(class="glyphicon glyphicon-transfer" )
+            Import Selection
 
 
 

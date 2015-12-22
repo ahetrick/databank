@@ -186,6 +186,8 @@ ready = function() {
         $('#orcid_search').modal('show');
     });
 
+    $('.orcid-search-spinner').hide();
+
     var cells, desired_width, table_width;
     if ($("#creator_table tr").length > 0) {
         table_width = $('#creator_table').width();
@@ -486,8 +488,9 @@ function set_orcid_from_search_modal(){
 
 function search_orcid(){
     $("#orcid-search-results").empty();
+    $('.orcid-search-spinner').show();
 
-    var search_url = 'http://pub.orcid.org/';
+    var search_url = 'https://pub.orcid.org/';
     var bio_segment = 'v1.2/search/orcid-bio?q='
     if($("#creator-family").val() != "") {
         var search_query = 'family-name:' + $("#creator-family").val();
@@ -505,6 +508,7 @@ function search_orcid(){
         url: search_string,
         dataType: 'jsonp',
         success: function(data){
+            $('.orcid-search-spinner').hide();
             console.log(data);
 
             var total_found = data["orcid-search-results"]["num-found"];
@@ -515,8 +519,6 @@ function search_orcid(){
 
             if (total_found > 0) {
                 $("#orcid-search-results").append("<div class='row'><div class='col-md-1'>Select</div><div class='col-md-11'>Identifier (click link for details).</div></div>")
-
-
 
                 var people = data["orcid-search-results"]["orcid-search-result"];
                 people_minified = [];
@@ -533,7 +535,7 @@ function search_orcid(){
                     $("#orcid-search-results").append("<div class='row'><div class='col-md-1'><input type='radio' name='orcid-search-select' value='" + orcid + "'/></div><div class='col-md-11'> <a href='" + orcid_uri + "' target='_blank'>" + family_name + ", " + given_name + ": " + orcid + "</a></div></div>");
                 });
             } else {
-                $("#orcid-search-results").append("<p>No results found.  Try fewer letters (P instead of Paula) or <a href='http://orcid.org'>The ORCID site</a></p>")
+                $("#orcid-search-results").append("<p>No results found.  Try fewer letters (J instead of Juan) or <a href='http://orcid.org'>The ORCID site</a></p>")
             }
         },
         error: function(xhr){
