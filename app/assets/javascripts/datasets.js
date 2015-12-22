@@ -182,6 +182,7 @@ ready = function() {
         var creatorGivenName = $("#dataset_creators_attributes_" + creator_index + "_given_name").val();
         $("#creator-family").val(creatorFamilyName);
         $("#creator-given").val(creatorGivenName);
+        $("#orcid-search-results").empty();
         $('#orcid_search').modal('show');
     });
 
@@ -476,7 +477,7 @@ function generate_creator_preview(){
 
 function set_orcid_from_search_modal(){
     var creator_index = $("#creator-index").val();
-    var selected_id = $("#selected-id").val();
+    var selected_id = $("input[type='radio'][name='orcid-search-select']:checked").val();
 
     $("#dataset_creators_attributes_" + creator_index  + "_identifier").val(selected_id);
 }
@@ -484,14 +485,19 @@ function set_orcid_from_search_modal(){
 
 
 function search_orcid(){
+    $("#orcid-search-results").empty();
+
     var search_url = 'http://pub.orcid.org/';
     var bio_segment = 'v1.2/search/orcid-bio?q='
-    if($("#creator-family").val()) {
-
-        var search_query = 'family-name:' + $("#creator-family").val() + '+AND+given-names:' + $("#creator-given").val();
+    if($("#creator-family").val() != "") {
+        var search_query = 'family-name:' + $("#creator-family").val();
+        if ($("#creator-given").val() != "")
+          search_query = search_query + '+AND+given-names:' + $("#creator-given").val();
+    } else if ($("#creator-given").val() != "") {
+        var search_query = 'given-names:' + $("#creator-given").val();
     }
 
-    var search_string = search_url + bio_segment + search_query + '&start=0&rows=5&wt=json';
+    var search_string = search_url + bio_segment + search_query + '&start=0&rows=50&wt=json';
 
     console.log(search_string);
 
@@ -499,29 +505,36 @@ function search_orcid(){
         url: search_string,
         dataType: 'jsonp',
         success: function(data){
-            var people = data["orcid-search-results"]["orcid-search-result"];
-            people_minified = [];
-            found_number = people.length;
-            for (var person in people){
-                console.log(person);
-                var given_name = person['orcid-profile']['orcid-bio']['personal-details']['given-names']['value'];
-                var family_name = person['orcid-profile']['orcid-bio']['personal-details']['family-name']['value'];
-                var orcid = person['orcid-profile']['orcid-identifier']['path'];
+            console.log(data);
 
-                people_minified.push(given_name + ' ' + family_name + ', ' + orcid);
+            var total_found = data["orcid-search-results"]["num-found"];
 
-                if(people_minified.length >= found_number){
+            if (total_found > 50){
+                $("#orcid-search-results").append("<div class='row'>Showing first 50 results of " + total_found + ". For more results, search <a href='http://orcid.org'>The ORCID site</a>.</div><hr/>");
+            }
 
-                    $.each(people_minified, function( index, value ) {
-                        $(".response").append("<div class='row'>" + family_name + ", " + given_name + ": " + orcid + "</div>");
-                    });
-
-                    clearInterval(timeout);
-                }
+            if (total_found > 0) {
+                $("#orcid-search-results").append("<div class='row'><div class='col-md-1'>Select</div><div class='col-md-11'>Identifier (click link for details).</div></div>")
 
 
-            };
-            timeout = setInterval(function(){response(people_minified)}, 100);
+
+                var people = data["orcid-search-results"]["orcid-search-result"];
+                people_minified = [];
+                var given_name = "";
+                var family_name = "";
+                var orcid = "";
+                var orcid_uri = "";
+                $.each(people, function (index, person) {
+                    given_name = person['orcid-profile']['orcid-bio']['personal-details']['given-names']['value'];
+                    family_name = person['orcid-profile']['orcid-bio']['personal-details']['family-name']['value'];
+                    orcid = person['orcid-profile']['orcid-identifier']['path'];
+                    orcid_uri = person['orcid-profile']['orcid-identifier']['uri'];
+                    people_minified.push(given_name + ' ' + family_name + ', ' + orcid);
+                    $("#orcid-search-results").append("<div class='row'><div class='col-md-1'><input type='radio' name='orcid-search-select' value='" + orcid + "'/></div><div class='col-md-11'> <a href='" + orcid_uri + "' target='_blank'>" + family_name + ", " + given_name + ": " + orcid + "</a></div></div>");
+                });
+            } else {
+                $("#orcid-search-results").append("<p>No results found.  Try fewer letters (P instead of Paula) or <a href='http://orcid.org'>The ORCID site</a></p>")
+            }
         },
         error: function(xhr){
             console.error(xhr);
