@@ -188,6 +188,8 @@ ready = function() {
 
     $('.orcid-search-spinner').hide();
 
+
+
     var cells, desired_width, table_width;
     if ($("#creator_table tr").length > 0) {
         table_width = $('#creator_table').width();
@@ -221,7 +223,7 @@ ready = function() {
 
     }
 
-    //alert("javascript working");
+    alert("javascript working");
 
 }
 
@@ -345,7 +347,7 @@ function add_creator_row(){
 
         '<td class="col-md-2">' +
         '<input value="ORCID" type="hidden" name="dataset[creators_attributes][' + newId + '][identifier_scheme]" id="dataset_creators_attributes_' + newId + '_identifier_scheme" />' +
-         '<input class="form-control dataset" placeholder="[xxxx-xxxx-xxxx-xxxx]" type="text" name="dataset[creators_attributes][' + newId + '][identifier]" id="dataset_creators_attributes_' + newId + '_identifier" />' +
+         '<input class="form-control dataset orcid-mask", data-mask="9999-9999-9999-999*", placeholder="[xxxx-xxxx-xxxx-xxxx]" type="text" name="dataset[creators_attributes][' + newId + '][identifier]" id="dataset_creators_attributes_' + newId + '_identifier" />' +
         '</td>'+
 
         '<td class="col-md-1">' +
@@ -483,8 +485,6 @@ function set_orcid_from_search_modal(){
 
     $("#dataset_creators_attributes_" + creator_index  + "_identifier").val(selected_id);
 }
-
-
 
 function search_orcid(){
     $("#orcid-search-results").empty();
