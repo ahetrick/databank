@@ -223,7 +223,7 @@ ready = function() {
 
     }
 
-    alert("javascript working");
+    //alert("javascript working");
 
 }
 
