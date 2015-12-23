@@ -504,7 +504,7 @@ function search_orcid(){
             }
 
             if (total_found > 0) {
-                $("#orcid-search-results").append("<div class='row'><div class='col-md-1'>Select</div><div class='col-md-11'>Identifier (click link for details).</div></div>")
+                $("#orcid-search-results").append("<table class='table table-striped' id='orcid-search-results-table'><thead><tr class='row'><th><span class='col-md-6'>Identifier (click link for details)</span><span class='col-md-1'>Select</span></th></tr></thead><tbody></tbody></table>")
 
                 var people = data["orcid-search-results"]["orcid-search-result"];
                 people_minified = [];
@@ -518,10 +518,10 @@ function search_orcid(){
                     orcid = person['orcid-profile']['orcid-identifier']['path'];
                     orcid_uri = person['orcid-profile']['orcid-identifier']['uri'];
                     people_minified.push(given_name + ' ' + family_name + ', ' + orcid);
-                    $("#orcid-search-results").append("<div class='row'><div class='col-md-1'><input type='radio' name='orcid-search-select' value='" + orcid + "'/></div><div class='col-md-11'> <a href='" + orcid_uri + "' target='_blank'>" + family_name + ", " + given_name + ": " + orcid + "</a></div></div>");
+                    $("#orcid-search-results-table > tbody:last-child").append("<tr class='row'><td><span class='col-md-6'><a href='" + orcid_uri + "' target='_blank'>" + family_name + ", " + given_name + ": " + orcid + "</a></span><span class='col-md-1'><input type='radio' name='orcid-search-select' value='" + orcid + "'/></span></td></tr>");
                 });
             } else {
-                $("#orcid-search-results").append("<p>No results found.  Try fewer letters (J instead of Juan) or <a href='http://orcid.org'>The ORCID site</a></p>")
+                $("#orcid-search-results").append("<p>No results found.  Try fewer letters or <a href='http://orcid.org'>The ORCID site</a></p>")
             }
         },
         error: function(xhr){
