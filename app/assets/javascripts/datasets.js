@@ -174,21 +174,7 @@ ready = function() {
 
     $('#box-upload-in-progress').hide();
 
-    $(".orcid-search-btn").click(function(){
-        //alert("orcid-search-btn clicked");
-        var creator_index = $(this).data('id');
-        $("#creator-index").val(creator_index);
-        var creatorFamilyName =  $("#dataset_creators_attributes_" + creator_index + "_family_name").val();
-        var creatorGivenName = $("#dataset_creators_attributes_" + creator_index + "_given_name").val();
-        $("#creator-family").val(creatorFamilyName);
-        $("#creator-given").val(creatorGivenName);
-        $("#orcid-search-results").empty();
-        $('#orcid_search').modal('show');
-    });
-
     $('.orcid-search-spinner').hide();
-
-
 
     var cells, desired_width, table_width;
     if ($("#creator_table tr").length > 0) {
@@ -351,7 +337,7 @@ function add_creator_row(){
         '</td>'+
 
         '<td class="col-md-1">' +
-        '<a class="btn btn-primary btn-sm orcid-search-btn" data-id="' + newId + '" data-toggle="modal"><span class="glyphicon glyphicon-search"></span>&nbsp;Look Up</a>' +
+        '<button type="button" class="btn btn-primary btn-sm orcid-search-btn" data-id="' + newId + '" onclick="showOrcidSearchModal('+ newId +')"><span class="glyphicon glyphicon-search"></span>&nbsp;Look Up</a>' +
         '</td>' +
         '<td class="col-md-2">' +
         '<input onchange="handle_creator_email_change(this)" class="form-control dataset creator-email" placeholder="[Email, e.g.: jws@example.edu]" type="email" name="dataset[creators_attributes][' + newId + '][email]" id="dataset_creators_attributes_' + newId + '_email" />' +
@@ -543,6 +529,17 @@ function search_orcid(){
         }
     });
 
+}
+
+function showOrcidSearchModal(creator_index){
+
+    $("#creator-index").val(creator_index);
+    var creatorFamilyName =  $("#dataset_creators_attributes_" + creator_index + "_family_name").val();
+    var creatorGivenName = $("#dataset_creators_attributes_" + creator_index + "_given_name").val();
+    $("#creator-family").val(creatorFamilyName);
+    $("#creator-given").val(creatorGivenName);
+    $("#orcid-search-results").empty();
+    $('#orcid_search').modal('show');
 }
 
 function uncheckPrivateNA(){

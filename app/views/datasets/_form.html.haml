@@ -122,7 +122,7 @@
                       = cf.text_field :identifier, class: "form-control dataset", "data-mask" => "9999-9999-9999-999*", placeholder: "[xxxx-xxxx-xxxx-xxxx]"
                       = cf.hidden_field :identifier_scheme, value: "ORCID"
                     %td(class="col-md-1" )
-                      %a(class="btn btn-primary btn-sm orcid-search-btn" data-toggle="modal" data-id="#{i}" )
+                      %button(type="button" class="btn btn-primary btn-sm orcid-search-btn" onclick="showOrcidSearchModal('#{i}')" )
                         %span(class="glyphicon glyphicon-search" )
                         Look Up
                     %td(class="col-md-2")
