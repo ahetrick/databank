@@ -188,14 +188,8 @@ legend.metadata-border {
 }
 
 #beta-banner{
-  background-color: #39d;
-  color: #fff;
-  padding: 15px;
+  background-color: #39d !important;
+  color: #fff !important;
   font-size: large;
-}
-
-#beta-banner{
-  transform: rotate(270deg);
-  transform-origin: left top 0;
-  float: left;
+  padding: 15px;
 }
