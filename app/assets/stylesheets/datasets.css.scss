@@ -187,7 +187,15 @@ legend.metadata-border {
   content:"*";color:red;
 }
 
+#beta-banner{
+  background-color: #39d;
+  color: #fff;
+  padding: 15px;
+  font-size: large;
+}
 
-//#box-select{
-//  display: inline;
-//}
+#beta-banner{
+  transform: rotate(270deg);
+  transform-origin: left top 0;
+  float: left;
+}

@@ -120,7 +120,7 @@ class DatasetsController < ApplicationController
           @datafile.destroy
 
           if ((Dir.glob(IDB_CONFIG[:delayed_job_pid_dir])).count < 5) || Delayed::Job.all.count == 0
-            system "cd #{Rails.root} && RAILS_ENV=#{::Rails.env} bin/delayed_job -n 5 restart"
+            system "cd #{Rails.root} && RAILS_ENV=#{::Rails.env} bin/delayed_job -n 10 restart"
           end
         end
       else
