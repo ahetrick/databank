@@ -520,12 +520,16 @@ function search_orcid(){
                 var orcid = "";
                 var orcid_uri = "";
                 $.each(people, function (index, person) {
-                    given_name = person['orcid-profile']['orcid-bio']['personal-details']['given-names']['value'];
-                    family_name = person['orcid-profile']['orcid-bio']['personal-details']['family-name']['value'];
-                    orcid = person['orcid-profile']['orcid-identifier']['path'];
-                    orcid_uri = person['orcid-profile']['orcid-identifier']['uri'];
-                    people_minified.push(given_name + ' ' + family_name + ', ' + orcid);
-                    $("#orcid-search-results-table > tbody:last-child").append("<tr class='row'><td><span class='col-md-6'><a href='" + orcid_uri + "' target='_blank'>" + family_name + ", " + given_name + ": " + orcid + "</a></span><span class='col-md-1'><input type='radio' name='orcid-search-select' value='" + orcid + "~" + family_name + "~" + given_name +"'/></span></td></tr>");
+                    try {
+                        given_name = person['orcid-profile']['orcid-bio']['personal-details']['given-names']['value'];
+                        family_name = person['orcid-profile']['orcid-bio']['personal-details']['family-name']['value'];
+                        orcid = person['orcid-profile']['orcid-identifier']['path'];
+                        orcid_uri = person['orcid-profile']['orcid-identifier']['uri'];
+                        people_minified.push(given_name + ' ' + family_name + ', ' + orcid);
+                        $("#orcid-search-results-table > tbody:last-child").append("<tr class='row'><td><span class='col-md-6'><a href='" + orcid_uri + "' target='_blank'>" + family_name + ", " + given_name + ": " + orcid + "</a></span><span class='col-md-1'><input type='radio' name='orcid-search-select' value='" + orcid + "~" + family_name + "~" + given_name + "'/></span></td></tr>");
+                    } catch(err){
+                        console.log(err);
+                    }
                 });
             } else {
                 $("#orcid-search-results").append("<p>No results found.  Try fewer letters or <a href='http://orcid.org'>The ORCID site</a></p>")
