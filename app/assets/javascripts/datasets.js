@@ -467,9 +467,16 @@ function generate_creator_preview(){
 
 function set_orcid_from_search_modal(){
     var creator_index = $("#creator-index").val();
-    var selected_id = $("input[type='radio'][name='orcid-search-select']:checked").val();
+    var selected = $("input[type='radio'][name='orcid-search-select']:checked").val();
+    var select_split = selected.split("~");
+    var selected_id = select_split[0];
+    var selected_family = select_split[1];
+    var selected_given = select_split[2];
 
     $("#dataset_creators_attributes_" + creator_index  + "_identifier").val(selected_id);
+    $("#dataset_creators_attributes_" + creator_index + "_family_name").val(selected_family);
+    $("#dataset_creators_attributes_" + creator_index + "_given_name").val(selected_given);
+
 }
 
 function search_orcid(){
@@ -518,7 +525,7 @@ function search_orcid(){
                     orcid = person['orcid-profile']['orcid-identifier']['path'];
                     orcid_uri = person['orcid-profile']['orcid-identifier']['uri'];
                     people_minified.push(given_name + ' ' + family_name + ', ' + orcid);
-                    $("#orcid-search-results-table > tbody:last-child").append("<tr class='row'><td><span class='col-md-6'><a href='" + orcid_uri + "' target='_blank'>" + family_name + ", " + given_name + ": " + orcid + "</a></span><span class='col-md-1'><input type='radio' name='orcid-search-select' value='" + orcid + "'/></span></td></tr>");
+                    $("#orcid-search-results-table > tbody:last-child").append("<tr class='row'><td><span class='col-md-6'><a href='" + orcid_uri + "' target='_blank'>" + family_name + ", " + given_name + ": " + orcid + "</a></span><span class='col-md-1'><input type='radio' name='orcid-search-select' value='" + orcid + "~" + family_name + "~" + given_name +"'/></span></td></tr>");
                 });
             } else {
                 $("#orcid-search-results").append("<p>No results found.  Try fewer letters or <a href='http://orcid.org'>The ORCID site</a></p>")
