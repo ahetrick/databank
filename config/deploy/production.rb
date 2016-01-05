@@ -8,6 +8,8 @@
 # server 'db.example.com', user: 'deploy', roles: %w{db}
 server 'databank.illinois.edu', user: 'databank', roles: %w{app db web}
 
+set :rails_env, 'production'
+
 # role-based syntax
 # ==================
 
