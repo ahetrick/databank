@@ -65,11 +65,6 @@ gem 'will_paginate', '~> 3.0.5'
 
 #gem 'httpclient', git: 'git://github.com/medusa-project/httpclient.git'
 
-# Use rdf to handle RDF stuff
-gem 'rdf'
-gem 'rdf-turtle'
-gem 'rdf-rdfxml'
-
 gem 'nokogiri'
 gem 'equivalent-xml'
 
@@ -108,8 +103,10 @@ group :development, :test do
   gem 'spring'
 
   # Use Capistrano for deployment
-  gem 'capistrano'
-  gem 'capistrano-ext'
+
+  gem 'capistrano-rails'
+  gem 'capistrano-bundler'
+  gem 'capistrano-rvm'
 
   # Use rspec/factory girl/capybara/database cleaner in testing
   gem 'rspec-rails', '~> 3.0.0'

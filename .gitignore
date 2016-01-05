@@ -12,9 +12,6 @@
 !/log/.keep
 /tmp
 
-/shared/*
-
-
 # Ignore local files.
 .idea
 config/database.yml
