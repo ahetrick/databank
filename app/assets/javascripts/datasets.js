@@ -315,7 +315,7 @@ function add_creator_row(){
     var listStr = $('#creator_index_list').val();
     var listArr = listStr.split(",").map(Number);
 
-    var maxId = Math.max(...listArr);
+    var maxId = Math.max.apply(listArr);
     var newId = maxId + 1;
 
     var creator_row = '<tr class="item row" id="creator_index_' + newId + '">' +
