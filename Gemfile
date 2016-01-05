@@ -107,11 +107,7 @@ group :development, :test do
   gem 'capistrano-rails'
   gem 'capistrano-bundler'
   gem 'capistrano-rvm'
+  gem 'capistrano3-unicorn'
 
-  # Use rspec/factory girl/capybara/database cleaner in testing
-  gem 'rspec-rails', '~> 3.0.0'
-  gem 'factory_girl_rails'
-  gem 'capybara'
-  gem 'database_cleaner'
 end
 

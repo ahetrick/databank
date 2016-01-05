@@ -103,6 +103,7 @@ class DatasetsController < ApplicationController
               Process.kill('QUIT', Integer(pid))
               Dir.foreach(IDB_CONFIG[:delayed_job_pid_dir]) do |item|
                 next if item == '.' or item == '..'
+                next unless item.include? 'delayed_job'
                 file_contents = IO.read(filename)
                 pid_file_path = item.path
                 if file_contents.include? pid.to_s
@@ -119,8 +120,20 @@ class DatasetsController < ApplicationController
 
           @datafile.destroy
 
-          if ((Dir.glob(IDB_CONFIG[:delayed_job_pid_dir])).count < 5) || Delayed::Job.all.count == 0
+          if Delayed::Job.all.count == 0
             system "cd #{Rails.root} && RAILS_ENV=#{::Rails.env} bin/delayed_job -n 10 restart"
+          else
+            running_deamon_count = 0
+            Dir.foreach(IDB_CONFIG[:delayed_job_pid_dir]) do |item|
+              next if item == '.' or item == '..'
+              next unless item.include? 'delayed_job'
+              running_deamon_count = running_deamon_count + 1
+            end
+
+            if running_deamon_count == 0
+              system "cd #{Rails.root} && RAILS_ENV=#{::Rails.env} bin/delayed_job -n 10 start"
+            end
+
           end
         end
       else

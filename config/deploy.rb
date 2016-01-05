@@ -11,6 +11,8 @@ set :rvm_ruby_version, '2.2.1@idb_v1'
 # Default deploy_to directory is /var/www/my_app_name
 set :deploy_to, '/home/databank'
 
+set :unicorn_config_path, '/home/databank/current/config/unicorn.rb'
+
 # Default value for :scm is :git
 # set :scm, :git
 
@@ -36,6 +38,13 @@ set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', '
 # set :keep_releases, 5
 
 namespace :deploy do
+
+  after 'deploy:publishing', 'deploy:restart'
+  namespace :deploy do
+    task :restart do
+      invoke 'unicorn:restart'
+    end
+  end
 
   after :restart, :clear_cache do
     on roles(:web), in: :groups, limit: 3, wait: 10 do
