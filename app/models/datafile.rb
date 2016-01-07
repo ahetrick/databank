@@ -1,4 +1,5 @@
 class Datafile < ActiveRecord::Base
+
   mount_uploader :binary, BinaryUploader
   belongs_to :dataset
 

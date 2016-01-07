@@ -92,6 +92,9 @@ gem 'progress_job'
 # Use canan to restrict what resources a given user is allowed to access
 gem 'cancancan'
 
+# User bunny to handle RabbitMQ messages
+gem "bunny", ">= 2.2.2"
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'

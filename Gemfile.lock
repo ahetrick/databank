@@ -37,6 +37,7 @@ GEM
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
     addressable (2.4.0)
+    amq-protocol (2.0.1)
     arel (6.0.3)
     autoprefixer-rails (6.2.3)
       execjs
@@ -56,6 +57,8 @@ GEM
       jwt (~> 1.4)
       oj (~> 2.11)
     builder (3.2.2)
+    bunny (2.2.2)
+      amq-protocol (>= 2.0.1)
     byebug (8.2.1)
     cancancan (1.13.1)
     capistrano (3.4.0)
@@ -246,6 +249,7 @@ DEPENDENCIES
   bcrypt (~> 3.1.7)
   bootstrap-sass (~> 3.3.4.1)
   boxr
+  bunny (>= 2.2.2)
   byebug
   cancancan
   capistrano-bundler

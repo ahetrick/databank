@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  idb_class: MyString
+  idb_identifier: MyString
+  staging_path: MyString
+  request_status: MyString
+  medusa_path: MyString
+  medusa_uuid: MyString
+  response_time: 2016-01-07 15:13:13
+  error_text: MyString
+
+two:
+  idb_class: MyString
+  idb_identifier: MyString
+  staging_path: MyString
+  request_status: MyString
+  medusa_path: MyString
+  medusa_uuid: MyString
+  response_time: 2016-01-07 15:13:13
+  error_text: MyString

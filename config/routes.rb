@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
 
+  resources :medusa_ingests
   resources :licenses
   resources :datafiles
   resources :users

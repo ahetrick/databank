@@ -8,6 +8,21 @@ development:
   :ezid_placeholder_identifier: 10.5072/FK2
   :datafile_store_dir:  /uploads
   :delayed_job_pid_dir: /tmp/pids
+  :orcid_token: ORCID_TOKEN
+  #You can set anything here that you might pass to Bunny.new. Anything you don't set just gets the Bunny default.
+  #Typical fields needed for our setup are shown below.
+  amqp:
+    #ssl: true
+    #port: 5761 #this is the default port for ssl connections
+    #host: 127.0.0.1
+    #user: user
+    #password: pw
+    #vhost: medusa
+    #verify_peer: false
+  medusa:
+    #AMQP queues to communicate with glacier server
+    outgoing_queue: idb_to_medusa
+    incoming_queue: medusa_to_idb
 
 test:
   :admin_list: admin
@@ -19,6 +34,21 @@ test:
   :ezid_placeholder_identifier: 10.5072/FK2
   :datafile_store_dir:  /uploads
   :delayed_job_pid_dir: /tmp/pids
+  :orcid_token: ORCID_TOKEN
+  #You can set anything here that you might pass to Bunny.new. Anything you don't set just gets the Bunny default.
+  #Typical fields needed for our setup are shown below.
+  amqp:
+    #ssl: true
+    #port: 5761 #this is the default port for ssl connections
+    #host: 127.0.0.1
+    #user: user
+    #password: pw
+    #vhost: medusa
+    #verify_peer: false
+  medusa:
+    #AMQP queues to communicate with glacier server
+    outgoing_queue: idb_to_medusa
+    incoming_queue: medusa_to_idb
 
 production:
   :admin_list: <%= ENV["ADMIN_LIST"] %>
@@ -30,3 +60,18 @@ production:
   :ezid_placeholder_identifier: 10.5072/FK2
   :datafile_store_dir:  <%= ENV["DATAFILE_STORE_DIR"] %>
   :delayed_job_pid_dir: <%= ENV["PIDS_DIR"] %>
+  :orcid_token: ORCID_TOKEN
+  #You can set anything here that you might pass to Bunny.new. Anything you don't set just gets the Bunny default.
+  #Typical fields needed for our setup are shown below.
+  amqp:
+    #ssl: true
+    #port: 5761 #this is the default port for ssl connections
+    #host: 127.0.0.1
+    #user: user
+    #password: pw
+    #vhost: medusa
+    #verify_peer: false
+  medusa:
+    #AMQP queues to communicate with glacier server
+    outgoing_queue: idb_to_medusa
+    incoming_queue: medusa_to_idb
