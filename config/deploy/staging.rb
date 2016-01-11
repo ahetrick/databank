@@ -6,7 +6,9 @@
 # server 'example.com', user: 'deploy', roles: %w{app db web}, my_property: :my_value
 # server 'example.com', user: 'deploy', roles: %w{app web}, other_property: :other_value
 # server 'db.example.com', user: 'deploy', roles: %w{db}
+server 'rds-dev.illinois.edu', user: 'databank', roles: %w{app db web}
 
+set :rails_env, 'development'
 
 
 # role-based syntax
