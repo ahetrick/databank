@@ -258,17 +258,17 @@ class DatasetsController < ApplicationController
         if !@dataset.identifier || @dataset.identifier.empty?
           @dataset.identifier = mint_doi
         end
-        medusa_ingest = MedusaIngest.new
-        @dataset.datafiles.each do |datafile|
-          full_path = datafile.binary.path
-          full_path_arr = full_path.split("/")
-          staging_path = "#{full_path_arr[5]}/#{full_path_arr[6]}/#{full_path_arr[7]}"
-          medusa_ingest.staging_path = staging_path
-          medusa_ingest.idb_class = 'datafile'
-          medusa_ingest.idb_identifier = datafile.web_id
-          medusa_ingest.send_medusa_ingest_message(staging_path)
-          medusa_ingest.save
-        end
+        # medusa_ingest = MedusaIngest.new
+        # @dataset.datafiles.each do |datafile|
+        #   full_path = datafile.binary.path
+        #   full_path_arr = full_path.split("/")
+        #   staging_path = "#{full_path_arr[5]}/#{full_path_arr[6]}/#{full_path_arr[7]}"
+        #   medusa_ingest.staging_path = staging_path
+        #   medusa_ingest.idb_class = 'datafile'
+        #   medusa_ingest.idb_identifier = datafile.web_id
+        #   medusa_ingest.send_medusa_ingest_message(staging_path)
+        #   medusa_ingest.save
+        # end
 
         if @dataset.save
           format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset was successfully published and the DataCite DOI minted is #{@dataset.identifier}.<br/>The persistent link to this dataset is now <a href = "http://dx.doi.org/#{@dataset.identifier}">http://dx.doi.org/#{@dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.] }
