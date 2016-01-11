@@ -9,7 +9,7 @@ Bundler.require(*Rails.groups)
 module Databank
 
   class Application < Rails::Application
-
+    Rails.root.join("vendor", "assets", "stylesheet/bootstrap-glyphicons.css")
 
     attr_accessor :shibboleth_host
 

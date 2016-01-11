@@ -9,4 +9,4 @@ Rails.application.config.assets.version = '1.0'
 # Precompile additional assets.
 # application.js, application.css.scss, and all non-JS/CSS in app/assets folder are already added.
 # Rails.application.config.assets.precompile += %w( search.js )
-Rails.application.config.assets.precompile +=  ['datasets.js', 'jansy-bootstrap.js', 'datasets.css.scss', 'scaffolds.scss', 'jansy-bootstrap.css', Rails.root.join("vendor", "assets", "stylesheet/bootstrap-glyphicons.css")]
+Rails.application.config.assets.precompile +=  ['datasets.js', 'jansy-bootstrap.js', 'datasets.css.scss', 'scaffolds.scss', 'jansy-bootstrap.css', 'bootstrap-glyphicons.css']
