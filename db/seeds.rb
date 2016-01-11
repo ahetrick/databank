@@ -6,6 +6,18 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-License.create(code: "CC01", name: "CC0 1.0 waiver", external_info_url: "https://creativecommons.org/about/cc0", full_text_url: "#{Rails.root}/public/CC01.txt")
-License.create(code: "CCBY4", name: "CC BY 4.0 license", external_info_url: " https://creativecommons.org/licenses/by/4.0", full_text_url: "#{Rails.root}/public/CCBY4.txt")
-License.create(code: "license.txt", name: "See license.txt file in dataset")
+cc01 = License.find_or_initialize_by(code: "CC01")
+cc01.name = "CC0"
+cc01.external_info_url = "https://creativecommons.org/about/cc0"
+cc01.full_text_url = "#{Rails.root}/public/CC01.txt"
+cc01.save!
+
+cc0BY4 = License.find_or_initialize_by(code: "CCBY4")
+cc0BY4.name = "CC BY"
+cc0BY4.external_info_url = "https://creativecommons.org/licenses/by/4.0"
+cc0BY4.full_text_url = "#{Rails.root}/public/CCBY4.txt"
+cc0BY4.save!
+
+custom = License.find_or_initialize_by(code: "license.txt")
+custom.name = "See license.txt file in dataset"
+custom.save!
