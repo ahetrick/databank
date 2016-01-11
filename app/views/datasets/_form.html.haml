@@ -71,7 +71,7 @@
                           %p Not specifying a license reserves all rights.  This offers the least potential for re-use.
                   %a(href="#" data-toggle="modal" data-target="#licenseModal" tabindex="-1")
                     %span(class="glyphicon glyphicon-question-sign")
-                  = f.collection_select :license, License.all, :code, :name, {:prompt => true}, {:class => "form-control dataset"}
+                  = f.collection_select :license, License.order('code ASC'), :code, :name, {:prompt => true}, {:class => "form-control dataset"}
 
             %label(class="control-label required")
               Author List
