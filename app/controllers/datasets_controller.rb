@@ -121,7 +121,7 @@ class DatasetsController < ApplicationController
           end
 
           if Delayed::Job.all.count == 0
-            system "cd #{Rails.root} && RAILS_ENV=#{::Rails.env} bin/delayed_job --pool=box_ingest:#{@@num_box_ingest_deamons} restart"
+            system "cd #{Rails.root} && RAILS_ENV=#{::Rails.env} bin/delayed_job -n #{@@num_box_ingest_deamons} restart"
           else
             running_deamon_count = 0
             Dir.foreach(IDB_CONFIG[:delayed_job_pid_dir]) do |item|
