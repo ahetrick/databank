@@ -14,6 +14,22 @@ class Datafile < ActiveRecord::Base
     self.web_id
   end
 
+  def bytestream_name
+    self.binary_name || self.binary.file.filename
+  end
+
+  def bytestream_size
+    self.binary_size || self.binary.size
+  end
+
+  def bytestream_path
+    if self.medusa_path.nil? || self.medusa_path.empty?
+      self.binary.path
+    else
+      "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{self.medusa_path}"
+    end
+  end
+
   def remove_directory
     # Rails.logger.warn "#{IDB_CONFIG[:datafile_store_dir]}/#{self.web_id}"
     dir = "#{IDB_CONFIG[:datafile_store_dir]}/#{self.web_id}"

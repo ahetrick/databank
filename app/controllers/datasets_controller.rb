@@ -21,6 +21,8 @@ class DatasetsController < ApplicationController
 
   before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text ]
 
+  @@num_box_ingest_deamons = 10
+
   # enable streaming responses
   include ActionController::Streaming
   # enable zipline
@@ -80,6 +82,7 @@ class DatasetsController < ApplicationController
   def cancel_box_upload
 
     @job_id_string = "0"
+    Rails.logger.warn "params: #{params.to_yaml}"
 
     @datafile = Datafile.find_by_web_id(params[:web_id])
 
@@ -87,14 +90,14 @@ class DatasetsController < ApplicationController
       if @datafile.job_id
         @job_id_string = @datafile.job_id.to_s
         job = Delayed::Job.where(id: @datafile.job_id).first
-        if job  && !job.locked_by.empty?
+        if job && job.locked_by  && !job.locked_by.empty?
           locked_by_text = job.locked_by.to_s
 
-          # Rails.logger.warn "***\n   locked_by_text #{locked_by_text}"
+          Rails.logger.warn "***\n   locked_by_text #{locked_by_text}"
 
           pid = locked_by_text.split(":").last
 
-          # Rails.logger.warn "***\n    pid: #{pid}"
+          Rails.logger.warn "***\n    pid: #{pid}"
 
           if !pid.empty?
 
@@ -102,9 +105,10 @@ class DatasetsController < ApplicationController
 
               Process.kill('QUIT', Integer(pid))
               Dir.foreach(IDB_CONFIG[:delayed_job_pid_dir]) do |item|
+                Rails.logger.warn("item: #{item}")
                 next if item == '.' or item == '..'
                 next unless item.include? 'delayed_job'
-                file_contents = IO.read(filename)
+                file_contents = IO.read(item)
                 pid_file_path = item.path
                 if file_contents.include? pid.to_s
                   File.delete(pid_file_path)
@@ -116,12 +120,8 @@ class DatasetsController < ApplicationController
             end
           end
 
-          job.destroy
-
-          @datafile.destroy
-
           if Delayed::Job.all.count == 0
-            system "cd #{Rails.root} && RAILS_ENV=#{::Rails.env} bin/delayed_job -n 10 restart"
+            system "cd #{Rails.root} && RAILS_ENV=#{::Rails.env} bin/delayed_job --pool=box_ingest:#{@@num_box_ingest_deamons} restart"
           else
             running_deamon_count = 0
             Dir.foreach(IDB_CONFIG[:delayed_job_pid_dir]) do |item|
@@ -129,12 +129,11 @@ class DatasetsController < ApplicationController
               next unless item.include? 'delayed_job'
               running_deamon_count = running_deamon_count + 1
             end
-
-            if running_deamon_count == 0
-              system "cd #{Rails.root} && RAILS_ENV=#{::Rails.env} bin/delayed_job -n 10 start"
-            end
-
           end
+        elsif job
+          job.destroy
+          @datafile.destroy
+
         end
       else
         @datafile.destroy
@@ -330,10 +329,7 @@ class DatasetsController < ApplicationController
       temp_zipfile.unlink
     end
 
-
   end
-
-
 
   def download_endNote_XML
 

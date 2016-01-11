@@ -173,9 +173,9 @@
 
                         <div class="row checkbox">
 
-                          <span class="col-md-8"><label><input type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="<%= datafile.web_id %>"><%= datafile.binary.file.filename %>
+                          <span class="col-md-8"><label><input type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="<%= datafile.web_id %>"><%= datafile.bytestream_name %>
                           </label></span>
-                          <span class="col-md-2"><%= number_to_human_size(datafile.binary.size) %></span>
+                          <span class="col-md-2"><%= number_to_human_size(datafile.bytestream_size) %></span>
                           <span class="col-md-2"><a href="#" onclick='window.location = "/datafiles/<%= datafile.web_id %>/download"' class="btn btn-primary btn-sm" role="button">
                             <span class="glyphicon glyphicon-download"></span> File
                           </a></span>

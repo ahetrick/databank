@@ -38,7 +38,7 @@ class DatafilesController < ApplicationController
 
     @datafile = Datafile.create(:dataset_id => @dataset.id)
 
-    @job = Delayed::Job.enqueue CreateDatafileFromRemoteJob.new(@dataset.id, @datafile, params[:url], @filename, @filesize)
+    @job = Delayed::Job.enqueue CreateDatafileFromRemoteJob.new(@dataset.id, @datafile, params[:url], @filename, @filesize), :queue => 'box_ingest'
 
     @datafile.job_id = @job.id
     @datafile.box_filename = @filename
@@ -69,7 +69,7 @@ class DatafilesController < ApplicationController
   end
 
   def download
-    path = @datafile.binary.path
+    path = @datafile.bytestream_path
     send_file path, :x_sendfile=>true
   end
 
