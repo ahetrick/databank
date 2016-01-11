@@ -38,7 +38,7 @@ class DatafilesController < ApplicationController
 
     @datafile = Datafile.create(:dataset_id => @dataset.id)
 
-    @job = Delayed::Job.enqueue CreateDatafileFromRemoteJob.new(@dataset.id, @datafile, params[:url], @filename, @filesize), :queue => 'box_ingest'
+    @job = Delayed::Job.enqueue CreateDatafileFromRemoteJob.new(@dataset.id, @datafile, params[:url], @filename, @filesize)
 
     @datafile.job_id = @job.id
     @datafile.box_filename = @filename

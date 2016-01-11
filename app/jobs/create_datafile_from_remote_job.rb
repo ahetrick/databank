@@ -4,8 +4,7 @@ require 'fileutils'
 require 'net/http'
 
 class CreateDatafileFromRemoteJob < ProgressJob::Base
-  queue_as :box_ingest
-
+  
   def initialize(dataset_id, datafile, remote_url, filename, filesize)
     @remote_url = remote_url
     @dataset_id = dataset_id
