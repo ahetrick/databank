@@ -152,9 +152,9 @@ class Dataset < ActiveRecord::Base
 
     end
 
-    languageNode = doc.create_element('language')
-    languageNode.content = "en-us"
-    languageNode.parent = resourceNode
+    # languageNode = doc.create_element('language')
+    # languageNode.content = "en-us"
+    # languageNode.parent = resourceNode
 
     if self.license && !self.license.blank?
       rightsListNode = doc.create_element('rightsList')

@@ -18,7 +18,7 @@ Rails.application.routes.draw do
 
   get '/faqs', to: 'welcome#faqs', :as => :faq
   get '/policies', to: 'welcome#policies', :as => :policies
-  get '/help', to: 'welcome#help', :as => :help
+  get '/help', to: 'help#index', :as => :help
   get '/welcome/deposit_login_modal', to: 'welcome#deposit_login_modal'
   get '/contact', to: 'welcome#contact', :as => :contact
   get '/datasets/:id/download_endNote_XML', to: 'datasets#download_endNote_XML'

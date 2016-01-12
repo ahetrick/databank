@@ -229,3 +229,21 @@ body:after{
   height: 200px;
   padding: 5px;
 }
+
+.idb-help{
+  border-radius: 25px;
+  border: 1px solid #003dac;
+  padding: 10px;
+}
+
+ul.help-info{
+  list-style-type:none;
+}
+
+.idb-help ul {
+  list-style-type: none;
+}
+.idb-help p {
+  font-size: large;
+  line-height: 1.5;
+}
