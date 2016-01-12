@@ -247,3 +247,19 @@ ul.help-info{
   font-size: large;
   line-height: 1.5;
 }
+.idb-nav ul{
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  background-color: f1f1f1;
+}
+.idb-nav li a {
+  display: block;
+  color: 000;
+  padding: 8px 0 8px 16px;
+  text-decoration: none;
+}
+.idb-nav a:hover {
+  background-color: #555;
+  color: white;
+}
