@@ -67,8 +67,7 @@ namespace :deploy do
       within "/home/databank/current" do
         execute "pwd"
         execute "whoami"
-        execute "for i in `ps awx | grep unicorn | grep -v grep | awk '{print $1;}'`; do kill $i"
-        execute "unicorn_rails -c config/unicorn.rb -D"
+        "idb_restart.sh"
       end
     end
   end
