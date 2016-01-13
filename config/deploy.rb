@@ -66,7 +66,7 @@ namespace :deploy do
     on roles(:web), in: :groups, limit: 3, wait: 10 do
       within "/home/databank/current" do
         execute "pwd"
-        execute "whomai"
+        execute "whoami"
         execute "idb_restart.sh"
       end
     end
