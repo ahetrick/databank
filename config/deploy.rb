@@ -65,12 +65,9 @@ namespace :deploy do
   after :restart, :clear_cache do
     on roles(:web), in: :groups, limit: 3, wait: 10 do
       within "/home/databank/current" do
-
-        with rails_env: :rails_env do
-          execute "pwd"
-          execute "idb_restart.sh"
-        end
-
+        execute "pwd"
+        execute "whomai"
+        execute "idb_restart.sh"
       end
     end
   end
