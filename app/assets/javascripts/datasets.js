@@ -316,6 +316,11 @@ function add_creator_row(){
     var listArr = listStr.split(",").map(Number);
 
     var maxId = Math.max.apply(listArr);
+
+    if (maxId < 0){
+        maxId = 0
+    }
+
     var newId = maxId + 1;
 
     var creator_row = '<tr class="item row" id="creator_index_' + newId + '">' +
@@ -324,7 +329,7 @@ function add_creator_row(){
         '<td class="col-md-2">' +
         '<input type="hidden" value="' + $('#creator_table tr').length + '" name="dataset[creators_attributes][' + newId + '][row_position]" id="dataset_creators_attributes_' + newId + '_row_position" />' +
         '<input value="0" type="hidden" name="dataset[creators_attributes][' + newId + '][type_of]" id="dataset_creators_attributes_' + newId + '_type_of" />' +
-        '<input onchange="generate_creator_preview()" class="form-control dataset creator family-name" placeholder="[Family Name, e.g.: Smith]" type="text" name="dataset[creators_attributes][' + newId + '][family_name]" id="dataset_creators_attributes_' + newId + '_family_name" /><strong>,</strong>' +
+        '<input onchange="generate_creator_preview()" class="form-control dataset creator family-name" placeholder="[Family Name, e.g.: Smith]" type="text" name="dataset[creators_attributes][' + newId + '][family_name]" id="dataset_creators_attributes_' + newId + '_family_name" /><strong> ,</strong>' +
         '</td>' +
 
         '<td class="col-md-2">' +
