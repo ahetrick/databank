@@ -313,10 +313,11 @@ function add_creator_row(){
 
 
     var listStr = $('#creator_index_list').val();
+
     var listArr = listStr.split(",").map(Number);
 
-    var maxId = Math.max.apply(listArr);
-
+    var maxId = listArr[listArr.length - 1];
+    
     if (maxId < 0){
         maxId = 0
     }
@@ -481,7 +482,6 @@ function set_orcid_from_search_modal(){
     $("#dataset_creators_attributes_" + creator_index  + "_identifier").val(selected_id);
     $("#dataset_creators_attributes_" + creator_index + "_family_name").val(selected_family);
     $("#dataset_creators_attributes_" + creator_index + "_given_name").val(selected_given);
-
 }
 
 function search_orcid(){
@@ -500,29 +500,20 @@ function search_orcid(){
 
     var search_string = search_url + bio_segment + search_query + '&start=0&rows=50&wt=json';
 
-    console.log(search_string);
-
     $.ajax({
         url: search_string,
         dataType: 'jsonp',
         success: function(data){
             $('.orcid-search-spinner').hide();
             console.log(data);
+            console.log(search_string);
 
             var total_found = data["orcid-search-results"]["num-found"];
 
             if (total_found > 50){
-                var orcid_search_string = ""
-                if ($("#creator-given").val() != "")
-                {
-                    orcid_search_string = $("#creator-given").val();
-                    if ($("#creator-family").val() != "")
-                        orcid_search_string = orcid_search_string + ' ' + $("#creator-family").val();
-                } else if($("#creator-family").val() != "")  {
-                    orcid_search_string = $("#creator-family").val();
-                }
 
-                $("#orcid-search-results").append("<div class='row'>Showing first 50 results of " + total_found + ". For more results, search <a href='https://orcid.org/orcid-search/quick-search?searchQuery=' + orcid_search_string target='_blank'>The ORCID site</a>.</div><hr/>");
+                console.log($("#creator-family").val());
+                $("#orcid-search-results").append("<div class='row'>Showing first 50 results of " + total_found + ". For more results, search <a href='https://orcid.org/orcid-search/quick-search?searchQuery=' + target='_blank'>The ORCID site</a>.</div><hr/>");
             }
 
             if (total_found > 0) {
