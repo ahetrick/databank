@@ -65,7 +65,7 @@ namespace :deploy do
   after :restart, :clear_cache do
     on roles(:web), in: :groups, limit: 3, wait: 10 do
       # restart unicorn
-      execute :idb_restart.sh
+      execute('idb_restart.sh')
 
 
       # restart delayed job deamons
