@@ -64,11 +64,13 @@ namespace :deploy do
 
   after :restart, :clear_cache do
     on roles(:web), in: :groups, limit: 3, wait: 10 do
-      # restart unicorn
-      execute('idb_restart.sh')
-
-
-      # restart delayed job deamons
+      within "/current" do
+        as :databank  do
+          with rails_env: :rails_env do
+            execute "idb_restart.sh"
+          end
+        end
+      end
     end
   end
 
