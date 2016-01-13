@@ -507,7 +507,17 @@ function search_orcid(){
             var total_found = data["orcid-search-results"]["num-found"];
 
             if (total_found > 50){
-                $("#orcid-search-results").append("<div class='row'>Showing first 50 results of " + total_found + ". For more results, search <a href='http://orcid.org'>The ORCID site</a>.</div><hr/>");
+                var orcid_search_string = ""
+                if ($("#creator-given").val() != "")
+                {
+                    orcid_search_string = $("#creator-given").val();
+                    if ($("#creator-family").val() != "")
+                        orcid_search_string = orcid_search_string + ' ' + $("#creator-family").val();
+                } else if($("#creator-family").val() != "")  {
+                    orcid_search_string = $("#creator-family").val();
+                }
+
+                $("#orcid-search-results").append("<div class='row'>Showing first 50 results of " + total_found + ". For more results, search <a href='https://orcid.org/orcid-search/quick-search?searchQuery=' + orcid_search_string target='_blank'>The ORCID site</a>.</div><hr/>");
             }
 
             if (total_found > 0) {
@@ -532,7 +542,7 @@ function search_orcid(){
                     }
                 });
             } else {
-                $("#orcid-search-results").append("<p>No results found.  Try fewer letters or <a href='http://orcid.org'>The ORCID site</a></p>")
+                $("#orcid-search-results").append("<p>No results found.  Try fewer letters or <a href='http://orcid.org' target='_blank'>The ORCID site</a></p>")
             }
         },
         error: function(xhr){

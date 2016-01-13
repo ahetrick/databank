@@ -1,0 +1,13 @@
+.row
+  .col-md-2
+    .bs-sidebar.hidden-print.affix.idb-nav(role="complementary" )
+      %ul(class="nav bs-sidenav" )
+        %li(class="active" )
+          %a(href="/help" ) Help Center
+        %ul
+          %li
+            %a(href="#license") Copyright and Licensing
+          %li
+            %a(href="#other") Other
+  .col-md-10
+    =yield

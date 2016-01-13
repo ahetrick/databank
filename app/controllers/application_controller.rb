@@ -41,10 +41,6 @@ class ApplicationController < ActionController::Base
         redirect_to redirect_path, :alert => alert_message
       end
 
-    elsif exception.message.include? "undefined method `filename' for nil:NilClass"
-
-      redirect_to redirect_path, :alert => "Incomplete or failed datafile upload found and cleared."
-
     else
 
       raise exception

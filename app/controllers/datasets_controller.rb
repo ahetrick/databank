@@ -44,6 +44,11 @@ class DatasetsController < ApplicationController
   # GET /datasets/1
   # GET /datasets/1.json
   def show
+    @dataset.datafiles.each do |datafile|
+      if (!datafile.medusa_path || datafile.medusa_path == "" ) && (!datafile.binary.path || datafile.binary.path == "")
+        datafile.destroy
+      end
+    end
     @datacite_record = datacite_record_hash
     if params.has_key?(:selected_files)
       zip_and_download_selected
@@ -152,6 +157,11 @@ class DatasetsController < ApplicationController
   # GET /datasets/1/edit
   def edit
     @dataset.creators.build unless @dataset.creators.count > 0
+    @dataset.datafiles.each do |datafile|
+      if (!datafile.medusa_path || datafile.medusa_path == "" ) && (!datafile.binary.path || datafile.binary.path == "")
+        datafile.destroy
+      end
+    end
   end
 
   # POST /datasets
