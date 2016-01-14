@@ -107,7 +107,7 @@ group :development, :test do
 
   # Use Capistrano for deployment
 
-  gem 'capistrano'
+  gem 'capistrano-rails'
   gem 'capistrano-bundler'
   gem 'capistrano-rvm'
   gem 'capistrano3-unicorn'
