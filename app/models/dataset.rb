@@ -12,6 +12,7 @@ class Dataset < ActiveRecord::Base
 
   before_create 'set_key'
   before_save 'set_primary_contact'
+  after_save 'remove_invalid_datafiles'
 
   KEY_LENGTH = 5
 
@@ -247,6 +248,14 @@ class Dataset < ActiveRecord::Base
       if creator.is_contact?
         self.corresponding_creator_name = "#{creator.given_name} #{creator.family_name}"
         self.corresponding_creator_email = creator.email
+      end
+    end
+  end
+
+  def remove_invalid_datafiles
+    self.datafiles.each do |datafile|
+      if (!datafile.medusa_path || datafile.medusa_path == "" ) && (!datafile.binary.path || datafile.binary.path == "")
+        datafile.destroy
       end
     end
   end
