@@ -19,11 +19,13 @@ config/databank.yml
 config/secrets.yml
 config/shibboleth.yml
 public/uploads
+config/unicorn.rb
 
 prod_start.sh
 prod_restart.sh
 
 /uploads
+
 
 
 

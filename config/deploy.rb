@@ -11,6 +11,7 @@ set :rvm_ruby_version, '2.2.1@idb_v1'
 # Default deploy_to directory is /var/www/my_app_name
 set :deploy_to, '/home/databank'
 
+set :unicorn_pid, '/home/databank/current/tmp/pids/unicorn.pid'
 set :unicorn_config_path, '/home/databank/current/config/unicorn.rb'
 
 # Default value for :scm is :git
@@ -26,7 +27,7 @@ set :unicorn_config_path, '/home/databank/current/config/unicorn.rb'
 # set :pty, true
 
 # Default value for :linked_files is []
-set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'config/secrets.yml', 'config/databank.yml', 'config/shibboleth.yml')
+set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'config/secrets.yml', 'config/databank.yml', 'config/shibboleth.yml', 'config/unicorn.rb')
 
 # Default value for linked_dirs is []
 set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'tmp/uploads', 'tmp/sessions')
@@ -64,11 +65,10 @@ namespace :deploy do
 
   after :restart, :clear_cache do
     on roles(:web), in: :groups, limit: 3, wait: 10 do
-      within "/home/databank/current" do
-        execute "pwd"
-        execute "whoami"
-        "idb_restart.sh"
-      end
+      # within "/home/databank/current" do
+      #   execute "pwd"
+      #   execute "whoami"
+      # end
     end
   end
 

@@ -6,4 +6,4 @@ do
   rm -f "$f"
 done
 echo "Starting unicorn rails server..."
-unicorn_rails -c config/unicorn.rb -D
+unicorn -c config/unicorn.rb -D

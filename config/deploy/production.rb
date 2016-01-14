@@ -9,6 +9,7 @@
 server 'databank.illinois.edu', user: 'databank', roles: %w{app db web}
 
 set :rails_env, 'production'
+set :unicorn_rack_env, 'production'
 
 # role-based syntax
 # ==================
