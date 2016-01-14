@@ -15,11 +15,26 @@ class Datafile < ActiveRecord::Base
   end
 
   def bytestream_name
-    self.binary_name || self.binary.file.filename
+    if self.binary_name
+      self.binary_name
+    elsif self.binary && self.binary.file
+      self.binary.file.filename
+    else
+      ""
+    end
+
   end
 
   def bytestream_size
-    self.binary_size || self.binary.size
+
+    if self.binary_size
+      self.binary_size
+    elsif self.binary
+      self.binary.size
+    else
+      0
+    end
+
   end
 
   def bytestream_path

@@ -191,42 +191,41 @@
                 %table(class="table table-striped" id="datafiles")
                   %tbody
                     - @dataset.datafiles.each do |datafile|
-                      -if datafile.job_status == :complete
-                        %tr
-                          %td
-                            .row
-                              %span(class="col-md-8")
-                                -#= debug(datafile.binary)
-                                = datafile.binary.file.filename
-                                -#= datafile.binary.filename ? datafile.binary.filename : "filename not found"
-                              %span(class="col-md-2")
-                                = number_to_human_size(datafile.binary.size)
-                              %span(class="col-md-2")
-                                - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
-                                  %a(data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" data-method="delete" href="/datafiles/#{datafile.web_id}")
-                                    %span(class="glyphicon glyphicon-trash")
-                      -else
-                        %tr(id="job#{datafile.job.id}")
-                          %td
-                            .row
-                              %span(class="col-md-4")
-                                = datafile.box_filename
-                              %span(class="col-md-6")
-                                %span(class="metadata-label")
-                                  STATUS:
-                                %span(class="metadata-value" )
-                                  = datafile.job_status
-                                %span(class="metadata-label" )
-                                  | PROGRESS:
-                                %span(class="metadata-value" )
-                                  = number_to_human_size((datafile.job.progress_current) * 10000)
-                                  of
-                                  = datafile.box_filesize_display
-                                %span(class="metadata-note" )
-                                  (refresh page to update)
-                              %span(class="col-md-2")
-                                - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
-                                  %button(class="cancel-upload-btn btn btn-danger btn-sm" onclick="cancelUpload('#{datafile.web_id}', '#{datafile.job_id}')") Cancel
+                      - if datafile.bytestream_name != ""
+                        -if datafile.job_status == :complete
+                          %tr
+                            %td
+                              .row
+                                %span(class="col-md-8")
+                                  = datafile.bytestream_name
+                                %span(class="col-md-2")
+                                  = number_to_human_size(datafile.bytestream_size)
+                                %span(class="col-md-2")
+                                  - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
+                                    %a(data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" data-method="delete" href="/datafiles/#{datafile.web_id}")
+                                      %span(class="glyphicon glyphicon-trash")
+                        -else
+                          %tr(id="job#{datafile.job.id}")
+                            %td
+                              .row
+                                %span(class="col-md-4")
+                                  = datafile.box_filename
+                                %span(class="col-md-6")
+                                  %span(class="metadata-label")
+                                    STATUS:
+                                  %span(class="metadata-value" )
+                                    = datafile.job_status
+                                  %span(class="metadata-label" )
+                                    | PROGRESS:
+                                  %span(class="metadata-value" )
+                                    = number_to_human_size((datafile.job.progress_current) * 10000)
+                                    of
+                                    = datafile.box_filesize_display
+                                  %span(class="metadata-note" )
+                                    (refresh page to update)
+                                %span(class="col-md-2")
+                                  - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
+                                    %button(class="cancel-upload-btn btn btn-danger btn-sm" onclick="cancelUpload('#{datafile.web_id}', '#{datafile.job_id}')") Cancel
 
                 %div(id="datafiles_upload_progress")
                 - if ( (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)) )
