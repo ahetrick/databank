@@ -113,6 +113,43 @@ $dropDown: false;
   }
 }
 
+.idb-help ul {
+  list-style-type: none;
+}
+.idb-help p {
+  font-size: large;
+  line-height: 1.5;
+}
+.idb-nav.bs-sidebar{
+  display: block;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  border: 1px solid #606EB2;
+}
+
+.idb-nav ul{
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.idb-nav a:hover {
+  background-color: #BEC4DF;
+  border: 1px solid #606EB2;
+}
+
+.idb-nav li a {
+  display: block;
+  color: black;
+  padding: 8px 8px 8px 16px;
+  text-decoration: none;
+}
+
+li.current {
+  background-color: #BEC4DF;
+}
+
+
 // Place all the styles related to the home controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/

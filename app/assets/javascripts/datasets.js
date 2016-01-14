@@ -56,6 +56,12 @@ ready = function() {
 
     });
 
+    $('.nav-item').click(function () {
+
+        $('.nav-item').removeClass('current');
+        $(this).addClass('current');
+    });
+
     $('#update-save-button').click(function () {
         window.onbeforeunload = null;
         $("[id^=edit_dataset]").submit();
