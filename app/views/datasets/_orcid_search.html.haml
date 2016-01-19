@@ -37,10 +37,10 @@
     .modal-footer
       .control-group
         .controls
-          %button(type="button" class="btn btn-danger" data-dismiss="modal" )
+          %button(type="button" class="btn btn-danger" data-dismiss="modal")
             %span(class="glyphicon glyphicon-ban-circle" )
             Cancel
-          %button(type='button' class='btn btn-success' data-dismiss="modal" onclick='set_orcid_from_search_modal()')
+          %button(type='button' id='orcid-import-btn' class='btn btn-success' data-dismiss="modal" onclick='set_orcid_from_search_modal()' disabled)
             %span(class="glyphicon glyphicon-transfer" )
             Import Selection
 

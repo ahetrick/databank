@@ -548,7 +548,7 @@ function search_orcid(){
                         orcid = person['orcid-profile']['orcid-identifier']['path'];
                         orcid_uri = person['orcid-profile']['orcid-identifier']['uri'];
                         people_minified.push(given_name + ' ' + family_name + ', ' + orcid);
-                        $("#orcid-search-results-table > tbody:last-child").append("<tr class='row'><td><span class='col-md-6'><a href='" + orcid_uri + "' target='_blank'>" + family_name + ", " + given_name + ": " + orcid + "</a></span><span class='col-md-1'><input type='radio' name='orcid-search-select' value='" + orcid + "~" + family_name + "~" + given_name + "'/></span></td></tr>");
+                        $("#orcid-search-results-table > tbody:last-child").append("<tr class='row'><td><span class='col-md-6'><a href='" + orcid_uri + "' target='_blank'>" + family_name + ", " + given_name + ": " + orcid + "</a></span><span class='col-md-1'><input type='radio' name='orcid-search-select' onclick='enableOrcidImport()'  value='" + orcid + "~" + family_name + "~" + given_name + "'/></span></td></tr>");
                     } catch(err){
                         console.log(err);
                     }
@@ -563,8 +563,14 @@ function search_orcid(){
     });
 
 }
+function enableOrcidImport(){
+
+    $('#orcid-import-btn').prop('disabled', false);
+}
 
 function showOrcidSearchModal(creator_index){
+
+    $('#orcid-import-btn').prop('disabled', true);
 
     $("#creator-index").val(creator_index);
     var creatorFamilyName =  $("#dataset_creators_attributes_" + creator_index + "_family_name").val();
