@@ -34,10 +34,13 @@ class AmqpConnector < Object
   end
 
   def with_channel
+
     channel = connection.create_channel
     yield channel
   ensure
-    channel.close
+    if !channel.nil?
+      channel.close
+    end
   end
 
   def with_queue(queue_name)

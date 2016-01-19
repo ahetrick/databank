@@ -82,9 +82,9 @@ namespace :test do
 
     msg_hash = {status: 'ok',
                 operation: 'ingest',
-                staging_path: 'uploads/sf923/hello.rb',
-                medusa_path: 'medusa/staging/path',
-                medusa_uuid: '149603bb-0cad-468b-9ef0-e91023a5d454',
+                staging_path: 'uploads/5g06s/test.txt',
+                medusa_path: '5g06s_test.txt',
+                medusa_uuid: '149603bb-0cad-468b-9ef0-e91023a5d455',
                 error: ''}
 
     x.publish("#{msg_hash.to_json}", :routing_key => q.name)
@@ -126,5 +126,5 @@ namespace :test do
     conn.close
 
   end
-
+  
 end

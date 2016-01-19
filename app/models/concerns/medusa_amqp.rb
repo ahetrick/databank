@@ -42,41 +42,41 @@ module MedusaAmqp
     end
 
     def on_medusa_succeeded_message(response_hash)
-      Rails.logger.warn "inside on_medusa_succeed_message: #{response_hash.to_yaml}"
+      #Rails.logger.warn "inside on_medusa_succeed_message: #{response_hash.to_yaml}"
       staging_path_arr = (response_hash['staging_path']).split('/')
       ingest_relation = MedusaIngest.where("staging_path = ?", response_hash['staging_path'])
-      Rails.logger.warn ingest_relation.to_yaml
+      # Rails.logger.warn ingest_relation.to_yaml
+      # Rails.logger.warn "response_hash['status']: #{response_hash['status']}"
 
       if ingest_relation.count > 0
 
+        Rails.logger.warn("response hash: #{response_hash.to_yaml}" )
         ingest = ingest_relation.first
-
-        ingest.request_status = response_hash['status']
-
-        Rails.logger warn "got past first assignment: #{ingest.to_yaml}"
-
+        ingest.request_status = response_hash['status'].to_s
         ingest.medusa_path = response_hash['medusa_path']
         ingest.medusa_uuid = response_hash['medusa_uuid']
         ingest.response_time = Time.now.utc.iso8601
         ingest.save!
-        #Rails.logger.warn "ingest supposedly saved #{ingest.to_yaml}"
       else
-        Rails.logger.warn "could not find ingest record for medusa failure message: #{response_hash['staging_path']}"
+        Rails.logger.warn "could not find ingest record for medusa succeeded message: #{response_hash['staging_path']}"
       end
+
       case staging_path_arr[0]
         when 'uploads'
           datafile = Datafile.find_by_web_id(staging_path_arr[1])
           if datafile
             datafile.medusa_path = response_hash['medusa_path']
-            datafile.binary_size = datafile.binary.size
-            datafile.binary_name = datafile.binary.file.filename
+            datafile.binary_size |= datafile.binary.size
+            datafile.binary_name |= datafile.binary.file.filename
             datafile.medusa_id = response_hash['medusa_uuid']
-            if FileUtils.identical?(datafile.binary.file.filename, "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{self.medusa_path}")
+            if datafile.binary && FileUtils.identical?(datafile.binary.path, "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{datafile.medusa_path}")
               datafile.remove_binary!
               datafile.save
             else
               Rails.logger.warn "Copy unverified for medusa ingest response #{response.to_yaml}"
             end
+          else
+            Rails.logger.warn "Did not find datafile by web_id, staging_path_arr: #{staging_path_arr.to_yaml}"
           end
         else
           Rails.logger.warn "Unrecognized staging_path in medusa ingest response #{response.to_yaml}"
@@ -88,6 +88,7 @@ module MedusaAmqp
       # Rails.logger.warn "inside on_medusa_failed_message"
       ingest = MedusaIngest.where(staging_path: response.staging_path)
       if ingest
+        Rails.logger.warn ingest.to_yaml
         ingest.request_status = response.status
         ingest.error_text = response.error
         ingest.response_time = Time.now.utc.iso8601
@@ -97,25 +98,24 @@ module MedusaAmqp
       end
     end
 
-    def subscribe_to_incoming
-      # Rails.logger.warn "inside subscribe_to_incoming"
-      t = Thread.new do
-        AmqpConnector.instance.with_queue(IDB_CONFIG['medusa']['incoming_queue']) do |queue|
-          AmqpConnector.instance.with_channel do |channel|
-            consumer = MedusaConsumer.new(channel, queue)
-            # Pass block to consumer delivery handler
-            consumer.on_delivery() do |delivery_info, metadata, payload|
-              MedusaIngest.on_medusa_message(payload)
-            end
-            # Register the consumer
-            queue.subscribe_with(consumer)
-
-          end
-        end
-      end
-      t.abort_on_exception = true
-      sleep 0.5
-    end
+    # def subscribe_to_incoming
+    #   # Rails.logger.warn "inside subscribe_to_incoming"
+    #   t = Thread.new do
+    #     AmqpConnector.instance.with_queue(IDB_CONFIG['medusa']['incoming_queue']) do |queue|
+    #       AmqpConnector.instance.with_channel do |channel|
+    #         consumer = MedusaConsumer.new(channel, queue)
+    #         # Pass block to consumer delivery handler
+    #         consumer.on_delivery() do |delivery_info, metadata, payload|
+    #           MedusaIngest.on_medusa_message(payload)
+    #         end
+    #         # Register the consumer
+    #         queue.subscribe_with(consumer)
+    #
+    #       end
+    #     end
+    #   end
+    #   t.abort_on_exception = true
+    # end
 
   end
 

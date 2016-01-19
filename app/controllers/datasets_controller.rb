@@ -598,6 +598,19 @@ class DatasetsController < ApplicationController
 
   end
 
+  def release_standard_embargo
+
+  end
+
+  def release_invisible_embargo
+
+  end
+
+  def set_standard_embargo
+
+  end
+
+
   def update_datacite_metadata
 
     if @dataset.complete?
