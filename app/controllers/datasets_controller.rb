@@ -258,8 +258,9 @@ class DatasetsController < ApplicationController
         if !@dataset.identifier || @dataset.identifier.empty?
           @dataset.identifier = mint_doi
         end
-        medusa_ingest = MedusaIngest.new
+
         @dataset.datafiles.each do |datafile|
+          medusa_ingest = MedusaIngest.new
           full_path = datafile.binary.path
           full_path_arr = full_path.split("/")
           staging_path = "#{full_path_arr[5]}/#{full_path_arr[6]}/#{full_path_arr[7]}"
@@ -597,19 +598,6 @@ class DatasetsController < ApplicationController
     end
 
   end
-
-  def release_standard_embargo
-
-  end
-
-  def release_invisible_embargo
-
-  end
-
-  def set_standard_embargo
-
-  end
-
 
   def update_datacite_metadata
 

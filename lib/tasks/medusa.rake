@@ -7,9 +7,7 @@ namespace :medusa do
   desc 'get a RabbitMQ ingest response message'
   task :get_ingest_response_msg => :environment do
     AmqpConnector.instance.with_message(IDB_CONFIG['medusa']['incoming_queue'], create_medusa_ingest_message(staging_path)) do |payload|
-
     end
-
   end
 
   desc 'simulate RabbitMQ ok response from Medusa'
@@ -35,25 +33,9 @@ namespace :medusa do
 
     msg_hash = {status: 'ok',
                 operation: 'ingest',
-                staging_path: 'uploads/57rbk/test.txt',
-                medusa_path: '57rbk_test.txt',
-                medusa_uuid: '149603bb-0cad-468b-9ef0-e91023a5d458',
-                error: ''}
-
-    # msg_hash = {status: 'ok',
-    #             operation: 'ingest',
-    #             staging_path: 'uploads/nx6x4/stock_unicorn.jpg',
-    #             medusa_path: 'nx6x4_stock_unicorn.jpg',
-    #             medusa_uuid: '149603bb-0cad-468b-9ef0-e91023a5d456',
-    #             error: ''}
-
-    x.publish("#{msg_hash.to_json}", :routing_key => q.name)
-
-    msg_hash = {status: 'ok',
-                operation: 'ingest',
-                staging_path: 'uploads/bqz8o/hello.rb',
-                medusa_path: 'bqz8o_hello.rb',
-                medusa_uuid: '149603bb-0cad-468b-9ef0-e91023a5d459',
+                staging_path: 'uploads/file.txt',
+                medusa_path: 'file.txt',
+                medusa_uuid: '149603bb-0cad-468b-9ef0-e91023a5d460',
                 error: ''}
 
     x.publish("#{msg_hash.to_json}", :routing_key => q.name)
@@ -85,7 +67,7 @@ namespace :medusa do
 
     msg_hash = {status: 'error',
                 operation: 'ingest',
-                staging_path: 'uploads/tbzaq/test.txt',
+                staging_path: 'uploads/test.txt',
                 medusa_path: '',
                 medusa_uuid: '',
                 error: 'malformed thingy'}
@@ -98,7 +80,6 @@ namespace :medusa do
 
   desc 'get Medusa RabbitMQ ingest response messages'
   task :get_medusa_ingest_responses => :environment do
-    puts "getting message"
 
     idbconfig = YAML.load_file(File.join(Rails.root, 'config', 'databank.yml'))[Rails.env]
 

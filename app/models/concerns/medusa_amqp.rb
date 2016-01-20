@@ -44,9 +44,15 @@ module MedusaAmqp
     def on_medusa_succeeded_message(response_hash)
       #Rails.logger.warn "inside on_medusa_succeed_message: #{response_hash.to_yaml}"
       staging_path_arr = (response_hash['staging_path']).split('/')
+
       ingest_relation = MedusaIngest.where("staging_path = ?", response_hash['staging_path'])
-      # Rails.logger.warn ingest_relation.to_yaml
-      # Rails.logger.warn "response_hash['status']: #{response_hash['status']}"
+      Rails.logger.warn "ingest_relation"
+      Rails.logger.warn ingest_relation.to_yaml
+      Rails.logger.warn "response_hash['staging_path']: #{response_hash['staging_path']}"
+
+      MedusaIngest.all.each do |ingest|
+        Rails.logger.warn ingest.staging_path
+      end
 
       if ingest_relation.count > 0
 
@@ -64,19 +70,19 @@ module MedusaAmqp
       case staging_path_arr[0]
         when 'uploads'
           datafile = Datafile.find_by_web_id(staging_path_arr[1])
-          if datafile
+          if datafile && datafile.binary && datafile.binary.file
             datafile.medusa_path = response_hash['medusa_path']
             datafile.binary_size |= datafile.binary.size
             datafile.binary_name |= datafile.binary.file.filename
             datafile.medusa_id = response_hash['medusa_uuid']
-            if datafile.binary && FileUtils.identical?(datafile.binary.path, "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{datafile.medusa_path}")
+            if File.exists?("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{datafile.medusa_path}") &&  datafile.binary && FileUtils.identical?(datafile.binary.path, "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{datafile.medusa_path}")
               datafile.remove_binary!
               datafile.save
             else
               Rails.logger.warn "Copy unverified for medusa ingest response #{response.to_yaml}"
             end
           else
-            Rails.logger.warn "Did not find datafile by web_id, staging_path_arr: #{staging_path_arr.to_yaml}"
+            Rails.logger.warn "Did not find datafile binary, staging_path_arr: #{staging_path_arr.to_yaml}"
           end
         else
           Rails.logger.warn "Unrecognized staging_path in medusa ingest response #{response.to_yaml}"
