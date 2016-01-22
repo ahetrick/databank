@@ -179,28 +179,22 @@ class DatasetsController < ApplicationController
   # PATCH/PUT /datasets/1.json
   def update
 
-    completion_check_response = @dataset.completion_check
-
-    if completion_check_response == 'ok'
-      @dataset.complete = true
-    else
-      @dataset.complete = false
-    end
-
     respond_to do |format|
+
       if @dataset.update(dataset_params)
 
         if @dataset.complete?
           update_datacite_metadata
         end
+
         format.html { redirect_to dataset_path(@dataset.key), notice: 'Dataset was successfully updated.' }
         format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
       else
         format.html { render :edit }
         format.json { render json: @dataset.errors, status: :unprocessable_entity }
       end
-    end
 
+    end
 
   end
 
@@ -216,9 +210,7 @@ class DatasetsController < ApplicationController
 
   def deposit
 
-    completion_check_response = @dataset.completion_check
-
-    if completion_check_response == 'ok'
+    if completion_check == 'ok'
       @dataset.complete = true
     else
       @dataset.complete = false
@@ -250,8 +242,8 @@ class DatasetsController < ApplicationController
           format.json { render json: @dataset.errors, status: :unprocessable_entity }
         end
       else
-        format.html { redirect_to edit_dataset_path(@dataset.key), notice: completion_check_response }
-        format.json {render json: validation_error_message, status: :unprocessable_entity}
+        format.html { redirect_to edit_dataset_path(@dataset.key), notice: completion_check }
+        format.json {render json: completion_check, status: :unprocessable_entity}
       end
     end
 
@@ -673,7 +665,7 @@ class DatasetsController < ApplicationController
     end
 
     if validation_error_messages.length > 0
-      validation_error_message << "Required elements for depositing a dataset missing: "
+      validation_error_message << "Required elements for a complete dataset missing: "
       validation_error_messages.each_with_index do |m, i|
         if i > 0
           validation_error_message << ", "
