@@ -8,10 +8,12 @@ Bundler.require(*Rails.groups)
 
 module Databank
 
-  class EmbargoState
+  class PublicationState
+    DRAFT = 'draft'
     RELEASED = 'released'
-    STANDARD = 'standard'
-    INVISIBLE = 'invisible'
+    STANDARD_EMBARGO = 'standard embargo'
+    INVISIBLE_EMBARGO = 'invisible embargo'
+    TOMBSTONE = 'tombstone'
   end
 
   class Application < Rails::Application

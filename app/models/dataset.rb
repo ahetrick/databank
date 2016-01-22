@@ -13,6 +13,7 @@ class Dataset < ActiveRecord::Base
   before_create 'set_key'
   before_save 'set_primary_contact'
   after_save 'remove_invalid_datafiles'
+  after_update 'set_has_datacite_changes'
 
   KEY_LENGTH = 5
 
@@ -74,6 +75,7 @@ class Dataset < ActiveRecord::Base
     end
 
     contact = Creator.where(dataset_id: self.id, is_contact: true).first
+    raise ActiveRecord::RecordNotFound unless contact
 
     doc = Nokogiri::XML::Document.parse(%Q(<?xml version="1.0"?><resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd"></resource>))
     resourceNode = doc.first_element_child
@@ -120,16 +122,18 @@ class Dataset < ActiveRecord::Base
     contributorNode['contributorType'] = "ContactPerson"
     contributorNode.parent = contributorsNode
 
-    contributorNameNode = doc.create_element('contributorName')
-    contributorNameNode.content = "#{contact.family_name}, #{contact.given_name}"
-    contributorNameNode.parent = contributorNode
+    if contact.family_name && contact.given_name
+      contributorNameNode = doc.create_element('contributorName')
+      contributorNameNode.content = "#{contact.family_name}, #{contact.given_name}"
+      contributorNameNode.parent = contributorNode
 
-    if contact.identifier && contact.identifier != ""
-      contributorIdentifierNode = doc.create_element('nameIdentifier')
-      contributorIdentifierNode["schemeURI"] = "http://orcid.org/"
-      contributorIdentifierNode["nameIdentifierScheme"] = "ORCID"
-      contributorIdentifierNode.content = "#{contact.identifier}"
-      contributorIdentifierNode.parent = contributorNode
+      if contact.identifier && contact.identifier != ""
+        contributorIdentifierNode = doc.create_element('nameIdentifier')
+        contributorIdentifierNode["schemeURI"] = "http://orcid.org/"
+        contributorIdentifierNode["nameIdentifierScheme"] = "ORCID"
+        contributorIdentifierNode.content = "#{contact.identifier}"
+        contributorIdentifierNode.parent = contributorNode
+      end
     end
 
     publisherNode = doc.create_element('publisher')
@@ -244,6 +248,10 @@ class Dataset < ActiveRecord::Base
   end
 
   def set_primary_contact
+
+    self.corresponding_creator_name = nil
+    self.corresponding_creator_email = nil
+
     self.creators.each do |creator|
       if creator.is_contact?
         self.corresponding_creator_name = "#{creator.given_name} #{creator.family_name}"
@@ -258,6 +266,10 @@ class Dataset < ActiveRecord::Base
         datafile.destroy
       end
     end
+  end
+
+  def set_has_datacite_changes
+
   end
 
 end

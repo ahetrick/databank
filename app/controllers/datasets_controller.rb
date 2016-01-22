@@ -19,7 +19,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :review_deposit_agreement
   skip_load_and_authorize_resource :only => :datacite_record
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text ]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :completion_check ]
 
   @@num_box_ingest_deamons = 10
 
@@ -179,6 +179,16 @@ class DatasetsController < ApplicationController
   # PATCH/PUT /datasets/1.json
   def update
 
+    completion_check_response = @dataset.completion_check
+
+    if completion_check_response == 'ok'
+      @dataset.complete = true
+    else
+      @dataset.complete = false
+    end
+
+    if @dataset.complete || @dataset
+
     respond_to do |format|
       if @dataset.update(dataset_params)
 
@@ -206,52 +216,14 @@ class DatasetsController < ApplicationController
   end
 
   def deposit
-    @dataset.complete = true
-    validation_error_messages = Array.new
-    validation_error_message = ""
 
+    completion_check_response = @dataset.completion_check
 
-    if !@dataset.title || @dataset.title.empty?
+    if completion_check_response == 'ok'
+      @dataset.complete = true
+    else
       @dataset.complete = false
-      validation_error_messages << "title"
     end
-
-    if @dataset.creator_list.empty?
-      @dataset.complete = false
-      validation_error_messages << "at least one creator"
-    end
-
-    if !@dataset.license || @dataset.license.empty?
-      @dataset.complete = false
-      validation_error_messages << "license"
-    end
-
-    if !@dataset.corresponding_creator_name || @dataset.corresponding_creator_name.empty?
-      @dataset.complete = false
-      validation_error_messages << "at least one primary long term contact"
-    end
-
-    if !@dataset.corresponding_creator_email || @dataset.corresponding_creator_email.empty?
-      @dataset.complete = false
-      validation_error_messages << "email address for primary long term contact"
-    end
-
-    if @dataset.datafiles.count < 1
-      @dataset.complete = false
-      validation_error_messages << "at least one file"
-    end
-
-    if validation_error_messages.length > 0
-      validation_error_message << "Required elements for depositing a dataset missing: "
-      validation_error_messages.each_with_index do |m, i|
-        if i > 0
-          validation_error_message << ", "
-        end
-        validation_error_message << m
-      end
-      validation_error_message << "."
-    end
-
 
     respond_to do |format|
       if @dataset.complete?
@@ -279,7 +251,7 @@ class DatasetsController < ApplicationController
           format.json { render json: @dataset.errors, status: :unprocessable_entity }
         end
       else
-        format.html { redirect_to edit_dataset_path(@dataset.key), notice: validation_error_message }
+        format.html { redirect_to edit_dataset_path(@dataset.key), notice: completion_check_response }
         format.json {render json: validation_error_message, status: :unprocessable_entity}
       end
     end
@@ -663,6 +635,57 @@ class DatasetsController < ApplicationController
     # remove last newline. there is probably a really good way to
     # avoid adding it in the first place. if you know it, please fix.
     anvl.strip.encode!('UTF-8')
+  end
+
+  def completion_check
+    response = 'ok'
+    validation_error_messages = Array.new
+    validation_error_message = ""
+
+    if !@dataset.title || @dataset.title.empty?
+      validation_error_messages << "title"
+    end
+
+    if @dataset.creator_list.empty?
+      validation_error_messages << "at least one creator"
+    end
+
+    if !@dataset.license || @dataset.license.empty?
+      validation_error_messages << "license"
+    end
+
+    contact = nil
+    @dataset.creators.each do |creator|
+      if creator.is_contact?
+        contact = creator
+      end
+    end
+
+    unless contact
+      validation_error_messages << "at least one primary long term contact"
+    end
+
+    if contact.nil? || !contact.email || contact.email == ""
+      validation_error_messages << "email address for primary long term contact"
+    end
+
+    if @dataset.datafiles.count < 1
+      validation_error_messages << "at least one file"
+    end
+
+    if validation_error_messages.length > 0
+      validation_error_message << "Required elements for depositing a dataset missing: "
+      validation_error_messages.each_with_index do |m, i|
+        if i > 0
+          validation_error_message << ", "
+        end
+        validation_error_message << m
+      end
+      validation_error_message << "."
+
+      response = validation_error_message
+    end
+    response
   end
 
 end

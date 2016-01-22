@@ -21,3 +21,9 @@ cc0BY4.save!
 custom = License.find_or_initialize_by(code: "license.txt")
 custom.name = "See license.txt file in dataset"
 custom.save!
+
+#set datacite change indicator to false where it is nil
+Dataset.where(has_datacite_change: nil).each do |dataset|
+  dataset.has_datacite_change = false;
+  dataset.save!
+end
