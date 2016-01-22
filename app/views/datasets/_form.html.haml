@@ -34,6 +34,7 @@
       .panel-collapse.collapse.in(id="descriptionPanel" role="tabpanel" aria-labelledby="descriptionHeading" )
         .panel-body
           = form_for(@dataset, :html => {"data-toggle" => "validator", :multipart => true, :role => "form", :enctype => "multipart/form-data", :class => "container-fluid input-append dataset-form" }) do |f|
+
             - if @dataset.errors.any?
               .error_explaination
                 = "#{pluralize(@dataset.errors.count, "error")} prohibited this dataset from being deposited."
@@ -61,7 +62,7 @@
             )
             %br
             %input(type="hidden" name="creator_index_list" id="creator_index_list" value="" )
-
+            = f.hidden_field :complete
             %table(id="creator_table" class="table table-striped" )
               %thead
                 %tr(class="row" )
@@ -109,7 +110,8 @@
                     %td(class="col-md-2")
                       = cf.email_field :email, class: "form-control dataset creator-email", placeholder: "[Email, e.g.: jws@example.edu]", onchange: "handle_creator_email_change(this)"
                     %td(class="col-md-1" align="center" )
-                      %input(name="dataset[creators_attributes][#{i}][is_contact]" type="hidden" value="#{creator.is_contact?}")
+                      = cf.hidden_field :is_contact
+                      -#%input(name="dataset[creators_attributes][#{i}][is_contact]" type="hidden" value="#{creator.is_contact?}")
                       - if creator.is_contact?
                         %input(type="radio" name="primary_contact" class="dataset contact_radio" value="#{i}" onchange="handle_contact_change()" checked="true" )
                       -else

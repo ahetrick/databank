@@ -42,7 +42,7 @@ function add_creator_row(){
         '<td class="col-md-2">' +
         '<input onchange="handle_creator_email_change(this)" class="form-control dataset creator-email" placeholder="[Email, e.g.: jws@example.edu]" type="email" name="dataset[creators_attributes][' + newId + '][email]" id="dataset_creators_attributes_' + newId + '_email" />' +
         '</td>' +
-        '<td class="col-md-1" align="center"><input name="dataset[creators_attributes][' +  newId + '][is_contact]" type="hidden" value="false"><input class="dataset contact_radio" name="primary_contact" onchange="handle_contact_change()" type="radio" value="false"></td>' +
+        '<td class="col-md-1" align="center"><input name="dataset[creators_attributes][' +  newId + '][is_contact]" type="hidden" value="false" id="dataset_creators_attributes_' + newId + '_is_contact"><input class="dataset contact_radio" name="primary_contact" onchange="handle_contact_change()" type="radio" value="false"></td>' +
         '<td class="col-md-1"></td>' +
         '</tr>';
     $("#creator_table tbody:last-child").append(creator_row);
@@ -54,20 +54,28 @@ function add_creator_row(){
 }
 
 function remove_creator_row(creator_index) {
-    if($("#dataset_creators_attributes_" + creator_index + "_id").val() != undefined) {
-        $("#dataset_creators_attributes_" + creator_index + "__destroy").val("true");
+
+    // do not allow removal of primary contact for published dataset
+
+    if ( ($("input[name='dataset[complete]']").val() == 'true') && ($("#dataset_creators_attributes_" + creator_index + "_is_contact").val() == 'true'))  {
+     alert("The primary long term contact for a published dataset may not be removed.  To delete this author listing, first select a different contact.")
     }
+    else {
+        if ($("#dataset_creators_attributes_" + creator_index + "_id").val() != undefined) {
+            $("#dataset_creators_attributes_" + creator_index + "__destroy").val("true");
+        }
 
-    $("#deleted_creator_table > tbody:last-child").append($("#creator_index_" + creator_index));
+        $("#deleted_creator_table > tbody:last-child").append($("#creator_index_" + creator_index));
 
-    $("#creator_index_" + creator_index).hide();
-    $('#creator_table').sortable('refresh');
+        $("#creator_index_" + creator_index).hide();
+        $('#creator_table').sortable('refresh');
 
-    if ($("#creator_table tr").length < 2){
-        add_creator_row();
+        if ($("#creator_table tr").length < 2) {
+            add_creator_row();
+        }
+        handleCreatorTable();
+        generate_creator_preview();
     }
-    handleCreatorTable();
-    generate_creator_preview();
 }
 
 function initialize_creator_index_list(){
