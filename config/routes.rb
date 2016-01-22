@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  #special temporary work-around
+  get '/datasets/r1epy', to: redirect('https://www.ideals.illinois.edu/handle/2142/65511')
 
   resources :medusa_ingests
   resources :licenses
@@ -12,7 +14,7 @@ Rails.application.routes.draw do
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
-
+  
   # You can have the root of your site routed with "root"
   root 'welcome#index'
 

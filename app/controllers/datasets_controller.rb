@@ -19,7 +19,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :review_deposit_agreement
   skip_load_and_authorize_resource :only => :datacite_record
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :completion_check ]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :completion_check, :change_publication_state ]
 
   @@num_box_ingest_deamons = 10
 
@@ -511,6 +511,77 @@ class DatasetsController < ApplicationController
     end
   end
 
+  # def change_publication_state(new_state)
+  #   @dataset.publication_state |= PublicationState::DRAFT
+  #   unless (new_state == @dataset.publication_state)
+  #
+  #     case new_state
+  #       when PublicationState::DRAFT
+  #         case @dataset.publication_state
+  #
+  #           when PublicationState::RELEASED
+  #             #TODO
+  #           when PublicationState::STANDARD_EMBARGO
+  #             #TODO
+  #           when PublicationState::INVISIBLE_EMBARGO
+  #             #TODO
+  #           when PublicationState::TOMBSTONE
+  #             #TODO
+  #         end
+  #
+  #       when PublicationState::RELEASED
+  #         case @dataset.publication_state
+  #           when PublicationState::DRAFT
+  #             #TODO
+  #           when PublicationState::STANDARD_EMBARGO
+  #             #TODO
+  #           when PublicationState::INVISIBLE_EMBARGO
+  #             #TODO
+  #           when PublicationState::TOMBSTONE
+  #             #TODO
+  #         end
+  #
+  #       when PublicationState::STANDARD_EMBARGO
+  #         case @dataset.publication_state
+  #           when PublicationState::DRAFT
+  #             #TODO
+  #           when PublicationState::RELEASED
+  #             #TODO
+  #           when PublicationState::INVISIBLE_EMBARGO
+  #             #TODO
+  #           when PublicationState::TOMBSTONE
+  #             #TODO
+  #         end
+  #
+  #       when PublicationState::INVISIBLE_EMBARGO
+  #         case @dataset.publication_state
+  #           when PublicationState::DRAFT
+  #             #TODO
+  #           when PublicationState::RELEASED
+  #             #TODO
+  #           when PublicationState::STANDARD_EMBARGO
+  #             #TODO
+  #           when PublicationState::TOMBSTONE
+  #             #TODO
+  #         end
+  #
+  #       when PublicationState::TOMBSTONE
+  #         case @dataset.publication_state
+  #           when PublicationState::DRAFT
+  #             #TODO
+  #           when PublicationState::RELEASED
+  #             #TODO
+  #           when PublicationState::STANDARD_EMBARGO
+  #             #TODO
+  #           when PublicationState::INVISIBLE_EMBARGO
+  #             #TODO
+  #
+  #         end
+  #       end
+  #     end
+  #   end
+  # end
+
   def mint_doi
 
     host = IDB_CONFIG[:ezid_host]
@@ -564,7 +635,7 @@ class DatasetsController < ApplicationController
 
   def update_datacite_metadata
 
-    if @dataset.complete?
+    if completion_check = 'ok'
 
       host = IDB_CONFIG[:ezid_host]
       user = IDB_CONFIG[:ezid_username]
@@ -610,7 +681,7 @@ class DatasetsController < ApplicationController
           raise "error updating DataCite metadata"
       end
     else
-      Rails.logger.warn "dataset not detected as complete"
+      Rails.logger.warn "dataset not detected as complete - #{completion_check}"
     end
 
   end

@@ -13,7 +13,6 @@ class Dataset < ActiveRecord::Base
   before_create 'set_key'
   before_save 'set_primary_contact'
   after_save 'remove_invalid_datafiles'
-  after_update 'set_has_datacite_changes'
 
   KEY_LENGTH = 5
 
@@ -268,8 +267,7 @@ class Dataset < ActiveRecord::Base
     end
   end
 
-  def set_has_datacite_changes
 
-  end
+
 
 end
