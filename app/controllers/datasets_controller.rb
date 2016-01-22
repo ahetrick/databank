@@ -187,8 +187,6 @@ class DatasetsController < ApplicationController
       @dataset.complete = false
     end
 
-    if @dataset.complete || @dataset
-
     respond_to do |format|
       if @dataset.update(dataset_params)
 
@@ -202,6 +200,7 @@ class DatasetsController < ApplicationController
         format.json { render json: @dataset.errors, status: :unprocessable_entity }
       end
     end
+
 
   end
 
