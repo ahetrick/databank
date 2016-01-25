@@ -1,8 +1,8 @@
 include ActionView::Helpers::NumberHelper # to pass a display value to a javascript function that adds characters to view
 
 class DatafilesController < ApplicationController
-  before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download]
 
+  before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download]
   # GET /datafiles
   # GET /datafiles.json
   def index

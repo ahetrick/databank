@@ -1,8 +1,8 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Listing Creators</h1>
+<h1>Creators Listing for Curator Use</h1>
 
-<table>
+<table class="table table-striped">
   <thead>
     <tr>
       <th>Dataset</th>
@@ -18,16 +18,17 @@
 
   <tbody>
     <% @creators.each do |creator| %>
-      <tr>
-        <td><%= creator.dataset_id %></td>
-        <td><%= creator.family_name %></td>
-        <td><%= creator.given_name %></td>
-        <td><%= creator.institution_name %></td>
-        <td><%= creator.identifier %></td>
-        <td><%= creator.type %></td>
-        <td><%= creator.row_order %></td>
-
-      </tr>
+      <% if (can? :manage, creator)%>
+        <tr>
+          <td><%= creator.dataset_id %></td>
+          <td><%= creator.family_name %></td>
+          <td><%= creator.given_name %></td>
+          <td><%= creator.institution_name %></td>
+          <td><%= creator.identifier %></td>
+          <td><%= creator.type %></td>
+          <td><%= creator.row_order %></td>
+        </tr>
+     <% end %>
     <% end %>
   </tbody>
 </table>

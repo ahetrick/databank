@@ -749,5 +749,4 @@ class DatasetsController < ApplicationController
     end
     response
   end
-
 end

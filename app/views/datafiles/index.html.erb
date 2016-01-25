@@ -1,8 +1,7 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Listing Datafiles</h1>
-
-<table>
+<h1>Listing Datafiles for Curators</h1>
+<table class="table table-striped">
   <thead>
     <tr>
       <th>Description</th>
@@ -15,6 +14,7 @@
 
   <tbody>
     <% @datafiles.each do |datafile| %>
+    <% if (can? :manage, datafile) %>
       <tr>
         <td><%= link_to "datafile/#{datafile.web_id}/download", :class => "btn btn-primary btn-sm" do %>
             <span class="glyphicon glyphicon-download"></span> Download
@@ -44,9 +44,8 @@
 
       </tr>
     <% end %>
+    <% end %>
   </tbody>
 </table>
 
 <br>
-
-<%= link_to 'New Datafile', new_datafile_path %>
