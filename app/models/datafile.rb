@@ -10,6 +10,8 @@ class Datafile < ActiveRecord::Base
   before_destroy 'destroy_job'
   before_destroy 'remove_directory'
 
+  after_save 'chmod_binary_for_medusa'
+
   def to_param
     self.web_id
   end
@@ -89,6 +91,12 @@ class Datafile < ActiveRecord::Base
       break unless self.class.find_by_web_id(proposed_id)
     end
     proposed_id
+  end
+
+  def chmod_binary_for_medusa
+    if self.binary && self.binary.file
+      FileUtils.chmod "u=wrx,go=r", self.binary.path
+    end
   end
 
 end
