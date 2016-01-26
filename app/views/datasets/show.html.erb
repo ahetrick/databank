@@ -113,11 +113,17 @@
           <%= (!@dataset.corresponding_creator_email || @dataset.corresponding_creator_email.empty?) ? "[corresponding creator email not provided]" : @dataset.corresponding_creator_email %>
         </span>
       <span class="col-md-6">
-          <span class="metadata-label">Depositor Email:</span>
+        <span class="metadata-label">Depositor Email:</span>
         <%= @dataset.depositor_email %>
         </span>
       </div>
     <% end %>
+    <div class="row">
+      <span class="col-md-6">
+        <span class="metadata-label">Version:</span>
+        <%= @dataset.version %>
+      </span>
+    </div>
     <div class="row">
       <span class="col-md-6">
         <span class="metadata-label">License:</span>

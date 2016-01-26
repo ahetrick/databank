@@ -140,16 +140,21 @@
 
             - if can? :manage, @dataset
               .row
-                %span(class="col-md-6" )
+                %span(class="col-md-4" )
                   .form-group.curator-only
                     = f.label :identifier, "DOI", :class => "control-label"
                     %br
                     = f.text_field :identifier, :class => "form-control dataset", :placeholder => "[Leave blank if requesting a DOI.]"
-                %span(class="col-md-6" )
+                %span(class="col-md-4" )
                   .form-group.curator-only
                     = f.label :publication_year, "Publication Year", :class => "control-label"
                     %br
                     = f.number_field :publication_year, :value => "#{Time.now.year}", :class => "form-control dataset", :min => "1800", :max => "#{Time.now.year + 1}", :maxlength => 4
+                %span(class="col-md-4" )
+                  .form-group.curator-only
+                    =f.label :version, "Version", :class => "control-label"
+                    %br
+                    =f.text_field :version, :class => "form-control dataset"
             - else
               = f.hidden_field :publication_year, :value => "#{Time.now.year}"
 
