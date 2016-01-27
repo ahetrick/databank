@@ -1,4 +1,4 @@
-#!/usr/bin/env bash --login
+#!/usr/bin/env bash
 
 rvm use 2.2.1@idb_v1
 touch log/get_medusa_message.log
