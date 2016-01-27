@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash --login
 FILES=/tmp/RackMulti*
 for f in $FILES
 do
