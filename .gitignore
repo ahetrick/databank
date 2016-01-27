@@ -21,6 +21,7 @@ config/shibboleth.yml
 public/uploads
 config/unicorn.rb
 mock_medusa
+/scripts
 
 prod_start.sh
 prod_restart.sh

@@ -30,7 +30,7 @@ set :unicorn_config_path, '/home/databank/current/config/unicorn.rb'
 set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'config/secrets.yml', 'config/databank.yml', 'config/shibboleth.yml', 'config/unicorn.rb')
 
 # Default value for linked_dirs is []
-set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'tmp/uploads', 'tmp/sessions')
+set :linked_dirs, fetch(:linked_dirs, []).push('log', 'scripts', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'tmp/uploads', 'tmp/sessions')
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
