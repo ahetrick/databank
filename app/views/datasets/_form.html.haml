@@ -1,211 +1,180 @@
 %div(id="wrapper")
   %div(id="main-form-top")
-    - if params[:action] == 'new'
-      .deposit-agreement-warning
-        You must agree to the Deposit Agreement before depositing data into Illinois Data Bank.
-        %button(type="button" id="show-agreement-modal-link" class="btn btn-primary deposit-agreement-btn" data-toggle="modal" data-target="#agreement") Deposit Agreement
-        %a(href="http://researchdataservice.illinois.edu/contact-us/" class="btn btn-success" role="button")
-          %span(class="glyphicon glyphicon-question-sign")
-          Help
-        %button(type="button" class="btn btn-danger" name="cancel" onclick='window.location = "/"' )Cancel
+    - if (can? :edit, @dataset)
+      = render partial: 'dashboard'
+    .panel-group(id="description" role="tablist" aria-multiselectable="true")
+      .panel.panel-default
+        .panel-heading(role="tab" id="descriptionHeading")
+          %h4(class="panel-title")
+            %a(role="button" data-toggle="collapse" data-parent="#description" href="#descriptionPanel" aria-expanded="true" aria-controls="descriptionPanel")
+              %span( class="metadata-label" )
+                Citation Preview:
+              %span( id="creator-preview" )
+                = @dataset.creator_list && @dataset.creator_list != "" ? @dataset.creator_list : "[Creator List]"
+              %span( id="year-preview" )
+                = @dataset.publication_year && @dataset.publication_year != "" ? "(#{@dataset.publication_year})" : "(#{Time.now.year}):"
+              %span( id="title-preview" )
+                = @dataset.title && @dataset.title != "" ? "#{@dataset.title}." : "[The Title]."
+              University of Illinois at Urbana-Champaign.
+              %span( id="doi-preview" )
+                = @dataset.identifier && @dataset.identifier != "" ? "http://dx.doi.org/#{@dataset.identifier}" : ""
 
+        .panel-collapse.collapse.in(id="descriptionPanel" role="tabpanel" aria-labelledby="descriptionHeading" )
+          .panel-body
+            = form_for(@dataset, :html => {"data-toggle" => "validator", :multipart => true, :role => "form", :enctype => "multipart/form-data", :class => "container-fluid input-append dataset-form" }) do |f|
 
-  .panel-group(id="description" role="tablist" aria-multiselectable="true")
-    .panel.panel-default
-      .panel-heading(role="tab" id="descriptionHeading")
-        %h4(class="panel-title")
-          %a(role="button" data-toggle="collapse" data-parent="#description" href="#descriptionPanel" aria-expanded="true" aria-controls="descriptionPanel")
-            %span( class="metadata-label" )
-              Description
-            (expand to edit dataset description fields)
-        %br
-        %span( class="metadata-label" )
-          citation preview:
-        %span( id="creator-preview" )
-          = @dataset.creator_list && @dataset.creator_list != "" ? @dataset.creator_list : "[Creator List]"
-        %span( id="year-preview" )
-          = @dataset.publication_year && @dataset.publication_year != "" ? "(#{@dataset.publication_year})" : "(#{Time.now.year}):"
-        %span( id="title-preview" )
-          = @dataset.title && @dataset.title != "" ? "#{@dataset.title}." : "[The Title]."
-        University of Illinois at Urbana-Champaign.
-        %span( id="doi-preview" )
-          = @dataset.identifier && @dataset.identifier != "" ? "http://dx.doi.org/#{@dataset.identifier}" : ""
-
-      .panel-collapse.collapse.in(id="descriptionPanel" role="tabpanel" aria-labelledby="descriptionHeading" )
-        .panel-body
-          = form_for(@dataset, :html => {"data-toggle" => "validator", :multipart => true, :role => "form", :enctype => "multipart/form-data", :class => "container-fluid input-append dataset-form" }) do |f|
-
-            - if @dataset.errors.any?
-              .error_explaination
-                = "#{pluralize(@dataset.errors.count, "error")} prohibited this dataset from being deposited."
-                %ul
-                  - @dataset.errors.full_messages.each do |msg|
-                    %li
-                      = msg
-            .row
-              .col-md-6
-                .form-group.required
-                  = f.label :title, "Dataset Title", :class => "control-label"
-                  %br
-                  = f.text_field :title, :class => "form-control dataset", :placeholder => "[The Title]"
-              .col-md-6
-                .form-group.required
-                  = f.label :license, "License", :class => "control-label"
-                  %a(href="#" data-toggle="modal" data-target="#licenseModal" tabindex="-1")
-                    %span(class="glyphicon glyphicon-question-sign")
-                  = f.collection_select :license, License.order('code ASC'), :code, :name, {:prompt => true}, {:class => "form-control dataset"}
-
-            %label(class="control-label required")
-              Author List
-            (One primary long term contact required.
-            %span(id="email_required_span") Email Required for primary contact.
-            )
-            %br
-            %input(type="hidden" name="creator_index_list" id="creator_index_list" value="" )
-            = f.hidden_field :complete
-            %table(id="creator_table" class="table table-striped" )
-              %thead
-                %tr(class="row" )
-                  %th(class="col-md-1")
-                  %th(class="col-md-2")
-                    .form-heading-required
-                      Family Name
-                  %th(class="col-md-2")
-                    .form-heading-required
-                      Given Name
-                  %th(class="col-md-2")
-                    ORCID® iD
-                  %th(class="col-md-1" )
-                  %th(class="col-md-2")
-                    Email
-                  %th(class="col-md-1" )
-                    .form-heading-required
-                      Contact
-                  %th(class="col-md-1")
-
-              %tbody
-
-              - @dataset.creators.each_with_index do |creator, i|
-
-                = f.fields_for :creators, creator do |cf|
-                  %tr(class="item row" id="creator_index_#{i}" )
-
-                    %td(class="col-md-1")
-                    -# row position handle and author position value inserted via AJAX
-                    %td(class="col-md-2")
-                      = cf.hidden_field :_destroy, value: false
-                      = cf.hidden_field :row_position # value set via AJAX
-                      = cf.hidden_field :type_of, value: Creator::PERSON
-                      = cf.text_field :family_name, class: "form-control dataset creator", placeholder: "[Family Name, e.g.: Smith]", onchange: "generate_creator_preview()"
-                    %td(class="col-md-2")
-                      = cf.text_field :given_name, class: "form-control dataset creator", placeholder: "[Given Name, e.g.: John W., Jr. ]", onchange: "generate_creator_preview()"
-                    %td(class="col-md-2")
-                      = cf.text_field :identifier, class: "form-control dataset", "data-mask" => "9999-9999-9999-999*", placeholder: "[xxxx-xxxx-xxxx-xxxx]"
-                      = cf.hidden_field :identifier_scheme, value: "ORCID"
-                    %td(class="col-md-1" )
-                      %button(type="button" class="btn btn-primary btn-sm orcid-search-btn" onclick="showOrcidSearchModal('#{i}')" )
-                        %span(class="glyphicon glyphicon-search" )
-                        Look Up
-                    %td(class="col-md-2")
-                      = cf.email_field :email, class: "form-control dataset creator-email", placeholder: "[Email, e.g.: netid@illinois.edu]", onchange: "handle_creator_email_change(this)"
-                    %td(class="col-md-1" align="center" )
-                      = cf.hidden_field :is_contact
-                      -#%input(name="dataset[creators_attributes][#{i}][is_contact]" type="hidden" value="#{creator.is_contact?}")
-                      - if creator.is_contact?
-                        %input(type="radio" name="primary_contact" class="dataset contact_radio" value="#{i}" onchange="handle_contact_change()" checked="true" )
-                      -else
-                        %input(type="radio" name="primary_contact" class="dataset contact_radio" value="#{i}" onchange="handle_contact_change()" )
-                    %td(class="col-md-1")
-                      -# Add/Remove Creator buttons inserted via ajax
-            %table(id="deleted_creator_table")
-              %tbody
-
-            .field
-              = f.hidden_field :publisher, :value=>"University of Illinois at Urbana-Champaign"
-
-            .form-group
-              = f.label :description, "Dataset Description", :class => "control-label"
-              %br
-              = f.text_area :description, :rows => 3,  :class => "form-control dataset", :placeholder => "[Description of this dataset, including an overview of content, structure, and format.]"
-
-            .form-group
-              = f.label :keywords, "Keywords (Semi-colon delimted list)", :class => "control-label"
-              %br
-              = f.text_field :keywords, :class => "form-control dataset", :placeholder => "[Semi-colon separated list of keywords or phrases, e.g.: (institutional repositories; file formats)]"
-              %span(class="help-block") Use a semi-colon (;) to separate keywords or phrases (e.g.: institutional repositories; file formats).
-
-            = f.hidden_field :depositor_email, :class => "form-control", :id => "depositor_email", :title => "Must agree to deposit agreement to deposit data.", :required => true
-
-            = f.hidden_field :depositor_name, :class => "form-control", :id => "depositor_name"
-
-            - if can? :manage, @dataset
+              - if @dataset.errors.any?
+                .error_explaination
+                  = "#{pluralize(@dataset.errors.count, "error")} prohibited this dataset from being deposited."
+                  %ul
+                    - @dataset.errors.full_messages.each do |msg|
+                      %li
+                        = msg
               .row
-                %span(class="col-md-4" )
-                  .form-group.curator-only
-                    = f.label :identifier, "DOI", :class => "control-label"
+                .col-md-6
+                  .form-group.required
+                    = f.label :title, "Dataset Title", :class => "control-label"
                     %br
-                    = f.text_field :identifier, :class => "form-control dataset", :placeholder => "[Leave blank if requesting a DOI.]"
-                %span(class="col-md-4" )
-                  .form-group.curator-only
-                    = f.label :publication_year, "Publication Year", :class => "control-label"
-                    %br
-                    = f.number_field :publication_year, :value => "#{Time.now.year}", :class => "form-control dataset", :min => "1800", :max => "#{Time.now.year + 1}", :maxlength => 4
-                %span(class="col-md-4" )
-                  .form-group.curator-only
-                    =f.label :version, "Version", :class => "control-label"
-                    %br
-                    =f.text_field :version, :class => "form-control dataset"
-            - else
-              = f.hidden_field :publication_year, :value => "#{Time.now.year}"
+                    = f.text_field :title, :class => "form-control dataset", :placeholder => "[The Title]"
+                .col-md-6
+                  .form-group.required
+                    = f.label :license, "License", :class => "control-label"
+                    %a(href="#" data-toggle="modal" data-target="#licenseModal" tabindex="-1")
+                      %span(class="glyphicon glyphicon-question-sign")
+                    = f.collection_select :license, License.order('code ASC'), :code, :name, {:prompt => true}, {:class => "form-control dataset"}
 
-  .panel-group(id="funder" role="tablist" aria-multiselectable="true")
-    .panel.panel-default
-      .panel-heading(role="tab" id="funderHeading")
-        %h4(class="panel-title")
-          %a(role="button" data-toggle="collapse" data-parent="#funder" href="#funderPanel" aria-expanded="false" aria-controls="funderPanel" class="collapsed" )
-            %span( class="metadata-label" ) Funder
-      .panel-collapse.collapse(id="funderPanel" role="tabpanel" aria-labelledby="funderHeading" )
-        .panel-body
-          Funder Form Placeholder
+              %label(class="control-label required")
+                Author List
+              (One primary long term contact required.
+              %span(id="email_required_span") Email Required for primary contact.
+              )
+              %br
+              %input(type="hidden" name="creator_index_list" id="creator_index_list" value="" )
+              = f.hidden_field :complete
+              %table(id="creator_table" class="table table-striped" )
+                %thead
+                  %tr(class="row" )
+                    %th(class="col-md-1")
+                    %th(class="col-md-2")
+                      .form-heading-required
+                        Family Name
+                    %th(class="col-md-2")
+                      .form-heading-required
+                        Given Name
+                    %th(class="col-md-2")
+                      ORCID® iD
+                    %th(class="col-md-1" )
+                    %th(class="col-md-2")
+                      Email
+                    %th(class="col-md-1" )
+                      .form-heading-required
+                        Contact
+                    %th(class="col-md-1")
 
-  .panel-group(id="related" role="tablist" aria-multiselectable="true")
-    .panel.panel-default
-      .panel-heading(role="tab" id="relatedHeading")
-        %h4(class="panel-title")
-          %a(role="button" data-toggle="collapse" data-parent="#related" href="#relatedPanel" aria-expanded="false" aria-controls="relatedPanel" class="collapsed" )
-            %span( class="metadata-label" ) Related Materials
-      .panel-collapse.collapse(id="relatedPanel" role="tabpanel" aria-labelledby="relatedHeading" )
-        .panel-body
-          Related Materials Form Placeholder
+                %tbody
 
-  .panel-group(id="funder" role="tablist" aria-multiselectable="true")
-    .panel.panel-default
-      .panel-heading(role="tab" id="embargoHeading")
-        %h4(class="panel-title")
-          %a(role="button" data-toggle="collapse" data-parent="#embargo" href="#embargoPanel" aria-expanded="false" aria-controls="embargoPanel" class="collapsed" )
-            %span( class="metadata-label" ) Release Date
-      .panel-collapse.collapse(id="embargoPanel" role="tabpanel" aria-labelledby="embargoHeading" )
-        .panel-body
-          Release Date Form Placeholder
+                - @dataset.creators.each_with_index do |creator, i|
 
-  %div(id="main-form-bottom")
+                  = f.fields_for :creators, creator do |cf|
+                    %tr(class="item row" id="creator_index_#{i}" )
 
-    .container-fluid.save
-      .row
-        %span(class="col-md-6" )
-          - if params[:action] == 'new'
-            %button(type="button" id="show-agreement-modal-link" class="btn btn-primary" data-toggle="modal" data-target="#agreement") Review Deposit Agreement
-          -else
-            %button(type="button" class="btn btn-primary" onclick='window.location="/datasets/#{@dataset.key}/review_deposit_agreement"' ) Review Deposit Agreement
-        %span(class="col-md-6" )
-          %button(type="button" class="btn btn-danger" name="cancel" onclick='window.location = "/"' )
-            %span(class="glyphicon glyphicon-ban-circle" )
-            Cancel
-          - if params[:action] == 'new'
-            %button(type="button" class="btn btn-primary save-button" id="new-save-button") Next (Upload Files) ->
-          - else
-            %button(type="button" class="btn btn-primary update save-button" id="update-save-button") Save & Review Dataset ->
+                      %td(class="col-md-1")
+                      -# row position handle and author position value inserted via AJAX
+                      %td(class="col-md-2")
+                        = cf.hidden_field :_destroy, value: false
+                        = cf.hidden_field :row_position # value set via AJAX
+                        = cf.hidden_field :type_of, value: Creator::PERSON
+                        = cf.text_field :family_name, class: "form-control dataset creator", placeholder: "[Family Name, e.g.: Smith]", onchange: "generate_creator_preview()"
+                      %td(class="col-md-2")
+                        = cf.text_field :given_name, class: "form-control dataset creator", placeholder: "[Given Name, e.g.: John W., Jr. ]", onchange: "generate_creator_preview()"
+                      %td(class="col-md-2")
+                        = cf.text_field :identifier, class: "form-control dataset", "data-mask" => "9999-9999-9999-999*", placeholder: "[xxxx-xxxx-xxxx-xxxx]"
+                        = cf.hidden_field :identifier_scheme, value: "ORCID"
+                      %td(class="col-md-1" )
+                        %button(type="button" class="btn btn-primary btn-sm orcid-search-btn" onclick="showOrcidSearchModal('#{i}')" )
+                          %span(class="glyphicon glyphicon-search" )
+                          Look Up
+                      %td(class="col-md-2")
+                        = cf.email_field :email, class: "form-control dataset creator-email", placeholder: "[Email, e.g.: netid@illinois.edu]", onchange: "handle_creator_email_change(this)"
+                      %td(class="col-md-1" align="center" )
+                        = cf.hidden_field :is_contact
+                        -#%input(name="dataset[creators_attributes][#{i}][is_contact]" type="hidden" value="#{creator.is_contact?}")
+                        - if creator.is_contact?
+                          %input(type="radio" name="primary_contact" class="dataset contact_radio" value="#{i}" onchange="handle_contact_change()" checked="true" )
+                        -else
+                          %input(type="radio" name="primary_contact" class="dataset contact_radio" value="#{i}" onchange="handle_contact_change()" )
+                      %td(class="col-md-1")
+                        -# Add/Remove Creator buttons inserted via ajax
+              %table(id="deleted_creator_table")
+                %tbody
 
+              .field
+                = f.hidden_field :publisher, :value=>"University of Illinois at Urbana-Champaign"
+
+              .form-group
+                = f.label :description, "Dataset Description", :class => "control-label"
+                %br
+                = f.text_area :description, :rows => 3,  :class => "form-control dataset", :placeholder => "[Description of this dataset, including an overview of content, structure, and format.]"
+
+              .form-group
+                = f.label :keywords, "Keywords (Semi-colon delimted list)", :class => "control-label"
+                %br
+                = f.text_field :keywords, :class => "form-control dataset", :placeholder => "[Semi-colon separated list of keywords or phrases, e.g.: (institutional repositories; file formats)]"
+                %span(class="help-block") Use a semi-colon (;) to separate keywords or phrases (e.g.: institutional repositories; file formats).
+
+              = f.hidden_field :depositor_email, :class => "form-control", :id => "depositor_email", :title => "Must agree to deposit agreement to deposit data.", :required => true
+
+              = f.hidden_field :depositor_name, :class => "form-control", :id => "depositor_name"
+
+              - if can? :manage, @dataset
+                .row
+                  %span(class="col-md-4" )
+                    .form-group.curator-only
+                      = f.label :identifier, "DOI", :class => "control-label"
+                      %br
+                      = f.text_field :identifier, :class => "form-control dataset", :placeholder => "[Leave blank if requesting a DOI.]"
+                  %span(class="col-md-4" )
+                    .form-group.curator-only
+                      = f.label :publication_year, "Publication Year", :class => "control-label"
+                      %br
+                      = f.number_field :publication_year, :value => "#{Time.now.year}", :class => "form-control dataset", :min => "1800", :max => "#{Time.now.year + 1}", :maxlength => 4
+                  %span(class="col-md-4" )
+                    .form-group.curator-only
+                      =f.label :version, "Version", :class => "control-label"
+                      %br
+                      =f.text_field :version, :class => "form-control dataset"
+              - else
+                = f.hidden_field :publication_year, :value => "#{Time.now.year}"
+
+    .panel-group(id="funder" role="tablist" aria-multiselectable="true")
+      .panel.panel-default
+        .panel-heading(role="tab" id="funderHeading")
+          %h4(class="panel-title")
+            %a(role="button" data-toggle="collapse" data-parent="#funder" href="#funderPanel" aria-expanded="false" aria-controls="funderPanel" class="collapsed" )
+              %span( class="metadata-label" ) Funder
+        .panel-collapse.collapse(id="funderPanel" role="tabpanel" aria-labelledby="funderHeading" )
+          .panel-body
+            Funder Form Placeholder
+
+    .panel-group(id="related" role="tablist" aria-multiselectable="true")
+      .panel.panel-default
+        .panel-heading(role="tab" id="relatedHeading")
+          %h4(class="panel-title")
+            %a(role="button" data-toggle="collapse" data-parent="#related" href="#relatedPanel" aria-expanded="false" aria-controls="relatedPanel" class="collapsed" )
+              %span( class="metadata-label" ) Related Materials
+        .panel-collapse.collapse(id="relatedPanel" role="tabpanel" aria-labelledby="relatedHeading" )
+          .panel-body
+            Related Materials Form Placeholder
+
+    .panel-group(id="funder" role="tablist" aria-multiselectable="true")
+      .panel.panel-default
+        .panel-heading(role="tab" id="embargoHeading")
+          %h4(class="panel-title")
+            %a(role="button" data-toggle="collapse" data-parent="#embargo" href="#embargoPanel" aria-expanded="false" aria-controls="embargoPanel" class="collapsed" )
+              %span( class="metadata-label" ) Release Date
+        .panel-collapse.collapse(id="embargoPanel" role="tabpanel" aria-labelledby="embargoHeading" )
+          .panel-body
+            Release Date Form Placeholder
 
   %div(id="datafiles-form")
 

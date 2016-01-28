@@ -1,0 +1,39 @@
+.idb-dashboard.panel.panel-warning
+  -#.panel-heading
+  -#  %span(class="metadata-label" )Dataset Dashboard
+  .panel-body
+    .row
+      .col-md-10
+        %div(id="idb-alert")
+          - if params[:action] == 'new'
+            .deposit-agreement-warning
+              %span(class="glyphicon glyphicon-alert" )
+              You must agree to the Deposit Agreement before depositing data into Illinois Data Bank.
+          - else
+            %span(class="metadata-label" ) Required Elements:
+        %span(class="glyphicon glyphicon-eye-open" )
+        %span(class="metadata-label" ) Visibility:
+        = @dataset.visibility
+        %br
+        %span(class="glyphicon glyphicon-triangle-right" )
+        %span(class="metadata-label" ) Progress:
+        %span(id="progress-text" )
+          - if params[:action] == 'new'
+            Describe the dataset here, then
+            %button(type="button" class="btn btn-primary save-button" id="new-save-button")
+              %span(class="glyphicon glyphicon-save-file" )
+              Save Draft Description &
+              %span(class="glyphicon glyphicon-cloud-upload" )
+              Upload Files
+          - else
+            Edit the dataset description and file set as needed, then save and review before publishing.
+            %button(type="button" class="btn btn-primary update save-button" id="update-save-button")
+              %span(class="glyphicon glyphicon-save" )
+              Save & Review Dataset
+
+      .col-md-2
+
+        %button(type="button" id="show-agreement-modal-link" class="btn btn-info deposit-agreement-btn btn-block btn-sm" data-toggle="modal" data-target="#agreement") Review Deposit Agreement
+        %button(type="button" class="btn btn-danger btn-block btn-sm" name="cancel" onclick='window.location = "/"' )
+          %span(class="glyphicon glyphicon-ban-circle" )
+          Cancel

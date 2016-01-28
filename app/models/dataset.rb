@@ -187,6 +187,34 @@ class Dataset < ActiveRecord::Base
 
   end
 
+  def visibility
+    case self.publication_state
+      when Databank::PublicationState::DRAFT
+        return_string = "Private (Saved Draft)"
+      when Databank::PublicationState::RELEASED
+        return_string = "Public (Released)"
+      when Databank::PublicationState::STANDARD_EMBARGO
+        return_string = "Public description, Private files (Standard Embargo)"
+      when Databank::PublicationState::INVISIBLE_EMBARGO
+        return_string = "Private (Invisible Embargo)"
+      when Databank::PublicationState::TOMBSTONE
+        return_string = "Public Metadata, Private Files (Tombstone)"
+      else
+        #should never get here
+        return_string = "Unknown, please contact the Research Data Service"
+    end
+
+    if self.new_record?
+      return_string = "Private (Not Yet Saved)"
+    end
+
+    if self.curator_hold
+      return_string = "Private (Curator Hold)"
+    end
+
+    return_string
+  end
+
   def creator_list
       return_list = ""
 

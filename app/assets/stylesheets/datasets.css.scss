@@ -85,8 +85,8 @@ legend.metadata-border {
   color:red;
   font-weight: bold;
   font-style: italic;
-  padding-bottom: 20px;
-  font-size: 120%;
+  // padding-bottom: 20px;
+  //font-size: 120%;
 }
 .selected-button {
   outline: solid 5px #dfdfb8;
@@ -95,12 +95,13 @@ legend.metadata-border {
   display:table;
   width: 100%;
 }
-#main-form-top {
-  display: table-header-group;
-}
-#main-form-bottom {
-  display:table-footer-group;
-}
+//#main-form-top {
+//  display: table-header-group;
+//}
+//#main-form-bottom {
+//  display:table-footer-group;
+//}
+
 .drop-area{
   background-color: white;
   margin: 50px;
@@ -236,3 +237,9 @@ ul.help-info{
   list-style-type:none;
 }
 
+.idb-dashboard .panel-body{
+  background-color: white;
+}
+.idb-dashboard .panel-heading{
+  color: black;
+}

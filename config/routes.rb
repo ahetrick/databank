@@ -23,7 +23,6 @@ Rails.application.routes.draw do
   get '/policies', to: 'welcome#policies', :as => :policies
   get '/help', to: 'help#index', :as => :help
   get '/welcome/deposit_login_modal', to: 'welcome#deposit_login_modal'
-  get '/contact', to: 'welcome#contact', :as => :contact
   get '/datasets/:id/download_endNote_XML', to: 'datasets#download_endNote_XML'
   get '/datasets/:id/download_BibTeX', to: 'datasets#download_BibTeX'
   get '/datasets/:id/download_RIS', to: 'datasets#download_RIS'
