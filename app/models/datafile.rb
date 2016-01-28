@@ -95,7 +95,7 @@ class Datafile < ActiveRecord::Base
 
   def chmod_binary_for_medusa
     if self.binary && self.binary.file
-      FileUtils.chmod "u=wrx,go=r", File.dirname(self.binary.path)
+      FileUtils.chmod "u=wrx,go=rx", File.dirname(self.binary.path)
       FileUtils.chmod "u=wrx,go=rx", self.binary.path
 
     end
