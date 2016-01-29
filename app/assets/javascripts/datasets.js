@@ -55,6 +55,7 @@ ready = function() {
         $('#new_dataset').submit();
 
     });
+    $('#new-save-button').hide();
 
     $('.nav-item').click(function () {
 
@@ -143,6 +144,8 @@ ready = function() {
             }
         }
     });
+
+
 
     var boxSelect = new BoxSelect();
     // Register a success callback handler
@@ -244,11 +247,14 @@ function handleNotAgreed(){
     $('.dataset').attr("disabled", true);
     $('.file-field').attr("disabled", true);
     $('.add-attachment-subform-button').hide();
-    $('#show-agreement-modal-link').show();
-    $('#new-save-button').hide();
+    //$('#show-agreement-modal-link').show();
+    $('.new-dataset-progress').hide();
     $('.deposit-agreement-warning').show();
     $('.search').removeAttr("disabled");
-    $('.deposit-agreement-btn').removeAttr("disabled");
+    $('.deposit-agreement-btn').removeAttr("disabled");;
+    $('#show-agreement-modal-link').removeClass("btn-success");
+    $('#show-agreement-modal-link').addClass("btn-warning");
+    $('#new-save-button').hide();
     window.scrollTo(0,0);
 }
 
@@ -257,11 +263,14 @@ function setDepositor(email, name){
     $('#depositor_email').val(email);
     $('#depositor_name').val(name);
     $('.save').show();
-    $('#new-save-button').show();
+    $('.new-dataset-progress').show();
     $('.dataset').removeAttr("disabled");
     $('.file-field').removeAttr("disabled");
     $('.add-attachment-subform-button').show();
     $('.deposit-agreement-warning').hide();
+    $('#show-agreement-modal-link').removeClass("btn-warning")
+    $('#show-agreement-modal-link').addClass("btn-success")
+    $('#new-save-button').show();
     //$('#show-agreement-modal-link').hide();
 }
 

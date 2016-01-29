@@ -192,7 +192,7 @@ class Dataset < ActiveRecord::Base
       when Databank::PublicationState::DRAFT
         return_string = "Private (Saved Draft)"
       when Databank::PublicationState::RELEASED
-        return_string = "Public (Released)"
+        return_string = "Public (Published)"
       when Databank::PublicationState::STANDARD_EMBARGO
         return_string = "Public description, Private files (Standard Embargo)"
       when Databank::PublicationState::INVISIBLE_EMBARGO

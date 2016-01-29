@@ -1,12 +1,13 @@
+.idb-anchor(id="form-top")
 %div(id="wrapper")
   %div(id="main-form-top")
-    - if (can? :edit, @dataset)
-      = render partial: 'dashboard'
     .panel-group(id="description" role="tablist" aria-multiselectable="true")
       .panel.panel-default
         .panel-heading(role="tab" id="descriptionHeading")
           %h4(class="panel-title")
             %a(role="button" data-toggle="collapse" data-parent="#description" href="#descriptionPanel" aria-expanded="true" aria-controls="descriptionPanel")
+              %span(class="metadata-label" ) Main Description
+              %br
               %span( class="metadata-label" )
                 Citation Preview:
               %span( id="creator-preview" )
@@ -248,7 +249,7 @@
                           %span(class="metadata-label")or
                         .col-md-3
                           %div(id="box-select" data-link-type="direct" data-multiselect="true" data-client-id="r5tgofc05460skm84yjepz1ck16ptotr")
-
+%a(href="#form-top" )Go to top
 = render partial: 'orcid_search'
 = render partial: 'license_help_modal'
 

@@ -45,6 +45,7 @@ class DatasetsController < ApplicationController
   # GET /datasets/1.json
   def show
     @datacite_record = datacite_record_hash
+    @completion_check = self.completion_check
     if params.has_key?(:selected_files)
       zip_and_download_selected
     end
@@ -152,6 +153,7 @@ class DatasetsController < ApplicationController
   # GET /datasets/1/edit
   def edit
     @dataset.creators.build unless @dataset.creators.count > 0
+    @completion_check = self.completion_check
   end
 
   # POST /datasets
@@ -187,7 +189,7 @@ class DatasetsController < ApplicationController
           update_datacite_metadata
         end
 
-        format.html { redirect_to dataset_path(@dataset.key), notice: 'Dataset was successfully updated.' }
+        format.html { redirect_to dataset_path(@dataset.key)}
         format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
       else
         format.html { render :edit }
@@ -212,6 +214,7 @@ class DatasetsController < ApplicationController
 
     if completion_check == 'ok'
       @dataset.complete = true
+      @dataset.publication_state = Databank::PublicationState::RELEASED
     else
       @dataset.complete = false
     end
@@ -468,6 +471,57 @@ class DatasetsController < ApplicationController
     render json:{"citation": @dataset.plain_text_citation}
   end
 
+  def completion_check
+    response = 'ok'
+    validation_error_messages = Array.new
+    validation_error_message = ""
+
+    if !@dataset.title || @dataset.title.empty?
+      validation_error_messages << "title"
+    end
+
+    if @dataset.creator_list.empty?
+      validation_error_messages << "at least one creator"
+    end
+
+    if !@dataset.license || @dataset.license.empty?
+      validation_error_messages << "license"
+    end
+
+    contact = nil
+    @dataset.creators.each do |creator|
+      if creator.is_contact?
+        contact = creator
+      end
+    end
+
+    unless contact
+      validation_error_messages << "at least one primary long term contact"
+    end
+
+    if contact.nil? || !contact.email || contact.email == ""
+      validation_error_messages << "email address for primary long term contact"
+    end
+
+    if @dataset.datafiles.count < 1
+      validation_error_messages << "at least one file"
+    end
+
+    if validation_error_messages.length > 0
+      validation_error_message << "Required elements for a complete dataset missing: "
+      validation_error_messages.each_with_index do |m, i|
+        if i > 0
+          validation_error_message << ", "
+        end
+        validation_error_message << m
+      end
+      validation_error_message << "."
+
+      response = validation_error_message
+    end
+    response
+  end
+
 
   private
 
@@ -699,54 +753,5 @@ class DatasetsController < ApplicationController
     anvl.strip.encode!('UTF-8')
   end
 
-  def completion_check
-    response = 'ok'
-    validation_error_messages = Array.new
-    validation_error_message = ""
 
-    if !@dataset.title || @dataset.title.empty?
-      validation_error_messages << "title"
-    end
-
-    if @dataset.creator_list.empty?
-      validation_error_messages << "at least one creator"
-    end
-
-    if !@dataset.license || @dataset.license.empty?
-      validation_error_messages << "license"
-    end
-
-    contact = nil
-    @dataset.creators.each do |creator|
-      if creator.is_contact?
-        contact = creator
-      end
-    end
-
-    unless contact
-      validation_error_messages << "at least one primary long term contact"
-    end
-
-    if contact.nil? || !contact.email || contact.email == ""
-      validation_error_messages << "email address for primary long term contact"
-    end
-
-    if @dataset.datafiles.count < 1
-      validation_error_messages << "at least one file"
-    end
-
-    if validation_error_messages.length > 0
-      validation_error_message << "Required elements for a complete dataset missing: "
-      validation_error_messages.each_with_index do |m, i|
-        if i > 0
-          validation_error_message << ", "
-        end
-        validation_error_message << m
-      end
-      validation_error_message << "."
-
-      response = validation_error_message
-    end
-    response
-  end
 end

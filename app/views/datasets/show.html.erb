@@ -1,32 +1,12 @@
 <%= render partial: 'confirm_deposit_modal' %>
+<% if (can? :edit, @dataset) %>
+  <%= render partial: 'dashboard_show' %>
+<% end %>
 <!-- Only show page contents if dataset is complete or if the viewer has rights to modify it. -->
 <% if ((can? :update, @dataset) || @dataset.complete?) %>
   <div class="container-fluid">
     <div class="row">
       <span class="col-md-6" id="title"><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></span>
-
-      <% if (can? :update, @dataset) %>
-          <span class="pull-right">
-            <a href="http://researchdataservice.illinois.edu/contact-us/" class="btn btn-success" role="button">
-              <span class="glyphicon glyphicon-question-sign"></span> Get Help
-            </a>
-
-            <%= link_to edit_dataset_path(@dataset), :class => "btn btn-info" do %>
-              <span class="glyphicon glyphicon-edit"></span> Edit
-            <% end %>
-
-            <% if !@dataset.complete? || @dataset.has_datacite_change? %>
-              <button type="button" id="show-confirm-modal-link" class="btn btn-primary" data-toggle="modal" data-target="#deposit">Confirm
-                & Publish
-              </button>
-            <% end %>
-            <% if (((can? :destroy, @dataset) && (!@dataset.complete?))||(can? :manage, @dataset)) %>
-              <%= link_to dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn btn-danger" do %>
-                <span class="glyphicon glyphicon-trash"></span> Delete
-              <% end %>
-            <% end %>
-          </span>
-      <% end %>
     </div>
   </div>
   <div class="container-fluid" id="citation-block">
@@ -200,6 +180,8 @@
       </div>
     </div>
   </div>
+
+  <a href="/datasets/<%= @dataset.key %>/review_deposit_agreement">Review Deposit Agreement</a>
 
   <% if can? :manage, @dataset && @dataset.complete? %>
     <h2>DataCite Record:</h2>

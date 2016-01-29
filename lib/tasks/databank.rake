@@ -59,4 +59,20 @@ namespace :databank do
 
   end
 
+  desc 'Retroactively set publication_state'
+  task :update_state => :environment do
+    Dataset.where.not(identifier: "").each do |dataset|
+      dataset.publication_state = Databank::PublicationState::RELEASED
+      dataset.save!
+    end
+  end
+
+  desc 'Retroactively set datacite change status'
+  task :update_datacite_flag => :environment do
+    Dataset.all.each do |dataset|
+      dataset.has_datacite_change = false
+      dataset.save!
+    end
+  end
+
 end

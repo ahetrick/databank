@@ -1,0 +1,61 @@
+- if (can? :edit, @dataset)
+  .idb-dashboard.panel.panel-warning
+    -#.panel-heading
+    -#  %span(class="metadata-label" )Dataset Dashboard
+    .panel-body
+      -if @dataset.has_datacite_change
+        .datacite-changes-warning
+          %span(class="glyphicon glyphicon-alert" )
+          Changes have been made to this dataset that have not yet been published.  Confirm & Publish to complete changes.
+      -if @completion_check != 'ok'
+        .completion-warning
+          %span(class="glyphicon glyphicon-alert" )
+          = @completion_check
+          - if @dataset.publication_state == Databank::PublicationState::DRAFT || (can? :manage, @dataset)
+            Edit to complete dataset.
+      .row
+        .col-md-7
+          %span(class="glyphicon glyphicon-eye-open" )
+          %span(class="metadata-label" ) Visibility:
+          = @dataset.visibility
+          %br
+          %span(class="glyphicon glyphicon-triangle-right" )
+          %span(class="metadata-label" ) Progress:
+          View dataset page here.
+
+          - if @dataset.publication_state == Databank::PublicationState::DRAFT || (can? :manage, @dataset)
+            Edit to make changes.
+          - else
+            You can edit the description for the dataset to correct an error, but you would need to contact the
+            %a(href="/help#contact" )Research Data Service
+            if there is an error in the files that needs to be corrected.
+          - if @completion_check == 'ok' && (@dataset.publication_state == Databank::PublicationState::DRAFT || @dataset.has_datacite_change)
+            Click Confirm & Publish for final confirmation and to publish this dataset.
+        .col-md-2
+          - if @completion_check == 'ok' && (@dataset.publication_state == Databank::PublicationState::DRAFT || @dataset.has_datacite_change)
+            %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit") Confirm & Publish
+        .col-md-1
+          = link_to(edit_dataset_path(@dataset), :class => "btn btn-info btn-block") do
+            %span(class="glyphicon glyphicon-edit")
+            Edit
+        .col-md-1
+          - if @dataset.publication_state == Databank::PublicationState::DRAFT
+            %button(type="button" id="show-agreement-modal-link" class="btn btn-success deposit-agreement-btn btn-block" data-toggle="modal" data-target="#agreement")
+              %span(class="glyphicon glyphicon-check" )
+              Agree
+          - else
+            %button(type="button" class="btn btn-success btn-block" onclick="/help" )
+              %span(class="glyphicon glyphicon-info-sign" )
+              Help
+        .col-md-1
+          - if @dataset.publication_state == Databank::PublicationState::DRAFT
+            = link_to(dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn btn-danger btn-block") do
+              %span(class="glyphicon glyphicon-trash" )
+              Delete
+          - elsif (can? :manage, @dataset)
+            %button(type="button" class="btn btn-danger btn-block" )
+              Tombstone
+          -else
+            %button(type="button" class="btn btn-danger btn-block" name="cancel" onclick='window.location = "/"' )
+            %span(class="glyphicon glyphicon-ban-circle" )
+            Cancel
