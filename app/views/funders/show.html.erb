@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @funder.name %>
+</p>
+
+<p>
+  <strong>Identifier:</strong>
+  <%= @funder.identifier %>
+</p>
+
+<p>
+  <strong>Identifier scheme:</strong>
+  <%= @funder.identifier_scheme %>
+</p>
+
+<p>
+  <strong>Grant:</strong>
+  <%= @funder.grant %>
+</p>
+
+<p>
+  <strong>Dataset:</strong>
+  <%= @funder.dataset_id %>
+</p>
+
+<%= link_to 'Edit', edit_funder_path(@funder) %> |
+<%= link_to 'Back', funders_path %>

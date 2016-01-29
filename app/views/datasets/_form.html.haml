@@ -155,7 +155,17 @@
               %span( class="metadata-label" ) Funder
         .panel-collapse.collapse(id="funderPanel" role="tabpanel" aria-labelledby="funderHeading" )
           .panel-body
-            Funder Form Placeholder
+            %table(class="table table-striped")
+              %thead
+                %tr(class="row" )
+                  %th(class="col-md-8")
+                    Name
+                  %th(class="col-md-4")
+                    Grant Number
+              %tbody
+                -@dataset.funders.each do |funder|
+                  %tr(class="row")
+                    %td
 
     .panel-group(id="related" role="tablist" aria-multiselectable="true")
       .panel.panel-default
