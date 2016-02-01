@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   get '/datasets/r1epy', to: redirect('https://www.ideals.illinois.edu/handle/2142/65511')
 
   resources :medusa_ingests
-  resources :licenses
+  resources :license_infos
   resources :datafiles
   resources :users
   resources :identities

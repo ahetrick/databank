@@ -21,14 +21,10 @@
             You can edit the description for the dataset to correct an error, but you would need to contact the
             %a(href="/help#contact" )Research Data Service
             if there is an error in the files that needs to be corrected.
-        .col-md-1
+        .col-md-2
           %button(type="button" class="btn btn-primary update save-button btn-block" id="update-save-button")
             %span(class="glyphicon glyphicon-save-file" )
-            Save
-        .col-md-1
-          %button(type="button" id="show-agreement-modal-link" class="btn btn-success deposit-agreement-btn btn-block" data-toggle="modal" data-target="#agreement")
-            %span(class="glyphicon glyphicon-check" )
-            Agree
+            Save & Review
         .col-md-1
           - if @dataset.publication_state == Databank::PublicationState::DRAFT
             = link_to(dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn btn-danger btn-block") do

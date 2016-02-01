@@ -59,7 +59,7 @@ class DatasetsController < ApplicationController
     # @license_expanded = ""
     @license_link = ""
 
-    @license = License.where(:code => @dataset.license).first
+    @license = LicenseInfo.where(:code => @dataset.license).first
     case @dataset.license
       when "CC01", "CCBY4"
         # @license_header = @license.name
@@ -148,6 +148,7 @@ class DatasetsController < ApplicationController
   def new
     @dataset = Dataset.new
     @dataset.creators.build
+    @dataset.funders.build
   end
 
   # GET /datasets/1/edit
@@ -535,7 +536,7 @@ class DatasetsController < ApplicationController
   # def dataset_params
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, :search, :version, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, :search, :version, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy], funders_attributes: [:dataset_id, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy])
   end
 
   def ezid_metadata_response

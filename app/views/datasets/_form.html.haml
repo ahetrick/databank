@@ -1,29 +1,28 @@
 .idb-anchor(id="form-top")
 %div(id="wrapper")
   %div(id="main-form-top")
-    .panel-group(id="description" role="tablist" aria-multiselectable="true")
-      .panel.panel-default
-        .panel-heading(role="tab" id="descriptionHeading")
-          %h4(class="panel-title")
-            %a(role="button" data-toggle="collapse" data-parent="#description" href="#descriptionPanel" aria-expanded="true" aria-controls="descriptionPanel")
-              %span(class="metadata-label" ) Main Description
-              %br
-              %span( class="metadata-label" )
-                Citation Preview:
-              %span( id="creator-preview" )
-                = @dataset.creator_list && @dataset.creator_list != "" ? @dataset.creator_list : "[Creator List]"
-              %span( id="year-preview" )
-                = @dataset.publication_year && @dataset.publication_year != "" ? "(#{@dataset.publication_year})" : "(#{Time.now.year}):"
-              %span( id="title-preview" )
-                = @dataset.title && @dataset.title != "" ? "#{@dataset.title}." : "[The Title]."
-              University of Illinois at Urbana-Champaign.
-              %span( id="doi-preview" )
-                = @dataset.identifier && @dataset.identifier != "" ? "http://dx.doi.org/#{@dataset.identifier}" : ""
+    = form_for(@dataset, :html => {"data-toggle" => "validator", :multipart => true, :role => "form", :enctype => "multipart/form-data", :class => "container-fluid input-append dataset-form" }) do |f|
+      .panel-group(id="description" role="tablist" aria-multiselectable="true")
+        .panel.panel-default
+          .panel-heading(role="tab" id="descriptionHeading")
+            %h4(class="panel-title")
+              %a(role="button" data-toggle="collapse" data-parent="#description" href="#descriptionPanel" aria-expanded="true" aria-controls="descriptionPanel")
+                %span(class="metadata-label" ) Main Description
+                %br
+                %span( class="metadata-label" )
+                  Citation Preview:
+                %span( id="creator-preview" )
+                  = @dataset.creator_list && @dataset.creator_list != "" ? @dataset.creator_list : "[Creator List]"
+                %span( id="year-preview" )
+                  = @dataset.publication_year && @dataset.publication_year != "" ? "(#{@dataset.publication_year})" : "(#{Time.now.year}):"
+                %span( id="title-preview" )
+                  = @dataset.title && @dataset.title != "" ? "#{@dataset.title}." : "[The Title]."
+                University of Illinois at Urbana-Champaign.
+                %span( id="doi-preview" )
+                  = @dataset.identifier && @dataset.identifier != "" ? "http://dx.doi.org/#{@dataset.identifier}" : ""
 
-        .panel-collapse.collapse.in(id="descriptionPanel" role="tabpanel" aria-labelledby="descriptionHeading" )
-          .panel-body
-            = form_for(@dataset, :html => {"data-toggle" => "validator", :multipart => true, :role => "form", :enctype => "multipart/form-data", :class => "container-fluid input-append dataset-form" }) do |f|
-
+          .panel-collapse.collapse.in(id="descriptionPanel" role="tabpanel" aria-labelledby="descriptionHeading" )
+            .panel-body
               - if @dataset.errors.any?
                 .error_explaination
                   = "#{pluralize(@dataset.errors.count, "error")} prohibited this dataset from being deposited."
@@ -42,7 +41,7 @@
                     = f.label :license, "License", :class => "control-label"
                     %a(href="#" data-toggle="modal" data-target="#licenseModal" tabindex="-1")
                       %span(class="glyphicon glyphicon-question-sign")
-                    = f.collection_select :license, License.order('code ASC'), :code, :name, {:prompt => true}, {:class => "form-control dataset"}
+                    = f.collection_select :license, LicenseInfo.order('code ASC'), :code, :name, {:prompt => true}, {:class => "form-control dataset"}
 
               %label(class="control-label required")
                 Author List
@@ -147,45 +146,70 @@
               - else
                 = f.hidden_field :publication_year, :value => "#{Time.now.year}"
 
-    .panel-group(id="funder" role="tablist" aria-multiselectable="true")
-      .panel.panel-default
-        .panel-heading(role="tab" id="funderHeading")
-          %h4(class="panel-title")
-            %a(role="button" data-toggle="collapse" data-parent="#funder" href="#funderPanel" aria-expanded="false" aria-controls="funderPanel" class="collapsed" )
-              %span( class="metadata-label" ) Funder
-        .panel-collapse.collapse(id="funderPanel" role="tabpanel" aria-labelledby="funderHeading" )
-          .panel-body
-            %table(class="table table-striped")
-              %thead
-                %tr(class="row" )
-                  %th(class="col-md-8")
-                    Name
-                  %th(class="col-md-4")
-                    Grant Number
-              %tbody
-                %tr
-                  %td Placeholder Name
-                  %td Placeholder Grant Number
+      .panel-group(id="funder" role="tablist" aria-multiselectable="true")
+        .panel.panel-default
+          .panel-heading(role="tab" id="funderHeading")
+            %h4(class="panel-title")
+              %a(role="button" data-toggle="collapse" data-parent="#funder" href="#funderPanel" aria-expanded="false" aria-controls="funderPanel" class="collapsed" )
+                %span( class="metadata-label" ) Funder
+          .panel-collapse.collapse(id="funderPanel" role="tabpanel" aria-labelledby="funderHeading" )
+            .panel-body
+              %table(id="funder_table" class="table table-striped")
+                %thead
+                  %tr(class="row" )
+                    %th(class="col-md-4")
+                      Name
+                    %th(class="col-md-4" )
+                    %th(class="col-md-3")
+                      Grant Number
+                    %th(class="col-md-1" )
+                %tbody
+                  - @dataset.funders.each_with_index do |funder, i|
+                    = f.fields_for :funders, funder do |ff|
+                      %tr(class="item row" id="funder_index_#{i}" )
+                        %td
+                          =ff.hidden_field :identifier
+                          =ff.hidden_field :identifier_scheme
+                          %select(class="form-control dataset"  name="funder_select_#{i}" id="funder_select_#{i}" onchange="handleFunderChange('#{i}')" )
+                            %option(value="none" ) Please select
+                            %option(value="IDOE" ) DOE
+                            %option(value="IDCEO" ) IL Department of Commerce & Economic Opportunity (DCEO)
+                            %option(value="IDHS" ) IL Department of Human Services (DHS)
+                            %option(value="IDNR" ) IL Department of Natural Resources (IDNR)
+                            %option(value="IDOT" ) IL Department of Transporation (IDOT)
+                            %option(value="NASA" ) NASA
+                            %option(value="NIH" ) NIH
+                            %option(value="NSF" ) NSF
+                            %option(value="USARMY" ) US Army
+                            %option(value="USDARO" ) USDA Research Office
+                            %option(value="other" ) Other
+                        %td
+                          =ff.text_field :name, :class=> "form-control dataset funder-text"
 
-    .panel-group(id="related" role="tablist" aria-multiselectable="true")
-      .panel.panel-default
-        .panel-heading(role="tab" id="relatedHeading")
-          %h4(class="panel-title")
-            %a(role="button" data-toggle="collapse" data-parent="#related" href="#relatedPanel" aria-expanded="false" aria-controls="relatedPanel" class="collapsed" )
-              %span( class="metadata-label" ) Related Materials
-        .panel-collapse.collapse(id="relatedPanel" role="tabpanel" aria-labelledby="relatedHeading" )
-          .panel-body
-            Related Materials Form Placeholder
+                        %td
+                          =ff.text_field :grant, :class => "form-control dataset"
+                        %td
+              %table(id="deleted_funder_table")
+                %tbody
+      .panel-group(id="related" role="tablist" aria-multiselectable="true")
+        .panel.panel-default
+          .panel-heading(role="tab" id="relatedHeading")
+            %h4(class="panel-title")
+              %a(role="button" data-toggle="collapse" data-parent="#related" href="#relatedPanel" aria-expanded="false" aria-controls="relatedPanel" class="collapsed" )
+                %span( class="metadata-label" ) Related Materials
+          .panel-collapse.collapse(id="relatedPanel" role="tabpanel" aria-labelledby="relatedHeading" )
+            .panel-body
+              Related Materials Form Placeholder
 
-    .panel-group(id="funder" role="tablist" aria-multiselectable="true")
-      .panel.panel-default
-        .panel-heading(role="tab" id="embargoHeading")
-          %h4(class="panel-title")
-            %a(role="button" data-toggle="collapse" data-parent="#embargo" href="#embargoPanel" aria-expanded="false" aria-controls="embargoPanel" class="collapsed" )
-              %span( class="metadata-label" ) Release Date
-        .panel-collapse.collapse(id="embargoPanel" role="tabpanel" aria-labelledby="embargoHeading" )
-          .panel-body
-            Release Date Form Placeholder
+      .panel-group(id="funder" role="tablist" aria-multiselectable="true")
+        .panel.panel-default
+          .panel-heading(role="tab" id="embargoHeading")
+            %h4(class="panel-title")
+              %a(role="button" data-toggle="collapse" data-parent="#embargo" href="#embargoPanel" aria-expanded="false" aria-controls="embargoPanel" class="collapsed" )
+                %span( class="metadata-label" ) Release Date
+          .panel-collapse.collapse(id="embargoPanel" role="tabpanel" aria-labelledby="embargoHeading" )
+            .panel-body
+              Release Date Form Placeholder
 
   %div(id="datafiles-form")
 
@@ -259,8 +283,12 @@
                           %span(class="metadata-label")or
                         .col-md-3
                           %div(id="box-select" data-link-type="direct" data-multiselect="true" data-client-id="r5tgofc05460skm84yjepz1ck16ptotr")
+.review-deposit-agreement
+  %a(href="/datasets/#{@dataset.key}/review_deposit_agreement") Review Deposit Agreement
 .pull-right
   %a(href="#form-top" )Go to top
+
+
 = render partial: 'orcid_search'
 = render partial: 'license_help_modal'
 

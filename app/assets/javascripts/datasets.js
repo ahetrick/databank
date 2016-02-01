@@ -245,13 +245,15 @@ function handleNotAgreed(){
 
     $('.save').hide();
     $('.dataset').attr("disabled", true);
-    $('.file-field').attr("disabled", true);
+    //$('.file-field').attr("disabled", true);
     $('.add-attachment-subform-button').hide();
     //$('#show-agreement-modal-link').show();
     $('.new-dataset-progress').hide();
     $('.deposit-agreement-warning').show();
     $('.search').removeAttr("disabled");
-    $('.deposit-agreement-btn').removeAttr("disabled");;
+    $('#show-agreement-modal-link').show();
+    $('.review-deposit-agreement').hide();
+    //$('.deposit-agreement-btn').removeAttr("disabled");
     $('#show-agreement-modal-link').removeClass("btn-success");
     $('#show-agreement-modal-link').addClass("btn-warning");
     $('#new-save-button').hide();
@@ -268,9 +270,9 @@ function setDepositor(email, name){
     $('.file-field').removeAttr("disabled");
     $('.add-attachment-subform-button').show();
     $('.deposit-agreement-warning').hide();
-    $('#show-agreement-modal-link').removeClass("btn-warning")
-    $('#show-agreement-modal-link').addClass("btn-success")
+    $('#show-agreement-modal-link').hide();
     $('#new-save-button').show();
+    $('.review-deposit-agreement').show();
     //$('#show-agreement-modal-link').hide();
 }
 

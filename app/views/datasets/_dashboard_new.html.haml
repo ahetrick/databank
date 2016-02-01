@@ -4,7 +4,7 @@
   .panel-body
     .deposit-agreement-warning
       %span(class="glyphicon glyphicon-alert" )
-      You must agree to the Deposit Agreement before depositing data into Illinois Data Bank. Clicking on the Agree button will open the Deposit Agreement to review.
+      You must agree to the Deposit Agreement before depositing data into Illinois Data Bank.
     .row
       .col-md-9
         %span(class="glyphicon glyphicon-eye-open" )
@@ -14,14 +14,16 @@
         %span(class="glyphicon glyphicon-triangle-right" )
         %span(class="metadata-label" ) Progress:
         Describe the dataset here, then save this draft description to upload files next.  You will continue to be able to edit these values.
-      .col-md-1
-        %button(type="button" class="btn btn-block btn-primary" id="new-save-button")
-          %span(class="glyphicon glyphicon-save-file" )
-          Save
-      .col-md-1
+
+      .col-md-2
         %button(type="button" id="show-agreement-modal-link" class="btn btn-warning deposit-agreement-btn btn-block" data-toggle="modal" data-target="#agreement")
           %span(class="glyphicon glyphicon-check" )
-          Agree
+          Deposit Agreement
+
+        %button(type="button" class="btn btn-primary btn-block" id="new-save-button")
+          %span(class="glyphicon glyphicon-save-file" )
+          Save & Upload Files
+
       .col-md-1
         %button(type="button" class="btn btn-danger btn-block" name="cancel" onclick='window.location = "/"' )
           %span(class="glyphicon glyphicon-ban-circle" )

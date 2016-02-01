@@ -14,7 +14,7 @@
           - if @dataset.publication_state == Databank::PublicationState::DRAFT || (can? :manage, @dataset)
             Edit to complete dataset.
       .row
-        .col-md-7
+        .col-md-8
           %span(class="glyphicon glyphicon-eye-open" )
           %span(class="metadata-label" ) Visibility:
           = @dataset.visibility
@@ -38,15 +38,6 @@
           = link_to(edit_dataset_path(@dataset), :class => "btn btn-info btn-block") do
             %span(class="glyphicon glyphicon-edit")
             Edit
-        .col-md-1
-          - if @dataset.publication_state == Databank::PublicationState::DRAFT
-            %button(type="button" id="show-agreement-modal-link" class="btn btn-success deposit-agreement-btn btn-block" data-toggle="modal" data-target="#agreement")
-              %span(class="glyphicon glyphicon-check" )
-              Agree
-          - else
-            %button(type="button" class="btn btn-success btn-block" onclick="/help" )
-              %span(class="glyphicon glyphicon-info-sign" )
-              Help
         .col-md-1
           - if @dataset.publication_state == Databank::PublicationState::DRAFT
             = link_to(dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn btn-danger btn-block") do

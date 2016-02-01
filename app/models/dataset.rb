@@ -7,8 +7,10 @@ class Dataset < ActiveRecord::Base
 
   has_many :datafiles, dependent: :destroy
   has_many :creators, dependent: :destroy
+  has_many :funders, dependent: :destroy
   accepts_nested_attributes_for :datafiles, :reject_if => :all_blank, allow_destroy: true
   accepts_nested_attributes_for :creators, reject_if: proc { |attributes| (attributes['family_name'].blank?  && attributes['institution_name'].blank? )}, allow_destroy: true
+  accepts_nested_attributes_for :funders, reject_if: :all_blank, allow_destroy: true
 
   before_create 'set_key'
   before_save 'set_primary_contact'

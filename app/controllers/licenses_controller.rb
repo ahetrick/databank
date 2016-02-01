@@ -1,2 +1,0 @@
-class LicensesController < ApplicationController
-end
