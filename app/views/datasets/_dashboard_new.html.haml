@@ -15,12 +15,13 @@
         %span(class="metadata-label" ) Progress:
         Describe the dataset here, then save this draft description to upload files next.  You will continue to be able to edit these values.
 
-      .col-md-2
-        %button(type="button" id="show-agreement-modal-link" class="btn btn-warning deposit-agreement-btn btn-block" data-toggle="modal" data-target="#agreement")
+      .col-md-2(id="show-agreement-modal-link")
+        %button(type="button" class="btn btn-warning deposit-agreement-btn btn-block" data-toggle="modal" data-target="#agreement")
           %span(class="glyphicon glyphicon-check" )
           Deposit Agreement
 
-        %button(type="button" class="btn btn-primary btn-block" id="new-save-button")
+      .col-md-2(id="new-save-button")
+        %button(type="button" class="btn btn-primary btn-block")
           %span(class="glyphicon glyphicon-save-file" )
           Save & Upload Files
 

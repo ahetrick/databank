@@ -254,8 +254,6 @@ function handleNotAgreed(){
     $('#show-agreement-modal-link').show();
     $('.review-deposit-agreement').hide();
     //$('.deposit-agreement-btn').removeAttr("disabled");
-    $('#show-agreement-modal-link').removeClass("btn-success");
-    $('#show-agreement-modal-link').addClass("btn-warning");
     $('#new-save-button').hide();
     window.scrollTo(0,0);
 }
