@@ -1,16 +1,14 @@
 .idb-anchor(id="form-top")
 %div(id="wrapper")
   %div(id="main-form-top")
-    = form_for(@dataset, :html => {"data-toggle" => "validator", :multipart => true, :role => "form", :enctype => "multipart/form-data", :class => "container-fluid input-append dataset-form" }) do |f|
+    = form_for(@dataset, :html => {"data-toggle" => "validator", :multipart => true, :role => "form", :enctype => "multipart/form-data", :class => "input-append dataset-form" }) do |f|
       .panel-group(id="description" role="tablist" aria-multiselectable="true")
         .panel.panel-default
           .panel-heading(role="tab" id="descriptionHeading")
             %h4(class="panel-title")
-              %a(role="button" data-toggle="collapse" data-parent="#description" href="#descriptionPanel" aria-expanded="true" aria-controls="descriptionPanel")
-                %span(class="metadata-label" ) Main Description
-                %br
+              %a(class="accordion-toggle" role="button" data-toggle="collapse" data-parent="#description" href="#descriptionPanel" aria-expanded="true" aria-controls="descriptionPanel")
                 %span( class="metadata-label" )
-                  Citation Preview:
+                  Description | Citation Preview:
                 %span( id="creator-preview" )
                   = @dataset.creator_list && @dataset.creator_list != "" ? @dataset.creator_list : "[Creator List]"
                 %span( id="year-preview" )
@@ -150,7 +148,7 @@
         .panel.panel-default
           .panel-heading(role="tab" id="funderHeading")
             %h4(class="panel-title")
-              %a(role="button" data-toggle="collapse" data-parent="#funder" href="#funderPanel" aria-expanded="false" aria-controls="funderPanel" class="collapsed" )
+              %a( role="button" data-toggle="collapse" data-parent="#funder" href="#funderPanel" aria-expanded="false" aria-controls="funderPanel" class="idb-accordion-toggle collapsed" )
                 %span( class="metadata-label" ) Funder
           .panel-collapse.collapse(id="funderPanel" role="tabpanel" aria-labelledby="funderHeading" )
             .panel-body
@@ -195,7 +193,7 @@
         .panel.panel-default
           .panel-heading(role="tab" id="relatedHeading")
             %h4(class="panel-title")
-              %a(role="button" data-toggle="collapse" data-parent="#related" href="#relatedPanel" aria-expanded="false" aria-controls="relatedPanel" class="collapsed" )
+              %a(role="button" data-toggle="collapse" data-parent="#related" href="#relatedPanel" aria-expanded="false" aria-controls="relatedPanel" class="accordion-toggle collapsed" )
                 %span( class="metadata-label" ) Related Materials
           .panel-collapse.collapse(id="relatedPanel" role="tabpanel" aria-labelledby="relatedHeading" )
             .panel-body
@@ -205,7 +203,7 @@
         .panel.panel-default
           .panel-heading(role="tab" id="embargoHeading")
             %h4(class="panel-title")
-              %a(role="button" data-toggle="collapse" data-parent="#embargo" href="#embargoPanel" aria-expanded="false" aria-controls="embargoPanel" class="collapsed" )
+              %a(role="button" data-toggle="collapse" data-parent="#embargo" href="#embargoPanel" aria-expanded="false" aria-controls="embargoPanel" class="accordion-toggle collapsed" )
                 %span( class="metadata-label" ) Release Date
           .panel-collapse.collapse(id="embargoPanel" role="tabpanel" aria-labelledby="embargoHeading" )
             .panel-body
@@ -218,7 +216,7 @@
         .panel.panel-default
           .panel-heading(role="tab" id="filesHeading")
             %h4(class="panel-title")
-              %a(role="button" data-toggle="collapse" data-parent="#files" href="#collapseFiles" aria-expanded="true" aria-controls="collapseFiles" )
+              %a(class="accordion-toggle" role="button" data-toggle="collapse" data-parent="#files" href="#collapseFiles" aria-expanded="true" aria-controls="collapseFiles" )
                 %span(class="metadata-label" ) Files
           .panel-collapse.collapse.in(id="collapseFiles" role="tabpanel" aria-labelledby="filesHeading" )
             .panel-body

@@ -243,3 +243,65 @@ ul.help-info{
 .idb-dashboard .panel-heading{
   color: black;
 }
+
+
+
+.panel-heading .accordion-toggle:after {
+   /* symbol for "open" panels */
+   font-family: 'FontAwesome';
+   content: "\f066";
+   float: left;
+   color: black;
+   height: 20px;
+   width: 20px;
+   background-color: white;
+   margin-right: 10px;
+ }
+
+.panel-heading .idb-accordion-toggle:after {
+  /* symbol for "opening" panels */
+  //font-family: 'FontAwesome';
+  //content: "[\f068]";
+  content: "[-]";
+  float: left;
+  color: black;
+  height: 20px;
+  width: 20px;
+  background-color: white;
+  margin-right: 10px;
+  /* rotate icon  */
+  -webkit-transform: rotate(0);
+  -moz-transform:    rotate(0);
+  -ms-transform:     rotate(0);
+  -o-transform:      rotate(0);
+  transform:         rotate(0);
+}
+
+.panel-heading .collapsed:after {
+  /* symbol for "collapsed" panels */
+  font-family: 'FontAwesome';
+  content: "\f065";
+  float: left;
+  color: black;
+  height: 20px;
+  width: 20px;
+  background-color: white;
+  margin-right: 10px;
+}
+
+.panel-heading .idb-accordion-toggle.collapsed:after {
+  /* symbol for "opening" panels */
+  //font-family: 'FontAwesome';
+  //content: "[\f067]";
+  content: "[+]";
+  float: left;
+  color: black;
+  height: 20px;
+  width: 20px;
+  background-color: white;
+  -webkit-transform: rotate(0);
+  -moz-transform:    rotate(0);
+  -ms-transform:     rotate(0);
+  -o-transform:      rotate(0);
+  transform:         rotate(0);
+}
