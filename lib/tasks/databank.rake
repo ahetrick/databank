@@ -75,4 +75,20 @@ namespace :databank do
     end
   end
 
+  desc 'fix name and size display for files ingested into Medusa'
+  task :update_filename => :environment do
+    MedusaIngest.all.each do |ingest|
+      if ingest.medusa_path && ingest.medusa_path != ""
+        datafile = Datafile.where(web_id: ingest.idb_identifier).first
+        if datafile && File.exists?("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}")
+          datafile.binary_size = File.size("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}")
+          datafile.binary_name = File.basename("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}")
+          datafile.save!
+        else
+          puts "could not find datafile: #{ingest.idb_identifier} for ingest #{ingest.id}"
+        end
+      end
+    end
+  end
+
 end
