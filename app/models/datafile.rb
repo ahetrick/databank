@@ -17,12 +17,16 @@ class Datafile < ActiveRecord::Base
   end
 
   def bytestream_name
-    if self.binary_name
+    Rails.logger.warn "datafile: #{self.to_yaml}"
+    if self.binary_name && self.binary_name != ""
       self.binary_name
+      Rails.logger.warn "using self.binary_name"
     elsif self.binary && self.binary.file
       self.binary.file.filename
+      Rails.logger.warn "using self.binary.file.filename"
     else
       ""
+      Rails.logger.warn "neither found, using empty string"
     end
 
   end

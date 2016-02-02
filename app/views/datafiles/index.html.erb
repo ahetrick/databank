@@ -16,6 +16,9 @@
     <% @datafiles.each do |datafile| %>
     <% if (can? :manage, datafile) %>
       <tr>
+        <td colspan="7"><%= debug(datafile) %></td>
+      </tr>
+      <tr>
         <td><%= link_to "datafile/#{datafile.web_id}/download", :class => "btn btn-primary btn-sm" do %>
             <span class="glyphicon glyphicon-download"></span> Download
           <% end %></td>
