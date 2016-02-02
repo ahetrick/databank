@@ -64,8 +64,14 @@ ready = function() {
     });
 
     $('#update-save-button').click(function () {
-        window.onbeforeunload = null;
-        $("[id^=edit_dataset]").submit();
+
+        if ($(".invalid-input").length == 0) {
+            window.onbeforeunload = null;
+            $("[id^=edit_dataset]").submit();
+        } else {
+            alert("Email address must be in a valid format. Only the long-term primary contact email address is required.");
+            $(".invalid-input").first().focus();
+        }
 
     });
 
@@ -95,6 +101,8 @@ ready = function() {
         var current_user_email = $('input#current_user_email').val();
         window.location.assign('/datasets?depositor_email=' + current_user_email);
     });
+
+    $('.review-deposit-agreement').hide();
 
     $('[data-toggle="tooltip"]').tooltip();
 
@@ -211,7 +219,7 @@ ready = function() {
 
     }
 
-    //alert("javascript working");
+    //alert("dataset.js javascript working");
 
 }
 

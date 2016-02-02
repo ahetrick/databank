@@ -154,6 +154,7 @@ class DatasetsController < ApplicationController
   # GET /datasets/1/edit
   def edit
     @dataset.creators.build unless @dataset.creators.count > 0
+    @dataset.funders.build unless @dataset.funders.count > 0
     @completion_check = self.completion_check
   end
 

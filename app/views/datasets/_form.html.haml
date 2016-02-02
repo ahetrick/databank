@@ -1,4 +1,3 @@
-.idb-anchor(id="form-top")
 %div(id="wrapper")
   %div(id="main-form-top")
     = form_for(@dataset, :html => {"data-toggle" => "validator", :multipart => true, :role => "form", :enctype => "multipart/form-data", :class => "input-append dataset-form" }) do |f|
@@ -89,6 +88,7 @@
                         = cf.text_field :identifier, class: "form-control dataset", "data-mask" => "9999-9999-9999-999*", placeholder: "[xxxx-xxxx-xxxx-xxxx]"
                         = cf.hidden_field :identifier_scheme, value: "ORCID"
                       %td(class="col-md-1" )
+
                         %button(type="button" class="btn btn-primary btn-sm orcid-search-btn" onclick="showOrcidSearchModal('#{i}')" )
                           %span(class="glyphicon glyphicon-search" )
                           Look Up
@@ -283,9 +283,6 @@
                           %div(id="box-select" data-link-type="direct" data-multiselect="true" data-client-id="r5tgofc05460skm84yjepz1ck16ptotr")
 .review-deposit-agreement
   %a(href="/datasets/#{@dataset.key}/review_deposit_agreement") Review Deposit Agreement
-.pull-right
-  %a(href="#form-top" )Go to top
-
 
 = render partial: 'orcid_search'
 = render partial: 'license_help_modal'

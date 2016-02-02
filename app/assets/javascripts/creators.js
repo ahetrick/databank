@@ -2,14 +2,16 @@
 
 var creators_ready;
 creators_ready = function() {
+
     $('.orcid-search-spinner').hide();
+    //alert("creators.js javascript working");
 }
 
 function add_creator_row(){
+
     var listStr = $('#creator_index_list').val();
 
     var listArr = listStr.split(",").map(Number);
-
     var maxId = listArr[listArr.length - 1];
 
     if (maxId < 0){
@@ -51,6 +53,7 @@ function add_creator_row(){
     $('#creator_index_list').val(newList);
 
     handleCreatorTable();
+
 }
 
 function remove_creator_row(creator_index) {
@@ -119,9 +122,16 @@ function handleCreatorTable(){
 }
 
 function handle_creator_email_change(input){
-    if ($(input).val() != "") {
+    if ( isEmail( $(input).val() ) ) {
         $(input).closest('td').removeClass('input-field-required');
         $("#email_required_span").removeClass('highlight');
+        $(input).removeClass("invalid-input");
+    } else if ($(input).val() != "") {
+        $(input).addClass("invalid-input");
+        alert("email address must be in valid format");
+        $(input).focus();
+    } else {
+        $(input).removeClass("invalid-input");
     }
 }
 
@@ -286,6 +296,10 @@ function showOrcidSearchModal(creator_index){
     $('#orcid_search').modal('show');
 }
 
+function isEmail(email) {
+    var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    return regex.test(email);
+}
 
 $(document).ready(creators_ready);
 $(document).on('page:load', creators_ready);

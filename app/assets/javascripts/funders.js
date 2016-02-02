@@ -4,6 +4,7 @@ var funders_ready;
 funders_ready = function() {
     $('.funder-text').css("visibility", "hidden");
     handleFunderTable();
+    //alert("funders.js javascript working");
 }
 
 function handleFunderChange(funderIndex){
