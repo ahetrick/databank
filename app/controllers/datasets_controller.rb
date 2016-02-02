@@ -228,6 +228,8 @@ class DatasetsController < ApplicationController
         end
 
         @dataset.datafiles.each do |datafile|
+          datafile.binary_name = datafile.binary.file.filename
+          datafile.binary_size = datafile.binary.size
           medusa_ingest = MedusaIngest.new
           full_path = datafile.binary.path
           full_path_arr = full_path.split("/")

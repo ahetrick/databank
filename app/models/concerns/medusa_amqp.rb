@@ -72,8 +72,8 @@ module MedusaAmqp
           datafile = Datafile.find_by_web_id(staging_path_arr[1])
           if datafile && datafile.binary && datafile.binary.file
             datafile.medusa_path = response_hash['medusa_path']
-            datafile.binary_size |= datafile.binary.size
-            datafile.binary_name |= datafile.binary.file.filename
+            #datafile.binary_size |= datafile.binary.size
+            #datafile.binary_name |= datafile.binary.file.filename
             datafile.medusa_id = response_hash['medusa_uuid']
             if File.exists?("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{datafile.medusa_path}") &&  datafile.binary && FileUtils.identical?(datafile.binary.path, "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{datafile.medusa_path}")
               datafile.remove_binary!
