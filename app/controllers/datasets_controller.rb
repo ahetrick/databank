@@ -242,6 +242,10 @@ class DatasetsController < ApplicationController
         end
 
         if @dataset.save
+          confirmation = DatabankMailer.confirm_deposit(@dataset.key)
+          # Rails.logger.warn "confirmation: #{confirmation}"
+          confirmation.deliver_now
+
           format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset was successfully published and the DataCite DOI minted is #{@dataset.identifier}.<br/>The persistent link to this dataset is now <a href = "http://dx.doi.org/#{@dataset.identifier}">http://dx.doi.org/#{@dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.] }
           format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
         else

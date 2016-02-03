@@ -1,12 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
 </head>
 <body>
-<h1>Hi <%= @dataset.depositor_name %></h1>
+<p>The following dataset has been successfully deposited in the Illinois Data Bank:</p>
+<blockquote>
+  <%= @dataset.plain_text_citation %>
+</blockquote>
+<p>Here is some information about the deposited dataset:</p>
+<blockquote>
+  <p>DataCite DOI: <%= @dataset.identifier %></p>
+
+  <p>Persisent Link: <a href="http://dx.doi.org/#{@dataset.identifier}">http://dx.doi.org/<%= @dataset.identifier %></a></p>
+
+  <p>Release date: TBD</p>
+
+  <p>Depositor: <%= @dataset.depositor_name %></p>
+
+  <p>Contact person: <%= @dataset.corresponding_creator_name %></p>
+</blockquote>
+
 <p>
-  This is to confirm your dataset publication.
+  A curator may contact you with questions about this dataset. Please direct any questions you may have at this time or
+  in the future to <a href="mailto:databank@library.illinois.edu">databank@library.illinois.edu</a>.
 </p>
+
+<p>Thank you,</p>
+<p>Research Data Service, University of Illinois at Urbana-Champaign</p>
 </body>
 </html>

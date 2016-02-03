@@ -39,6 +39,18 @@ Rails.application.configure do
   # set log_level to warn to avoid large noisy log files
   config.log_level = :warn
 
+  # email stuff
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+      address: 'express-smtp.cites.uiuc.edu',
+      domain: 'express-smtp.cites.uiuc.edu',
+      openssl_verify_mode: 'none'
+  }
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.logger = Rails.logger
+
+
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
 end

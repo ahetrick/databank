@@ -1,15 +1,13 @@
 class DatabankMailer < ActionMailer::Base
-  default from: "no-reply@databank.illinois.edu"
+  default from: "databank@library.illinois.edu"
 
   def confirm_deposit(dataset_key)
-    @dataset = Dataset.where(key: dataset_key)
+    @dataset = Dataset.where(key: dataset_key).first
     if @dataset
-      mail(to: @dataset.depositor_email, subject: 'Dataset Publication Confirmation')
+      mail(to: @dataset.depositor_email, subject: '[Illinois Data Bank] Dataset successfully deposited')
     else
       Rails.logger.warn "Confirmation email not sent because dataset not found for key: #{dataset_key}."
     end
-
-
 
   end
 
