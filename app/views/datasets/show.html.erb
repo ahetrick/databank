@@ -89,25 +89,17 @@
       </span>
     </div>
   </div>
+  
   <% @dataset.funders.each do |funder| %>
-  <% end %>
-
-  <% if @dataset.funders.count == 1 %>
-
     <div class="container-fluid">
       <span class="metadata-label">Funder:</span>
-      <%= @dataset.funders.first.name %>
-      <% if @dataset.funders.first.grant && @dataset.funders.first.grant != "" %>
+      <%= funder.name %>
+      <% if funder.grant && funder.grant != "" %>
         , <span class="metadata-label">Grant:</span>
-        <%= @dataset.funders.first.grant %>
+        <%= funder.grant %>
       <% end %>
     </div>
-
-  <% elsif @dataset.funders.count > 1 %>
-
   <% end %>
-
-
 
   <div class="container-fluid">
     <div class="row">

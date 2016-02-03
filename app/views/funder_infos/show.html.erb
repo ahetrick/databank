@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Code:</strong>
+  <%= @funder_info.code %>
+</p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @funder_info.name %>
+</p>
+
+<p>
+  <strong>Identifier:</strong>
+  <%= @funder_info.identifier %>
+</p>
+
+<p>
+  <strong>Display position:</strong>
+  <%= @funder_info.display_position %>
+</p>
+
+<p>
+  <strong>Identifier scheme:</strong>
+  <%= @funder_info.identifier_scheme %>
+</p>
+
+<%= link_to 'Edit', edit_funder_info_path(@funder_info) %> |
+<%= link_to 'Back', funder_infos_path %>

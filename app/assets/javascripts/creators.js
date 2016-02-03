@@ -3,22 +3,51 @@
 var creators_ready;
 creators_ready = function() {
 
+    var cells, desired_width, table_width;
+    if ($("#creator_table tr").length > 0) {
+        table_width = $('#creator_table').width();
+        cells = $('#creator_table').find('tr')[0].cells.length;
+        desired_width = table_width / cells + 'px';
+        handleCreatorTable();
+
+        $('#creator_table td').css('width', desired_width);
+
+        return $('#creator_table').sortable({
+
+            axis: 'y',
+            items: '.item',
+            cursor: 'move',
+            sort: function (e, ui) {
+                return ui.item.addClass('active-item-shadow');
+            },
+            stop: function (e, ui) {
+                ui.item.removeClass('active-item-shadow');
+                return ui.item.children('td').effect('highlight', {}, 1000);
+            },
+            update: function (e, ui) {
+                var item_id, position;
+                item_id = ui.item.data('item-id');
+                position = ui.item.index();
+                handleCreatorTable();
+                generate_creator_preview();
+            }
+        });
+
+    }
+
     $('.orcid-search-spinner').hide();
     //alert("creators.js javascript working");
 }
 
 function add_creator_row(){
 
-    var listStr = $('#creator_index_list').val();
+    var maxId = Number($('#creator_index_max').val());
+    var newId = 0;
 
-    var listArr = listStr.split(",").map(Number);
-    var maxId = listArr[listArr.length - 1];
-
-    if (maxId < 0){
-        maxId = 0
+    if (maxId != NaN) {
+        newId = maxId + 1;
     }
-
-    var newId = maxId + 1;
+    $('#creator_index_max').val(newId);
 
     var creator_row = '<tr class="item row" id="creator_index_' + newId + '">' +
         '<td class="col-md-1"></td>' +
@@ -49,9 +78,6 @@ function add_creator_row(){
         '</tr>';
     $("#creator_table tbody:last-child").append(creator_row);
 
-    var newList = listStr + "," + newId;
-    $('#creator_index_list').val(newList);
-
     handleCreatorTable();
 
 }
@@ -79,20 +105,6 @@ function remove_creator_row(creator_index) {
         handleCreatorTable();
         generate_creator_preview();
     }
-}
-
-function initialize_creator_index_list(){
-    // when the table is first formed, the creator.index is in the range 0..(number of table rows minus one because of header row)
-    var listStr = "";
-
-    for (i = 0; i < ($('#creator_table tr').length) - 1 ; i++) {
-        if (i > 0) {
-            listStr += ",";
-        }
-        listStr += i ;
-    }
-    // set creator form id list value
-    $('#creator_index_list').val(listStr);
 }
 
 function handleCreatorTable(){

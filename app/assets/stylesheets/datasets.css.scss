@@ -251,9 +251,6 @@ ul.help-info{
   content: "[-]";
   float: left;
   color: black;
-  height: 20px;
-  width: 20px;
-  background-color: white;
   margin-right: 10px;
   /* don't rotate icon - override framework defaults  */
   -webkit-transform: rotate(0);
@@ -269,9 +266,6 @@ ul.help-info{
    content: "[+]";
    float: left;
    color: black;
-   height: 20px;
-   width: 20px;
-   background-color: white;
    margin-right: 10px;
    /* don't rotate icon - override framework defaults  */
    -webkit-transform: rotate(0);

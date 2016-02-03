@@ -1,0 +1,2 @@
+module FunderInfosHelper
+end

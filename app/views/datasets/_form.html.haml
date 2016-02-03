@@ -46,7 +46,7 @@
               %span(id="email_required_span") Email Required for primary contact.
               )
               %br
-              %input(type="hidden" name="creator_index_list" id="creator_index_list" value="" )
+              %input(type="hidden" name="creator_index_max" id="creator_index_max" value="#{@dataset.creators.count}" )
               = f.hidden_field :complete
               %table(id="creator_table" class="table table-striped" )
                 %thead
@@ -152,6 +152,7 @@
                 %span( class="metadata-label" ) Funder
           .panel-collapse.collapse(id="funderPanel" role="tabpanel" aria-labelledby="funderHeading" )
             .panel-body
+              %input(type="hidden" name="funder_index_max" id="funder_index_max" value="#{@dataset.funders.count}" )
               %table(id="funder_table" class="table table-striped")
                 %thead
                   %tr(class="row" )
@@ -168,21 +169,9 @@
                         %td
                           =ff.hidden_field :identifier
                           =ff.hidden_field :identifier_scheme
-                          %select(class="form-control dataset"  name="funder_select_#{i}" id="funder_select_#{i}" onchange="handleFunderChange('#{i}')" )
-                            %option(value="none" ) Please select
-                            %option(value="IDOE" ) DOE
-                            %option(value="IDCEO" ) IL Department of Commerce & Economic Opportunity (DCEO)
-                            %option(value="IDHS" ) IL Department of Human Services (DHS)
-                            %option(value="IDNR" ) IL Department of Natural Resources (IDNR)
-                            %option(value="IDOT" ) IL Department of Transporation (IDOT)
-                            %option(value="NASA" ) NASA
-                            %option(value="NIH" ) NIH
-                            %option(value="NSF" ) NSF
-                            %option(value="USARMY" ) US Army
-                            %option(value="USDARO" ) USDA Research Office
-                            %option(value="other" ) Other
+                          =ff.collection_select :code, FunderInfo.order('display_position ASC'), :code, :name, {:prompt => true}, {:class => "form-control dataset", :onchange => "handleFunderChange(#{i})"}
                         %td
-                          =ff.text_field :name, :class=> "form-control dataset funder-text"
+                          =ff.text_field :name, :class=> "form-control dataset funder-text", :placeholder => "[Funder Name]"
 
                         %td
                           =ff.text_field :grant, :class => "form-control dataset"

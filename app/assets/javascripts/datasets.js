@@ -186,38 +186,6 @@ ready = function() {
 
     $('#box-upload-in-progress').hide();
 
-    var cells, desired_width, table_width;
-    if ($("#creator_table tr").length > 0) {
-        table_width = $('#creator_table').width();
-        cells = $('#creator_table').find('tr')[0].cells.length;
-        desired_width = table_width / cells + 'px';
-        initialize_creator_index_list();
-        handleCreatorTable();
-
-        $('#creator_table td').css('width', desired_width);
-
-        return $('#creator_table').sortable({
-
-            axis: 'y',
-            items: '.item',
-            cursor: 'move',
-            sort: function (e, ui) {
-                return ui.item.addClass('active-item-shadow');
-            },
-            stop: function (e, ui) {
-                ui.item.removeClass('active-item-shadow');
-                return ui.item.children('td').effect('highlight', {}, 1000);
-            },
-            update: function (e, ui) {
-                var item_id, position;
-                item_id = ui.item.data('item-id');
-                position = ui.item.index();
-                handleCreatorTable();
-                generate_creator_preview();
-            }
-        });
-
-    }
 
     //alert("dataset.js javascript working");
 

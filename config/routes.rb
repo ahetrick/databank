@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :funder_infos
   resources :funders
   resources :definitions
   #special temporary work-around
