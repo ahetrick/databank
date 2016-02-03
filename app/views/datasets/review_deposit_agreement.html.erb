@@ -2,6 +2,14 @@
   <%= link_to dataset_path(@dataset.key), :class => "btn btn-primary btn-sm" do %>
     <span class="glyphicon glyphicon-triangle-left"></span> Back
   <% end %>
+<% else %>
+  <div class='idb-dashboard panel panel-warning'>
+    <div class='panel-body'>
+      <span class='glyphicon glyphicon-info-sign'></span>
+      If you got to this page from a link on a new dataset, close this tab to get back to your dataset.
+    </div>
+  </div>
+  </div>
 <% end %>
 <%= render partial: 'deposit_agreement' %>
-
+<%= javascript_tag "document.getElementById('collapseOne').className = 'panel-collapse';" %>

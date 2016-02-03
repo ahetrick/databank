@@ -274,7 +274,10 @@
                         .col-md-4
                           %div(id="box-select" data-link-type="direct" data-multiselect="true" data-client-id="r5tgofc05460skm84yjepz1ck16ptotr")
 .review-deposit-agreement
-  %a(href="/datasets/#{@dataset.key}/review_deposit_agreement") Review Deposit Agreement
+  - if (params[:action] == 'new')
+    %a(href="/review_deposit_agreement" target="_blank" ) Review Deposit Agreement
+  - else
+    %a(href="/datasets/#{@dataset.key}/review_deposit_agreement" target="_blank" ) Review Deposit Agreement
 
 = render partial: 'orcid_search'
 = render partial: 'license_help_modal'
