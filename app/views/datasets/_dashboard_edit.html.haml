@@ -8,7 +8,7 @@
           %span(class="glyphicon glyphicon-alert" )
           = @completion_check
       .row
-        .col-md-9
+        .col-md-8
           %span(class="glyphicon glyphicon-eye-open" )
           %span(class="metadata-label" ) Visibility:
           = @dataset.visibility
@@ -21,6 +21,9 @@
             You can edit the description for the dataset to correct an error, but you would need to contact the
             %a(href="/help#contact" )Research Data Service
             if there is an error in the files that needs to be corrected.
+        .col-md-1
+          -if @dataset.title.downcase.include? 'unicorn'
+            = image_tag('Rainbow_Unicorn.png', size: "100x100", class: "dashboard-unicorn-image")
         .col-md-2
           %button(type="button" class="btn btn-primary update save-button btn-block" id="update-save-button")
             Save & Review

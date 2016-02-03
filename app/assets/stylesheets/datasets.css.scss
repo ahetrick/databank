@@ -245,24 +245,6 @@ ul.help-info{
 }
 
 .panel-heading .accordion-toggle:after {
-   /* symbol for "open" panels */
-   font-family: 'FontAwesome';
-   content: "\f066";
-   float: left;
-   color: black;
-   height: 20px;
-   width: 20px;
-   background-color: white;
-   margin-right: 10px;
-  /*  rotate icon - override framework defaults  */
-  -webkit-transform: rotate(0);
-  -moz-transform:    rotate(0);
-  -ms-transform:     rotate(0);
-  -o-transform:      rotate(0);
-  transform:         rotate(0);
- }
-
-.panel-heading .idb-accordion-toggle:after {
   /* symbol for "opening" panels */
   //font-family: 'FontAwesome';
   //content: "[\f068]";
@@ -281,26 +263,7 @@ ul.help-info{
   transform:         rotate(0);
 }
 
-
 .panel-heading .accordion-toggle.collapsed:after {
-  /* symbol for "collapsed" panels */
-  font-family: 'FontAwesome';
-  content: "\f065";
-  float: left;
-  color: black;
-  height: 20px;
-  width: 20px;
-  background-color: white;
-  margin-right: 10px;
-  /*  rotate icon - override framework defaults  */
-  -webkit-transform: rotate(0);
-  -moz-transform:    rotate(0);
-  -ms-transform:     rotate(0);
-  -o-transform:      rotate(0);
-  transform:         rotate(0);
-}
-
-.panel-heading .idb-accordion-toggle.collapsed:after {
    font-family: 'Verdana, sans-serif';
 
    content: "[+]";
@@ -309,6 +272,7 @@ ul.help-info{
    height: 20px;
    width: 20px;
    background-color: white;
+   margin-right: 10px;
    /* don't rotate icon - override framework defaults  */
    -webkit-transform: rotate(0);
    -moz-transform:    rotate(0);
@@ -319,4 +283,13 @@ ul.help-info{
 
 .invalid-input {
   border: 2px solid red;
+}
+
+.dashboard-unicorn-image {
+  -moz-transform: scaleX(-1);
+  -o-transform: scaleX(-1);
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  filter: FlipH;
+  -ms-filter: "FlipH";
 }

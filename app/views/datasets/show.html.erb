@@ -223,9 +223,7 @@
 
   <% end %>
 
-  <% localtitle = @dataset.title.downcase %>
-
-  <% if localtitle.include? 'unicorn' %>
+  <% if @dataset.title.downcase.include? 'unicorn' %>
     <div class="pull-right">
       <%= image_tag('Rainbow_Unicorn.png') %>
     </div>
