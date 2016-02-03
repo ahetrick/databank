@@ -191,12 +191,6 @@ li.current {
   color: #454444;
 }
 
-.welcome > ul > li {
-  list-style-type: none;
-  font-size: large;
-  padding-bottom: 5px;
-}
-
 #footer > .container-fluid {
   border-top: solid #606eb2;
 }
@@ -213,4 +207,28 @@ li.current {
 .panel, .panel-group{
   margin-top: 5px;
   margin-bottom: 5px;
+}
+.workflow-graphic {
+  color: $bgHighlight;
+  margin: 0;
+  padding: 0;
+}
+.welcome, .welcome > p, .welcome > li {
+  font-size: 18px;
+  line-height: 22px;
+}
+.workflow-graphic-text {
+  width: 100px;
+  margin-left: -70px;
+  padding: 15px 15px 15px 70px;
+  color: black;
+  background-color: lightgrey;
+}
+
+.workflow-bar {
+  opacity: 0.1;
+  padding: 0;
+  margin: -20px 0 0 10px;
+  height: 10px;
+  background-color: grey;
 }
