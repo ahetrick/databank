@@ -8,7 +8,15 @@ class DatabankMailer < ActionMailer::Base
     else
       Rails.logger.warn "Confirmation email not sent because dataset not found for key: #{dataset_key}."
     end
+  end
 
+  def confirm_deposit_update(dataset_key)
+    @dataset = Dataset.where(key: dataset_key).first
+    if @dataset
+      mail(to: [@dataset.depositor_email, @dataset.corresponding_creator_email], subject: '[Illinois Data Bank] Dataset successfully updated')
+    else
+      Rails.logger.warn "Update confirmation email not sent because dataset not found for key: #{dataset_key}."
+    end
   end
 
 end

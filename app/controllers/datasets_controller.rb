@@ -213,6 +213,8 @@ class DatasetsController < ApplicationController
 
   def deposit
 
+    old_state = @dataset.publication_state
+
     if completion_check == 'ok'
       @dataset.complete = true
       @dataset.publication_state = Databank::PublicationState::RELEASED
