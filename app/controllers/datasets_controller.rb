@@ -244,17 +244,32 @@ class DatasetsController < ApplicationController
 
         @dataset.has_datacite_change = false
 
-        if @dataset.save
-          confirmation = DatabankMailer.confirm_deposit(@dataset.key)
-          # Rails.logger.warn "confirmation: #{confirmation}"
-          confirmation.deliver_now
+        if old_state == Databank::PublicationState::DRAFT
+          if @dataset.save
+            confirmation = DatabankMailer.confirm_deposit(@dataset.key)
+            # Rails.logger.warn "confirmation: #{confirmation}"
+            confirmation.deliver_now
 
-          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset was successfully published and the DataCite DOI minted is #{@dataset.identifier}.<br/>The persistent link to this dataset is now <a href = "http://dx.doi.org/#{@dataset.identifier}">http://dx.doi.org/#{@dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.] }
-          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+            format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset was successfully published and the DataCite DOI minted is #{@dataset.identifier}.<br/>The persistent link to this dataset is now <a href = "http://dx.doi.org/#{@dataset.identifier}">http://dx.doi.org/#{@dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.] }
+            format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+          else
+            format.html { redirect_to dataset_path(@dataset.key), notice: 'Error in publishing dataset has been logged by the Research Data Service.' }
+            format.json { render json: @dataset.errors, status: :unprocessable_entity }
+          end
         else
-          format.html { redirect_to dataset_path(@dataset.key), notice: 'Error in publishing dataset has been logged by the Research Data Service.' }
-          format.json { render json: @dataset.errors, status: :unprocessable_entity }
+          if @dataset.save
+            confirmation = DatabankMailer.confirm_deposit_update(@dataset.key)
+            # Rails.logger.warn "confirmation: #{confirmation}"
+            confirmation.deliver_now
+
+            format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Changes have been successfully published.] }
+            format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+          else
+            format.html { redirect_to dataset_path(@dataset.key), notice: 'Error in publishing changes has been logged by the Research Data Service.' }
+            format.json { render json: @dataset.errors, status: :unprocessable_entity }
+          end
         end
+
       else
         format.html { redirect_to edit_dataset_path(@dataset.key), notice: completion_check }
         format.json {render json: completion_check, status: :unprocessable_entity}
