@@ -702,7 +702,7 @@ class DatasetsController < ApplicationController
       if creator_attributes.has_key?(:_destroy)
         if creator_attributes[:_destroy]
           return true
-        end  
+        end
       else
         return true
       end
