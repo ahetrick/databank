@@ -257,7 +257,7 @@ class DatasetsController < ApplicationController
             format.json { render json: @dataset.errors, status: :unprocessable_entity }
           end
         else
-          if @dataset.save
+          if @dataset.save && update_datacite_metadata
             confirmation = DatabankMailer.confirm_deposit_update(@dataset.key)
             # Rails.logger.warn "confirmation: #{confirmation}"
             confirmation.deliver_now
@@ -561,7 +561,7 @@ class DatasetsController < ApplicationController
   # def dataset_params
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, :search, :version, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy], funders_attributes: [:dataset_id, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, :search, :version, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update], funders_attributes: [:dataset_id, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update])
   end
 
   def ezid_metadata_response
@@ -798,14 +798,15 @@ class DatasetsController < ApplicationController
 
       case response
         when Net::HTTPSuccess, Net::HTTPRedirection
-          #OK
+          return true
 
         else
           Rails.logger.warn response.to_yaml
-          raise "error updating DataCite metadata"
+          return false
       end
     else
       Rails.logger.warn "dataset not detected as complete - #{completion_check}"
+      return false
     end
 
   end
