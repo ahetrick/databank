@@ -227,19 +227,23 @@ class DatasetsController < ApplicationController
         if !@dataset.identifier || @dataset.identifier.empty?
           @dataset.identifier = mint_doi
         end
+        
+        if old_state == Databank::PublicationState::DRAFT
 
-        @dataset.datafiles.each do |datafile|
-          datafile.binary_name = datafile.binary.file.filename
-          datafile.binary_size = datafile.binary.size
-          medusa_ingest = MedusaIngest.new
-          full_path = datafile.binary.path
-          full_path_arr = full_path.split("/")
-          staging_path = "#{full_path_arr[5]}/#{full_path_arr[6]}/#{full_path_arr[7]}"
-          medusa_ingest.staging_path = staging_path
-          medusa_ingest.idb_class = 'datafile'
-          medusa_ingest.idb_identifier = datafile.web_id
-          medusa_ingest.send_medusa_ingest_message(staging_path)
-          medusa_ingest.save
+          @dataset.datafiles.each do |datafile|
+            datafile.binary_name = datafile.binary.file.filename
+            datafile.binary_size = datafile.binary.size
+            medusa_ingest = MedusaIngest.new
+            full_path = datafile.binary.path
+            full_path_arr = full_path.split("/")
+            staging_path = "#{full_path_arr[5]}/#{full_path_arr[6]}/#{full_path_arr[7]}"
+            medusa_ingest.staging_path = staging_path
+            medusa_ingest.idb_class = 'datafile'
+            medusa_ingest.idb_identifier = datafile.web_id
+            medusa_ingest.send_medusa_ingest_message(staging_path)
+            medusa_ingest.save
+          end
+
         end
 
         @dataset.has_datacite_change = false
