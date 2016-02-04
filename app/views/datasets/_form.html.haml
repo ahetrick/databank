@@ -7,17 +7,19 @@
             %h4(class="panel-title")
               %a(class="accordion-toggle" role="button" data-toggle="collapse" data-parent="#description" href="#descriptionPanel" aria-expanded="true" aria-controls="descriptionPanel")
                 %span( class="metadata-label" )
-                  Description | Citation Preview:
-                %span( id="creator-preview" )
-                  = @dataset.creator_list && @dataset.creator_list != "" ? @dataset.creator_list : "[Creator List]"
-                %span( id="year-preview" )
-                  = @dataset.publication_year && @dataset.publication_year != "" ? "(#{@dataset.publication_year})" : "(#{Time.now.year}):"
-                %span( id="title-preview" )
-                  = @dataset.title && @dataset.title != "" ? "#{@dataset.title}." : "[The Title]."
-                University of Illinois at Urbana-Champaign.
-                %span( id="doi-preview" )
-                  = @dataset.identifier && @dataset.identifier != "" ? "http://dx.doi.org/#{@dataset.identifier}" : ""
-
+                  Description
+            %br
+            %span(class="metadata-label" )
+              Citation Preview:
+            %span( id="creator-preview" )
+              = @dataset.creator_list && @dataset.creator_list != "" ? @dataset.creator_list : "[Creator List]"
+            %span( id="year-preview" )
+              = @dataset.publication_year && @dataset.publication_year != "" ? "(#{@dataset.publication_year})" : "(#{Time.now.year}):"
+            %span( id="title-preview" )
+              = @dataset.title && @dataset.title != "" ? "#{@dataset.title}." : "[The Title]."
+            University of Illinois at Urbana-Champaign.
+            %span( id="doi-preview" )
+              = @dataset.identifier && @dataset.identifier != "" ? "http://dx.doi.org/#{@dataset.identifier}" : ""
           .panel-collapse.collapse.in(id="descriptionPanel" role="tabpanel" aria-labelledby="descriptionHeading" )
             .panel-body
               - if @dataset.errors.any?
