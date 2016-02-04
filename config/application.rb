@@ -11,8 +11,8 @@ module Databank
   class PublicationState
     DRAFT = 'draft'
     RELEASED = 'released'
-    STANDARD_EMBARGO = 'standard embargo'
-    INVISIBLE_EMBARGO = 'invisible embargo'
+    METADATA_EMBARGO = 'metadata embargo'
+    FILE_EMBARGO = 'file embargo'
     TOMBSTONE = 'tombstone'
   end
 

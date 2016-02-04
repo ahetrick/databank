@@ -82,7 +82,13 @@ ready = function() {
      });
 
     $('#dataset_title').change(function() {
-        $('#title-preview').html($(this).val() + '.');
+        if ($("input[name='dataset[publication_state]']").val() == 'draft' || $(this).val() != "" ) {
+            $('#title-preview').html($(this).val() + '.');
+            $('#update-save-button').prop('disabled', false);
+        } else {
+            alert("Published Dataset must have a title.");
+            $('#update-save-button').prop('disabled', true);
+        }
     });
 
     $('#dataset_publication_year').change(function() {

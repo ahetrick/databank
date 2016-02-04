@@ -5,6 +5,8 @@ class Dataset < ActiveRecord::Base
   MIN_FILES = 1
   MAX_FILES = 10000
 
+  validate :published_datasets_must_remain_complete
+
   has_many :datafiles, dependent: :destroy
   has_many :creators, dependent: :destroy
   has_many :funders, dependent: :destroy
@@ -316,6 +318,15 @@ class Dataset < ActiveRecord::Base
       if (!datafile.medusa_path || datafile.medusa_path == "" ) && (!datafile.binary.path || datafile.binary.path == "")
         datafile.destroy
       end
+    end
+  end
+
+  def published_datasets_must_remain_complete
+    if publication_state != Databank::PublicationState::DRAFT
+      if !title || title == ''
+        errors.add(:title, "must be present in a published dataset")
+      end
+      #TODO for completeness, add attributes not editable by depostors in interface
     end
   end
 

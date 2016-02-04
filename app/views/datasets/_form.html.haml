@@ -49,7 +49,7 @@
               )
               %br
               %input(type="hidden" name="creator_index_max" id="creator_index_max" value="#{@dataset.creators.count}" )
-              = f.hidden_field :complete
+              = f.hidden_field :publication_state
               %table(id="creator_table" class="table table-striped" )
                 %thead
                   %tr(class="row" )

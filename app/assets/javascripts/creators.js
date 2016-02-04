@@ -86,7 +86,7 @@ function remove_creator_row(creator_index) {
 
     // do not allow removal of primary contact for published dataset
 
-    if ( ($("input[name='dataset[complete]']").val() == 'true') && ($("#dataset_creators_attributes_" + creator_index + "_is_contact").val() == 'true'))  {
+    if ( ($("input[name='dataset[publication_state]']").val() != 'draft') && ($("#dataset_creators_attributes_" + creator_index + "_is_contact").val() == 'true'))  {
      alert("The primary long term contact for a published dataset may not be removed.  To delete this author listing, first select a different contact.")
     }
     else {
