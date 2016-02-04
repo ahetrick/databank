@@ -19,7 +19,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :review_deposit_agreement
   skip_load_and_authorize_resource :only => :datacite_record
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :completion_check, :change_publication_state ]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :completion_check, :change_publication_state, :is_datacite_changed ]
 
   @@num_box_ingest_deamons = 10
 
@@ -183,14 +183,13 @@ class DatasetsController < ApplicationController
   # PATCH/PUT /datasets/1.json
   def update
 
+    if is_datacite_changed?
+      @dataset.has_datacite_change = true
+    end
+
     respond_to do |format|
 
       if @dataset.update(dataset_params)
-
-        if @dataset.complete?
-          update_datacite_metadata
-        end
-
         format.html { redirect_to dataset_path(@dataset.key)}
         format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
       else
@@ -241,6 +240,8 @@ class DatasetsController < ApplicationController
           medusa_ingest.save
         end
 
+        @dataset.has_datacite_change = false
+
         if @dataset.save
           confirmation = DatabankMailer.confirm_deposit(@dataset.key)
           # Rails.logger.warn "confirmation: #{confirmation}"
@@ -249,7 +250,7 @@ class DatasetsController < ApplicationController
           format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset was successfully published and the DataCite DOI minted is #{@dataset.identifier}.<br/>The persistent link to this dataset is now <a href = "http://dx.doi.org/#{@dataset.identifier}">http://dx.doi.org/#{@dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.] }
           format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
         else
-          format.html { render :edit }
+          format.html { redirect_to dataset_path(@dataset.key), notice: 'Error in publishing dataset has been logged by the Research Data Service.' }
           format.json { render json: @dataset.errors, status: :unprocessable_entity }
         end
       else
@@ -692,6 +693,50 @@ class DatasetsController < ApplicationController
         Rails.logger.warn response.to_yaml
         raise "error minting DOI"
     end
+
+  end
+
+  def is_datacite_changed?
+
+    params[:dataset][:creators_attributes].each do |key, creator_attributes|
+      if creator_attributes.has_key?(:_destroy)
+        if creator_attributes[:_destroy]
+          return true
+        end  
+      else
+        return true
+      end
+    end
+
+    params[:dataset][:funders_attributes].each do |key, creator_attributes|
+      if creator_attributes.has_key?(:_destroy)
+        if creator_attributes[:_destroy]
+          return true
+        end
+      else
+        return true
+      end
+    end
+
+
+    @dataset.creators.each do |creator|
+      if creator.changed?
+        return true
+      end
+    end
+
+    @dataset.funders.each do |funder|
+      if funder.name_changed? || funder.identifier_changed?
+        return true
+      end
+    end
+
+    if @dataset.title_changed? || @dataset.license_changed? || @dataset.description_changed? || @dataset.version_changed? || @dataset.keywords_changed? || @dataset.identifier_changed? || @dataset.publication_year_changed?
+      return true
+    end
+
+    # if we get here, no DataCite-relevant changes have been detected
+    return false
 
   end
 

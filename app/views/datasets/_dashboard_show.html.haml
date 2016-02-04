@@ -3,7 +3,7 @@
     -#.panel-heading
     -#  %span(class="metadata-label" )Dataset Dashboard
     .panel-body
-      -if @dataset.has_datacite_change
+      -if @dataset.publication_state != Databank::PublicationState::DRAFT && @dataset.has_datacite_change
         .datacite-changes-warning
           %span(class="glyphicon glyphicon-alert" )
           Changes have been made to this dataset that have not yet been published.  Confirm & Publish to complete changes.
