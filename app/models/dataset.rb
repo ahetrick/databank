@@ -10,7 +10,7 @@ class Dataset < ActiveRecord::Base
   has_many :funders, dependent: :destroy
   accepts_nested_attributes_for :datafiles, :reject_if => :all_blank, allow_destroy: true
   accepts_nested_attributes_for :creators, reject_if: proc { |attributes| (attributes['family_name'].blank?  && attributes['institution_name'].blank? )}, allow_destroy: true
-  accepts_nested_attributes_for :funders, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :funders, reject_if: proc {|attributes|(attributes['name'].blank?)}, allow_destroy: true
 
   before_create 'set_key'
   before_save 'set_primary_contact'
@@ -119,23 +119,45 @@ class Dataset < ActiveRecord::Base
     contributorsNode = doc.create_element('contributors')
     contributorsNode.parent = resourceNode
 
-    contributorNode = doc.create_element('contributor')
-    contributorNode['contributorType'] = "ContactPerson"
-    contributorNode.parent = contributorsNode
+    contactNode = doc.create_element('contributor')
+    contactNode['contributorType'] = "ContactPerson"
+    contactNode.parent = contributorsNode
 
     if contact.family_name && contact.given_name
-      contributorNameNode = doc.create_element('contributorName')
-      contributorNameNode.content = "#{contact.family_name}, #{contact.given_name}"
-      contributorNameNode.parent = contributorNode
+      contactNameNode = doc.create_element('contributorName')
+      contactNameNode.content = "#{contact.family_name}, #{contact.given_name}"
+      contactNameNode.parent = contactNode
 
       if contact.identifier && contact.identifier != ""
-        contributorIdentifierNode = doc.create_element('nameIdentifier')
-        contributorIdentifierNode["schemeURI"] = "http://orcid.org/"
-        contributorIdentifierNode["nameIdentifierScheme"] = "ORCID"
-        contributorIdentifierNode.content = "#{contact.identifier}"
-        contributorIdentifierNode.parent = contributorNode
+        contactIdentifierNode = doc.create_element('nameIdentifier')
+        contactIdentifierNode["schemeURI"] = "http://orcid.org/"
+        contactIdentifierNode["nameIdentifierScheme"] = "ORCID"
+        contactIdentifierNode.content = "#{contact.identifier}"
+        contactIdentifierNode.parent = contactNode
       end
     end
+
+    self.funders.each do |funder|
+      if (funder.name && funder.name != '') || (funder.identifier && funder.identifer != '')
+
+        funderNode = doc.create_element('contributor')
+        funderNode['contributorType'] = "Funder"
+        funderNode.parent = contributorsNode
+
+        funderNameNode = doc.create_element('contributorName')
+        funderNameNode.content = funder.name ||= '[Name not provided]'
+        funderNameNode.parent = funderNode
+
+        if funder.identifier && funder.identifier != ''
+          funderIdentifierNode = doc.create_element('nameIdentifier')
+          funderIdentifierNode["schemeURI"] = "http://dx.doi.org/"
+          funderIdentifierNode["nameIdentifierScheme"] = "DOI"
+          funderIdentifierNode.content = "#{funder.identifier}"
+          funderIdentifierNode.parent = funderNode
+        end
+      end
+    end
+
 
     publisherNode = doc.create_element('publisher')
     publisherNode.content = self.publisher || "University of Illinois at Urbana-Champaign"

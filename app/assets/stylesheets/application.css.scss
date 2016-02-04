@@ -218,11 +218,13 @@ li.current {
   line-height: 22px;
 }
 .workflow-graphic-text {
-  width: 100px;
+  width: 200px;
+  height: 200px;
   margin-left: -70px;
   padding: 15px 15px 15px 70px;
   color: black;
   background-color: lightgrey;
+  border-radius: 50%;
 }
 
 .workflow-bar {
