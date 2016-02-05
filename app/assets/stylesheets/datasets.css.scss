@@ -35,18 +35,6 @@ div#citation-block {
   padding: .5em;
 }
 
-#title {
-  font-weight: bold;
-  font-size: x-large;
-  margin-left: 0;
-  margin-top: 15px;
-  margin-bottom: 2px;
-  padding-left: 0;
-}
-.subtitle {
-  font-style: italic;
-}
-
 .form-group.required .control-label:after {
   content:"*";
   color:red;
@@ -260,7 +248,6 @@ body:after{
   height: 145px;
   background-color: white;
 }
-
 
 .idb-help{
   border-radius: 5px;

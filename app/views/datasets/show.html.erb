@@ -4,11 +4,8 @@
 <% end %>
 <!-- Only show page contents if dataset is complete or if the viewer has rights to modify it. -->
 <% if ((can? :update, @dataset) || @dataset.complete?) %>
-  <div class="container-fluid">
-    <div class="row">
-      <span class="col-md-6" id="title"><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></span>
-    </div>
-  </div>
+
+  <h1><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></h1>
   <div class="container-fluid" id="citation-block">
 
     <div class="row bg-citation">
