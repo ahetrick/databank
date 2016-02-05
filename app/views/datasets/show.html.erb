@@ -90,10 +90,12 @@
     </div>
   </div>
 
-  <div class="container-fluid">
-    <span class="metadata-label">Release Date:</span>
-    <%= @dataset.release_date %>
-  </div>
+  <% if (not [Databank::PublicationState::RELEASED, Databank::PublicationState::TOMBSTONE].include?(@dataset.publication_state) ) && !@dataset.curator_hold && @dataset.embargo && @dataset.embargo != '' && [Databank::PublicationState::METADATA_EMBARGO, Databank::PublicationState::FILE_EMBARGO].include?(@dataset.embargo) && @dataset.release_date && @dataset.release_date != '' %>
+    <div class="container-fluid">
+      <span class="metadata-label">Release Date:</span>
+      <%= @dataset.release_date %>
+    </div>
+  <% end %>
 
   <% @dataset.funders.each do |funder| %>
     <div class="container-fluid">
