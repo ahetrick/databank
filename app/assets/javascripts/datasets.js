@@ -108,6 +108,22 @@ ready = function() {
         window.location.assign('/datasets?depositor_email=' + current_user_email);
     });
 
+    $('#release-date-picker').hide();
+
+    $( "#dataset_embargo" ).change(function() {
+        switch($(this).val()){
+            case 'file embargo':
+                $('#release-date-picker').show();
+                break;
+            case 'metadata embargo':
+                $('#release-date-picker').show();
+                break;
+            default:
+                $('#dataset_release_date').val(Date.now());
+                $('#release-date-picker').hide();
+        }
+    });
+
     $('.review-deposit-agreement').hide();
 
     $('[data-toggle="tooltip"]').tooltip();
@@ -159,8 +175,6 @@ ready = function() {
         }
     });
 
-
-
     var boxSelect = new BoxSelect();
     // Register a success callback handler
     boxSelect.success(function(response) {
@@ -196,7 +210,6 @@ ready = function() {
     //alert("dataset.js javascript working");
 
 }
-
 
 var Reflector = function(obj) {
     this.getProperties = function() {
@@ -279,6 +292,7 @@ function download_selected(){
 function uncheckPrivateNA(){
     $('#private-na').attr('checked', false);
 }
+
 function uncheckPrivateYes(){
     $('#private-yes').attr('checked', false);
 }

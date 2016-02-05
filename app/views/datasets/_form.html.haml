@@ -44,19 +44,20 @@
 
               = render partial: 'creators_subform', locals: {f: f}
 
-              .field
-                = f.hidden_field :publisher, :value=>"University of Illinois at Urbana-Champaign"
+              = f.hidden_field :publisher, :value=>"University of Illinois at Urbana-Champaign"
 
               .form-group
                 = f.label :description, "Dataset Description", :class => "control-label"
                 %br
                 = f.text_area :description, :rows => 3,  :class => "form-control dataset", :placeholder => "[Description of this dataset, including an overview of content, structure, and format.]"
 
-              .form-group
-                = f.label :keywords, "Keywords (Semi-colon delimited list)", :class => "control-label"
-                %br
-                = f.text_field :keywords, :class => "form-control dataset", :placeholder => "[Semi-colon separated list of keywords or phrases, e.g.: (institutional repositories; file formats)]"
-                %span(class="help-block") Use a semi-colon (;) to separate keywords or phrases (e.g.: institutional repositories; file formats).
+              .row
+                .col-md-6
+                  .form-group
+                    = f.label :keywords, "Keywords (Semi-colon delimited list)", :class => "control-label"
+                    %br
+                    = f.text_field :keywords, :class => "form-control dataset", :placeholder => "[Semi-colon separated list of keywords or phrases, e.g.: (institutional repositories; file formats)]"
+                    %span(class="help-block") Use a semi-colon (;) to separate keywords or phrases (e.g.: institutional repositories; file formats).
 
               = f.hidden_field :depositor_email, :class => "form-control", :id => "depositor_email", :title => "Must agree to deposit agreement to deposit data.", :required => true
 
@@ -101,7 +102,7 @@
             .panel-body
               Related Materials Form Placeholder
 
-      .panel-group(id="funder" role="tablist" aria-multiselectable="true")
+      .panel-group(id="embargo" role="tablist" aria-multiselectable="true")
         .panel.panel-default
           .panel-heading(role="tab" id="embargoHeading")
             %h4(class="panel-title")
@@ -193,6 +194,7 @@
 
 = render partial: 'orcid_search'
 = render partial: 'license_help_modal'
+= render partial: 'embargo_help_modal'
 
 %script(id="template-upload" type="text/x-tmpl")
   .upload

@@ -1,0 +1,48 @@
+.modal.fade(id="embargoModal")
+  .modal-dialog.modal-lg
+    .modal-content
+      .modal-header
+        %button(class="close" data-dismiss="modal")
+          &times;
+      .modal-body
+        .row
+          .col-md-6
+            .embargo-info-column-header.embargo-info-header
+              %h4 File Publication Delay
+              %p (standard embargo)
+            .embargo-info-column-middle-section
+              %h4 You recieve an active DOI.
+              %ul
+                %li You will recieve a DOI, and the link will forward to the Illinois Data Bank page for your dataset.
+            .embargo-info-column-middle-section
+              %h4 Your dataset record is discoverable.
+              %ul
+                %li Lets others distribute, remix, tweak, and build upon your work without any restrictions or requirements.
+            .embargo-info-column-bottom-section
+              %h4 Dataset files cannot be accessed or seen.
+              %ul
+                %li Although the record for your dataset is publically visible, your data files will not be made available until the release date you selected.
+          .col-md-6
+            .embargo-info-column-header.embargo-info-header
+              %h4 Metadata and File Publication Delay
+              %p (reserve DOI only)
+            .embargo-info-column-middle-section
+              %h4 Your DOI is saved, but the link will fail.
+              %ul
+                %li You will receive a DOI link to place in your publication, but the link will fail until the release date you selected.
+            .embargo-info-column-middle-section
+              %h4 Your dataset record is not discoverable.
+              %ul
+                %li Your dataset will be stored in the Illinois Data Bank, but is not discoverable or visible until the release date you selected.
+            .embargo-info-column-bottom-section
+              %h4 Dataset files cannot be accessed or seen.
+              %ul
+                %li The record for your dataset is not visible, nor are your data files available until the release date you selected.
+
+        .container-fluid
+          .pull-right
+            %br
+            Unsure?
+            %button(onclick='window.location = "http://researchdataservice.illinois.edu/contact-us/"' type="button" class="btn btn-success" data-dismiss="modal" id="help-button")
+              %span(class="glyphicon glyphicon-question-sign")
+              Get Help
