@@ -150,6 +150,7 @@ function remove_funder_row(funder_index) {
     if ($("#funder_table tr").length < 2) {
         add_funder_row();
     }
+    handleFunderTable();
 }
 
 

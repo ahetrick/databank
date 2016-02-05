@@ -4,7 +4,7 @@
   %span(id="email_required_span") Email Required for primary contact.
   )
 %br
-%input(type="hidden" name="creator_index_max" id="creator_index_max" value="#{@dataset.creators.count}" )
+%input(type="hidden" name="creator_index_max" id="creator_index_max" value="#{@dataset.creators.count.to_i - 1}" )
 = f.hidden_field :publication_state
 %table(id="creator_table" class="table table-striped" )
   %thead

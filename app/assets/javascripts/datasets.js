@@ -119,7 +119,7 @@ ready = function() {
                 $('#release-date-picker').show();
                 break;
             default:
-                $('#dataset_release_date').val(Date.now());
+                $('#dataset_release_date').val('');
                 $('#release-date-picker').hide();
         }
     });
