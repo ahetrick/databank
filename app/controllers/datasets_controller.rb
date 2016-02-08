@@ -238,6 +238,8 @@ class DatasetsController < ApplicationController
         
         if old_state == Databank::PublicationState::DRAFT
 
+          @dataset.release_date = Date.current()
+
           @dataset.datafiles.each do |datafile|
             datafile.binary_name = datafile.binary.file.filename
             datafile.binary_size = datafile.binary.size
