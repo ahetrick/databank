@@ -17,7 +17,7 @@ module Datasets
 
       # This should only be relevant if there are DataCite relevant changes, including release date
 
-      if !dataset.release_date ||  dataset.release_date <= Date.current()
+      if !dataset.release_date || dataset.release_date <= Date.current()
         dataset.embargo = nil
       end
 
