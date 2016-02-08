@@ -1,4 +1,4 @@
--if ( (can? :manage, @dataset) || ((can? :edit, @dataset) && ([Databank::PublicationState::METADATA_EMBARGO, Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::DRAFT].include?(@dataset.publication_state))))
+-if ( params[:action]=='new' || (can? :manage, @dataset) || ((can? :edit, @dataset) && ([Databank::PublicationState::METADATA_EMBARGO, Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::DRAFT].include?(@dataset.publication_state))))
 
   .row
     .col-md-4

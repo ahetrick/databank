@@ -14,7 +14,7 @@
           - if @dataset.publication_state == Databank::PublicationState::DRAFT || (can? :manage, @dataset)
             Edit to complete dataset.
       .row
-        .col-md-7
+        .col-md-8
           %span(class="glyphicon glyphicon-eye-open" )
           %span(class="metadata-label" ) Visibility:
           = @dataset.visibility
@@ -30,14 +30,14 @@
             %a(href="/help#contact" )Research Data Service
             if there is an error in the files that needs to be corrected.
           -if @completion_check == 'ok' && (@dataset.publication_state == Databank::PublicationState::DRAFT || (@dataset.has_datacite_change && [Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO].include?(@dataset.publication_state) ) )
-            Click Confirm & Publish for final confirmation and to publish this dataset.
+            Click Confirm for final confirmation and to publish this dataset.
 
         .col-md-1
           -if @dataset.title.downcase.include? 'unicorn'
             = image_tag('Rainbow_Unicorn.png', size: "100x100", class: "dashboard-unicorn-image")
-        .col-md-2
+        .col-md-1
           -if @completion_check == 'ok' && (@dataset.publication_state == Databank::PublicationState::DRAFT || (@dataset.has_datacite_change && [Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO].include?(@dataset.publication_state) ) )
-            %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit") Confirm & Publish
+            %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit") Confirm
         .col-md-1
           = link_to(edit_dataset_path(@dataset), :class => "btn btn-info btn-block") do
             %span(class="glyphicon glyphicon-edit")
@@ -50,7 +50,7 @@
           - elsif (can? :manage, @dataset)
             %button(type="button" class="btn btn-danger btn-block" )
               Tombstone
-          -else
+          - else
             %button(type="button" class="btn btn-danger btn-block" name="cancel" onclick='window.location = "/"' )
-            %span(class="glyphicon glyphicon-ban-circle" )
-            Cancel
+              %span(class="glyphicon glyphicon-ban-circle" )
+              Cancel

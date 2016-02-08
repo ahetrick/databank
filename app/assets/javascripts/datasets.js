@@ -108,6 +108,14 @@ ready = function() {
         window.location.assign('/datasets?depositor_email=' + current_user_email);
     });
 
+
+    console.log("val: " + $('#dataset_embargo').val());
+
+    if (!$('#dataset_embargo').val()) {
+
+        $('#release-date-picker').hide();
+    }
+
     $( "#dataset_embargo" ).change(function() {
         switch($(this).val()){
             case 'file embargo':
@@ -118,6 +126,7 @@ ready = function() {
                 break;
             default:
                 $('#dataset_release_date').val('');
+                $('#release-date-picker').hide();
         }
     });
 

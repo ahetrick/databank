@@ -59,6 +59,24 @@
                     = f.text_field :keywords, :class => "form-control dataset", :placeholder => "[Semi-colon separated list of keywords or phrases, e.g.: (institutional repositories; file formats)]"
                     %span(class="help-block") Use a semi-colon (;) to separate keywords or phrases (e.g.: institutional repositories; file formats).
 
+                -if ( params[:action]=='new' || (can? :manage, @dataset) || ((can? :edit, @dataset) && ([Databank::PublicationState::METADATA_EMBARGO, Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::DRAFT].include?(@dataset.publication_state))))
+
+                  .col-md-4
+                    .form-group
+                      =f.label :embargo, "Publication Delay (embargo)", class: "control-label"
+                      %a(href="#" data-toggle="modal" data-target="#embargoModal" tabindex="-1")
+                        %span(class="glyphicon glyphicon-question-sign")
+                      = f.select :embargo, options_for_select([["File Publication Delay (standard embargo)", Databank::PublicationState::FILE_EMBARGO],["File and Metadata Publication Delay (reserve DOI only)", Databank::PublicationState::METADATA_EMBARGO]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
+                  .col-md-2
+                    %div(id="release-date-picker")
+                      =f.label :release_date, "Release Date",  :class => "control-label"
+                      =f.date_field :release_date,  class: "form-control dataset"
+                -else
+                  .col-md-2
+                    .form-group
+                      =f.label :release_date, "Release Date",  :class => "control-label"
+                      =f.text_field :release_date, class: "form-control dataset", disabled: true
+
               = f.hidden_field :depositor_email, :class => "form-control", :id => "depositor_email", :title => "Must agree to deposit agreement to deposit data.", :required => true
 
               = f.hidden_field :depositor_name, :class => "form-control", :id => "depositor_name"
@@ -102,15 +120,6 @@
             .panel-body
               Related Materials Form Placeholder
 
-      .panel-group(id="embargo" role="tablist" aria-multiselectable="true")
-        .panel.panel-default
-          .panel-heading(role="tab" id="embargoHeading")
-            %h4(class="panel-title")
-              %a(role="button" data-toggle="collapse" data-parent="#embargo" href="#embargoPanel" aria-expanded="false" aria-controls="embargoPanel" class="accordion-toggle collapsed" )
-                %span( class="metadata-label" ) Release Date
-          .panel-collapse.collapse(id="embargoPanel" role="tabpanel" aria-labelledby="embargoHeading" )
-            .panel-body
-              = render partial: 'embargo_subform', locals: {f: f}
   %div(id="datafiles-form")
 
     - if (params[:action] != 'new')
