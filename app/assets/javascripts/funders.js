@@ -42,9 +42,9 @@ function handleFunderChange(funderIndex) {
             $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
             break;
         case "IDOT":
-            $('#dataset_funders_attributes_' + funderIndex + '_name').val('IL Department of Transportation (IDOT)');
-            $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('');
-            $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('');
+            $('#dataset_funders_attributes_' + funderIndex + '_name').val('USGS');
+            $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('10.13039/100000203');
+            $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
             break;
         case "NASA":
             $('#dataset_funders_attributes_' + funderIndex + '_name').val('NASA');
@@ -118,7 +118,7 @@ function add_funder_row() {
         '<option value="IDCEO">IL Department of Commerce &amp; Economic Opportunity (DCEO)</option>' +
         '<option value="IDHS">IL Department of Human Services (DHS)</option>' +
         '<option value="IDNR">IL Department of Natural Resources (IDNR)</option>' +
-        '<option value="IDOT">IL Department of Transportation (IDOT)</option>' +
+        '<option value="USGS">USGS</option>' +
         '<option value="NASA">NASA</option>' +
         '<option value="NIH">NIH</option>' +
         '<option value="NSF">NSF</option>' +

@@ -26,6 +26,11 @@ license_custom.save!
 
 # FUNDER INFO
 
+funder_idot = FunderInfo.find_or_initialize_by(code: "IDOT")
+if funder_idot
+  funder_idot.destroy
+end
+
 funder_idoe = FunderInfo.find_or_initialize_by(code: "IDOE")
 funder_idoe.name = "DOE"
 funder_idoe.identifier = "10.13039/100000015"
@@ -54,12 +59,20 @@ funder_idnr.display_position = 4
 funder_idnr.identifier_scheme = "DOI"
 funder_idnr.save!
 
-funder_idot = FunderInfo.find_or_initialize_by(code: "IDOT")
-funder_idot.name = "IL Department of Transportation (IDOT)"
-funder_idot.identifier = ""
+# funder_idot = FunderInfo.find_or_initialize_by(code: "IDOT")
+# funder_idot.name = "IL Department of Transportation (IDOT)"
+# funder_idot.identifier = ""
+# funder_idot.display_position = 5
+# funder_idot.identifier_scheme = ""
+# funder_idot.save!
+
+funder_idot = FunderInfo.find_or_initialize_by(code: "USGS")
+funder_idot.name = "USGS"
+funder_idot.identifier = "10.13039/100000203"
 funder_idot.display_position = 5
-funder_idot.identifier_scheme = ""
+funder_idot.identifier_scheme = "DOI"
 funder_idot.save!
+
 
 funder_nasa = FunderInfo.find_or_initialize_by(code: "NASA")
 funder_nasa.name = "NASA"
