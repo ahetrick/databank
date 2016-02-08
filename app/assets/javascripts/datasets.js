@@ -108,8 +108,6 @@ ready = function() {
         window.location.assign('/datasets?depositor_email=' + current_user_email);
     });
 
-    $('#release-date-picker').hide();
-
     $( "#dataset_embargo" ).change(function() {
         switch($(this).val()){
             case 'file embargo':
@@ -120,7 +118,6 @@ ready = function() {
                 break;
             default:
                 $('#dataset_release_date').val('');
-                $('#release-date-picker').hide();
         }
     });
 

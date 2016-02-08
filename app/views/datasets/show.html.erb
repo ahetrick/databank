@@ -2,9 +2,15 @@
 <% if (can? :edit, @dataset) %>
   <%= render partial: 'dashboard_show' %>
 <% end %>
-<!-- Only show page contents if dataset is complete or if the viewer has rights to modify it. -->
-<% if ((can? :update, @dataset) || @dataset.complete?) %>
 
+<% if @visibility_message != "" %>
+  <div class="availability-msg">
+    <%= @visibility_msg %>
+  </div>
+<% end %>
+
+<% if ((can? :edit, @dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO].include? @dataset.publication_state)) %>
+  <!-- BEGIN metadata section-->
   <h1><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></h1>
   <div class="container-fluid" id="citation-block">
 
@@ -87,7 +93,7 @@
     </div>
   </div>
 
-  <% if (not [Databank::PublicationState::RELEASED, Databank::PublicationState::TOMBSTONE].include?(@dataset.publication_state) ) && !@dataset.curator_hold && @dataset.embargo && @dataset.embargo != '' && [Databank::PublicationState::METADATA_EMBARGO, Databank::PublicationState::FILE_EMBARGO].include?(@dataset.embargo) && @dataset.release_date && @dataset.release_date != '' %>
+  <% if [Databank::PublicationState::METADATA_EMBARGO, Databank::PublicationState::FILE_EMBARGO].include?(@dataset.publication_state) || ( @dataset.publication_state == Databank::PublicationState::DRAFT && @dataset.release_date && @dataset.release_date > Date.current() ) %>
     <div class="container-fluid">
       <span class="metadata-label">Release Date:</span>
       <%= @dataset.release_date %>
@@ -133,6 +139,10 @@
 
   </div>
 
+<% end %>
+<!-- END metadata section-->
+<% if ((can? :edit, @dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::METADATA_EMBARGO].include? @dataset.publication_state)) %>
+<!-- BEGIN file section -->
   <div class="panel-group" id="files" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="headingOne">
@@ -196,10 +206,16 @@
       </div>
     </div>
   </div>
+<!-- END file section -->
+<% end %>
 
+<% if can? :edit, @dataset %>
   <a href="/datasets/<%= @dataset.key %>/review_deposit_agreement">Review Deposit Agreement</a>
 
-  <% if can? :manage, @dataset && @dataset.complete? %>
+<% end %>
+
+<% if can? :manage, @dataset && @dataset.publication_state != Databank::PublicationState::DRAFT %>
+  <div class="curator-only">
     <h2>DataCite Record:</h2>
     <% @datacite_record.each do |key, value| %>
 
@@ -216,16 +232,11 @@
         <% end %>
       </div>
     <% end %>
-
-  <% end %>
-
-  <% if @dataset.title.downcase.include? 'unicorn' %>
-    <div class="pull-right">
-      <%= image_tag('Rainbow_Unicorn.png') %>
-    </div>
-  <% end %>
-<% else %>
-  <div class="jumbotron"><h2>Must be logged in as the depositor or a curator to view this dataset.</h2></div>
-
+  </div>
 <% end %>
-<div id="frames"></div>
+
+<%if (@dataset.title.downcase.include? 'unicorn') && ((can? :edit, @dataset) && [Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO].include?(@dataset.publication_state) ) %>
+  <div class="pull-right">
+    <%= image_tag('Rainbow_Unicorn.png') %>
+  </div>
+<% end %>

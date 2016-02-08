@@ -4,6 +4,7 @@ require 'boxr'
 require 'zipruby'
 
 class DatasetsController < ApplicationController
+  include Datasets::PublicationStateMethods
 
   protect_from_forgery except: :cancel_box_upload
 
@@ -49,6 +50,9 @@ class DatasetsController < ApplicationController
     if params.has_key?(:selected_files)
       zip_and_download_selected
     end
+    @publish_modal_msg = publish_modal_msg(@dataset)
+    @visibility_msg = visibility_msg(@dataset)
+
 
     # # clean up incomplete datasfiles
     # @dataset.datafiles.each do |datafile|
@@ -217,7 +221,11 @@ class DatasetsController < ApplicationController
 
     if completion_check == 'ok'
       @dataset.complete = true
-      @dataset.publication_state = Databank::PublicationState::RELEASED
+      if (@dataset.release_date && @dataset.release_date <= Date.current) || !@dataset.embargo || @dataset.embargo == ""
+        @dataset.publication_state = Databank::PublicationState::RELEASED
+      else
+        @dataset.publication_state = @dataset.embargo
+      end
     else
       @dataset.complete = false
     end
@@ -250,11 +258,12 @@ class DatasetsController < ApplicationController
 
         if old_state == Databank::PublicationState::DRAFT
           if @dataset.save
+            send_deposit_confirmation_email(old_state, @dataset)
             confirmation = DatabankMailer.confirm_deposit(@dataset.key)
             # Rails.logger.warn "confirmation: #{confirmation}"
             confirmation.deliver_now
 
-            format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset was successfully published and the DataCite DOI minted is #{@dataset.identifier}.<br/>The persistent link to this dataset is now <a href = "http://dx.doi.org/#{@dataset.identifier}">http://dx.doi.org/#{@dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.] }
+            format.html { redirect_to dataset_path(@dataset.key), notice: deposit_confirmation_notice(old_state, @dataset)}
             format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
           else
             format.html { redirect_to dataset_path(@dataset.key), notice: 'Error in publishing dataset has been logged by the Research Data Service.' }
@@ -565,7 +574,7 @@ class DatasetsController < ApplicationController
   # def dataset_params
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :complete, :search, :version, :release_date, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update])
   end
 
   def ezid_metadata_response
@@ -595,76 +604,9 @@ class DatasetsController < ApplicationController
     end
   end
 
-  # def change_publication_state(new_state)
-  #   @dataset.publication_state |= PublicationState::DRAFT
-  #   unless (new_state == @dataset.publication_state)
-  #
-  #     case new_state
-  #       when PublicationState::DRAFT
-  #         case @dataset.publication_state
-  #
-  #           when PublicationState::RELEASED
-  #             #TODO
-  #           when PublicationState::STANDARD_EMBARGO
-  #             #TODO
-  #           when PublicationState::INVISIBLE_EMBARGO
-  #             #TODO
-  #           when PublicationState::TOMBSTONE
-  #             #TODO
-  #         end
-  #
-  #       when PublicationState::RELEASED
-  #         case @dataset.publication_state
-  #           when PublicationState::DRAFT
-  #             #TODO
-  #           when PublicationState::STANDARD_EMBARGO
-  #             #TODO
-  #           when PublicationState::INVISIBLE_EMBARGO
-  #             #TODO
-  #           when PublicationState::TOMBSTONE
-  #             #TODO
-  #         end
-  #
-  #       when PublicationState::STANDARD_EMBARGO
-  #         case @dataset.publication_state
-  #           when PublicationState::DRAFT
-  #             #TODO
-  #           when PublicationState::RELEASED
-  #             #TODO
-  #           when PublicationState::INVISIBLE_EMBARGO
-  #             #TODO
-  #           when PublicationState::TOMBSTONE
-  #             #TODO
-  #         end
-  #
-  #       when PublicationState::INVISIBLE_EMBARGO
-  #         case @dataset.publication_state
-  #           when PublicationState::DRAFT
-  #             #TODO
-  #           when PublicationState::RELEASED
-  #             #TODO
-  #           when PublicationState::STANDARD_EMBARGO
-  #             #TODO
-  #           when PublicationState::TOMBSTONE
-  #             #TODO
-  #         end
-  #
-  #       when PublicationState::TOMBSTONE
-  #         case @dataset.publication_state
-  #           when PublicationState::DRAFT
-  #             #TODO
-  #           when PublicationState::RELEASED
-  #             #TODO
-  #           when PublicationState::STANDARD_EMBARGO
-  #             #TODO
-  #           when PublicationState::INVISIBLE_EMBARGO
-  #             #TODO
-  #
-  #         end
-  #       end
-  #     end
-  #   end
-  # end
+
+
+
 
   def mint_doi
 

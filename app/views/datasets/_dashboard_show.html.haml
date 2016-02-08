@@ -3,7 +3,7 @@
     -#.panel-heading
     -#  %span(class="metadata-label" )Dataset Dashboard
     .panel-body
-      -if @dataset.publication_state != Databank::PublicationState::DRAFT && @dataset.has_datacite_change
+      -if @dataset.has_datacite_change && (@dataset.publication_state != Databank::PublicationState::DRAFT && @dataset.publication_state != Databank::PublicationState::METADATA_EMBARGO)
         .datacite-changes-warning
           %span(class="glyphicon glyphicon-alert" )
           Changes have been made to this dataset that have not yet been published.  Confirm & Publish to complete changes.
@@ -29,13 +29,14 @@
             You can edit the description for the dataset to correct an error, but you would need to contact the
             %a(href="/help#contact" )Research Data Service
             if there is an error in the files that needs to be corrected.
-          - if @completion_check == 'ok' && (@dataset.publication_state == Databank::PublicationState::DRAFT || @dataset.has_datacite_change)
+          -if @completion_check == 'ok' && (@dataset.publication_state == Databank::PublicationState::DRAFT || (@dataset.has_datacite_change && [Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO].include?(@dataset.publication_state) ) )
             Click Confirm & Publish for final confirmation and to publish this dataset.
+
         .col-md-1
           -if @dataset.title.downcase.include? 'unicorn'
             = image_tag('Rainbow_Unicorn.png', size: "100x100", class: "dashboard-unicorn-image")
         .col-md-2
-          - if @completion_check == 'ok' && (@dataset.publication_state == Databank::PublicationState::DRAFT || @dataset.has_datacite_change)
+          -if @completion_check == 'ok' && (@dataset.publication_state == Databank::PublicationState::DRAFT || (@dataset.has_datacite_change && [Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO].include?(@dataset.publication_state) ) )
             %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit") Confirm & Publish
         .col-md-1
           = link_to(edit_dataset_path(@dataset), :class => "btn btn-info btn-block") do

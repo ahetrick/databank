@@ -219,10 +219,10 @@ class Dataset < ActiveRecord::Base
         return_string = "Private (Saved Draft)"
       when Databank::PublicationState::RELEASED
         return_string = "Public (Published)"
-      when Databank::PublicationState::STANDARD_EMBARGO
+      when Databank::PublicationState::FILE_EMBARGO
         return_string = "Public description, Private files (Standard Embargo)"
-      when Databank::PublicationState::INVISIBLE_EMBARGO
-        return_string = "Private (Invisible Embargo)"
+      when Databank::PublicationState::METADATA_EMBARGO
+        return_string = "Private (DOI Reserved Only)"
       when Databank::PublicationState::TOMBSTONE
         return_string = "Public Metadata, Private Files (Tombstone)"
       else

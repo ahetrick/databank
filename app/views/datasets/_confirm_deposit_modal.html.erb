@@ -7,20 +7,7 @@
       </div>
 
       <div class="modal-body">
-
-        <% if @dataset.publication_state == Databank::PublicationState::DRAFT %>
-
-          <p class="ds-paragraph">
-            This action will make your dataset public and create a DOI. You will be able to edit the description for the dataset to correct an error, but you would need to contact the <a href=" http://researchdataservice.illinois.edu/contact-us">Research Data Service</a> directly if there is an error in the files that needs to be corrected.
-          </p>
-
-        <% else %>
-
-          <p class="ds-paragraph">
-            This action will make your updates to your dataset public. You will continue to be able to edit the description for the dataset to correct an error, and will continue to need to contact the <a href=" http://researchdataservice.illinois.edu/contact-us">Research Data Service</a> directly if there is an error in the files that needs to be corrected.
-          </p>
-
-        <% end %>
+        <p class="ds-paragraph"><%= @publish_modal_msg.html_safe %></p>
       </div>
 
       <div class="modal-footer container-fluid">
