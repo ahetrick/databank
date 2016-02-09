@@ -15,40 +15,54 @@ module Datasets
 
     def publish_modal_msg (dataset)
 
-      # This should only be relevant if there are DataCite relevant changes, including release date
+      # This method should only be called if there are DataCite relevant changes, including release date
 
       if !dataset.release_date || dataset.release_date <= Date.current()
         dataset.embargo = nil
       end
 
-      msg = ""
+      msg = "<div class='confirm-modal-text'>"
 
       case dataset.embargo
 
         when Databank::PublicationState::FILE_EMBARGO
           if dataset.publication_state == Databank::PublicationState::DRAFT
-            msg << "This action will make your record public and create a DOI. Information for your dataset in the Illinois Data Bank will be publicly visible through several search engines. Although the record for your dataset will be publically visible, your data files will not be made available until #{dataset.release_date.iso8601}. "
+            msg << "<h4>This action will make your record public and create a DOI.</h4><hr/>"
+            msg << "<ul>"
+            msg << "<li>Your Illinois Data Bank dataset record will be publicly visible through search engines.</li>"
+            msg << "<li>Although the record for your dataset will be publicly visible, your data files will not be made available until #{dataset.release_date.iso8601}.</li>"
+
           else
-            msg << "This action will make your updates to your dataset record public. "
+            msg << "<h4>This action will make your updates to your dataset record public.</h4><hr/>"
+            msg << "<ul>"
           end
 
         when Databank::PublicationState::METADATA_EMBARGO
           if dataset.publication_state == Databank::PublicationState::DRAFT
-            msg << "This action will reserve a DOI, but the DOI link will fail until #{dataset.release_date.iso8601}.  The record for your dataset is not visible, nor are your data files available until #{dataset.release_date.iso8601}. "
+            msg << "<h4>This action will reserve a DOI</h4><hr/>"
+            msg << "<ul>"
+            msg << "The DOI link will fail until #{dataset.release_date.iso8601}."
+            msg << "The record for your dataset is not visible, nor are your data files available until #{dataset.release_date.iso8601}. "
           else
             # Should never get here, DataCite record changes are not relevant to METADATA_EMBARGO
-            "This action will not do anything.  The record for your dataset is not visible, and the DOI is already reserved. "
+            msg << "<h3>This action will not do anything.  The record for your dataset is not visible, and the DOI is already reserved.</h3>"
+            msg << "<ul>"
           end
 
         else
           if dataset.publication_state == Databank::PublicationState::DRAFT
-            msg << "This action will make your dataset public and create a DOI. "
+            msg << "<h4>This action will make your dataset public and create a DOI.</h4><hr/>"
           else
-            msg << "This action will make your updates to your dataset public. "
+            msg << "<h4>This action will make your updates to your dataset record public.</h4>"
           end
+          msg << "<ul>"
+          msg << "<li>Your Illinois Data Bank dataset record will be publicly visible through search engines.</li>"
+          msg << "<li>Your data files will be publically available.</li>"
       end
 
-      msg << "You will be able to edit the description for the dataset to correct an error, but you would need to contact the <a href='http://researchdataservice.illinois.edu/contact-us'>Research Data Service</a> directly if there is an error in the files that needs to be corrected. "
+      msg << "<li>You will be able to edit the description for the dataset to correct an error, but would need to contact the <a href='/help'>Research Data Service</a> if there is an error in the files that needs to be corrected.</li> "
+
+      msg << "</ul></div>"
 
       msg
     end
