@@ -1,14 +1,19 @@
-.row
-  .col-md-2
-    .bs-sidebar.hidden-print.affix.idb-nav(role="complementary" )
-      %ul(class="idb-nav bs-sidenav" )
-        %li(class="nav-item current" )
-          %a(href="/help" ) Help Center
-        %li(class="nav-item" )
-          %a(href="#contact" ) Contact Us
-        %li(class="nav-item" )
-          %a(href="#license") Copyright and Licensing
-        %li(class="nav-item" )
-          %a(href="#other") Topic
-  .col-md-10
-    =yield
+%div(id="wrapper")
+  %div(id="sidebar-wrapper")
+    %ul(class="sidebar-nav" )
+      %li(class="sidebar-brand" )
+        %a(href="/help") Select a Help Topic
+      %li
+        %a(href="#embargo") Embargoing your dataset
+      %li
+        %a(href="#license") Licensing your dataset
+      %li
+        %a(href="#fix") Fixing an error in your published dataset files
+
+  %div(id="page-content-wrapper")
+    .container-fluid
+      .row
+        .col-lg-12
+          %h1(class="text-center" ) How can we help you?
+          %hr
+          =yield

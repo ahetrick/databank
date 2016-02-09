@@ -83,5 +83,7 @@ Rails.application.routes.draw do
   post "/creators/update_row_order", to: 'creators#update_row_order'
   post "/creators/create_for_form", to: 'creators#create_for_form', defaults: {format: 'json'}
 
+  post "/help/help_mail", to: 'help#help_mail', as: :help_mail
+
 
 end

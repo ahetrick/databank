@@ -252,6 +252,7 @@ function handleNotAgreed(){
     $('.new-dataset-progress').hide();
     $('.deposit-agreement-warning').show();
     $('.search').removeAttr("disabled");
+    $('.help').removeAttr("disabled");
     $('#show-agreement-modal-link').show();
     $('.review-deposit-agreement').hide();
     //$('.deposit-agreement-btn').removeAttr("disabled");
@@ -301,6 +302,10 @@ function uncheckPrivateNA(){
 
 function uncheckPrivateYes(){
     $('#private-yes').attr('checked', false);
+}
+
+function clear_help_form(){
+    $('input .help').val('');
 }
 
 $(document).ready(ready);

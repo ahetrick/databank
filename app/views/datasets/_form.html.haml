@@ -1,200 +1,201 @@
-%div(id="wrapper")
-  %div(id="main-form-top")
-    = form_for(@dataset, :html => {"data-toggle" => "validator", :multipart => true, :role => "form", :enctype => "multipart/form-data", :class => "input-append dataset-form" }) do |f|
-      .panel-group(id="description" role="tablist" aria-multiselectable="true")
-        .panel.panel-default
-          .panel-heading(role="tab" id="descriptionHeading")
-            %h4(class="panel-title")
-              %a(class="accordion-toggle" role="button" data-toggle="collapse" data-parent="#description" href="#descriptionPanel" aria-expanded="true" aria-controls="descriptionPanel")
-                %span( class="metadata-label" )
-                  Description
-            %br
-            %span(class="metadata-label" )
-              Citation Preview:
-            %span( id="creator-preview" )
-              = @dataset.creator_list && @dataset.creator_list != "" ? @dataset.creator_list : "[Creator List]"
-            %span( id="year-preview" )
-              = @dataset.publication_year && @dataset.publication_year != "" ? "(#{@dataset.publication_year})" : "(#{Time.now.year}):"
-            %span( id="title-preview" )
-              = @dataset.title && @dataset.title != "" ? "#{@dataset.title}." : "[The Title]."
-            University of Illinois at Urbana-Champaign.
-            %span( id="doi-preview" )
-              = @dataset.identifier && @dataset.identifier != "" ? "http://dx.doi.org/#{@dataset.identifier}" : ""
-          .panel-collapse.collapse.in(id="descriptionPanel" role="tabpanel" aria-labelledby="descriptionHeading" )
-            .panel-body
-              - if @dataset.errors.any?
-                .error_explaination
-                  = "#{pluralize(@dataset.errors.count, "error")} prohibited this dataset from being deposited."
-                  %ul
-                    - @dataset.errors.full_messages.each do |msg|
-                      %li
-                        = msg
-              .row
-                .col-md-6
-                  .form-group.required
-                    = f.label :title, "Dataset Title", :class => "control-label"
-                    %br
-                    = f.text_field :title, :class => "form-control dataset", :placeholder => "[The Title]"
-                .col-md-6
-                  .form-group.required
-                    = f.label :license, "License", :class => "control-label"
-                    %a(href="#" data-toggle="modal" data-target="#licenseModal" tabindex="-1")
-                      %span(class="glyphicon glyphicon-question-sign")
-                    = f.collection_select :license, LicenseInfo.order('code ASC'), :code, :name, {:prompt => true}, {:class => "form-control dataset"}
+%div(id="main-form-top")
+  = form_for(@dataset, :html => {"data-toggle" => "validator", :multipart => true, :role => "form", :enctype => "multipart/form-data", :class => "input-append dataset-form" }) do |f|
+    .panel-group(id="description" role="tablist" aria-multiselectable="true")
+      .panel.panel-default
+        .panel-heading(role="tab" id="descriptionHeading")
+          %h4(class="panel-title")
+            %a(class="accordion-toggle" role="button" data-toggle="collapse" data-parent="#description" href="#descriptionPanel" aria-expanded="true" aria-controls="descriptionPanel")
+              %span( class="metadata-label" )
+                Description
+          %br
+          %span(class="metadata-label" )
+            Citation Preview:
+          %span( id="creator-preview" )
+            = @dataset.creator_list && @dataset.creator_list != "" ? @dataset.creator_list : "[Creator List]"
+          %span( id="year-preview" )
+            = @dataset.publication_year && @dataset.publication_year != "" ? "(#{@dataset.publication_year})" : "(#{Time.now.year}):"
+          %span( id="title-preview" )
+            = @dataset.title && @dataset.title != "" ? "#{@dataset.title}." : "[The Title]."
+          University of Illinois at Urbana-Champaign.
+          %span( id="doi-preview" )
+            = @dataset.identifier && @dataset.identifier != "" ? "http://dx.doi.org/#{@dataset.identifier}" : ""
+        .panel-collapse.collapse.in(id="descriptionPanel" role="tabpanel" aria-labelledby="descriptionHeading" )
+          .panel-body
+            - if @dataset.errors.any?
+              .error_explaination
+                = "#{pluralize(@dataset.errors.count, "error")} prohibited this dataset from being deposited."
+                %ul
+                  - @dataset.errors.full_messages.each do |msg|
+                    %li
+                      = msg
+            .row
+              .col-md-6
+                .form-group.required
+                  = f.label :title, "Dataset Title", :class => "control-label"
+                  %br
+                  = f.text_field :title, :class => "form-control dataset", :placeholder => "[The Title]"
+              .col-md-6
+                .form-group.required
+                  = f.label :license, "License", :class => "control-label"
+                  %a(href="#" data-toggle="modal" data-target="#licenseModal" tabindex="-1")
+                    %span(class="fa fa-question-circle fa-2x")
+                    what's this?
+                  = f.collection_select :license, LicenseInfo.order('code ASC'), :code, :name, {:prompt => true}, {:class => "form-control dataset"}
 
-              = render partial: 'creators_subform', locals: {f: f}
+            = render partial: 'creators_subform', locals: {f: f}
 
-              = f.hidden_field :publisher, :value=>"University of Illinois at Urbana-Champaign"
+            = f.hidden_field :publisher, :value=>"University of Illinois at Urbana-Champaign"
 
-              .form-group
-                = f.label :description, "Dataset Description", :class => "control-label"
-                %br
-                = f.text_area :description, :rows => 3,  :class => "form-control dataset", :placeholder => "[Description of this dataset, including an overview of content, structure, and format.]"
+            .form-group
+              = f.label :description, "Dataset Description", :class => "control-label"
+              %br
+              = f.text_area :description, :rows => 3,  :class => "form-control dataset", :placeholder => "[Description of this dataset, including an overview of content, structure, and format.]"
 
-              .row
-                .col-md-6
+            .row
+              .col-md-6
+                .form-group
+                  = f.label :keywords, "Keywords (Semi-colon delimited list)", :class => "control-label"
+                  %br
+                  = f.text_field :keywords, :class => "form-control dataset", :placeholder => "[Semi-colon separated list of keywords or phrases, e.g.: (institutional repositories; file formats)]"
+                  %span(class="help-block") Use a semi-colon (;) to separate keywords or phrases (e.g.: institutional repositories; file formats).
+
+              -if ( params[:action]=='new' || (can? :manage, @dataset) || ((can? :edit, @dataset) && ([Databank::PublicationState::METADATA_EMBARGO, Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::DRAFT].include?(@dataset.publication_state))))
+
+                .col-md-4
                   .form-group
-                    = f.label :keywords, "Keywords (Semi-colon delimited list)", :class => "control-label"
+                    =f.label :embargo, "Publication Delay (embargo)", class: "control-label"
+                    %a(href="#" data-toggle="modal" data-target="#embargoModal" tabindex="-1")
+                      %span(class="fa fa-question-circle fa-2x")
+                      what's this?
+                    = f.select :embargo, options_for_select([["File Publication Delay (standard embargo)", Databank::PublicationState::FILE_EMBARGO],["File and Metadata Publication Delay (reserve DOI only)", Databank::PublicationState::METADATA_EMBARGO]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
+                .col-md-2
+                  %div(id="release-date-picker")
+                    =f.label :release_date, "Release Date",  :class => "control-label"
+                    =f.date_field :release_date,  class: "form-control dataset"
+              -else
+                .col-md-2
+                  .form-group
+                    =f.label :release_date, "Release Date",  :class => "control-label"
+                    =f.text_field :release_date, class: "form-control dataset", disabled: true
+
+            = f.hidden_field :depositor_email, :class => "form-control", :id => "depositor_email", :title => "Must agree to deposit agreement to deposit data.", :required => true
+
+            = f.hidden_field :depositor_name, :class => "form-control", :id => "depositor_name"
+
+            - if can? :manage, @dataset
+              .row
+                %span(class="col-md-4" )
+                  .form-group.curator-only
+                    = f.label :identifier, "DOI", :class => "control-label"
                     %br
-                    = f.text_field :keywords, :class => "form-control dataset", :placeholder => "[Semi-colon separated list of keywords or phrases, e.g.: (institutional repositories; file formats)]"
-                    %span(class="help-block") Use a semi-colon (;) to separate keywords or phrases (e.g.: institutional repositories; file formats).
+                    = f.text_field :identifier, :class => "form-control dataset", :placeholder => "[Leave blank if requesting a DOI.]"
+                %span(class="col-md-4" )
+                  .form-group.curator-only
+                    = f.label :publication_year, "Publication Year", :class => "control-label"
+                    %br
+                    = f.number_field :publication_year, :value => "#{Time.now.year}", :class => "form-control dataset", :min => "1800", :max => "#{Time.now.year + 1}", :maxlength => 4
+                %span(class="col-md-4" )
+                  .form-group.curator-only
+                    =f.label :version, "Version", :class => "control-label"
+                    %br
+                    =f.text_field :version, :class => "form-control dataset"
+            - else
+              = f.hidden_field :publication_year, :value => "#{Time.now.year}"
 
-                -if ( params[:action]=='new' || (can? :manage, @dataset) || ((can? :edit, @dataset) && ([Databank::PublicationState::METADATA_EMBARGO, Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::DRAFT].include?(@dataset.publication_state))))
+    .panel-group(id="funder" role="tablist" aria-multiselectable="true")
+      .panel.panel-default
+        .panel-heading(role="tab" id="funderHeading")
+          %h4(class="panel-title")
+            %a( role="button" data-toggle="collapse" data-parent="#funder" href="#funderPanel" aria-expanded="false" aria-controls="funderPanel" class="accordion-toggle collapsed" )
+              %span( class="metadata-label" ) Funder
+        .panel-collapse.collapse(id="funderPanel" role="tabpanel" aria-labelledby="funderHeading" )
+          .panel-body
+            = render partial: 'funders_subform', locals: {f: f}
+    .panel-group(id="related" role="tablist" aria-multiselectable="true")
+      .panel.panel-default
+        .panel-heading(role="tab" id="relatedHeading")
+          %h4(class="panel-title")
+            %a(role="button" data-toggle="collapse" data-parent="#related" href="#relatedPanel" aria-expanded="false" aria-controls="relatedPanel" class="accordion-toggle collapsed" )
+              %span( class="metadata-label" ) Related Materials
+        .panel-collapse.collapse(id="relatedPanel" role="tabpanel" aria-labelledby="relatedHeading" )
+          .panel-body
+            Related Materials Form Placeholder
 
-                  .col-md-4
-                    .form-group
-                      =f.label :embargo, "Publication Delay (embargo)", class: "control-label"
-                      %a(href="#" data-toggle="modal" data-target="#embargoModal" tabindex="-1")
-                        %span(class="glyphicon glyphicon-question-sign")
-                      = f.select :embargo, options_for_select([["File Publication Delay (standard embargo)", Databank::PublicationState::FILE_EMBARGO],["File and Metadata Publication Delay (reserve DOI only)", Databank::PublicationState::METADATA_EMBARGO]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
-                  .col-md-2
-                    %div(id="release-date-picker")
-                      =f.label :release_date, "Release Date",  :class => "control-label"
-                      =f.date_field :release_date,  class: "form-control dataset"
-                -else
-                  .col-md-2
-                    .form-group
-                      =f.label :release_date, "Release Date",  :class => "control-label"
-                      =f.text_field :release_date, class: "form-control dataset", disabled: true
+%div(id="datafiles-form")
 
-              = f.hidden_field :depositor_email, :class => "form-control", :id => "depositor_email", :title => "Must agree to deposit agreement to deposit data.", :required => true
+  - if (params[:action] != 'new')
+    .panel-group(id="files" role="tablist" aria-multiselectable="true")
+      .panel.panel-default
+        .panel-heading(role="tab" id="filesHeading")
+          %h4(class="panel-title")
+            %a(class="accordion-toggle" role="button" data-toggle="collapse" data-parent="#files" href="#collapseFiles" aria-expanded="true" aria-controls="collapseFiles" )
+              %span(class="metadata-label" ) Files
+        .panel-collapse.collapse.in(id="collapseFiles" role="tabpanel" aria-labelledby="filesHeading" )
+          .panel-body
+            .container-fluid
+              For files larger than 500 MB, importing from Box is recommended.  For files larger than Box supports, contact the
+              %a(href="http://researchdataservice.illinois.edu/")Research Data Service
+              %br
+              Importing from Box happens in the background, so it is not necessary to keep your browser window open, but processing may be delayed at times of heavy system usage.
+              %table(class="table table-striped" id="datafiles")
+                %tbody
+                  - @dataset.datafiles.each do |datafile|
+                    - if datafile.bytestream_name != ""
+                      -if datafile.job_status == :complete
+                        %tr
+                          %td
+                            .row
+                              %span(class="col-md-8")
+                                = datafile.bytestream_name
+                              %span(class="col-md-2")
+                                = number_to_human_size(datafile.bytestream_size)
+                              %span(class="col-md-2")
+                                - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
+                                  %a(data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" data-method="delete" href="/datafiles/#{datafile.web_id}")
+                                    %span(class="glyphicon glyphicon-trash")
+                      -else
+                        %tr(id="job#{datafile.job.id}")
+                          %td
+                            .row
+                              %span(class="col-md-4")
+                                = datafile.box_filename
+                              %span(class="col-md-6")
+                                %span(class="metadata-label")
+                                  STATUS:
+                                %span(class="metadata-value" )
+                                  = datafile.job_status
+                                %span(class="metadata-label" )
+                                  | PROGRESS:
+                                %span(class="metadata-value" )
+                                  = number_to_human_size((datafile.job.progress_current) * 10000)
+                                  of
+                                  = datafile.box_filesize_display
+                                %span(class="metadata-note" )
+                                  (refresh page to update)
+                              %span(class="col-md-2")
+                                - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
+                                  %button(class="cancel-upload-btn btn btn-danger btn-sm" onclick="cancelUpload('#{datafile.web_id}', '#{datafile.job_id}')") Cancel
 
-              = f.hidden_field :depositor_name, :class => "form-control", :id => "depositor_name"
-
-              - if can? :manage, @dataset
-                .row
-                  %span(class="col-md-4" )
-                    .form-group.curator-only
-                      = f.label :identifier, "DOI", :class => "control-label"
-                      %br
-                      = f.text_field :identifier, :class => "form-control dataset", :placeholder => "[Leave blank if requesting a DOI.]"
-                  %span(class="col-md-4" )
-                    .form-group.curator-only
-                      = f.label :publication_year, "Publication Year", :class => "control-label"
-                      %br
-                      = f.number_field :publication_year, :value => "#{Time.now.year}", :class => "form-control dataset", :min => "1800", :max => "#{Time.now.year + 1}", :maxlength => 4
-                  %span(class="col-md-4" )
-                    .form-group.curator-only
-                      =f.label :version, "Version", :class => "control-label"
-                      %br
-                      =f.text_field :version, :class => "form-control dataset"
-              - else
-                = f.hidden_field :publication_year, :value => "#{Time.now.year}"
-
-      .panel-group(id="funder" role="tablist" aria-multiselectable="true")
-        .panel.panel-default
-          .panel-heading(role="tab" id="funderHeading")
-            %h4(class="panel-title")
-              %a( role="button" data-toggle="collapse" data-parent="#funder" href="#funderPanel" aria-expanded="false" aria-controls="funderPanel" class="accordion-toggle collapsed" )
-                %span( class="metadata-label" ) Funder
-          .panel-collapse.collapse(id="funderPanel" role="tabpanel" aria-labelledby="funderHeading" )
-            .panel-body
-              = render partial: 'funders_subform', locals: {f: f}
-      .panel-group(id="related" role="tablist" aria-multiselectable="true")
-        .panel.panel-default
-          .panel-heading(role="tab" id="relatedHeading")
-            %h4(class="panel-title")
-              %a(role="button" data-toggle="collapse" data-parent="#related" href="#relatedPanel" aria-expanded="false" aria-controls="relatedPanel" class="accordion-toggle collapsed" )
-                %span( class="metadata-label" ) Related Materials
-          .panel-collapse.collapse(id="relatedPanel" role="tabpanel" aria-labelledby="relatedHeading" )
-            .panel-body
-              Related Materials Form Placeholder
-
-  %div(id="datafiles-form")
-
-    - if (params[:action] != 'new')
-      .panel-group(id="files" role="tablist" aria-multiselectable="true")
-        .panel.panel-default
-          .panel-heading(role="tab" id="filesHeading")
-            %h4(class="panel-title")
-              %a(class="accordion-toggle" role="button" data-toggle="collapse" data-parent="#files" href="#collapseFiles" aria-expanded="true" aria-controls="collapseFiles" )
-                %span(class="metadata-label" ) Files
-          .panel-collapse.collapse.in(id="collapseFiles" role="tabpanel" aria-labelledby="filesHeading" )
-            .panel-body
-              .container-fluid
-                For files larger than 500 MB, importing from Box is recommended.  For files larger than Box supports, contact the
-                %a(href="http://researchdataservice.illinois.edu/")Research Data Service
-                %br
-                Importing from Box happens in the background, so it is not necessary to keep your browser window open, but processing may be delayed at times of heavy system usage.
-                %table(class="table table-striped" id="datafiles")
-                  %tbody
-                    - @dataset.datafiles.each do |datafile|
-                      - if datafile.bytestream_name != ""
-                        -if datafile.job_status == :complete
-                          %tr
-                            %td
-                              .row
-                                %span(class="col-md-8")
-                                  = datafile.bytestream_name
-                                %span(class="col-md-2")
-                                  = number_to_human_size(datafile.bytestream_size)
-                                %span(class="col-md-2")
-                                  - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
-                                    %a(data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" data-method="delete" href="/datafiles/#{datafile.web_id}")
-                                      %span(class="glyphicon glyphicon-trash")
-                        -else
-                          %tr(id="job#{datafile.job.id}")
-                            %td
-                              .row
-                                %span(class="col-md-4")
-                                  = datafile.box_filename
-                                %span(class="col-md-6")
-                                  %span(class="metadata-label")
-                                    STATUS:
-                                  %span(class="metadata-value" )
-                                    = datafile.job_status
-                                  %span(class="metadata-label" )
-                                    | PROGRESS:
-                                  %span(class="metadata-value" )
-                                    = number_to_human_size((datafile.job.progress_current) * 10000)
-                                    of
-                                    = datafile.box_filesize_display
-                                  %span(class="metadata-note" )
-                                    (refresh page to update)
-                                %span(class="col-md-2")
-                                  - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
-                                    %button(class="cancel-upload-btn btn btn-danger btn-sm" onclick="cancelUpload('#{datafile.web_id}', '#{datafile.job_id}')") Cancel
-
-                %div(id="datafiles_upload_progress")
-                - if ( (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)) )
-                  = form_for Datafile.new do |df|
-                    = df.hidden_field :dataset_id, value: @dataset.id
-                    .container.text-center
-                      .row
-                        .col-md-7
-                          %span(class="fa fa-cloud-upload fa-2x" )
-                          %span(class="metadata-label" )Drop files anywhere on this page
-                          %span(class="metadata-label")or
-                          &nbsp;
-                          .btn.btn-success.fileinput-button
-                            %span(class="fa fa-laptop fa-lg" )
-                            Select from your computer
-                            /# The file input field used as target for the file upload widget
-                            = df.file_field :binary, name: "datafile[binary]", multiple: true
-                          &nbsp
-                          %span(class="metadata-label")or
-                        .col-md-4
-                          %div(id="box-select" data-link-type="direct" data-multiselect="true" data-client-id="r5tgofc05460skm84yjepz1ck16ptotr")
+              %div(id="datafiles_upload_progress")
+              - if ( (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)) )
+                = form_for Datafile.new do |df|
+                  = df.hidden_field :dataset_id, value: @dataset.id
+                  .container.text-center
+                    .row
+                      .col-md-7
+                        %span(class="fa fa-cloud-upload fa-2x" )
+                        %span(class="metadata-label" )Drop files anywhere on this page
+                        %span(class="metadata-label")or
+                        &nbsp;
+                        .btn.btn-success.fileinput-button
+                          %span(class="fa fa-laptop fa-lg" )
+                          Select from your computer
+                          /# The file input field used as target for the file upload widget
+                          = df.file_field :binary, name: "datafile[binary]", multiple: true
+                        &nbsp
+                        %span(class="metadata-label")or
+                      .col-md-4
+                        %div(id="box-select" data-link-type="direct" data-multiselect="true" data-client-id="r5tgofc05460skm84yjepz1ck16ptotr")
 .review-deposit-agreement
   - if (params[:action] == 'new')
     %a(href="/review_deposit_agreement" target="_blank" ) Review Deposit Agreement

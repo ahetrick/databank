@@ -178,25 +178,25 @@ legend.metadata-border {
   content:"*";color:red;
 }
 
-body:after{
-  content: "beta";
-  position: fixed;
-  width: 80px;
-  height: 25px;
-  background: #EE8E4A;
-  top: 7px;
-  left: -20px;
-  text-align: center;
-  font-size: 13px;
-  font-family: sans-serif;
-  text-transform: uppercase;
-  font-weight: bold;
-  color: #fff;
-  line-height: 27px;
-  -ms-transform:rotate(-45deg);
-  -webkit-transform:rotate(-45deg);
-  transform:rotate(-45deg);
-}
+//body:after{
+//  content: "beta";
+//  position: fixed;
+//  width: 80px;
+//  height: 25px;
+//  background: #EE8E4A;
+//  top: 7px;
+//  left: -20px;
+//  text-align: center;
+//  font-size: 13px;
+//  font-family: sans-serif;
+//  text-transform: uppercase;
+//  font-weight: bold;
+//  color: #fff;
+//  line-height: 27px;
+//  -ms-transform:rotate(-45deg);
+//  -webkit-transform:rotate(-45deg);
+//  transform:rotate(-45deg);
+//}
 
 .license-info-column-header{
   border-radius: 5px 5px 0 0;
@@ -249,11 +249,7 @@ body:after{
   background-color: white;
 }
 
-.idb-help{
-  border-radius: 5px;
-  border: 1px solid #003dac;
-  padding: 10px;
-}
+
 
 ul.help-info{
   list-style-type:none;
@@ -319,4 +315,3 @@ ul.help-info{
   line-height: 22px;
   margin: 10px;
 }
-
