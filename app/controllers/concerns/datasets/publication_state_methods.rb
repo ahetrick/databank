@@ -41,8 +41,8 @@ module Datasets
           if dataset.publication_state == Databank::PublicationState::DRAFT
             msg << "<h4>This action will reserve a DOI</h4><hr/>"
             msg << "<ul>"
-            msg << "The DOI link will fail until #{dataset.release_date.iso8601}."
-            msg << "The record for your dataset is not visible, nor are your data files available until #{dataset.release_date.iso8601}. "
+            msg << "<li>The DOI link will fail until #{dataset.release_date.iso8601}.</li>"
+            msg << "<li>The record for your dataset is not visible, nor are your data files available until #{dataset.release_date.iso8601}.</li>"
           else
             # Should never get here, DataCite record changes are not relevant to METADATA_EMBARGO
             msg << "<h3>This action will not do anything.  The record for your dataset is not visible, and the DOI is already reserved.</h3>"
