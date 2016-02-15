@@ -38,7 +38,7 @@
                 .form-group.required
                   = f.label :license, "License", :class => "control-label"
                   %a(href="#" data-toggle="modal" data-target="#licenseModal" tabindex="-1")
-                    %span(class="fa fa-question-circle fa-2x")
+                    %span(class="fa fa-question-circle")
                     what's this?
                   = f.collection_select :license, LicenseInfo.order('code ASC'), :code, :name, {:prompt => true}, {:class => "form-control dataset"}
 
@@ -65,7 +65,7 @@
                   .form-group
                     =f.label :embargo, "Publication Delay (embargo)", class: "control-label"
                     %a(href="#" data-toggle="modal" data-target="#embargoModal" tabindex="-1")
-                      %span(class="fa fa-question-circle fa-2x")
+                      %span(class="fa fa-question-circle")
                       what's this?
                     = f.select :embargo, options_for_select([["File Publication Delay (standard embargo)", Databank::PublicationState::FILE_EMBARGO],["File and Metadata Publication Delay (reserve DOI only)", Databank::PublicationState::METADATA_EMBARGO]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
                 .col-md-2

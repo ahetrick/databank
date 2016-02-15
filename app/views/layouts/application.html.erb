@@ -42,18 +42,14 @@
 <div class="idb-anchor" id="page-top"></div>
 <div id="body" class="container-fluid">
   <%= render :partial => 'shared/header_navbar' %>
-  <div id="main-container" class="container-fluid" >
-
-    <div class="row">
-      <% flash.each do |key, value| %>
-        <div class="alert alert-info"><%= sanitize(value) %></div>
-      <% end %>
-      <%= yield %>
-    </div>
-  </div>
-
   <div class="pull-right">
     <a href="#page-top">Go to top</a>
+  </div>
+  <div class="row">
+    <% flash.each do |key, value| %>
+      <div class="alert alert-info"><%= sanitize(value) %></div>
+    <% end %>
+    <%= yield %>
   </div>
   <br/>
   <%= render :partial => 'shared/footer' %>
