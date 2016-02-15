@@ -21,11 +21,7 @@ class DatabankMailer < ActionMailer::Base
 
   def contact_help(params)
     @params = params
-    if @params.has_key?('help-sendme')
-      mail(from: @params['help-email'], to:['databank@library.illinois.edu', @params['help-email']], subject:'[Illinois Data Bank] Help Request')
-    else
-      mail(from: @params['help-email'] , to:['databank@library.illinois.edu'], subject:'[Illinois Data Bank] Help Request')
-    end
+    mail(from: @params['help-email'] , to:['databank@library.illinois.edu'], subject:'[Illinois Data Bank] Help Request')
   end
 
 end
