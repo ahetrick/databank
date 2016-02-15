@@ -42,18 +42,19 @@
 <div class="idb-anchor" id="page-top"></div>
 <div id="body" class="container-fluid">
   <%= render :partial => 'shared/header_navbar' %>
-  <div class="pull-right">
-    <a href="#page-top">Go to top</a>
-  </div>
+
   <div class="row">
     <% flash.each do |key, value| %>
       <div class="alert alert-info"><%= sanitize(value) %></div>
     <% end %>
     <%= yield %>
   </div>
-  <br/>
+  <div class="pull-right">
+    <a href="#page-top">Go to top</a>
+  </div>
   <%= render :partial => 'shared/footer' %>
 </div>
+
 <% if @dataset %>
   <%= javascript_tag do %>
     window.dataset_key = '<%= j @dataset.key %>';

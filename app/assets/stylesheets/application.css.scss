@@ -168,9 +168,6 @@ li.current {
   color: #454444;
 }
 
-#footer > .container-fluid {
-  border-top: solid #606eb2;
-}
 .bg-subtle  {
   background-color: #F8F8F8;
 }
@@ -224,4 +221,13 @@ li.current {
   padding-top: 40px;
   padding-bottom: 10px;
 }
-
+#footer{
+  padding: 10px;
+  margin: 0;
+  width: 100%;
+}
+#footer > hr {
+  color: $bgDefault;
+  height: 2px;
+  width: 100%;
+}
