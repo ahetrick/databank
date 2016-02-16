@@ -166,8 +166,6 @@ class DatasetsController < ApplicationController
   # POST /datasets.json
   def create
 
-    Rails.logger.warn params
-
     @dataset = Dataset.new(dataset_params)
 
     respond_to do |format|

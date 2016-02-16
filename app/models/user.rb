@@ -66,10 +66,10 @@ class User < ActiveRecord::Base
 
       if IDB_CONFIG[:local_mode]
         # Rails.logger.info "inside local mode check #{IDB_CONFIG[:local_mode]}"
-        user.role = user_role(auth["info"]["email"], auth["extra"]["raw_info"]["unscoped-affiliation"])
+        user.role = user_role(auth["info"]["email"], ['staff'])
       else
         # Rails.logger.info "failed local mode check #{IDB_CONFIG[:local_mode]}"
-        user.role = user_role(auth["uid"])
+        user.role = user_role(auth["uid"], auth["extra"]["raw_info"]["unscoped-affiliation"])
       end
 
     end
