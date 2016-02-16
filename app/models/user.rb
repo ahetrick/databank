@@ -1,3 +1,5 @@
+require 'open-uri'
+
 class User < ActiveRecord::Base
 
   ROLES = %w[admin depositor guest]
@@ -17,9 +19,7 @@ class User < ActiveRecord::Base
     self.role == requested_role.to_s
   end
 
-  def self.user_role(uid, affiliations)
-
-    Rails.logger.warn "affiliations: #{affiliations.to_yaml}"
+  def self.user_role(uid)
 
     role = "guest"
 
@@ -49,9 +49,6 @@ class User < ActiveRecord::Base
     # Rails.logger.warn "\n*** auth to yaml"
     # Rails.logger.warn auth.to_yaml
 
-    Rails.logger.warn "** auth **"
-    Rails.logger.warn auth.to_yaml
-
     authname = auth["info"]["name"]
 
     if ( (auth["provider"] == "shibboleth") &&  (auth["extra"]["raw_info"]["nickname"]) && ( (auth["extra"]["raw_info"]["nickname"]) != "") )
@@ -66,14 +63,27 @@ class User < ActiveRecord::Base
 
       if IDB_CONFIG[:local_mode]
         # Rails.logger.info "inside local mode check #{IDB_CONFIG[:local_mode]}"
-        user.role = user_role(auth["info"]["email"], ['staff'])
+        user.role = user_role(auth["info"]["email"])
       else
         # Rails.logger.info "failed local mode check #{IDB_CONFIG[:local_mode]}"
-        user.role = user_role(auth["uid"], auth["extra"]["raw_info"]["unscoped-affiliation"])
+        user.role = user_role(auth["uid"])
       end
 
     end
 
+  end
+
+  def self.is_undergrad_only(netid)
+
+    # url = URI.parse()
+    # req = Net::HTTP::Get.new(url.to_s)
+    # res = Net::HTTP.start(url.host, url.port) {|http|
+    #   http.request(req)
+    # }
+
+    response = open("http://quest.grainger.uiuc.edu/directory/ed/person/#{netid}").read
+    Rails.logger.warn "***** PERSON RESOPNSE FOR #{netid} *****"
+    Rails.logger.warn response
   end
 
 
