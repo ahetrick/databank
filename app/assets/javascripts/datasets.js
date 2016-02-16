@@ -152,7 +152,7 @@ ready = function() {
                 $('#datafiles_upload_progress').append(data.context);
                 return data.submit();
             } else if (typeof num_bytes === "undefined") {
-                alert("No file contents were detected.  For help, please contact the Research Data Service.");
+                alert("No file contents were detected for file named " + file.name + ".  For help, please contact the Research Data Service.");
             }
             else {
                 alert('num_bytes: ' + num_bytes);
