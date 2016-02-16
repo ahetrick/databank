@@ -151,8 +151,12 @@ ready = function() {
                 data.context = $(tmpl("template-upload", data.files[0]));
                 $('#datafiles_upload_progress').append(data.context);
                 return data.submit();
-            } else {
-                alert("For files larger than 2GB, please contact the Research Data Service.");
+            } else if (typeof num_bytes === "undefined") {
+                alert("No file contents were detected.  For help, please contact the Research Data Service.");
+            }
+            else {
+                alert('num_bytes: ' + num_bytes);
+                //alert("For files larger than 2GB, please contact the Research Data Service.");
             }
       },
         progress: function(e, data) {
