@@ -57,7 +57,7 @@
                   = f.label :keywords, "Keywords (Semi-colon delimited list)", :class => "control-label"
                   %br
                   = f.text_field :keywords, :class => "form-control dataset", :placeholder => "[Semi-colon separated list of keywords or phrases, e.g.: (institutional repositories; file formats)]"
-                  %span(class="help-block") Use a semi-colon (;) to separate keywords or phrases (e.g.: institutional repositories; file formats).
+                  %span(class="help-block") Use a semi-colon (;) to separate keywords or phrases (e.g.: repositories; file formats).
 
               -if ( params[:action]=='new' || (can? :manage, @dataset) || ((can? :edit, @dataset) && ([Databank::PublicationState::METADATA_EMBARGO, Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::DRAFT].include?(@dataset.publication_state))))
 
@@ -132,70 +132,70 @@
               %span(class="metadata-label" ) Files
         .panel-collapse.collapse.in(id="collapseFiles" role="tabpanel" aria-labelledby="filesHeading" )
           .panel-body
-            .container-fluid
-              For files larger than 500 MB, importing from Box is recommended.  For files larger than Box supports, contact the
-              %a(href="http://researchdataservice.illinois.edu/")Research Data Service
-              %br
-              Importing from Box happens in the background, so it is not necessary to keep your browser window open, but processing may be delayed at times of heavy system usage.
-              %table(class="table table-striped" id="datafiles")
-                %tbody
-                  - @dataset.datafiles.each do |datafile|
-                    - if datafile.bytestream_name != ""
-                      -if datafile.job_status == :complete
-                        %tr
-                          %td
-                            .row
-                              %span(class="col-md-8")
-                                = datafile.bytestream_name
-                              %span(class="col-md-2")
-                                = number_to_human_size(datafile.bytestream_size)
-                              %span(class="col-md-2")
-                                - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
-                                  %a(data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" data-method="delete" href="/datafiles/#{datafile.web_id}")
-                                    %span(class="glyphicon glyphicon-trash")
-                      -else
-                        %tr(id="job#{datafile.job.id}")
-                          %td
-                            .row
-                              %span(class="col-md-4")
-                                = datafile.box_filename
-                              %span(class="col-md-6")
-                                %span(class="metadata-label")
-                                  STATUS:
-                                %span(class="metadata-value" )
-                                  = datafile.job_status
-                                %span(class="metadata-label" )
-                                  | PROGRESS:
-                                %span(class="metadata-value" )
-                                  = number_to_human_size((datafile.job.progress_current) * 10000)
-                                  of
-                                  = datafile.box_filesize_display
-                                %span(class="metadata-note" )
-                                  (refresh page to update)
-                              %span(class="col-md-2")
-                                - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
-                                  %button(class="cancel-upload-btn btn btn-danger btn-sm" onclick="cancelUpload('#{datafile.web_id}', '#{datafile.job_id}')") Cancel
+            For files larger than 500 MB, importing from Box is recommended.  For files larger than Box supports,
+            = succeed '.' do
+              %a(href="/help")contact us
+            %br
+            Importing from Box happens in the background, so it is not necessary to keep your browser window open, but processing may be delayed at times of heavy system usage.
+            %table(class="table table-striped" id="datafiles")
+              %tbody
+                - @dataset.datafiles.each do |datafile|
+                  - if datafile.bytestream_name != ""
+                    -if datafile.job_status == :complete
+                      %tr
+                        %td
+                          .row
+                            %span(class="col-md-8")
+                              = datafile.bytestream_name
+                            %span(class="col-md-2")
+                              = number_to_human_size(datafile.bytestream_size)
+                            %span(class="col-md-2")
+                              - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
+                                %a(data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" data-method="delete" href="/datafiles/#{datafile.web_id}")
+                                  %span(class="glyphicon glyphicon-trash")
+                    -else
+                      %tr(id="job#{datafile.job.id}")
+                        %td
+                          .row
+                            %span(class="col-md-4")
+                              = datafile.box_filename
+                            %span(class="col-md-6")
+                              %span(class="metadata-label")
+                                STATUS:
+                              %span(class="metadata-value" )
+                                = datafile.job_status
+                              %span(class="metadata-label" )
+                                | PROGRESS:
+                              %span(class="metadata-value" )
+                                = number_to_human_size((datafile.job.progress_current) * 10000)
+                                of
+                                = datafile.box_filesize_display
+                              %span(class="metadata-note" )
+                                (refresh page to update)
+                            %span(class="col-md-2")
+                              - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
+                                %button(class="cancel-upload-btn btn btn-danger btn-sm" onclick="cancelUpload('#{datafile.web_id}', '#{datafile.job_id}')") Cancel
 
-              %div(id="datafiles_upload_progress")
-              - if ( (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)) )
-                = form_for Datafile.new do |df|
-                  = df.hidden_field :dataset_id, value: @dataset.id
-                  .container.text-center
-                    .row
-                      .col-md-7
-                        %span(class="fa fa-cloud-upload fa-2x" )
-                        %span(class="metadata-label" )Drop files anywhere on this page
-                        %span(class="metadata-label")or
-                        &nbsp;
-                        .btn.btn-success.fileinput-button
-                          %span(class="fa fa-laptop fa-lg" )
-                          Select from your computer
-                          /# The file input field used as target for the file upload widget
-                          = df.file_field :binary, name: "datafile[binary]", multiple: true
-                        &nbsp
-                        %span(class="metadata-label")or
-                      .col-md-4
-                        %div(id="box-select" data-link-type="direct" data-multiselect="true" data-client-id="r5tgofc05460skm84yjepz1ck16ptotr")
+            %div(id="datafiles_upload_progress")
+            - if ( (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)) )
+              = form_for Datafile.new do |df|
+                = df.hidden_field :dataset_id, value: @dataset.id
+                .container.text-center
+                  .row
+                    .col-md-7
+                      %span(class="fa fa-cloud-upload fa-2x" )
+                      %span(class="metadata-label" )Drop files anywhere on this page
+                      %span(class="metadata-label")or
+                      &nbsp;
+                      .btn.btn-success.fileinput-button
+                        %span(class="fa fa-laptop fa-lg" )
+                        Select from your computer
+                        /# The file input field used as target for the file upload widget
+                        = df.file_field :binary, name: "datafile[binary]", multiple: true
+                      &nbsp
+                      %span(class="metadata-label")or
+                    .col-md-4
+                      %div(id="box-select" data-link-type="direct" data-multiselect="true" data-client-id="r5tgofc05460skm84yjepz1ck16ptotr")
   .review-deposit-agreement.container-fluid
     - if (params[:action] == 'new')
       %a(href="/review_deposit_agreement" target="_blank" ) Review Deposit Agreement

@@ -50,8 +50,7 @@ function add_creator_row(){
     $('#creator_index_max').val(newId);
 
     var creator_row = '<tr class="item row" id="creator_index_' + newId + '">' +
-        '<td class="col-md-1"></td>' +
-
+        '<td><span style="display:inline;" class="glyphicon glyphicon-resize-vertical"></span></td>' +
         '<td class="col-md-2">' +
         '<input type="hidden" value="' + $('#creator_table tr').length + '" name="dataset[creators_attributes][' + newId + '][row_position]" id="dataset_creators_attributes_' + newId + '_row_position" />' +
         '<input value="0" type="hidden" name="dataset[creators_attributes][' + newId + '][type_of]" id="dataset_creators_attributes_' + newId + '_type_of" />' +
@@ -68,12 +67,12 @@ function add_creator_row(){
         '</td>'+
 
         '<td class="col-md-1">' +
-        '<button type="button" class="btn btn-primary btn-sm orcid-search-btn" data-id="' + newId + '" onclick="showOrcidSearchModal('+ newId +')"><span class="glyphicon glyphicon-search"></span>&nbsp;Look Up</a>' +
+        '<button type="button" class="btn btn-primary btn-block orcid-search-btn" data-id="' + newId + '" onclick="showOrcidSearchModal('+ newId +')"><span class="glyphicon glyphicon-search"></span>&nbsp;Look Up</a>' +
         '</td>' +
         '<td class="col-md-2">' +
         '<input onchange="handle_creator_email_change(this)" class="form-control dataset creator-email" placeholder="[Email, e.g.: netid@illinois.edu]" type="email" name="dataset[creators_attributes][' + newId + '][email]" id="dataset_creators_attributes_' + newId + '_email" />' +
         '</td>' +
-        '<td class="col-md-1" align="center"><input name="dataset[creators_attributes][' +  newId + '][is_contact]" type="hidden" value="false" id="dataset_creators_attributes_' + newId + '_is_contact"><input class="dataset contact_radio" name="primary_contact" onchange="handle_contact_change()" type="radio" value="false"></td>' +
+        '<td class="col-md-2" align="center"><input name="dataset[creators_attributes][' +  newId + '][is_contact]" type="hidden" value="false" id="dataset_creators_attributes_' + newId + '_is_contact"><input class="dataset contact_radio" name="primary_contact" onchange="handle_contact_change()" type="radio" value="false"></td>' +
         '<td class="col-md-1"></td>' +
         '</tr>';
     $("#creator_table tbody:last-child").append(creator_row);
@@ -117,7 +116,7 @@ function handleCreatorTable(){
             $("#dataset_creators_attributes_" + creator_index + "_row_position").val(i);
 
             // set creator row num display
-            $("td:first", this).html("<span style='display:inline;'>  " + i + "     </span><span style='display:inline;' class='glyphicon glyphicon-resize-vertical'></span>" );
+            //$("td:first", this).html("<span style='display:inline;'>  " + i + "     </span><span style='display:inline;' class='glyphicon glyphicon-resize-vertical'></span>" );
 
             //console.log("i: " + i);
             //console.log("hidden_row_count: " + hidden_row_count);

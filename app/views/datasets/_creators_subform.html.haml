@@ -9,7 +9,7 @@
 %table(id="creator_table" class="table table-striped" )
   %thead
     %tr(class="row" )
-      %th(class="col-md-1")
+      %th
       %th(class="col-md-2")
         .form-heading-required
           Family Name
@@ -21,9 +21,9 @@
       %th(class="col-md-1" )
       %th(class="col-md-2")
         Email
-      %th(class="col-md-1" )
+      %th(class="col-md-2" )
         .form-heading-required
-          Contact
+          Select Primary Contact
       %th(class="col-md-1")
 
   %tbody
@@ -32,13 +32,13 @@
 
     = f.fields_for :creators, creator do |cf|
       %tr(class="item row" id="creator_index_#{i}" )
-
-        %td(class="col-md-1")
-        -# row position handle and author position value inserted via AJAX
+        %td
+          %span(style='display:inline;' class='glyphicon glyphicon-resize-vertical')
         %td(class="col-md-2")
           = cf.hidden_field :_destroy, value: false
           = cf.hidden_field :row_position # value set via AJAX
           = cf.hidden_field :type_of, value: Creator::PERSON
+
           = cf.text_field :family_name, class: "form-control dataset creator", placeholder: "[Family Name, e.g.: Smith]", onchange: "generate_creator_preview()"
         %td(class="col-md-2")
           = cf.text_field :given_name, class: "form-control dataset creator", placeholder: "[Given Name, e.g.: John W., Jr. ]", onchange: "generate_creator_preview()"
@@ -47,7 +47,7 @@
           = cf.hidden_field :identifier_scheme, value: "ORCID"
         %td(class="col-md-1" )
 
-          %button(type="button" class="btn btn-primary btn-sm orcid-search-btn" onclick="showOrcidSearchModal('#{i}')" )
+          %button(type="button" class="btn btn-primary btn-block orcid-search-btn" onclick="showOrcidSearchModal('#{i}')" )
             %span(class="glyphicon glyphicon-search" )
             Look Up
         %td(class="col-md-2")

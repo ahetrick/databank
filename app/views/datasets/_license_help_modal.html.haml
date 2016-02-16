@@ -37,7 +37,13 @@
             .license-info-column-bottom-section
               %h4 Custom licensing considerations
               %p Writing a custom license requires legal expertise and non-standard licenses complicate reuse.
-        %a(href="/help#license") Copyright and Licensing help
+        .container-fluid
+          .pull-right
+            %br
+            Unsure?
+            %button(onclick='window.location = "/help"' type="button" class="btn btn-success" data-dismiss="modal" id="help-button")
+              %span(class="glyphicon glyphicon-question-sign")
+              Get Help
 
 
 
