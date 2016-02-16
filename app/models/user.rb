@@ -1,4 +1,5 @@
 require 'open-uri'
+require 'json'
 
 class User < ActiveRecord::Base
 
@@ -21,11 +22,14 @@ class User < ActiveRecord::Base
 
   def self.user_role(uid)
 
+
+
     role = "guest"
 
     if uid.respond_to?(:split)
 
       netid = uid.split('@').first
+      is_undergrad_only(netid)
 
       if netid.respond_to?(:length) && netid.length > 0
 
@@ -81,9 +85,11 @@ class User < ActiveRecord::Base
     #   http.request(req)
     # }
 
-    response = open("http://quest.grainger.uiuc.edu/directory/ed/person/#{netid}").read
-    Rails.logger.warn "***** PERSON RESOPNSE FOR #{netid} *****"
-    Rails.logger.warn response
+
+
+
+    # Rails.logger.warn "***** PERSON RESOPNSE FOR #{netid} *****"
+    # Rails.logger.warn response
   end
 
 

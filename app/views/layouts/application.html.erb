@@ -42,13 +42,11 @@
 <div class="idb-anchor" id="page-top"></div>
 <div id="main-content" class="container-fluid">
   <%= render :partial => 'shared/header_navbar' %>
+  <% flash.each do |key, value| %>
+    <div class="idb-alert"><%= sanitize(value) %></div>
+  <% end %>
+  <%= yield %>
 
-  <div class="row">
-    <% flash.each do |key, value| %>
-      <div class="alert alert-info"><%= sanitize(value) %></div>
-    <% end %>
-    <%= yield %>
-  </div>
   <div class="pull-right">
     <a href="#page-top">Go to top</a>
   </div>
