@@ -705,7 +705,7 @@ class DatasetsController < ApplicationController
 
   def update_datacite_metadata
 
-    if completion_check = 'ok'
+    if completion_check == 'ok'
 
       host = IDB_CONFIG[:ezid_host]
       user = IDB_CONFIG[:ezid_username]
