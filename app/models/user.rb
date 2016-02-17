@@ -22,14 +22,11 @@ class User < ActiveRecord::Base
 
   def self.user_role(uid)
 
-
-
     role = "guest"
 
     if uid.respond_to?(:split)
 
       netid = uid.split('@').first
-      is_undergrad_only(netid)
 
       if netid.respond_to?(:length) && netid.length > 0
 
@@ -37,8 +34,10 @@ class User < ActiveRecord::Base
 
         if admins.include?(netid)
           role = "admin"
-        else
+        elsif can_deposit(netid)
           role = "depositor"
+        else
+          role = "no_deposit"
         end
       end
 
@@ -77,19 +76,73 @@ class User < ActiveRecord::Base
 
   end
 
-  def self.is_undergrad_only(netid)
+  def self.can_deposit(netid)
 
-    # url = URI.parse()
-    # req = Net::HTTP::Get.new(url.to_s)
-    # res = Net::HTTP.start(url.host, url.port) {|http|
-    #   http.request(req)
-    # }
+    response = open("http://quest.grainger.uiuc.edu/directory/ed/person/thabing").read
+    response_nospace = response.gsub(">\r\n", "")
 
+    response_nospace = response_nospace.gsub("> ", "") while response_nospace.include?("> ")
 
+    response_noslash = response_nospace.gsub("\"", "'")
+    xml_doc = Nokogiri::XML(response_noslash)
+    xml_doc.remove_namespaces!
+    employee_type = xml_doc.xpath("//attr[@name='uiuceduemployeetype']").text()
+    case employee_type
+      when "A"
+        # Faculty
+        return true
+      when "B"
+        # Acad. Prof."
+        return true
+      when "C", "D"
+        # Civil Service"
+        return true
+      when "E"
+        # Extra Help"
+        return false
+      when "G"
+        # Grad. Assisant"
+        return true
+      when "H"
+        # Acad./Grad. Hourly"
+        return true
+      when "L"
+        # Lump Sum"
+        return false
+      when "M"
+        # Summer Help"
+        return false
+      when "P"
+        # Post Doc."
+        return true
+      when "R"
+        # Medical Resident"
+        return true
+      when "S"
+        # Student"
+        student_level = xml_doc.xpath("//attr[@name='uiucedustudentlevelcode']").text()
+        if student_level == "1U"
+          # undergraduate
+          return false
+        else
+          return true
+        end
+      when "T"
+        # Retiree"
+        return true
+      when "U"
+        # Unpaid"
+        return false
+      when "V"
+        # Virtual"
+        return false
+      when "W"
+        # One Time Pay"
+        return false
+      else
+        return false
+    end
 
-
-    # Rails.logger.warn "***** PERSON RESOPNSE FOR #{netid} *****"
-    # Rails.logger.warn response
   end
 
 
