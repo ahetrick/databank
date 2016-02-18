@@ -104,6 +104,11 @@
                     =f.label :is_test, "test DOI", :class => "control-label"
                     %br
                     =f.check_box :is_test, :class => "form-control dataset"
+                %span(class="col-md-1" )
+                  .form-group.curator-only
+                    =f.label :curator_hold, "curator hold", :class => "control-label"
+                    %br
+                    =f.check_box :curator_hold, :class => "form-control dataset"
             - else
               = f.hidden_field :publication_year, :value => "#{Time.now.year}"
 

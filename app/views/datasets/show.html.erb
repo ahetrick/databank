@@ -3,16 +3,17 @@
   <%= render partial: 'dashboard_show' %>
 <% end %>
 
-<% if @visibility_msg != "" %>
-  <div class="availability-msg">
-    <%= @visibility_msg %>
-  </div>
-<% end %>
-
 <div class="container-fluid" id="main-show-div">
+  <% if ((!can? :edit, @dataset) && (@dataset.publication_state == Databank::PublicationState::METADATA_EMBARGO)) %>
+    <div class="embargo-placeholder">
+      This dataset will be available <%= @dataset.release_date %>. <a href="/help">Contact the Research Data Service</a> with any questions.
+    </div>
+  <% end %>
+
   <% if ((can? :edit, @dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO].include? @dataset.publication_state)) %>
     <!-- BEGIN metadata section-->
     <h1><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></h1>
+
     <div class="container-fluid" id="citation-block">
 
       <div class="row bg-citation">
@@ -72,8 +73,8 @@
 
     <% if @dataset.keywords && !@dataset.keywords.empty? %>
       <div class="container-fluid">
-          <span class="metadata-label">Keywords: </span>
-          <%= @dataset.keywords %>
+        <span class="metadata-label">Keywords: </span>
+        <%= @dataset.keywords %>
       </div>
     <% end %>
     <div class="container-fluid">
@@ -94,7 +95,7 @@
       </div>
     </div>
 
-    <% if [Databank::PublicationState::METADATA_EMBARGO, Databank::PublicationState::FILE_EMBARGO].include?(@dataset.publication_state) || ( @dataset.publication_state == Databank::PublicationState::DRAFT && @dataset.release_date && @dataset.release_date > Date.current() ) %>
+    <% if [Databank::PublicationState::METADATA_EMBARGO, Databank::PublicationState::FILE_EMBARGO].include?(@dataset.publication_state) || (@dataset.publication_state == Databank::PublicationState::DRAFT && @dataset.release_date && @dataset.release_date > Date.current()) %>
       <div class="container-fluid">
         <span class="metadata-label">Release Date:</span>
         <%= @dataset.release_date %>
@@ -140,10 +141,10 @@
 
     </div>
 
-  <% end %>
-  <!-- END metadata section-->
-  <% if ((can? :edit, @dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::METADATA_EMBARGO].include? @dataset.publication_state)) %>
-  <!-- BEGIN file section -->
+
+    <!-- END metadata section-->
+
+    <!-- BEGIN file section -->
     <div class="panel-group" id="files" role="tablist" aria-multiselectable="true">
       <div class="panel panel-default">
         <div class="panel-heading" role="tab" id="headingOne">
@@ -155,13 +156,15 @@
         </div>
         <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
           <div class="panel-body">
-            <form role="form">
-              <div class="form-group" id="select-files-form-group">
-                <table class="table table-striped">
-                  <tbody>
-                  <tr>
-                    <td>
-                      <div class="row">
+
+            <% if ((can? :edit, @dataset) || (@dataset.publication_state == Databank::PublicationState::RELEASED)) %>
+              <form role="form">
+                <div class="form-group" id="select-files-form-group">
+                  <table class="table table-striped">
+                    <tbody>
+                    <tr>
+                      <td>
+                        <div class="row">
                 <span class="col-md-4">
                   <!--<button class="btn btn-primary" type="submit">-->
                     <!--<span class="glyphicon glyphicon-download"></span> Zip and Download Selected-->
@@ -172,44 +175,50 @@
                     (<span id="checkFileSelectedCount"></span>)
                   </button>
                 </span>
-                      </div>
-                      <div class="row">
+                        </div>
+                        <div class="row">
                         <span class=" checkbox col-md-4"><label><input type="checkbox" id="checkAllFiles" value="checkAllFiles">Select
                           all (<%= @dataset.datafiles.count %>) </label></span>
-                      </div>
-                    </td>
-                  </tr>
-                  <% @dataset.datafiles.each do |datafile| %>
-                    <tr>
-                      <td>
-                        <% if datafile.job_status == :complete %>
+                        </div>
+                      </td>
+                    </tr>
+                    <% @dataset.datafiles.each do |datafile| %>
+                      <tr>
+                        <td>
+                          <% if datafile.job_status == :complete %>
 
-                          <div class="row checkbox">
+                            <div class="row checkbox">
 
                             <span class="col-md-8"><label><input type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="<%= datafile.web_id %>"><%= datafile.bytestream_name %>
                             </label></span>
-                            <span class="col-md-2"><%= number_to_human_size(datafile.bytestream_size) %></span>
+                              <span class="col-md-2"><%= number_to_human_size(datafile.bytestream_size) %></span>
                             <span class="col-md-2"><a href="#" onclick='window.location = "/datafiles/<%= datafile.web_id %>/download"' class="btn btn-primary btn-sm" role="button">
                               <span class="glyphicon glyphicon-download"></span> File
                             </a></span>
-                          </div>
-                        <% end %>
+                            </div>
+                          <% end %>
 
-                      </td>
-                    </tr>
-                  <% end %>
-                  </tbody>
-                </table>
+                        </td>
+                      </tr>
+                    <% end %>
+                    </tbody>
+                  </table>
+                </div>
+                <!-- end select-files-form-group -->
+              </form>
+            <% else %>
+              <div class="embargo-placeholder">
+                Files associated with this dataset will be made available <%= @dataset.release_date %>. <a href="/help">Contact the Research Data Service</a> with any questions.
               </div>
-              <!-- end select-files-form-group -->
-            </form>
+            <% end %>
+
+
           </div>
         </div>
       </div>
     </div>
-  <!-- END file section -->
+    <!-- END file section -->
   <% end %>
-
   <% if can? :edit, @dataset %>
     <a href="/datasets/<%= @dataset.key %>/review_deposit_agreement">Review Deposit Agreement</a>
 
@@ -237,7 +246,7 @@
   </div>
 <% end %>
 
-<%if (@dataset.title.downcase.include? 'unicorn') && ((can? :edit, @dataset) && [Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO].include?(@dataset.publication_state) ) %>
+<% if (@dataset.title.downcase.include? 'unicorn') && ((can? :edit, @dataset) && [Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO].include?(@dataset.publication_state)) %>
   <div class="pull-right">
     <%= image_tag('Rainbow_Unicorn.png') %>
   </div>

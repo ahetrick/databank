@@ -221,6 +221,7 @@ class DatasetsController < ApplicationController
       @dataset.complete = true
       if (@dataset.release_date && @dataset.release_date <= Date.current) || !@dataset.embargo || @dataset.embargo == ""
         @dataset.publication_state = Databank::PublicationState::RELEASED
+        @dataset.release_date = Date.current()
       else
         @dataset.publication_state = @dataset.embargo
       end
@@ -235,8 +236,6 @@ class DatasetsController < ApplicationController
         end
         
         if old_state == Databank::PublicationState::DRAFT
-
-          @dataset.release_date = Date.current()
 
           @dataset.datafiles.each do |datafile|
             datafile.binary_name = datafile.binary.file.filename
@@ -570,7 +569,6 @@ class DatasetsController < ApplicationController
     response
   end
 
-
   private
 
   # Use callbacks to share common setup or constraints between actions.
@@ -583,7 +581,7 @@ class DatasetsController < ApplicationController
   # def dataset_params
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, :is_test, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, :is_test, :curator_hold, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update])
   end
 
   def ezid_metadata_response
@@ -631,7 +629,12 @@ class DatasetsController < ApplicationController
 
     metadata = {}
     metadata['_target'] = target
-    metadata['datacite'] = @dataset.to_datacite_xml
+    if @dataset.publication_state == Databank::PublicationState::METADATA_EMBARGO
+      metadata['_status'] = 'reserved'
+    else
+      metadata['_status'] = 'public'
+      metadata['datacite'] = @dataset.to_datacite_xml
+    end
 
     uri = URI.parse("https://#{host}/shoulder/#{shoulder}")
 
@@ -726,6 +729,12 @@ class DatasetsController < ApplicationController
       target = "#{request.base_url}#{dataset_path(@dataset.key)}"
 
       metadata = {}
+      if [Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED].include?(@dataset.publication_state)
+        metadata['_status'] = 'public'
+      elsif @dataset.publication_state == Databank::PublicationState::TOMBSTONE
+        metadata['_status'] = 'unavailable'
+      end
+
       metadata['_target'] = target
       metadata['datacite'] = @dataset.to_datacite_xml
 
