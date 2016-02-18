@@ -219,7 +219,7 @@ class DatasetsController < ApplicationController
 
     if completion_check == 'ok'
       @dataset.complete = true
-      if (@dataset.release_date && @dataset.release_date <= Date.current) || !@dataset.embargo || @dataset.embargo == ""
+      if (@dataset.release_date && @dataset.release_date <= Date.current()) || !@dataset.embargo || @dataset.embargo == ""
         @dataset.publication_state = Databank::PublicationState::RELEASED
         @dataset.release_date = Date.current()
       else

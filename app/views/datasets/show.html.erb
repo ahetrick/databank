@@ -4,81 +4,94 @@
 <% end %>
 
 <div class="container-fluid" id="main-show-div">
-  <% if ((!can? :edit, @dataset) && (@dataset.publication_state == Databank::PublicationState::METADATA_EMBARGO)) %>
+
+  <% if ((!can? :edit, @dataset) && (@dataset.curator_hold?)) %>
+    <br/>
     <div class="embargo-placeholder">
-      This dataset will be available <%= @dataset.release_date %>. <a href="/help">Contact the Research Data Service</a> with any questions.
+      This dataset is under curator review.
+      <a href="/help">Contact the Research Data Service</a> with any questions.
     </div>
-  <% end %>
 
-  <% if ((can? :edit, @dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO].include? @dataset.publication_state)) %>
-    <!-- BEGIN metadata section-->
-    <h1><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></h1>
+  <% else %>
 
-    <div class="container-fluid" id="citation-block">
 
-      <div class="row bg-citation">
-        <div id="citation" class="col-md-9" onclick="if (event.target) { selectText(event.target); } else{ selectText(this); }"><%= @dataset.plain_text_citation %></div>
-        <div class="col-md-3 text-right" id="citation-download">
-          <div class="dropdown">
-            <button type="button" id="downloadCitation" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-              <span class="glyphicon glyphicon-list"></span> Citation <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu pull-right text-left" role="menu">
-              <li>
-                <a id="datasetForm:endNoteLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_endNote_XML"'>
-                  EndNote XML
-                </a>
-              </li>
-              <li>
-                <a id="datasetForm:risLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_RIS"'>
-                  RIS Format
-                </a>
-              </li>
-              <li>
-                <a id="datasetForm:BibTeXLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_BibTeX"'>
-                  BibTeX Format
-                </a>
-              </li>
-              <li>
-                <a id="datasetForm:plainTextCitationLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_plaintext_citation"'>
-                  Plain Text
-                </a>
-              </li>
-            </ul>
+    <% if ((!can? :edit, @dataset) && (@dataset.publication_state == Databank::PublicationState::METADATA_EMBARGO)) %>
+      <br/>
+      <div class="embargo-placeholder">
+        This dataset will be available <%= @dataset.release_date %>.
+        <a href="/help">Contact the Research Data Service</a> with any questions.
+      </div>
+    <% end %>
+
+    <% if ((can? :edit, @dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO].include? @dataset.publication_state)) %>
+      <!-- BEGIN metadata section-->
+      <h1><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></h1>
+
+      <div class="container-fluid" id="citation-block">
+
+        <div class="row bg-citation">
+          <div id="citation" class="col-md-9" onclick="if (event.target) { selectText(event.target); } else{ selectText(this); }"><%= @dataset.plain_text_citation %></div>
+          <div class="col-md-3 text-right" id="citation-download">
+            <div class="dropdown">
+              <button type="button" id="downloadCitation" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span class="glyphicon glyphicon-list"></span> Citation <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu pull-right text-left" role="menu">
+                <li>
+                  <a id="datasetForm:endNoteLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_endNote_XML"'>
+                    EndNote XML
+                  </a>
+                </li>
+                <li>
+                  <a id="datasetForm:risLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_RIS"'>
+                    RIS Format
+                  </a>
+                </li>
+                <li>
+                  <a id="datasetForm:BibTeXLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_BibTeX"'>
+                    BibTeX Format
+                  </a>
+                </li>
+                <li>
+                  <a id="datasetForm:plainTextCitationLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_plaintext_citation"'>
+                    Plain Text
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="row bg-muted">
-        <span id="citation-standards" class="col-md-9 text-muted small">If you use these data, please add this citation to your scholarly resources. </span>
+        <div class="row bg-muted">
+          <span id="citation-standards" class="col-md-9 text-muted small">If you use these data, please add this citation to your scholarly resources. </span>
         <span class="col-md-3 pull-right text-right">
           <!--<span class="label label-primary">Downloads <span class="badge">42</span></span>-->
         </span>
-      </div>
+        </div>
 
-      <% if @dataset.complete? %>
-        <div class="row bg-muted">
+        <% if @dataset.complete? %>
+          <div class="row bg-muted">
           <span id="citation-standards" class="col-md-9 text-muted small"><button class='my_clip_button btn btn-sm btn-default' data-clipboard-target='fe_text' data-clipboard-text="http://dx.doi.org/<%= @dataset.identifier %>" id='d_clip_button' title='Click me to copy to clipboard.'>
             <span class="glyphicon glyphicon-copy"></span>
             <b>Copy persistent link to clipboard...</b>
           </button> Persistent link for this item: <a href="http://dx.doi.org/<%= @dataset.identifier %>">http://dx.doi.org/<%= @dataset.identifier %></a></span>
-          <input type="hidden" value="http://dx.doi.org/<%= @dataset.identifier %>" name="fe_text" id="fe_text">
+            <input type="hidden" value="http://dx.doi.org/<%= @dataset.identifier %>" name="fe_text" id="fe_text">
+          </div>
+        <% end %>
+      </div>
+      <div class="container-fluid">
+        <span class="metadata-label">Dataset Description: </span>
+        <%= @dataset.description.empty? ? "[description not provided]" : @dataset.description %>
+      </div>
+
+      <% if @dataset.keywords && !@dataset.keywords.empty? %>
+        <div class="container-fluid">
+          <span class="metadata-label">Keywords: </span>
+          <%= @dataset.keywords %>
         </div>
       <% end %>
-    </div>
-    <div class="container-fluid">
-      <span class="metadata-label">Dataset Description: </span>
-      <%= @dataset.description.empty? ? "[description not provided]" : @dataset.description %>
-    </div>
-
-    <% if @dataset.keywords && !@dataset.keywords.empty? %>
       <div class="container-fluid">
-        <span class="metadata-label">Keywords: </span>
-        <%= @dataset.keywords %>
-      </div>
-    <% end %>
-    <div class="container-fluid">
-      <div class="row">
+        <div class="row">
           <span class="col-md-6">
             <span class="metadata-label">Version:</span>
             <%= @dataset.version %>
@@ -92,42 +105,42 @@
             <a href="<%= @license_link %>"><%= @license.name %></a>
           <% end %>
         </span>
+        </div>
       </div>
-    </div>
 
-    <% if [Databank::PublicationState::METADATA_EMBARGO, Databank::PublicationState::FILE_EMBARGO].include?(@dataset.publication_state) || (@dataset.publication_state == Databank::PublicationState::DRAFT && @dataset.release_date && @dataset.release_date > Date.current()) %>
+      <% if [Databank::PublicationState::METADATA_EMBARGO, Databank::PublicationState::FILE_EMBARGO].include?(@dataset.publication_state) || (@dataset.publication_state == Databank::PublicationState::DRAFT && @dataset.release_date && @dataset.release_date > Date.current()) %>
+        <div class="container-fluid">
+          <span class="metadata-label">Release Date:</span>
+          <%= @dataset.release_date %>
+        </div>
+      <% end %>
+
+      <% @dataset.funders.each do |funder| %>
+        <div class="container-fluid">
+          <span class="metadata-label">Funder:</span>
+          <%= funder.name %>
+          <% if funder.grant && funder.grant != "" %>
+            , <span class="metadata-label">Grant:</span>
+            <%= funder.grant %>
+          <% end %>
+        </div>
+      <% end %>
+
       <div class="container-fluid">
-        <span class="metadata-label">Release Date:</span>
-        <%= @dataset.release_date %>
-      </div>
-    <% end %>
-
-    <% @dataset.funders.each do |funder| %>
-      <div class="container-fluid">
-        <span class="metadata-label">Funder:</span>
-        <%= funder.name %>
-        <% if funder.grant && funder.grant != "" %>
-          , <span class="metadata-label">Grant:</span>
-          <%= funder.grant %>
-        <% end %>
-      </div>
-    <% end %>
-
-    <div class="container-fluid">
-      <div class="row">
+        <div class="row">
         <span class="col-md-6">
           <span class="metadata-label">Corresponding Creator: </span>
           <%= (!@dataset.corresponding_creator_name || @dataset.corresponding_creator_name.empty?) ? "[corresponding creator name not provided]" : @dataset.corresponding_creator_name %>
         </span>
-        <% if can? :manage, @dataset %>
+          <% if can? :manage, @dataset %>
           <span class="col-md-6">
             <span class="metadata-label">Depositor:</span>
             <%= @dataset.depositor_name %>
           </span>
-        <% end %>
-      </div>
-      <% if can? :manage, @dataset %>
-        <div class="row">
+          <% end %>
+        </div>
+        <% if can? :manage, @dataset %>
+          <div class="row">
           <span class="col-md-6">
             <span class="metadata-label">Corresponding Creator Email: </span>
             <%= (!@dataset.corresponding_creator_email || @dataset.corresponding_creator_email.empty?) ? "[corresponding creator email not provided]" : @dataset.corresponding_creator_email %>
@@ -136,35 +149,35 @@
           <span class="metadata-label">Depositor Email:</span>
           <%= @dataset.depositor_email %>
           </span>
-        </div>
-      <% end %>
+          </div>
+        <% end %>
 
-    </div>
+      </div>
 
 
-    <!-- END metadata section-->
+      <!-- END metadata section-->
 
-    <!-- BEGIN file section -->
-    <div class="panel-group" id="files" role="tablist" aria-multiselectable="true">
-      <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="headingOne">
-          <h4 class="panel-title">
-            <a role="button" data-toggle="collapse" data-parent="#files" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="accordion-toggle">
-              Files
-            </a>
-          </h4>
-        </div>
-        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-          <div class="panel-body">
+      <!-- BEGIN file section -->
+      <div class="panel-group" id="files" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="headingOne">
+            <h4 class="panel-title">
+              <a role="button" data-toggle="collapse" data-parent="#files" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="accordion-toggle">
+                Files
+              </a>
+            </h4>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+            <div class="panel-body">
 
-            <% if ((can? :edit, @dataset) || (@dataset.publication_state == Databank::PublicationState::RELEASED)) %>
-              <form role="form">
-                <div class="form-group" id="select-files-form-group">
-                  <table class="table table-striped">
-                    <tbody>
-                    <tr>
-                      <td>
-                        <div class="row">
+              <% if ((can? :edit, @dataset) || (@dataset.publication_state == Databank::PublicationState::RELEASED)) %>
+                <form role="form">
+                  <div class="form-group" id="select-files-form-group">
+                    <table class="table table-striped">
+                      <tbody>
+                      <tr>
+                        <td>
+                          <div class="row">
                 <span class="col-md-4">
                   <!--<button class="btn btn-primary" type="submit">-->
                     <!--<span class="glyphicon glyphicon-download"></span> Zip and Download Selected-->
@@ -175,54 +188,57 @@
                     (<span id="checkFileSelectedCount"></span>)
                   </button>
                 </span>
-                        </div>
-                        <div class="row">
+                          </div>
+                          <div class="row">
                         <span class=" checkbox col-md-4"><label><input type="checkbox" id="checkAllFiles" value="checkAllFiles">Select
                           all (<%= @dataset.datafiles.count %>) </label></span>
-                        </div>
-                      </td>
-                    </tr>
-                    <% @dataset.datafiles.each do |datafile| %>
-                      <tr>
-                        <td>
-                          <% if datafile.job_status == :complete %>
+                          </div>
+                        </td>
+                      </tr>
+                      <% @dataset.datafiles.each do |datafile| %>
+                        <tr>
+                          <td>
+                            <% if datafile.job_status == :complete %>
 
-                            <div class="row checkbox">
+                              <div class="row checkbox">
 
                             <span class="col-md-8"><label><input type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="<%= datafile.web_id %>"><%= datafile.bytestream_name %>
                             </label></span>
-                              <span class="col-md-2"><%= number_to_human_size(datafile.bytestream_size) %></span>
+                                <span class="col-md-2"><%= number_to_human_size(datafile.bytestream_size) %></span>
                             <span class="col-md-2"><a href="#" onclick='window.location = "/datafiles/<%= datafile.web_id %>/download"' class="btn btn-primary btn-sm" role="button">
                               <span class="glyphicon glyphicon-download"></span> File
                             </a></span>
-                            </div>
-                          <% end %>
+                              </div>
+                            <% end %>
 
-                        </td>
-                      </tr>
-                    <% end %>
-                    </tbody>
-                  </table>
+                          </td>
+                        </tr>
+                      <% end %>
+                      </tbody>
+                    </table>
+                  </div>
+                  <!-- end select-files-form-group -->
+                </form>
+              <% else %>
+                <div class="embargo-placeholder">
+                  Files associated with this dataset will be made available <%= @dataset.release_date %>.
+                  <a href="/help">Contact the Research Data Service</a> with any questions.
                 </div>
-                <!-- end select-files-form-group -->
-              </form>
-            <% else %>
-              <div class="embargo-placeholder">
-                Files associated with this dataset will be made available <%= @dataset.release_date %>. <a href="/help">Contact the Research Data Service</a> with any questions.
-              </div>
-            <% end %>
+              <% end %>
 
 
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <!-- END file section -->
-  <% end %>
-  <% if can? :edit, @dataset %>
-    <a href="/datasets/<%= @dataset.key %>/review_deposit_agreement">Review Deposit Agreement</a>
+      <!-- END file section -->
+    <% end %>
+    <% if can? :edit, @dataset %>
+      <a href="/datasets/<%= @dataset.key %>/review_deposit_agreement">Review Deposit Agreement</a>
 
+    <% end %>
   <% end %>
+
 </div>
 
 <% if can? :manage, @dataset && @dataset.publication_state != Databank::PublicationState::DRAFT %>
