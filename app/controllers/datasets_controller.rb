@@ -675,23 +675,28 @@ class DatasetsController < ApplicationController
   end
 
   def is_datacite_changed?
+    #Rails.logger.warn params.to_yaml
 
     params[:dataset][:creators_attributes].each do |key, creator_attributes|
       if creator_attributes.has_key?(:_destroy)
-        if creator_attributes[:_destroy]
+        if creator_attributes[:_destroy] == true
+          # Rails.logger.warn 'removed creator'
           return true
         end
       else
+        # Rails.logger.warn 'added creator'
         return true
       end
     end
 
-    params[:dataset][:funders_attributes].each do |key, creator_attributes|
-      if creator_attributes.has_key?(:_destroy)
-        if creator_attributes[:_destroy]
+    params[:dataset][:funders_attributes].each do |key, funder_attributes|
+      if funder_attributes.has_key?(:_destroy)
+        if funder_attributes[:_destroy] == true
+          # Rails.logger.warn 'removed funder'
           return true
         end
-      else
+      elsif funder_attributes[:name] != ''
+        # Rails.logger.warn 'added funder'
         return true
       end
     end
@@ -699,17 +704,26 @@ class DatasetsController < ApplicationController
 
     @dataset.creators.each do |creator|
       if creator.changed?
+        # Rails.logger.warn 'changed creator'
         return true
       end
     end
 
     @dataset.funders.each do |funder|
       if funder.name_changed? || funder.identifier_changed?
+        # Rails.logger.warn 'changed funder namem'
         return true
       end
     end
 
     if @dataset.title_changed? || @dataset.license_changed? || @dataset.description_changed? || @dataset.version_changed? || @dataset.keywords_changed? || @dataset.identifier_changed? || @dataset.publication_year_changed?
+      # Rails.logger.warn @dataset.title_changed?
+      # Rails.logger.warn @dataset.license_changed?
+      # Rails.logger.warn @dataset.description_changed?
+      # Rails.logger.warn @dataset.version_changed?
+      # Rails.logger.warn @dataset.keywords_changed?
+      # Rails.logger.warn @dataset.identifier_changed?
+      # Rails.logger.warn @dataset.publication_year_changed?
       return true
     end
 
