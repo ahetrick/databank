@@ -48,10 +48,10 @@ class ApplicationController < ActionController::Base
       Rails.logger.error "\n***---***"
       Rails.logger.error exception.class
       Rails.logger.error exception.message
-      # exception.backtrace.each { |line| Rails.logger.error line }
+      exception.backtrace.each { |line| Rails.logger.error line }
       #
-      redirect_to File.join(Rails.root, 'public', '500.html')
-      #render :file => File.join(Rails.root, 'public', '500.html')
+      redirect_to ('/500.html')
+
     end
 
   end
