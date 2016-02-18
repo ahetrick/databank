@@ -258,10 +258,15 @@ class DatasetsController < ApplicationController
 
         if old_state == Databank::PublicationState::DRAFT
           if @dataset.save
-            send_deposit_confirmation_email(old_state, @dataset)
-            confirmation = DatabankMailer.confirm_deposit(@dataset.key)
-            # Rails.logger.warn "confirmation: #{confirmation}"
-            confirmation.deliver_now
+
+            if IDB_CONFIG.has_key?(:local_mode) && IDB_CONFIG[:local_mode]
+              Rails.logger.warn "deposit OK for #{@dataset.key}"
+            else
+              send_deposit_confirmation_email(old_state, @dataset)
+              confirmation = DatabankMailer.confirm_deposit(@dataset.key)
+              # Rails.logger.warn "confirmation: #{confirmation}"
+              confirmation.deliver_now
+            end
 
             format.html { redirect_to dataset_path(@dataset.key), notice: deposit_confirmation_notice(old_state, @dataset)}
             format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
@@ -271,10 +276,14 @@ class DatasetsController < ApplicationController
           end
         else
           if @dataset.save && update_datacite_metadata
-            confirmation = DatabankMailer.confirm_deposit_update(@dataset.key)
-            # Rails.logger.warn "confirmation: #{confirmation}"
-            confirmation.deliver_now
 
+            if IDB_CONFIG.has_key?(:local_mode) && IDB_CONFIG[:local_mode]
+              Rails.logger.warn "deposit update OK for #{@dataset.key}"
+            else
+              confirmation = DatabankMailer.confirm_deposit_update(@dataset.key)
+              # Rails.logger.warn "confirmation: #{confirmation}"
+              confirmation.deliver_now
+            end
             format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Changes have been successfully published.] }
             format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
           else
@@ -574,7 +583,7 @@ class DatasetsController < ApplicationController
   # def dataset_params
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, :is_test, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update])
   end
 
   def ezid_metadata_response
@@ -604,13 +613,16 @@ class DatasetsController < ApplicationController
     end
   end
 
-
-
-
-
   def mint_doi
 
     host = IDB_CONFIG[:ezid_host]
+
+    if @dataset.is_test?
+      shoulder = 'doi:10.5072/FK2'
+      user = 'apitest'
+      password = 'apitest'
+    end
+
     shoulder = IDB_CONFIG[:ezid_shoulder]
     user = IDB_CONFIG[:ezid_username]
     password = IDB_CONFIG[:ezid_password]
