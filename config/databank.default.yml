@@ -9,6 +9,7 @@ development:
   :datafile_store_dir:  /uploads
   :delayed_job_pid_dir: /tmp/pids
   :orcid_token: ORCID_TOKEN
+  :key_prefix: idbdev
   #You can set anything here that you might pass to Bunny.new. Anything you don't set just gets the Bunny default.
   #Typical fields needed for our setup are shown below.
   amqp:
@@ -35,6 +36,7 @@ test:
   :datafile_store_dir:  /uploads
   :delayed_job_pid_dir: /tmp/pids
   :orcid_token: ORCID_TOKEN
+  :key_prefix: idbtest
   #You can set anything here that you might pass to Bunny.new. Anything you don't set just gets the Bunny default.
   #Typical fields needed for our setup are shown below.
   amqp:
@@ -61,6 +63,7 @@ production:
   :datafile_store_dir:  <%= ENV["DATAFILE_STORE_DIR"] %>
   :delayed_job_pid_dir: <%= ENV["PIDS_DIR"] %>
   :orcid_token: ORCID_TOKEN
+  :key_prefix: idb
   #You can set anything here that you might pass to Bunny.new. Anything you don't set just gets the Bunny default.
   #Typical fields needed for our setup are shown below.
   amqp:

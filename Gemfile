@@ -49,6 +49,8 @@ gem 'autoprefixer-rails'
 
 gem 'haml'
 
+gem 'uuid'
+
 gem 'simple_form'
 
 # Use cocoon to make it easier to handle nested forms

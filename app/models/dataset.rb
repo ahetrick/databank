@@ -18,8 +18,6 @@ class Dataset < ActiveRecord::Base
   before_save 'set_primary_contact'
   after_save 'remove_invalid_datafiles'
 
-  KEY_LENGTH = 5
-
   def to_param
     self.key
   end
@@ -85,7 +83,12 @@ class Dataset < ActiveRecord::Base
 
     identifierNode = doc.create_element('identifier')
     identifierNode['identifierType'] = "DOI"
-    identifierNode.content = IDB_CONFIG[:ezid_placeholder_identifier]
+    # for imports and post-v1 versions, use specified identifier, otherwise assert v1
+    if self.identifier && self.identifier != ''
+      identifierNode.content = self.identifier
+    else
+      identifierNode.content = "#{IDB_CONFIG[:ezid_placeholder_identifier]}_#{self.key}_v1"
+    end
     identifierNode.parent = resourceNode
 
     creatorsNode = doc.create_element('creators')
@@ -292,9 +295,11 @@ class Dataset < ActiveRecord::Base
   #
   def generate_key
     proposed_key = nil
+
     while true
-      proposed_key = (36 ** (KEY_LENGTH - 1) +
-          rand(36 ** KEY_LENGTH - 36 ** (KEY_LENGTH - 1))).to_s(36)
+
+      num_part = rand(10 ** 7).to_s.rjust(7,'0')
+      proposed_key =  "#{IDB_CONFIG[:key_prefix]}-#{num_part}"
       break unless self.class.find_by_key(proposed_key)
     end
     proposed_key

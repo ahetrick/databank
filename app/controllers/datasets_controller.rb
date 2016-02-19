@@ -20,7 +20,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :review_deposit_agreement
   skip_load_and_authorize_resource :only => :datacite_record
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :mint_doi, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :completion_check, :change_publication_state, :is_datacite_changed ]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :completion_check, :change_publication_state, :is_datacite_changed ]
 
   @@num_box_ingest_deamons = 10
 
@@ -231,8 +231,12 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       if @dataset.complete?
-        if !@dataset.identifier || @dataset.identifier.empty?
-          @dataset.identifier = mint_doi
+        if !@dataset.identifier || @dataset.identifier.empty? || !@dataset.is_import?
+          @dataset.identifier = create_doi(@dataset)
+        end
+
+        if @dataset.is_import?
+          update_datacite_metadata
         end
         
         if old_state == Databank::PublicationState::DRAFT
@@ -581,7 +585,7 @@ class DatasetsController < ApplicationController
   # def dataset_params
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, :is_test, :curator_hold, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, :is_test, :is_import, :curator_hold, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update])
   end
 
   def ezid_metadata_response
@@ -611,68 +615,7 @@ class DatasetsController < ApplicationController
     end
   end
 
-  def mint_doi
 
-    host = IDB_CONFIG[:ezid_host]
-
-    if @dataset.is_test?
-      shoulder = 'doi:10.5072/FK2'
-      user = 'apitest'
-      password = 'apitest'
-    end
-
-    shoulder = IDB_CONFIG[:ezid_shoulder]
-    user = IDB_CONFIG[:ezid_username]
-    password = IDB_CONFIG[:ezid_password]
-
-    target = "#{request.base_url}#{dataset_path(@dataset.key)}"
-
-    metadata = {}
-    metadata['_target'] = target
-    if @dataset.publication_state == Databank::PublicationState::METADATA_EMBARGO
-      metadata['_status'] = 'reserved'
-    else
-      metadata['_status'] = 'public'
-      metadata['datacite'] = @dataset.to_datacite_xml
-    end
-
-    uri = URI.parse("https://#{host}/shoulder/#{shoulder}")
-
-    request = Net::HTTP::Post.new(uri.request_uri)
-    request.basic_auth(user, password)
-    request.content_type = "text/plain"
-    request.body = make_anvl(metadata)
-
-    sock = Net::HTTP.new(uri.host, uri.port)
-    # sock.set_debug_output $stderr
-
-    if uri.scheme == 'https'
-      sock.use_ssl = true
-    end
-
-    begin
-
-      response = sock.start { |http| http.request(request) }
-
-    rescue Net::HTTPBadResponse, Net::HTTPServerError => error
-      Rails.logger.warn error.message
-      Rails.logger.warn response.body
-    end
-
-    case response
-      when Net::HTTPSuccess, Net::HTTPRedirection
-        response_split = response.body.split(" ")
-        Rails.logger.warn response_split
-        response_split2 = response_split[1].split(":")
-        Rails.logger.warn response_split2
-        doi = response_split2[1]
-
-      else
-        Rails.logger.warn response.to_yaml
-        raise "error minting DOI"
-    end
-
-  end
 
   def is_datacite_changed?
     #Rails.logger.warn params.to_yaml

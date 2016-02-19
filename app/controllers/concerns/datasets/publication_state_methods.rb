@@ -77,5 +77,142 @@ module Datasets
       end
       msg
     end
+
+    def create_doi(dataset)
+
+      if dataset.is_import?
+        raise "cannot create doi for imported dataset doi"
+      end
+
+      host = IDB_CONFIG[:ezid_host]
+      uri = nil
+
+      if dataset.is_test?
+        shoulder = 'doi:10.5072/FK2'
+        user = 'apitest'
+        password = 'apitest'
+      end
+
+      shoulder = IDB_CONFIG[:ezid_shoulder]
+      user = IDB_CONFIG[:ezid_username]
+      password = IDB_CONFIG[:ezid_password]
+
+      target = "#{request.base_url}#{dataset_path(dataset.key)}"
+
+      metadata = {}
+      metadata['_target'] = target
+      if @dataset.publication_state == Databank::PublicationState::METADATA_EMBARGO
+        metadata['_status'] = 'reserved'
+      else
+        metadata['_status'] = 'public'
+        metadata['datacite'] = dataset.to_datacite_xml
+      end
+
+      if dataset.identifier && dataset.identifier != ''
+        uri = URI.parse("https://#{host}/id/doi:#{dataset.identifier}")
+      else
+        uri = URI.parse("https://#{host}/id/#{shoulder}-#{dataset.key}_v1")
+      end
+
+      request = Net::HTTP::Put.new(uri.request_uri)
+      request.basic_auth(user, password)
+      request.content_type = "text/plain"
+      request.body = make_anvl(metadata)
+
+      sock = Net::HTTP.new(uri.host, uri.port)
+      # sock.set_debug_output $stderr
+
+      if uri.scheme == 'https'
+        sock.use_ssl = true
+      end
+
+      begin
+
+        response = sock.start { |http| http.request(request) }
+
+      rescue Net::HTTPBadResponse, Net::HTTPServerError => error
+        Rails.logger.warn error.message
+        Rails.logger.warn response.body
+      end
+
+      case response
+        when Net::HTTPSuccess, Net::HTTPRedirection
+          response_split = response.body.split(" ")
+          Rails.logger.warn response_split
+          response_split2 = response_split[1].split(":")
+          Rails.logger.warn response_split2
+          doi = response_split2[1]
+
+        else
+          Rails.logger.warn response.to_yaml
+          raise "error minting DOI"
+      end
+    end
+
+
+    def mint_doi(dataset)
+
+      host = IDB_CONFIG[:ezid_host]
+
+      if @dataset.is_test?
+        shoulder = 'doi:10.5072/FK2'
+        user = 'apitest'
+        password = 'apitest'
+      end
+
+      shoulder = IDB_CONFIG[:ezid_shoulder]
+      user = IDB_CONFIG[:ezid_username]
+      password = IDB_CONFIG[:ezid_password]
+
+      target = "#{request.base_url}#{dataset_path(dataset.key)}"
+
+      metadata = {}
+      metadata['_target'] = target
+      if @dataset.publication_state == Databank::PublicationState::METADATA_EMBARGO
+        metadata['_status'] = 'reserved'
+      else
+        metadata['_status'] = 'public'
+        metadata['datacite'] = dataset.to_datacite_xml
+      end
+
+      uri = URI.parse("https://#{host}/shoulder/#{shoulder}")
+
+      request = Net::HTTP::Post.new(uri.request_uri)
+      request.basic_auth(user, password)
+      request.content_type = "text/plain"
+      request.body = make_anvl(metadata)
+
+      sock = Net::HTTP.new(uri.host, uri.port)
+      # sock.set_debug_output $stderr
+
+      if uri.scheme == 'https'
+        sock.use_ssl = true
+      end
+
+      begin
+
+        response = sock.start { |http| http.request(request) }
+
+      rescue Net::HTTPBadResponse, Net::HTTPServerError => error
+        Rails.logger.warn error.message
+        Rails.logger.warn response.body
+      end
+
+      case response
+        when Net::HTTPSuccess, Net::HTTPRedirection
+          response_split = response.body.split(" ")
+          Rails.logger.warn response_split
+          response_split2 = response_split[1].split(":")
+          Rails.logger.warn response_split2
+          doi = response_split2[1]
+
+        else
+          Rails.logger.warn response.to_yaml
+          raise "error minting DOI"
+      end
+    end
+
   end
+
 end
+
