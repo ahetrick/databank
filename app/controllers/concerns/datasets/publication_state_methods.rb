@@ -8,8 +8,20 @@ module Datasets
     end
 
     def deposit_confirmation_notice (old_state, dataset)
-      %Q[Dataset was successfully published and the DataCite DOI minted is #{dataset.identifier}.<br/>The persistent link to this dataset is now <a href = "http://dx.doi.org/#{dataset.identifier}">http://dx.doi.org/#{dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.]
 
+      new_state = dataset.publication_state
+
+      case new_state
+        when Databank::PublicationState::RELEASED
+          return %Q[Dataset was successfully published and the DataCite DOI is #{dataset.identifier}.<br/>The persistent link to this dataset is now <a href = "http://dx.doi.org/#{dataset.identifier}">http://dx.doi.org/#{dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.]
+
+        when Databank::PublicationState::METADATA_EMBARGO
+          return %Q[DataCite DOI #{dataset.identifier} successfully reserved.<br/>The persistent link to this dataset will be <a href = "http://dx.doi.org/#{dataset.identifier}">http://dx.doi.org/#{dataset.identifier}</a> starting #{dataset.release_date}.]
+
+        when Databank::PublicationState::FILE_EMBARGO
+          return %Q[Dataset record was successfully published and the DataCite DOI is #{dataset.identifier}.<br/>Although the record for your dataset will be publicly visible, your data files will not be made available until #{dataset.release_date.iso8601}.<br/>The persistent link to this dataset is now <a href = "http://dx.doi.org/#{dataset.identifier}">http://dx.doi.org/#{dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.]
+      end
+      
     end
 
 
@@ -148,7 +160,7 @@ module Datasets
 
         else
           Rails.logger.warn response.to_yaml
-          raise "error minting DOI"
+          raise "error creating DOI"
       end
     end
 
