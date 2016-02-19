@@ -482,7 +482,9 @@ class DatasetsController < ApplicationController
 
   def datacite_record_hash
 
-    return {"status" => "dataset incomplete"} if !@dataset.complete?
+    return {"status" => "dataset incomplete"} if @dataset.publication_state == Databank::PublicationState::DRAFT
+    return {"status" => "DOI Reserved Only"} if @dataset.publication_state == Databank::PublicationState::FILE_EMBARGO
+
 
     response_hash = Hash.new
 
