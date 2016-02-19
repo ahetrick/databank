@@ -120,6 +120,8 @@ module Datasets
       request.content_type = "text/plain"
       request.body = make_anvl(metadata)
 
+      Rails.logger.warn request.body
+
       sock = Net::HTTP.new(uri.host, uri.port)
       # sock.set_debug_output $stderr
 
