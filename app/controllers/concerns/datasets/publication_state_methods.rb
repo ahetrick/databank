@@ -106,6 +106,7 @@ module Datasets
       else
         metadata['_status'] = 'public'
         metadata['datacite'] = dataset.to_datacite_xml
+        #Rails.logger.warn dataset.to_datacite_xml
       end
 
       if dataset.identifier && dataset.identifier != ''

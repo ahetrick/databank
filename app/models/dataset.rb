@@ -91,6 +91,11 @@ class Dataset < ActiveRecord::Base
     end
     identifierNode.parent = resourceNode
 
+    resourceTypeNode = doc.create_element('resourceType')
+    resourceTypeNode['resourceTypeGeneral'] = "Dataset"
+    resourceTypeNode.content = "Dataset"
+    resourceTypeNode.parent = resourceNode
+
     creatorsNode = doc.create_element('creators')
     creatorsNode.parent = resourceNode
 
@@ -169,7 +174,7 @@ class Dataset < ActiveRecord::Base
     publisherNode.parent = resourceNode
 
     publicationYearNode = doc.create_element('publicationYear')
-    publicationYearNode.content = self.publication_year || "2015"
+    publicationYearNode.content = self.publication_year || Time.now.year
     publicationYearNode.parent = resourceNode
 
     if self.keywords
@@ -184,6 +189,11 @@ class Dataset < ActiveRecord::Base
       end
 
     end
+
+    releasedateNode = doc.create_element('date')
+    releasedateNode["dateType"] = "Available"
+    releasedateNode.content = self.release_date || Date.current()
+    releasedateNode.parent = resourceNode
 
     # languageNode = doc.create_element('language')
     # languageNode.content = "en-us"
@@ -206,11 +216,6 @@ class Dataset < ActiveRecord::Base
       descriptionNode.content = self.description
       descriptionNode.parent = descriptionsNode
     end
-
-    resourceTypeNode = doc.create_element('resourceType')
-    resourceTypeNode['resourceTypeGeneral'] = "Dataset"
-    resourceTypeNode.content = "Dataset"
-    resourceTypeNode.parent = resourceNode
 
     doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
 
