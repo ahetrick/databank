@@ -51,8 +51,6 @@ class DatasetsController < ApplicationController
       zip_and_download_selected
     end
     @publish_modal_msg = publish_modal_msg(@dataset)
-    @visibility_msg = visibility_msg(@dataset)
-
 
     # # clean up incomplete datasfiles
     # @dataset.datafiles.each do |datafile|
@@ -185,7 +183,9 @@ class DatasetsController < ApplicationController
   # PATCH/PUT /datasets/1.json
   def update
 
-    if is_datacite_changed?
+    Rails.logger.warn "inside update dataset"
+
+    if has_nested_param_change?
       @dataset.has_datacite_change = true
     end
 
@@ -220,10 +220,7 @@ class DatasetsController < ApplicationController
     if completion_check == 'ok'
       @dataset.complete = true
       if (@dataset.release_date && @dataset.release_date <= Date.current()) || !@dataset.embargo || @dataset.embargo == ""
-        @dataset.publication_state = Databank::PublicationState::RELEASED
         @dataset.release_date = Date.current()
-      else
-        @dataset.publication_state = @dataset.embargo
       end
     else
       @dataset.complete = false
@@ -231,7 +228,7 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       if @dataset.complete?
-        if !@dataset.identifier || @dataset.identifier.empty? || !@dataset.is_import?
+        if !@dataset.identifier || @dataset.identifier.empty? || (@dataset.publication_state == Databank::PublicationState::DRAFT && !@dataset.is_import?)
           @dataset.identifier = create_doi(@dataset)
         end
 
@@ -260,7 +257,16 @@ class DatasetsController < ApplicationController
         @dataset.has_datacite_change = false
 
         if old_state == Databank::PublicationState::DRAFT
+
           if @dataset.save
+
+            if (@dataset.release_date && @dataset.release_date <= Date.current()) || !@dataset.embargo || @dataset.embargo == ""
+              @dataset.publication_state = Databank::PublicationState::RELEASED
+            else
+              @dataset.publication_state = @dataset.embargo
+            end
+            @dataset.has_datacite_change = false
+            @dataset.save
 
             if IDB_CONFIG.has_key?(:local_mode) && IDB_CONFIG[:local_mode]
               Rails.logger.warn "deposit OK for #{@dataset.key}"
@@ -279,6 +285,13 @@ class DatasetsController < ApplicationController
           end
         else
           if @dataset.save && update_datacite_metadata
+            if (@dataset.release_date && @dataset.release_date <= Date.current()) || !@dataset.embargo || @dataset.embargo == ""
+              @dataset.publication_state = Databank::PublicationState::RELEASED
+            else
+              @dataset.publication_state = @dataset.embargo
+            end
+            @dataset.has_datacite_change = false
+            @dataset.save
 
             if IDB_CONFIG.has_key?(:local_mode) && IDB_CONFIG[:local_mode]
               Rails.logger.warn "deposit update OK for #{@dataset.key}"
@@ -308,6 +321,35 @@ class DatasetsController < ApplicationController
       set_dataset
     end
 
+  end
+
+  def has_nested_param_change?
+    params[:dataset][:creators_attributes].each do |key, creator_attributes|
+      if creator_attributes.has_key?(:_destroy)
+        if creator_attributes[:_destroy] == true
+          # Rails.logger.warn 'removed creator'
+          return true
+        end
+      else
+        # Rails.logger.warn 'added creator'
+        return true
+      end
+    end
+
+    params[:dataset][:funders_attributes].each do |key, funder_attributes|
+      if funder_attributes.has_key?(:_destroy)
+        if funder_attributes[:_destroy] == true
+          # Rails.logger.warn 'removed funder'
+          return true
+        end
+      elsif funder_attributes[:name] != ''
+        # Rails.logger.warn 'added funder'
+        return true
+      end
+    end
+
+    # if we get here, no change has been detected
+    return false
   end
 
   def zip_and_download_selected
@@ -617,73 +659,21 @@ class DatasetsController < ApplicationController
     end
   end
 
-
-
-  def is_datacite_changed?
-    #Rails.logger.warn params.to_yaml
-
-    params[:dataset][:creators_attributes].each do |key, creator_attributes|
-      if creator_attributes.has_key?(:_destroy)
-        if creator_attributes[:_destroy] == true
-          # Rails.logger.warn 'removed creator'
-          return true
-        end
-      else
-        # Rails.logger.warn 'added creator'
-        return true
-      end
-    end
-
-    params[:dataset][:funders_attributes].each do |key, funder_attributes|
-      if funder_attributes.has_key?(:_destroy)
-        if funder_attributes[:_destroy] == true
-          # Rails.logger.warn 'removed funder'
-          return true
-        end
-      elsif funder_attributes[:name] != ''
-        # Rails.logger.warn 'added funder'
-        return true
-      end
-    end
-
-
-    @dataset.creators.each do |creator|
-      if creator.changed?
-        # Rails.logger.warn 'changed creator'
-        return true
-      end
-    end
-
-    @dataset.funders.each do |funder|
-      if funder.name_changed? || funder.identifier_changed?
-        # Rails.logger.warn 'changed funder namem'
-        return true
-      end
-    end
-
-    if @dataset.title_changed? || @dataset.license_changed? || @dataset.description_changed? || @dataset.version_changed? || @dataset.keywords_changed? || @dataset.identifier_changed? || @dataset.publication_year_changed?
-      # Rails.logger.warn @dataset.title_changed?
-      # Rails.logger.warn @dataset.license_changed?
-      # Rails.logger.warn @dataset.description_changed?
-      # Rails.logger.warn @dataset.version_changed?
-      # Rails.logger.warn @dataset.keywords_changed?
-      # Rails.logger.warn @dataset.identifier_changed?
-      # Rails.logger.warn @dataset.publication_year_changed?
-      return true
-    end
-
-    # if we get here, no DataCite-relevant changes have been detected
-    return false
-
-  end
-
   def update_datacite_metadata
 
     if completion_check == 'ok'
 
+      user = nil
+      password = nil
       host = IDB_CONFIG[:ezid_host]
-      user = IDB_CONFIG[:ezid_username]
-      password = IDB_CONFIG[:ezid_password]
+
+      if @dataset.is_test?
+        user = 'apitest'
+        password = 'apitest'
+      else
+        user = IDB_CONFIG[:ezid_username]
+        password = IDB_CONFIG[:ezid_password]
+      end
 
       target = "#{request.base_url}#{dataset_path(@dataset.key)}"
 

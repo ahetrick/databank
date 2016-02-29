@@ -78,15 +78,19 @@ class User < ActiveRecord::Base
 
   def self.can_deposit(netid)
 
-    response = open("http://quest.grainger.uiuc.edu/directory/ed/person/thabing").read
-    response_nospace = response.gsub(">\r\n", "")
-
-    response_nospace = response_nospace.gsub("> ", "") while response_nospace.include?("> ")
-
-    response_noslash = response_nospace.gsub("\"", "'")
-    xml_doc = Nokogiri::XML(response_noslash)
+    response = open("http://quest.grainger.uiuc.edu/directory/ed/person/#{netid}").read
+    # Rails.logger.warn response
+    # response_nospace = response.gsub(">\r\n", "")
+    #response_nospace = response_nospace.gsub("> ", "") while response_nospace.include?("> ")
+    #response_noslash = response_nospace.gsub("\"", "'")
+    xml_doc = Nokogiri::XML(response)
     xml_doc.remove_namespaces!
+    # Rails.logger.warn xml_doc.to_xml
     employee_type = xml_doc.xpath("//attr[@name='uiuceduemployeetype']").text()
+    employee_type.strip!
+    # Rails.logger.warn "netid then employee type:"
+    # Rails.logger.warn netid
+    # Rails.logger.warn employee_type
     case employee_type
       when "A"
         # Faculty

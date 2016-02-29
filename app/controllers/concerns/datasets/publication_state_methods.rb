@@ -21,7 +21,7 @@ module Datasets
         when Databank::PublicationState::FILE_EMBARGO
           return %Q[Dataset record was successfully published and the DataCite DOI is #{dataset.identifier}.<br/>Although the record for your dataset will be publicly visible, your data files will not be made available until #{dataset.release_date.iso8601}.<br/>The persistent link to this dataset is now <a href = "http://dx.doi.org/#{dataset.identifier}">http://dx.doi.org/#{dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.]
       end
-      
+
     end
 
 
@@ -79,17 +79,6 @@ module Datasets
       msg
     end
 
-    def visibility_msg(dataset)
-      msg = ""
-      case dataset.publication_state
-        when Databank::PublicationState::FILE_EMBARGO
-          msg = "Files associated with this dataset are unavailable. Please contact us for more information."
-        when Databank::PublicationState::METADATA_EMBARGO
-          msg = "This dataset will be made available on #{@dataset.release_date.iso8601}"
-      end
-      msg
-    end
-
     def create_doi(dataset)
 
       if dataset.is_import?
@@ -124,7 +113,7 @@ module Datasets
       if dataset.identifier && dataset.identifier != ''
         uri = URI.parse("https://#{host}/id/doi:#{dataset.identifier}")
       else
-        uri = URI.parse("https://#{host}/id/#{shoulder}-#{dataset.key}_v1")
+        uri = URI.parse("https://#{host}/id/#{shoulder}#{dataset.key}_v1")
       end
 
       request = Net::HTTP::Put.new(uri.request_uri)
@@ -132,10 +121,12 @@ module Datasets
       request.content_type = "text/plain"
       request.body = make_anvl(metadata)
 
-      Rails.logger.warn request.body
+      Rails.logger.warn "***** REQUEST START *****"
+      Rails.logger.warn request.to_yaml
+      Rails.logger.warn "***** REQUEST STOP *****"
 
       sock = Net::HTTP.new(uri.host, uri.port)
-      # sock.set_debug_output $stderr
+      sock.set_debug_output $stderr
 
       if uri.scheme == 'https'
         sock.use_ssl = true

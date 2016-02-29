@@ -11,21 +11,17 @@ class Dataset < ActiveRecord::Base
   has_many :creators, dependent: :destroy
   has_many :funders, dependent: :destroy
   accepts_nested_attributes_for :datafiles, :reject_if => :all_blank, allow_destroy: true
-  accepts_nested_attributes_for :creators, reject_if: proc { |attributes| (attributes['family_name'].blank?  && attributes['institution_name'].blank? )}, allow_destroy: true
-  accepts_nested_attributes_for :funders, reject_if: proc {|attributes|(attributes['name'].blank?)}, allow_destroy: true
+  accepts_nested_attributes_for :creators, reject_if: proc { |attributes| (attributes['family_name'].blank? && attributes['institution_name'].blank?) }, allow_destroy: true
+  accepts_nested_attributes_for :funders, reject_if: proc { |attributes| (attributes['name'].blank?) }, allow_destroy: true
 
   before_create 'set_key'
   before_save 'set_primary_contact'
   after_save 'remove_invalid_datafiles'
+  after_update 'set_datacite_change'
 
   def to_param
     self.key
   end
-
-  # def create_datafile_from_remote(remote_url)
-  #   Datafile.create(:remote_binary_url => remote_url, :dataset_id => self.id)
-  # end
-  # handle_asynchronously :create_datafile_from_remote
 
   def self.search(search)
     if search
@@ -42,7 +38,7 @@ class Dataset < ActiveRecord::Base
         clean_term = term.strip.downcase
 
         if !clean_term.empty?
-          
+
           #TODO search creators
           term_relations = Dataset.where('lower(title) LIKE :search OR lower(keywords) LIKE :search OR lower(creator_text) LIKE :search OR lower(identifier) LIKE :search OR lower(description) LIKE :search', search: "%#{clean_term}%")
 
@@ -57,11 +53,9 @@ class Dataset < ActiveRecord::Base
 
       Dataset.where(id: search_result.map(&:id))
     else # else of if search
-       Dataset.all
+      Dataset.all
     end # end if search
-
-
-  end # end search
+  end
 
   def to_datacite_xml
 
@@ -87,14 +81,9 @@ class Dataset < ActiveRecord::Base
     if self.identifier && self.identifier != ''
       identifierNode.content = self.identifier
     else
-      identifierNode.content = "#{IDB_CONFIG[:ezid_placeholder_identifier]}_#{self.key}_v1"
+      identifierNode.content = "#{IDB_CONFIG[:ezid_placeholder_identifier]}#{self.key}_v1"
     end
     identifierNode.parent = resourceNode
-
-    resourceTypeNode = doc.create_element('resourceType')
-    resourceTypeNode['resourceTypeGeneral'] = "Dataset"
-    resourceTypeNode.content = "Dataset"
-    resourceTypeNode.parent = resourceNode
 
     creatorsNode = doc.create_element('creators')
     creatorsNode.parent = resourceNode
@@ -190,10 +179,13 @@ class Dataset < ActiveRecord::Base
 
     end
 
+    datesNode = doc.create_element('dates')
+    datesNode.parent = resourceNode
+
     releasedateNode = doc.create_element('date')
     releasedateNode["dateType"] = "Available"
-    releasedateNode.content = self.release_date || Date.current()
-    releasedateNode.parent = resourceNode
+    releasedateNode.content = self.release_date.iso8601 || Date.current().iso8601
+    releasedateNode.parent = datesNode
 
     # languageNode = doc.create_element('language')
     # languageNode.content = "en-us"
@@ -217,9 +209,51 @@ class Dataset < ActiveRecord::Base
       descriptionNode.parent = descriptionsNode
     end
 
+    resourceTypeNode = doc.create_element('resourceType')
+    resourceTypeNode['resourceTypeGeneral'] = "Dataset"
+    resourceTypeNode.content = "Dataset"
+    resourceTypeNode.parent = resourceNode
+
     doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
 
+
   end
+
+  def set_datacite_change
+    if is_datacite_changed?
+      update_column("has_datacite_change", "true")
+    end
+  end
+
+  def is_datacite_changed?
+
+    self.creators.each do |creator|
+      if creator.changed?
+        return true
+      end
+    end
+
+    self.funders.each do |funder|
+      if funder.name_changed? || funder.identifier_changed?
+        return true
+      end
+    end
+
+    if self.title_changed? || self.license_changed? || self.description_changed? || self.version_changed? || self.keywords_changed? || self.identifier_changed? || self.publication_year_changed? || self.release_date_changed? || self.embargo_changed?
+      return true
+    end
+
+    if self.release_date_changed?
+      return true
+    end
+
+    # if we get here, no DataCite-relevant changes have been detected
+    return false
+
+  end
+
+
+
 
   def visibility
     case self.publication_state
@@ -250,9 +284,9 @@ class Dataset < ActiveRecord::Base
   end
 
   def creator_list
-      return_list = ""
+    return_list = ""
 
-      self.creators.each_with_index  do |creator, i|
+    self.creators.each_with_index do |creator, i|
 
       return_list << "; " unless i == 0
 
@@ -303,8 +337,8 @@ class Dataset < ActiveRecord::Base
 
     while true
 
-      num_part = rand(10 ** 7).to_s.rjust(7,'0')
-      proposed_key =  "#{IDB_CONFIG[:key_prefix]}-#{num_part}"
+      num_part = rand(10 ** 7).to_s.rjust(7, '0')
+      proposed_key = "#{IDB_CONFIG[:key_prefix]}-#{num_part}"
       break unless self.class.find_by_key(proposed_key)
     end
     proposed_key
@@ -325,7 +359,7 @@ class Dataset < ActiveRecord::Base
 
   def remove_invalid_datafiles
     self.datafiles.each do |datafile|
-      if (!datafile.medusa_path || datafile.medusa_path == "" ) && (!datafile.binary.path || datafile.binary.path == "")
+      if (!datafile.medusa_path || datafile.medusa_path == "") && (!datafile.binary.path || datafile.binary.path == "")
         datafile.destroy
       end
     end
@@ -339,8 +373,6 @@ class Dataset < ActiveRecord::Base
       #TODO for completeness, add attributes not editable by depostors in interface
     end
   end
-
-
 
 
 end
