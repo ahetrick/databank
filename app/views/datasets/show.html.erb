@@ -12,6 +12,12 @@
       <a href="/help">Contact the Research Data Service</a> with any questions.
     </div>
 
+  <% elsif @dataset.publication_state == Databank::PublicationState::DESTROYED %>
+    <div class="embargo-placeholder">
+      This dataset is not available.
+      <a href="/help">Contact the Research Data Service</a> with any questions.
+    </div>
+
   <% else %>
 
 
@@ -23,7 +29,7 @@
       </div>
     <% end %>
 
-    <% if ((can? :edit, @dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO].include? @dataset.publication_state)) %>
+    <% if ((can? :edit, @dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::TOMBSTONE].include? @dataset.publication_state)) %>
       <!-- BEGIN metadata section-->
       <h1><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></h1>
 
@@ -219,9 +225,14 @@
                   </div>
                   <!-- end select-files-form-group -->
                 </form>
-              <% else %>
+              <% elsif @dataset.publication_state == Databank::PublicationState::FILE_EMBARGO %>
                 <div class="embargo-placeholder">
                   Files associated with this dataset will be made available <%= @dataset.release_date %>.
+                  <a href="/help">Contact the Research Data Service</a> with any questions.
+                </div>
+              <% elsif @dataset.publication_state == Databank::PublicationState::TOMBSTONE %>
+                <div class="embargo-placeholder">
+                  Files associated with this dataset are not available.
                   <a href="/help">Contact the Research Data Service</a> with any questions.
                 </div>
               <% end %>

@@ -20,7 +20,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :review_deposit_agreement
   skip_load_and_authorize_resource :only => :datacite_record
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :completion_check, :change_publication_state, :is_datacite_changed ]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :completion_check, :delete_datacite_id, :change_publication_state, :is_datacite_changed, :tombstone ]
 
   @@num_box_ingest_deamons = 10
 
@@ -32,7 +32,20 @@ class DatasetsController < ApplicationController
   # GET /datasets
   # GET /datasets.json
   def index
+
+    @placeholder = 'placeholder'
     @datasets = Dataset.search(params[:search]).order(updated_at: :desc)
+
+    case current_user.role
+      when "admin"
+        # show everything
+      when "depositor"
+        @datasets = @datasets.where.not(publication_state: Databank::PublicationState::DESTROYED)
+        @datasets = @datasets.where("publication_state = ? OR publication_state = ? OR depositor_email = ?", Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED, current_user.email)
+
+      else
+        @datasets = @datasets.where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO])
+    end
 
     if params[:depositor_email]
       @datasets = @datasets.where(depositor_email: params[:depositor_email])
@@ -211,6 +224,73 @@ class DatasetsController < ApplicationController
       format.html { redirect_to datasets_url, notice: 'Dataset was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  def nuke
+    old_state = @dataset.publication_state
+    @dataset.publication_state = Databank::PublicationState::DESTROYED
+    @dataset.has_datacite_change = false
+    @dataset.tombstone_date = Date.current.iso8601
+    notice_msg = ""
+
+    if old_state == Databank::PublicationState::METADATA_EMBARGO
+      respond_to do |format|
+        @dataset.has_datacite_change = false
+        if @dataset.save && delete_datacite_id
+          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Reserved DOI has been deleted and all files have been hidden.] }
+          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        else
+          @dataset.publication_state = old_state
+          @dataset.tombstone_date = nil
+          @dataset.has_datacite_change = false
+          @dataset.save
+          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
+          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+
+        end
+      end
+    else
+      respond_to do |format|
+        @dataset.has_datacite_change = false
+        if @dataset.save && update_datacite_metadata
+          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata has been replaced with minimal placeholder values and all files have been hidden.] }
+          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        else
+          @dataset.publication_state = old_state
+          @dataset.tombstone_date = nil
+          @dataset.has_datacite_change = false
+          @dataset.save
+          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
+          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+
+        end
+      end
+    end
+  end
+
+  def tombstone
+
+    old_state = @dataset.publication_state
+
+    @dataset.publication_state = Databank::PublicationState::TOMBSTONE
+    @dataset.tombstone_date = Date.current
+
+    respond_to do |format|
+      @dataset.has_datacite_change = false
+      if @dataset.save && update_datacite_metadata
+        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset has been successfully tombstoned.] }
+        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+      else
+        @dataset.publication_state = old_state
+        @dataset.tombstone_date = nil
+        @dataset.has_datacite_change = false
+        @dataset.save
+        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
+        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+
+      end
+    end
+
   end
 
   def deposit
@@ -659,6 +739,53 @@ class DatasetsController < ApplicationController
     end
   end
 
+  def delete_datacite_id
+    user = nil
+    password = nil
+    host = IDB_CONFIG[:ezid_host]
+
+    if @dataset.is_test?
+      user = 'apitest'
+      password = 'apitest'
+    else
+      user = IDB_CONFIG[:ezid_username]
+      password = IDB_CONFIG[:ezid_password]
+    end
+
+    uri = URI.parse("https://#{host}/id/doi:#{@dataset.identifier}")
+
+    request = Net::HTTP::Delete.new(uri.request_uri)
+    request.basic_auth(user, password)
+    request.content_type = "text/plain"
+
+    sock = Net::HTTP.new(uri.host, uri.port)
+    # sock.set_debug_output $stderr
+
+    if uri.scheme == 'https'
+      sock.use_ssl = true
+    end
+
+    begin
+
+      response = sock.start { |http| http.request(request) }
+
+    rescue Net::HTTPBadResponse, Net::HTTPServerError => error
+      Rails.logger.warn error.message
+      Rails.logger.warn response.body
+    end
+
+    case response
+      when Net::HTTPSuccess, Net::HTTPRedirection
+        return true
+
+      else
+        Rails.logger.warn response.to_yaml
+        return false
+    end
+
+
+  end
+
   def update_datacite_metadata
 
     if completion_check == 'ok'
@@ -680,14 +807,20 @@ class DatasetsController < ApplicationController
       metadata = {}
       if [Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED].include?(@dataset.publication_state)
         metadata['_status'] = 'public'
-      elsif @dataset.publication_state == Databank::PublicationState::TOMBSTONE
+      elsif [Databank::PublicationState::TOMBSTONE, Databank::PublicationState::DESTROYED].include?(@dataset.publication_state)
         metadata['_status'] = 'unavailable'
       end
 
       metadata['_target'] = target
-      metadata['datacite'] = @dataset.to_datacite_xml
 
-      Rails.logger.warn metadata.to_yaml
+      if [Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED, Databank::PublicationState::TOMBSTONE].include?(@dataset.publication_state)
+        metadata['datacite'] = @dataset.to_datacite_xml
+      elsif @dataset.publication_state == Databank::PublicationState::DESTROYED
+        metadata['datacite'] = @dataset.placeholder_metadata
+      end
+
+
+      # Rails.logger.warn metadata.to_yaml
 
       uri = URI.parse("https://#{host}/id/doi:#{@dataset.identifier}")
 

@@ -56,6 +56,12 @@ Rails.application.routes.draw do
   # deposit
   get '/datasets/:id/deposit', to: 'datasets#deposit'
 
+  # tombstone
+  get '/datasets/:id/tombstone', to: 'datasets#tombstone'
+
+  # nuke
+  get '/datasets/:id/nuke', to: 'datasets#nuke'
+
   # review agreement
   get '/review_deposit_agreement', to: 'datasets#review_deposit_agreement'
   get '/datasets/:id/review_deposit_agreement', to: 'datasets#review_deposit_agreement'

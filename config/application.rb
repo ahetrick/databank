@@ -14,6 +14,7 @@ module Databank
     METADATA_EMBARGO = 'metadata embargo'
     FILE_EMBARGO = 'file embargo'
     TOMBSTONE = 'tombstone'
+    DESTROYED = 'destroyed'
   end
 
   class Application < Rails::Application

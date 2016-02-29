@@ -56,8 +56,10 @@
               %span(class="glyphicon glyphicon-trash" )
               Delete
           - elsif (can? :manage, @dataset)
-            %button(type="button" class="btn btn-danger btn-block" )
+            %button(type="button" class="btn btn-warning btn-block" onclick='window.location = "/datasets/#{@dataset.key}/tombstone"' )
               Tombstone
+            %button(type="button" class="btn btn-danger btn-block" onclick='window.location = "/datasets/#{@dataset.key}/nuke"' )
+              Destroy
           - else
             %button(type="button" class="btn btn-danger btn-block" name="cancel" onclick='window.location = "/"' )
               %span(class="glyphicon glyphicon-ban-circle" )

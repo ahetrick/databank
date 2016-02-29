@@ -184,6 +184,11 @@ class Dataset < ActiveRecord::Base
 
     releasedateNode = doc.create_element('date')
     releasedateNode["dateType"] = "Available"
+    if self.tombstone_date && self.tombstone_date != ""
+      releasedateNode.content =  "#{self.release_date.iso8601}/#{self.tombstone_date.iso8601} "
+    else
+      releasedateNode.content = self.release_date.iso8601 || Date.current().iso8601
+    end
     releasedateNode.content = self.release_date.iso8601 || Date.current().iso8601
     releasedateNode.parent = datesNode
 
@@ -218,6 +223,47 @@ class Dataset < ActiveRecord::Base
 
 
   end
+
+  def placeholder_metadata
+    doc = Nokogiri::XML::Document.parse(%Q(<?xml version="1.0"?><resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd"></resource>))
+    resourceNode = doc.first_element_child
+
+    identifierNode = doc.create_element('identifier')
+    identifierNode['identifierType'] = "DOI"
+    # for imports and post-v1 versions, use specified identifier, otherwise assert v1
+    if self.identifier && self.identifier != ''
+      identifierNode.content = self.identifier
+    else
+      identifierNode.content = "#{IDB_CONFIG[:ezid_placeholder_identifier]}#{self.key}_v1"
+    end
+    identifierNode.parent = resourceNode
+
+    creatorNode = doc.create_element('creator')
+    creatorNode.parent = creatorsNode
+
+    creatorNameNode = doc.create_element('creatorName')
+
+    creatorNameNode.content = "University of Illinois at Urbana-Champaign"
+    creatorNameNode.parent = creatorNode
+
+
+    titlesNode = doc.create_element('titles')
+    titlesNode.parent = resourceNode
+
+    titleNode = doc.create_element('title')
+    titleNode.content = "Removed Dataset"
+    titleNode.parent = titlesNode
+
+    descriptionsNode = doc.create_element('descriptions')
+    descriptionsNode.parent = resourceNode
+    descriptionNode = doc.create_element('description')
+    descriptionNode['descriptionType'] = "Other"
+    descriptionNode.content = "Dataset has been removed. Contact the Research Data Service of the University of Illinois at Urbana-Champaign with any questions. http://researchdataservice.illinois.edu"
+    descriptionNode.parent = descriptionsNode
+
+    doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
+  end
+
 
   def set_datacite_change
     if is_datacite_changed?
