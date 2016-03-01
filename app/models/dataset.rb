@@ -309,9 +309,6 @@ class Dataset < ActiveRecord::Base
 
   end
 
-
-
-
   def visibility
     case self.publication_state
       when Databank::PublicationState::DRAFT
@@ -323,7 +320,9 @@ class Dataset < ActiveRecord::Base
       when Databank::PublicationState::METADATA_EMBARGO
         return_string = "Private (DOI Reserved Only)"
       when Databank::PublicationState::TOMBSTONE
-        return_string = "Public Metadata, Private Files (Tombstone)"
+        return_string = "Public Metadata, Private Files (Tombstoned)"
+      when Databank::PublicationState::DESTROYED
+        return_string = "Removed Metadata, Removed Files (Destroyed)"
       else
         #should never get here
         return_string = "Unknown, please contact the Research Data Service"

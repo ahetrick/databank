@@ -12,12 +12,12 @@
       <a href="/help">Contact the Research Data Service</a> with any questions.
     </div>
 
-  <% elsif @dataset.publication_state == Databank::PublicationState::DESTROYED %>
+  <% elsif ((!can? :manage, @dataset) && (@dataset.publication_state == Databank::PublicationState::DESTROYED)) %>
+    <br/>
     <div class="embargo-placeholder">
       This dataset is not available.
       <a href="/help">Contact the Research Data Service</a> with any questions.
     </div>
-
   <% else %>
 
 
@@ -29,7 +29,7 @@
       </div>
     <% end %>
 
-    <% if ((can? :edit, @dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::TOMBSTONE].include? @dataset.publication_state)) %>
+    <% if ( ((can? :manage, @dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::TOMBSTONE].include? @dataset.publication_state)) || ( (can? :edit, @dataset) && @dataset.publication_state != Databank::PublicationState::DESTROYED ) ) %>
       <!-- BEGIN metadata section-->
       <h1><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></h1>
 
