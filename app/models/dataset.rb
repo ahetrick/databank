@@ -238,6 +238,9 @@ class Dataset < ActiveRecord::Base
     end
     identifierNode.parent = resourceNode
 
+    creatorsNode = doc.create_element('creators')
+    creatorsNode.parent = resourceNode
+
     creatorNode = doc.create_element('creator')
     creatorNode.parent = creatorsNode
 
@@ -253,6 +256,14 @@ class Dataset < ActiveRecord::Base
     titleNode = doc.create_element('title')
     titleNode.content = "Removed Dataset"
     titleNode.parent = titlesNode
+
+    publisherNode = doc.create_element('publisher')
+    publisherNode.content = self.publisher || "University of Illinois at Urbana-Champaign"
+    publisherNode.parent = resourceNode
+
+    publicationYearNode = doc.create_element('publicationYear')
+    publicationYearNode.content = self.publication_year || Time.now.year
+    publicationYearNode.parent = resourceNode
 
     descriptionsNode = doc.create_element('descriptions')
     descriptionsNode.parent = resourceNode
