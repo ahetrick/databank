@@ -690,8 +690,8 @@ class DatasetsController < ApplicationController
     end
 
     if @dataset.embargo && [Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::METADATA_EMBARGO].include?(@dataset.embargo)
-      if !@dataset.release_date || @dataset.release_date >= Date.current
-        validation_error_messages << "a future release date for delayed publication selection"
+      if !@dataset.release_date || @dataset.release_date <= Date.current
+        validation_error_messages << "a future release date for delayed publication (embargo) selection"
       end
     end
 
