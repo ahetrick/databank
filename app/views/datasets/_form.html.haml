@@ -60,14 +60,16 @@
                   %span(class="help-block") Use a semi-colon (;) to separate keywords or phrases (e.g.: repositories; file formats).
 
               -if ( params[:action]=='new' || (can? :manage, @dataset) || ((can? :edit, @dataset) && ([Databank::PublicationState::METADATA_EMBARGO, Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::DRAFT].include?(@dataset.publication_state))))
-
                 .col-md-4
                   .form-group
                     =f.label :embargo, "Publication Delay (embargo)", class: "control-label"
                     %a(href="#" data-toggle="modal" data-target="#embargoModal" tabindex="-1")
                       %span(class="fa fa-question-circle")
                       what's this?
-                    = f.select :embargo, options_for_select([["File Publication Delay (standard embargo)", Databank::PublicationState::FILE_EMBARGO],["File and Metadata Publication Delay (reserve DOI only)", Databank::PublicationState::METADATA_EMBARGO]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
+                    - if [Databank::PublicationState::DRAFT, Databank::PublicationState::METADATA_EMBARGO].include?(@dataset.publication_state)
+                      = f.select :embargo, options_for_select([["File Publication Delay (standard embargo)", Databank::PublicationState::FILE_EMBARGO],["File and Metadata Publication Delay (reserve DOI only)", Databank::PublicationState::METADATA_EMBARGO]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
+                    -else
+                      = f.select :embargo, options_for_select([["File Publication Delay (standard embargo)", Databank::PublicationState::FILE_EMBARGO]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
                 .col-md-2
                   %div(id="release-date-picker")
                     =f.label :release_date, "Release Date",  :class => "control-label"

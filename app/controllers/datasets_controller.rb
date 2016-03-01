@@ -202,7 +202,7 @@ class DatasetsController < ApplicationController
   # PATCH/PUT /datasets/1.json
   def update
 
-    Rails.logger.warn "inside update dataset"
+    # Rails.logger.warn "inside update dataset"
 
     if has_nested_param_change?
       @dataset.has_datacite_change = true
@@ -686,6 +686,16 @@ class DatasetsController < ApplicationController
 
     if @dataset.datafiles.count < 1
       validation_error_messages << "at least one file"
+    end
+
+    if @dataset.embargo && [Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::METADATA_EMBARGO].include?(@dataset.embargo)
+      if !@dataset.release_date || @dataset.release_date >= Date.current
+        validation_error_message << "a future release date for delayed publication selection"
+      else
+        Rails.logger.warn "release date: #{@dataset.release_date}"
+      end
+    else
+      Rails.logger.warn "embargo: #{@dataset.embargo}"
     end
 
     if validation_error_messages.length > 0
