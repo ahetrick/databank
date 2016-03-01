@@ -36,16 +36,22 @@ class DatasetsController < ApplicationController
     @placeholder = 'placeholder'
     @datasets = Dataset.search(params[:search]).order(updated_at: :desc)
 
-    case current_user.role
-      when "admin"
-        # show everything
-      when "depositor"
-        @datasets = @datasets.where.not(publication_state: Databank::PublicationState::DESTROYED)
-        @datasets = @datasets.where("publication_state = ? OR publication_state = ? OR depositor_email = ?", Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED, current_user.email)
+    if current_user && current_user.role
+      case current_user.role
+        when "admin"
+          # show everything
+        when "depositor"
+          @datasets = @datasets.where.not(publication_state: Databank::PublicationState::DESTROYED)
+          @datasets = @datasets.where("publication_state = ? OR publication_state = ? OR depositor_email = ?", Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED, current_user.email)
 
-      else
-        @datasets = @datasets.where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO])
+        else
+          @datasets = @datasets.where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO])
+      end
+
+    else
+      @datasets = @datasets.where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO])
     end
+
 
     if params[:depositor_email]
       @datasets = @datasets.where(depositor_email: params[:depositor_email])
