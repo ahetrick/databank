@@ -29,9 +29,9 @@ module Datasets
 
       # This method should only be called if there are DataCite relevant changes, including release date
 
-      if !dataset.release_date || dataset.release_date <= Date.current()
-        dataset.embargo = nil
-      end
+      # if !dataset.release_date || dataset.release_date <= Date.current()
+      #   dataset.embargo = nil
+      # end
 
       msg = "<div class='confirm-modal-text'>"
 
