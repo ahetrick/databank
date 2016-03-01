@@ -29,20 +29,24 @@ module Datasets
 
       # This method should only be called if there are DataCite relevant changes, including release date
 
-      # if !dataset.release_date || dataset.release_date <= Date.current()
-      #   dataset.embargo = nil
-      # end
+      effective_embargo = nil
+      effective_release_date = Date.current.iso8601
+
+      if dataset.release_date && dataset.release_date >= Date.current()
+        effective_embargo = @dataset.embargo
+        effective_release_date = @dataset.release_date.iso8601
+      end
 
       msg = "<div class='confirm-modal-text'>"
 
-      case dataset.embargo
+      case effective_embargo
 
         when Databank::PublicationState::FILE_EMBARGO
           if dataset.publication_state == Databank::PublicationState::DRAFT
             msg << "<h4>This action will make your record public and create a DOI.</h4><hr/>"
             msg << "<ul>"
             msg << "<li>Your Illinois Data Bank dataset record will be publicly visible through search engines.</li>"
-            msg << "<li>Although the record for your dataset will be publicly visible, your data files will not be made available until #{dataset.release_date.iso8601}.</li>"
+            msg << "<li>Although the record for your dataset will be publicly visible, your data files will not be made available until #{effective_release_date}.</li>"
 
           else
             msg << "<h4>This action will make your updates to your dataset record public.</h4><hr/>"
@@ -53,8 +57,8 @@ module Datasets
           if dataset.publication_state == Databank::PublicationState::DRAFT
             msg << "<h4>This action will reserve a DOI</h4><hr/>"
             msg << "<ul>"
-            msg << "<li>The DOI link will fail until #{dataset.release_date.iso8601}.</li>"
-            msg << "<li>The record for your dataset is not visible, nor are your data files available until #{dataset.release_date.iso8601}.</li>"
+            msg << "<li>The DOI link will fail until #{effective_release_date}.</li>"
+            msg << "<li>The record for your dataset is not visible, nor are your data files available until #{effective_release_date}.</li>"
           else
             # Should never get here, DataCite record changes are not relevant to METADATA_EMBARGO
             msg << "<h3>This action will not do anything.  The record for your dataset is not visible, and the DOI is already reserved.</h3>"

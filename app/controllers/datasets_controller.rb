@@ -69,6 +69,7 @@ class DatasetsController < ApplicationController
     if params.has_key?(:selected_files)
       zip_and_download_selected
     end
+
     @publish_modal_msg = publish_modal_msg(@dataset)
 
     # # clean up incomplete datasfiles
@@ -690,12 +691,8 @@ class DatasetsController < ApplicationController
 
     if @dataset.embargo && [Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::METADATA_EMBARGO].include?(@dataset.embargo)
       if !@dataset.release_date || @dataset.release_date >= Date.current
-        validation_error_message << "a future release date for delayed publication selection"
-      else
-        Rails.logger.warn "release date: #{@dataset.release_date}"
+        validation_error_messages << "a future release date for delayed publication selection"
       end
-    else
-      Rails.logger.warn "embargo: #{@dataset.embargo}"
     end
 
     if validation_error_messages.length > 0
