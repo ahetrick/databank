@@ -221,6 +221,43 @@ class Dataset < ActiveRecord::Base
     resourceTypeNode.content = "Dataset"
     resourceTypeNode.parent = resourceNode
 
+
+    if self.related_materials.count > 0
+
+      ready_count = 0
+
+      relatedIdentifiersNode = doc.create_element('relatedIdentifiers')
+      relatedIdentifiersNode.parent = resourceNode
+
+      self.related_materials.each do |material|
+
+        if material.url && material.url != ''
+          ready_count = ready_count + 1
+          datacite_arr = Array.new
+
+          if material.datacite_list && material.datacite_list != ''
+            datacite_arr = material.datacite_list.split(',')
+          else
+            datacite_arr << 'IsSupplementTo'
+          end
+
+          datacite_arr.each do |relationship|
+            relatedMaterialNode = doc.create_element('relatedIdentifier')
+            relatedMaterialNode['relatedIdentifierType'] = material.url_type || 'URL'
+            relatedMaterialNode['relationType'] = relationship
+            relatedMaterialNode.content = material.url
+          end
+
+        end
+      end
+
+      if ready_count == 0
+        relatedIdentifiersNode.remove
+      end
+
+    end
+
+
     doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
 
 
@@ -285,6 +322,12 @@ class Dataset < ActiveRecord::Base
   end
 
   def is_datacite_changed?
+
+    self.related_materials.each do |material|
+      if material.uri && material.uri != '' && material.changed?
+        return true
+      end
+    end
 
     self.creators.each do |creator|
       if creator.changed?

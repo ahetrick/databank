@@ -222,10 +222,6 @@ li.current {
   padding-bottom: 10px;
 }
 
-#footer{
-  background-color: lightgrey;
-  padding: 15px;
-}
 #main-content{
   margin-left: 15px;
   margin-right: 15px;
@@ -242,4 +238,23 @@ li.current {
 .idb-callout {
   background: lightblue;
   padding: 5px;
+}
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 78px;
+}
+.footer {
+  padding: 15px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 78px;
+  background-color: lightgrey;
 }

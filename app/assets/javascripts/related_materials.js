@@ -15,10 +15,10 @@ function handleMaterialChange(materialIndex) {
     switch (materialSelectVal) {
         case 'Article' || 'Code' || 'Presentation':
             $('#dataset_related_materials_attributes_' + materialIndex + '_material_type').val(materialSelectVal);
-            $('#dataset_related_materials_attributes_' + materialIndex + '_name').css("visibility", "hidden");
+            $('#dataset_related_materials_attributes_' + materialIndex + '_material_type').css("visibility", "hidden");
             break;
         case 'Other':
-            $('#dataset_related_materials_attributes_' + materialIndex + '_name').val('');
+            $('#dataset_related_materials_attributes_' + materialIndex + '_material_type').val('');
             $('.material-text').css("visibility", "visible");
             $('.material-text').focus();
             break;
