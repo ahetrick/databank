@@ -75,6 +75,7 @@ function handleFunderChange(funderIndex) {
             $('#dataset_funders_attributes_' + funderIndex + '_name').css("visibility", "visible");
             $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('');
             $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('');
+            $('#dataset_funders_attributes_' + funderIndex + '_name').focus();
             break;
         // should not get to default
         default:

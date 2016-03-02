@@ -1,0 +1,39 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Materialtype:</strong>
+  <%= @related_material.materialType %>
+</p>
+
+<p>
+  <strong>Availability:</strong>
+  <%= @related_material.availability %>
+</p>
+
+<p>
+  <strong>Link:</strong>
+  <%= @related_material.link %>
+</p>
+
+<p>
+  <strong>Uri:</strong>
+  <%= @related_material.uri %>
+</p>
+
+<p>
+  <strong>Uri type:</strong>
+  <%= @related_material.uri_type %>
+</p>
+
+<p>
+  <strong>Citation:</strong>
+  <%= @related_material.citation %>
+</p>
+
+<p>
+  <strong>Dataset:</strong>
+  <%= @related_material.dataset_id %>
+</p>
+
+<%= link_to 'Edit', edit_related_material_path(@related_material) %> |
+<%= link_to 'Back', related_materials_path %>

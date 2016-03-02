@@ -60,5 +60,15 @@
   <% end%>
 <% end %>
 
+<% if current_user && current_user.role %>
+  <%= javascript_tag do %>
+    window.user_role = '<%= j current_user.role %>';
+  <% end%>
+<% else %>
+  <%= javascript_tag do %>
+    window.user_role = '<%= j 'guest' %>';
+  <% end%>
+<% end %>
+
 </body>
 </html>

@@ -109,7 +109,7 @@ ready = function() {
     });
 
 
-    console.log("val: " + $('#dataset_embargo').val());
+    // console.log("val: " + $('#dataset_embargo').val());
 
     if (!$('#dataset_embargo').val()) {
 

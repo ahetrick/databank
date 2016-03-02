@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  materialType: MyString
+  availability: MyString
+  link: MyString
+  uri: MyString
+  uri_type: MyString
+  citation: MyText
+  dataset_id: 1
+
+two:
+  materialType: MyString
+  availability: MyString
+  link: MyString
+  uri: MyString
+  uri_type: MyString
+  citation: MyText
+  dataset_id: 1

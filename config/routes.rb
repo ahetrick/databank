@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :related_materials
   resources :funder_infos
   resources :funders
   resources :definitions

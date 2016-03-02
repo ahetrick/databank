@@ -137,7 +137,7 @@
               %span( class="metadata-label" ) Related Materials
         .panel-collapse.collapse(id="relatedPanel" role="tabpanel" aria-labelledby="relatedHeading" )
           .panel-body
-            Related Materials Form Placeholder
+            = render partial: 'materials_subform', locals: {f: f}
 
 %div(id="datafiles-form")
 

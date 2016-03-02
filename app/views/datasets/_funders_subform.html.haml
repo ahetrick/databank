@@ -15,10 +15,9 @@
             %td
               =ff.hidden_field :identifier
               =ff.hidden_field :identifier_scheme
-              =ff.collection_select :code, FunderInfo.order('display_position ASC'), :code, :name, {:prompt => true}, {:class => "form-control dataset", :onchange => "handleFunderChange(#{i})"}
+              =ff.collection_select :code, FunderInfo.order('display_position ASC'), :code, :name, {prompt: true}, {class: "form-control dataset", onchange: "handleFunderChange(#{i})"}
             %td
-              =ff.text_field :name, :class=> "form-control dataset funder-text", :placeholder => "[Funder Name]"
-
+              =ff.text_field :name, :class=> "form-control dataset funder-text", placeholder: "[Funder Name]"
             %td
               =ff.text_field :grant, :class => "form-control dataset"
             %td

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160229195324) do
+ActiveRecord::Schema.define(version: 20160301213004) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -154,6 +154,20 @@ ActiveRecord::Schema.define(version: 20160229195324) do
     t.string   "error_text"
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
+  end
+
+  create_table "related_materials", force: :cascade do |t|
+    t.string   "material_type"
+    t.string   "availability"
+    t.string   "link"
+    t.string   "uri"
+    t.string   "uri_type"
+    t.text     "citation"
+    t.integer  "dataset_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.string   "selected_type"
+    t.string   "datacite_list"
   end
 
   create_table "users", force: :cascade do |t|

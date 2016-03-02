@@ -171,12 +171,14 @@ class DatasetsController < ApplicationController
     @dataset = Dataset.new
     @dataset.creators.build
     @dataset.funders.build
+    @dataset.related_materials.build
   end
 
   # GET /datasets/1/edit
   def edit
     @dataset.creators.build unless @dataset.creators.count > 0
     @dataset.funders.build unless @dataset.funders.count > 0
+    @dataset.related_materials.build unless @dataset.related_materials.count > 0
     @completion_check = self.completion_check
   end
 
@@ -611,7 +613,7 @@ class DatasetsController < ApplicationController
 
   def datacite_record_hash
 
-    return {"status" => "dataset incomplete"} if @dataset.publication_state == Databank::PublicationState::DRAFT
+    return {"status" => "dataset not published"} if @dataset.publication_state == Databank::PublicationState::DRAFT
     return {"status" => "DOI Reserved Only"} if @dataset.publication_state == Databank::PublicationState::FILE_EMBARGO
 
 
@@ -722,7 +724,7 @@ class DatasetsController < ApplicationController
   # def dataset_params
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, :is_test, :is_import, :curator_hold, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, :is_test, :is_import, :curator_hold, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update], related_materials_attributes: [:material_type, :availability, :link, :uri, :uri_type, :citation, :dataset_id, :_destroy, :id, :_update])
   end
 
   def ezid_metadata_response

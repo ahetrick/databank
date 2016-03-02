@@ -17,6 +17,21 @@ module Databank
     DESTROYED = 'destroyed'
   end
 
+  class Relationship
+    SUPPLEMENT_TO = 'IsSupplementTo'
+    CITED_BY = 'IsCitedBy'
+    PREVIOUS_VERSION_OF = 'IsPreviousVersionOf'
+    NEW_VERSION_OF = 'IsNewVersionOf'
+  end
+
+  class MaterialType
+    ARTICLE = 'Article'
+    CODE = 'Code'
+    DATASET = 'Dataset'
+    PRESENTATION = 'Presentation'
+    OTHER = 'Other'
+  end
+
   class Application < Rails::Application
 
     attr_accessor :shibboleth_host
