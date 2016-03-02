@@ -73,7 +73,7 @@
                 .col-md-2
                   %div(id="release-date-picker")
                     =f.label :release_date, "Release Date",  :class => "control-label"
-                    =f.date_field :release_date, min: Date.current, max: (Date.current.to_time.to_date + 1.years), class: "form-control dataset"
+                    =f.date_field :release_date, min: Date.current, max: (Date.current + 1.years), class: "form-control dataset"
               -else
                 .col-md-2
                   .form-group
