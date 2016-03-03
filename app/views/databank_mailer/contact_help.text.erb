@@ -1,7 +1,7 @@
 Name: <%= @params['help-name'] %>
 Email: <%= @params['help-email'] %>
 Topic: <%= @params['help-topic'] %>
-<% if dataset %>
+<% if @params.has_key?('help-dataset') %>
   Dataset: <%= @params['help-dataset'] %>
 <% end %>
 -----------------------------------

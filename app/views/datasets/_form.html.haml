@@ -67,9 +67,9 @@
                       %span(class="fa fa-question-circle")
                       what's this?
                     - if [Databank::PublicationState::DRAFT, Databank::PublicationState::METADATA_EMBARGO].include?(@dataset.publication_state)
-                      = f.select :embargo, options_for_select([["File Publication Delay (standard embargo)", Databank::PublicationState::FILE_EMBARGO],["File and Metadata Publication Delay (reserve DOI only)", Databank::PublicationState::METADATA_EMBARGO]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
+                      = f.select :embargo, options_for_select([["File Publication Delay", Databank::PublicationState::FILE_EMBARGO],["File and Metadata Publication Delay", Databank::PublicationState::METADATA_EMBARGO]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
                     -else
-                      = f.select :embargo, options_for_select([["File Publication Delay (standard embargo)", Databank::PublicationState::FILE_EMBARGO]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
+                      = f.select :embargo, options_for_select([["File Publication Delay", Databank::PublicationState::FILE_EMBARGO]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
                 .col-md-2
                   %div(id="release-date-picker")
                     =f.label :release_date, "Release Date",  :class => "control-label"
