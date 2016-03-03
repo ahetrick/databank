@@ -11,6 +11,9 @@ Email: <%= @params['help-email'] %>
 <br/>
 Topic: <%= @params['help-topic'] %>
 <br/>
+<% if dataset %>
+  Dataset: <a href="<%= @params['help-dataset'] %>"><%= @params['help-dataset'] %></a>
+<% end %>
 <hr/>
 <blockquote>
   <%= @params['help-message'] %>

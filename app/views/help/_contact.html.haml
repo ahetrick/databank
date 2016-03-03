@@ -53,6 +53,12 @@
             %option{value: "Finding Data"} Finding Data
             %option{value: "Feeback"} Feedback
             %option{value: "Other"} Other
+      -if dataset
+        .form-group
+          %label(for='help-dataset' class="control-label col-sm-2" )
+            Dataset
+          .col-md-8
+            %input(type="text" name="help-dataset" id="help-dataset" class="form-control help" value="#{request.base_url}#{dataset_path(@dataset.key)}" disabled=true)
 
       .form-group
         %label(for="help-message" class="control-label col-sm-2" ) Message

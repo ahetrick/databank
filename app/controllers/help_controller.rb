@@ -1,5 +1,10 @@
 class HelpController < ApplicationController
   def index
+    # Rails.logger.warn params.to_yaml
+    if params.has_key?('key')
+      @dataset = Dataset.find_by_key(params['key'])
+    end
+    # Rails.logger.warn @dataset.to_yaml
   end
   def sensitive
   end
