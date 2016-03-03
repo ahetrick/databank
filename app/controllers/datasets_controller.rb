@@ -413,6 +413,19 @@ class DatasetsController < ApplicationController
   end
 
   def has_nested_param_change?
+
+    params[:dataset][:related_materials_attributes].each do |key, material_attributes|
+      if material_attributes.has_key?(:_destroy)
+        if material_attributes[:_destroy] == true
+          # Rails.logger.warn 'removed related material'
+          return true
+        end
+      else
+        # Rails.logger.warn 'added related material'
+        return true
+      end
+    end
+
     params[:dataset][:creators_attributes].each do |key, creator_attributes|
       if creator_attributes.has_key?(:_destroy)
         if creator_attributes[:_destroy] == true
@@ -724,7 +737,7 @@ class DatasetsController < ApplicationController
   # def dataset_params
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, :is_test, :is_import, :curator_hold, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update], related_materials_attributes: [:material_type, :availability, :link, :uri, :uri_type, :citation, :dataset_id, :_destroy, :id, :_update])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, :is_test, :is_import, :curator_hold, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update], related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update])
   end
 
   def ezid_metadata_response

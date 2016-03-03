@@ -231,8 +231,8 @@ class Dataset < ActiveRecord::Base
 
       self.related_materials.each do |material|
 
-        if material.url && material.url != ''
-          ready_count = ready_count + 1
+        if material.uri && material.uri != ''
+
           datacite_arr = Array.new
 
           if material.datacite_list && material.datacite_list != ''
@@ -242,10 +242,12 @@ class Dataset < ActiveRecord::Base
           end
 
           datacite_arr.each do |relationship|
+            ready_count = ready_count + 1
             relatedMaterialNode = doc.create_element('relatedIdentifier')
-            relatedMaterialNode['relatedIdentifierType'] = material.url_type || 'URL'
+            relatedMaterialNode['relatedIdentifierType'] = material.uri_type || 'URL'
             relatedMaterialNode['relationType'] = relationship
-            relatedMaterialNode.content = material.url
+            relatedMaterialNode.content = material.uri
+            relatedMaterialNode.parent = relatedIdentifiersNode
           end
 
         end

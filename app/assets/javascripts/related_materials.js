@@ -3,6 +3,7 @@
 var related_materials_ready;
 related_materials_ready = function () {
     $('.material-text').css("visibility", "hidden");
+
     handleMaterialTable();
     // console.log ("user role: " + user_role);
     // alert("related_materials.js javascript working");
@@ -115,13 +116,13 @@ function add_material_row() {
             '<td>' +
             '<div class="form-group curator-only">' +
             '<input type="hidden" name="dataset[related_materials_attributes][' + newId + '][datacite_list]" id="dataset_related_materials_attributes_' + newId + '_datacite_list" />' +
-            '<input name="datacite_relation" type="checkbox" value="IsSupplementTo"> IsSupplementTo </input>' +
+            '<input name="datacite_relation" type="checkbox" value="IsSupplementTo" class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsSupplementTo </input>' +
             '<br>' +
-            '<input name="datacite_relation" type="checkbox" value="IsCitedBy"> IsCitedBy </input>' +
+            '<input name="datacite_relation" type="checkbox" value="IsCitedBy" class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsCitedBy </input>' +
             '<br>' +
-            '<input name="datacite_relation" type="checkbox" value="IsPreviousVersionOf"> IsPreviousVersionOf </input>' +
+            '<input name="datacite_relation" type="checkbox" value="IsPreviousVersionOf" class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsPreviousVersionOf </input>' +
             '<br>' +
-            '<input name="datacite_relation" type="checkbox" value="IsNewVersionOf"> IsNewVersionOf </input>' +
+            '<input name="datacite_relation" type="checkbox" value="IsNewVersionOf" class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsNewVersionOf </input>' +
             '</div>' +
             '</td>' +
 
@@ -177,6 +178,21 @@ function remove_material_row(material_index) {
     handleFunderTable();
 }
 
+function handle_relationship_box(material_index) {
+    console.log(material_index);
+    var checked_values = "";
+    var i = 0;
+    $(".material_checkbox_" + material_index +":checked").each(function () {
+        if (i > 0) {
+            checked_values = checked_values + ','
+        }
+        checked_values = checked_values + ( $(this).val() );
+        i = i + 1;
+    });
+
+    $('#dataset_related_materials_attributes_' + material_index + '_datacite_list').val(checked_values)
+
+}
 
 $(document).ready(related_materials_ready);
 $(document).on('page:load', related_materials_ready);
