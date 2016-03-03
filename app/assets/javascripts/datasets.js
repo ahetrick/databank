@@ -313,7 +313,11 @@ function handlePrivateNA(){
 function handlePrivateNo(){
     $('#private-na').attr('checked', false);
     $('#private-yes').attr('checked', false);
-    window.location = "/help/sensitive";
+    window.location = "/help?context=sensitive";
+
+}
+
+function handleReviewRequest(){
 
 }
 

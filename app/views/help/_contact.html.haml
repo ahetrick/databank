@@ -3,7 +3,15 @@
     Contact the
     %a(href="http://researchdataservice.illinois.edu/about/" target="_blank" )Research Data Service Team
   %hr
-  %h3 We're data publishing experts and we're here to help!
+
+  - case params['context']
+    - when 'sensitive'
+      %p(class="idb-callout" )
+        In order to deposit data in the Illinois Data Bank,
+        %strong you must remove any private, confidential, or other legally protected information
+        from the dataset. Please get in touch with the IDB curation staff using this form so we can assist you with your dataset.
+    - else
+      %h3 We're data publishing experts and we're here to help!
 
   .container-fluid
     = form_tag(help_mail_path, class: "form-horizontal", role: "form") do
@@ -32,6 +40,15 @@
           %select(name="help-topic" id="help-topic" class="form-control help" )
             %option{value: "No Selection Made" } Please Select ...
             %option{value: "Depositing Data"} Depositing Data
+            - if params['context'] == 'sensitive'
+              %option{value: "Sensitive Data", selected: true} Sensitive Data
+            - else
+              %option{value: "Sensitive Data"} Sensitive Data
+
+            - if params['context'] == 'review'
+              %option{value: "Dataset Review", selected: true} Dataset Review
+            -else
+              %option{value: "Dataset Review"} Dataset Review
             %option{value: "Delaying Publication (Embargo)"} Delaying Publication (Embargo)
             %option{value: "Finding Data"} Finding Data
             %option{value: "Feeback"} Feedback

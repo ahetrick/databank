@@ -19,7 +19,7 @@
           - if @dataset.publication_state == Databank::PublicationState::DRAFT || (can? :manage, @dataset)
             Edit to complete dataset.
       .row
-        .col-md-8
+        .col-md-7
           %span(class="glyphicon glyphicon-eye-open" )
           %span(class="metadata-label" ) Visibility:
           = @dataset.visibility
@@ -38,21 +38,22 @@
             Click Confirm for final confirmation and to publish this dataset.
 
         .col-md-1
-          -if @dataset.title.downcase.include? 'unicorn'
-            = image_tag('Rainbow_Unicorn.png', size: "100x100", class: "dashboard-unicorn-image")
-        .col-md-1
           -# confirm button conditional complex, so broken into two statements
           -if @completion_check == 'ok' && (@dataset.publication_state == Databank::PublicationState::DRAFT || (@dataset.has_datacite_change && [Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO].include?(@dataset.publication_state) ) )
             %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit") Confirm
           -if @dataset.publication_state == Databank::PublicationState::METADATA_EMBARGO && @dataset.embargo != Databank::PublicationState::METADATA_EMBARGO
             %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit") Confirm
+
+        .col-md-2
+          =link_to("Request Dataset Review", "/help?context=review", class: "btn btn-success btn-block")
+
         .col-md-1
           = link_to(edit_dataset_path(@dataset), :class => "btn btn-info btn-block") do
             %span(class="glyphicon glyphicon-edit")
             Edit
         .col-md-1
           - if @dataset.publication_state == Databank::PublicationState::DRAFT
-            = link_to(dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn btn-danger btn-block") do
+            = link_to(dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure?'}, class: "btn btn-danger btn-block") do
               %span(class="glyphicon glyphicon-trash" )
               Delete
           - elsif (can? :manage, @dataset)
