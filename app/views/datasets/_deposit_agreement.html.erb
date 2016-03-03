@@ -9,7 +9,7 @@
     <div class="panel panel-default">
       <div class="panel-heading">
         <h4 class="panel-title">
-          <a class="accordion-toggle collapsed" data-toggle="collapse" href="#collapseOne ">Deposit Agreement</a>
+          <a class="accordion-toggle collapsed" data-toggle="collapse" href="#collapseOne ">Illinois Data Bank Deposit Agreement (click to expand)</a>
         </h4>
       </div>
       <div id="collapseOne" class="panel-collapse collapse <% if @dataset && @dataset.depositor_email %>in<% end %> ">
@@ -133,14 +133,17 @@
           <a href="#" data-toggle="tooltip" title = "Deposit into Illinois Data Bank requires removal of any private, confidential or legally protected information that is in the dataset. A selection of Not applicable indicates that either the dataset never included any such information, while a selection of yes indicates that such informaiton has been removed." tabindex="-1")>
             <span class="glyphicon glyphicon-info-sign"></span></a>
           <div class="checkbox">
-            <label><input type="checkbox" class="private-checkbox agree" id="private-yes" onclick="uncheckPrivateNA()" >Yes</label>
+            <label><input type="checkbox" class="private-checkbox agree" id="private-yes" onclick="handlePrivateYes()" >Yes</label>
           </div>
           <div class="checkbox">
-            <label><input type="checkbox" class="private-checkbox agree" id="private-na" onclick="uncheckPrivateYes()">Not applicable</label>
+            <label><input type="checkbox" class="private-checkbox agree" id="private-no" onclick="handlePrivateNo()" >No</label>
+          </div>
+          <div class="checkbox">
+            <label><input type="checkbox" class="private-checkbox agree" id="private-na" onclick="handlePrivateNA()">Not applicable</label>
           </div>
         </div>
         <div class="form-group">
-          <span class="metadata-label">Do you agree to the full deposit agreement?</span>
+          <span class="metadata-label">Do you agree to the Illinois Data Bank Deposit Agreement in its entirety?</span>
           <a href="#" data-toggle="tooltip" title = "Deposit into Illinois Data Bank requires agreement to the Deposit Agreement. Click on the Deposit Agreement heading above to view the full agreement." tabindex="-1")>
             <span class="glyphicon glyphicon-info-sign"></span></a>
           <div class="checkbox">

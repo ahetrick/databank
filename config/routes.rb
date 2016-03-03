@@ -92,5 +92,7 @@ Rails.application.routes.draw do
 
   post "/help/help_mail", to: 'help#help_mail', as: :help_mail
 
+  get "/help/sensitive", to: 'help#sensitive', as: :help_sensitive
+
 
 end

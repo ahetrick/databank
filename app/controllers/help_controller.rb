@@ -1,6 +1,8 @@
 class HelpController < ApplicationController
   def index
   end
+  def sensitive
+  end
   def help_mail
     if params.has_key?("nobots")
       # ignore the spam

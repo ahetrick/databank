@@ -300,12 +300,21 @@ function download_selected(){
     });
 }
 
-function uncheckPrivateNA(){
+function handlePrivateYes(){
     $('#private-na').attr('checked', false);
+    $('#private-no').attr('checked', false);
 }
 
-function uncheckPrivateYes(){
+function handlePrivateNA(){
     $('#private-yes').attr('checked', false);
+    $('#private-no').attr('checked', false);
+}
+
+function handlePrivateNo(){
+    $('#private-na').attr('checked', false);
+    $('#private-yes').attr('checked', false);
+    window.location = "/help/sensitive";
+
 }
 
 function clear_help_form(){
