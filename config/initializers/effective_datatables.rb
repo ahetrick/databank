@@ -2,7 +2,7 @@ EffectiveDatatables.setup do |config|
   # Authorization Method
   #
   # This method is called by all controller actions with the appropriate action and resource
-  # If the method returns false, an Effective::AccessDenied Error will be raised (see README.md for complete info)
+  # If the method returns false, an effective::AccessDenied Error will be raised (see README.md for complete info)
   #
   # Use via Proc (and with CanCan):
   # config.authorization_method = Proc.new { |controller, action, resource| authorize!(action, resource) }
