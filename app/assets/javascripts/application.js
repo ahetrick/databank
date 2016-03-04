@@ -18,4 +18,5 @@
 //= require zeroclipboard
 //= require turbolinks
 //= require bootstrap-sprockets
+//= require effective_datatables
 //= require_tree .

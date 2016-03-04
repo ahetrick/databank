@@ -75,6 +75,21 @@ ready = function() {
 
     });
 
+    $('#save-exit-button').click(function () {
+
+
+
+        if ($(".invalid-input").length == 0) {
+            alert("Your draft has been saved!  When you're ready to continue, click your name to access your saved draft and click 'Edit' to pick up where you left off.  We'll save your draft for at least six months.")
+            window.onbeforeunload = null;
+            $("[id^=edit_dataset]").submit();
+        } else {
+            alert("Email address must be in a valid format. Only the long-term primary contact email address is required.");
+            $(".invalid-input").first().focus();
+        }
+
+    });
+
     $('input.dataset').change(function() {
         if ($(this).val() != ""){
             window.onbeforeunload = confirmOnPageExit;
@@ -314,10 +329,6 @@ function handlePrivateNo(){
     $('#private-na').attr('checked', false);
     $('#private-yes').attr('checked', false);
     window.location = "/help?context=sensitive";
-
-}
-
-function handleReviewRequest(){
 
 }
 

@@ -63,7 +63,10 @@ gem 'simple_form'
 gem 'carrierwave'
 
 # use will_paginate to handle paging results on datasets index
-gem 'will_paginate', '~> 3.0.5'
+# gem 'will_paginate', '~> 3.0.5'
+
+# use effective_datatables to handle sorting and pagination on datasets index page
+gem 'effective_datatables'
 
 #gem 'httpclient', git: 'git://github.com/medusa-project/httpclient.git'
 

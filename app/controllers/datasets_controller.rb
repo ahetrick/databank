@@ -33,31 +33,30 @@ class DatasetsController < ApplicationController
   # GET /datasets.json
   def index
 
-    @placeholder = 'placeholder'
-    @datasets = Dataset.search(params[:search]).order(updated_at: :desc)
+    @datasets = Dataset.where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO]).order(updated_at: :desc)
+    @datatable = Effective::Datatables::GuestDatasets.new
 
     if current_user && current_user.role
       case current_user.role
         when "admin"
-          # show everything
+          @datasets = Dataset.order(updated_at: :desc)
+          @datatable = Effective::Datatables::CuratorDatasets.new
         when "depositor"
-          @datasets = @datasets.where.not(publication_state: Databank::PublicationState::DESTROYED)
-          @datasets = @datasets.where("publication_state = ? OR publication_state = ? OR depositor_email = ?", Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED, current_user.email)
+          if params.has_key?('depositor')
+            @datasets = Dataset.where.not(publication_state: Databank::PublicationState::DESTROYED).where("depositor_email = ?", current_user.email).order(updated_at: :desc)
+            @datatable = Effective::Datatables::MyDatasets.new(current_email: current_user.email)
+          else
+            @datasets = Dataset.where.not(publication_state: Databank::PublicationState::DESTROYED).where("publication_state = ? OR publication_state = ? OR depositor_email = ?", Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED, current_user.email).order(updated_at: :desc)
+            @datatable = Effective::Datatables::DepositorDatasets.new(current_email: current_user.email, current_name: current_user.name )
+          end
 
-        else
-          @datasets = @datasets.where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO])
       end
 
-    else
-      @datasets = @datasets.where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO])
     end
 
+  end
 
-    if params[:depositor_email]
-      @datasets = @datasets.where(depositor_email: params[:depositor_email])
-    end
-
-    @datasets = @datasets.page(params[:page]).per_page(10)
+  def curator_index
 
   end
 

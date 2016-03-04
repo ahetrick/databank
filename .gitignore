@@ -22,6 +22,7 @@ public/uploads
 config/unicorn.rb
 mock_medusa
 /scripts
+app/views/datasets/index_notable.html.erb
 
 prod_start.sh
 prod_restart.sh
