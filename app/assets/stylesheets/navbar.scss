@@ -1,0 +1,83 @@
+/*navbar*/
+
+nav {
+}
+#site-nav {
+  border: 0;
+  background-color: $color__lightest-grey;
+  border-radius: 0;
+
+  li a {
+    color: $color__darkest-grey;
+  }
+
+}
+.navbar {
+  @include border-rad();
+}
+
+
+/*off-canvas navbar*/
+/*http://www.smashingmagazine.com/2013/01/15/off-canvas-navigation-for-responsive-website/ */
+@media (max-width:767px) {
+  #site-nav {
+    right: -70%;
+    width: 70%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    margin-right:0;
+    margin-left:0;
+    padding-left:15px;
+  }
+  header {
+    margin-bottom: 15px;
+  }
+  #inner-wrap {
+    position: relative;
+    width: 100%;
+  }
+
+  #inner-wrap.off-canvas {
+    right:70%;
+    right:0;
+    transform: translateX(-70%);
+  }
+
+  #inner-wrap {
+    transition: transform 500ms ease;
+  }
+
+  .mobile-overlay.off-canvas {
+    height: 100%;
+    width: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 2;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+  }
+
+  #mobile-canvas-button {
+    color: $color__background-main-column;
+    background-color: transparent;
+  }
+
+  #outer-wrap {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+}
+
+@media (max-width:550px) {
+  #mobile-canvas-button>i {
+    font-size:2em;    
+  }
+}
+
+@media (min-width:551px) {
+  #mobile-canvas-button>i {
+    font-size:3em;    
+  }
+}
