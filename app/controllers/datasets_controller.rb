@@ -189,10 +189,15 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       if @dataset.save
-       
-        format.html { redirect_to edit_dataset_path(@dataset.key) }
 
-        format.json { render :edit, status: :created, location: edit_dataset_path(@dataset.key) }
+        if params.has_key?('exit')
+          format.html { redirect_to dataset_path(@dataset.key)}
+          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        else
+          format.html { redirect_to edit_dataset_path(@dataset.key) }
+          format.json { render :edit, status: :created, location: edit_dataset_path(@dataset.key) }
+        end
+
       else
         format.html { render :new }
         format.json { render json: @dataset.errors, status: :unprocessable_entity }

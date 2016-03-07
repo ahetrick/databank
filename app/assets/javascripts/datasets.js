@@ -50,12 +50,23 @@ ready = function() {
         }
     });
 
-    $('.new-save-button').click(function () {
+    $('#new-save-button').click(function () {
         window.onbeforeunload = null;
         $('#new_dataset').submit();
 
     });
-    $('.new-save-button').hide();
+
+    $('#new-exit-button').click(function () {
+
+        alert("Your draft has been saved!  When you're ready to continue, click your name to access your saved draft and click 'Edit' to pick up where you left off.  We'll save your draft for at least six months.");
+        $('#new_dataset').append("<input type='hidden' name='exit' value='true' />");
+
+        window.onbeforeunload = null;
+        $('#new_dataset').submit();
+
+    });
+
+    $('.new-save').hide();
 
     $('.nav-item').click(function () {
 
@@ -80,7 +91,7 @@ ready = function() {
 
 
         if ($(".invalid-input").length == 0) {
-            alert("Your draft has been saved!  When you're ready to continue, click your name to access your saved draft and click 'Edit' to pick up where you left off.  We'll save your draft for at least six months.")
+            alert("Your draft has been saved!  When you're ready to continue, click your name to access your saved draft and click 'Edit' to pick up where you left off.  We'll save your draft for at least six months.");
             window.onbeforeunload = null;
             $("[id^=edit_dataset]").submit();
         } else {
@@ -275,7 +286,7 @@ function handleNotAgreed(){
     $('#show-agreement-modal-link').show();
     $('.review-deposit-agreement').hide();
     //$('.deposit-agreement-btn').removeAttr("disabled");
-    $('.new-save-button').hide();
+    $('.new-save').hide();
     window.scrollTo(0,0);
 }
 
@@ -290,7 +301,7 @@ function setDepositor(email, name){
     $('.add-attachment-subform-button').show();
     $('.deposit-agreement-warning').hide();
     $('#show-agreement-modal-link').hide();
-    $('.new-save-button').show();
+    $('.new-save').show();
     $('.review-deposit-agreement').show();
     //$('#show-agreement-modal-link').hide();
 }
