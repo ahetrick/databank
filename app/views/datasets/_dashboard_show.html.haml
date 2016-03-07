@@ -53,14 +53,17 @@
             Edit
         .col-md-1
           - if @dataset.publication_state == Databank::PublicationState::DRAFT
-            = link_to(dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure?'}, class: "btn btn-danger btn-block") do
+            = link_to(dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure? This removes all files and metadata from IDB.'}, class: "btn btn-danger btn-block") do
               %span(class="glyphicon glyphicon-trash" )
               Delete
           - elsif (can? :manage, @dataset)
-            %button(type="button" class="btn btn-warning btn-block" onclick='window.location = "/datasets/#{@dataset.key}/tombstone"' )
+            %button(type="button" class="btn btn-warning btn-block" onclick="tombstone()" )
               Tombstone
-            %button(type="button" class="btn btn-danger btn-block" onclick='window.location = "/datasets/#{@dataset.key}/nuke"' )
+            %button(type="button" class="btn btn-danger btn-block" onclick="nuke()")
               Destroy
+            = link_to dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure? This removes all files and metadata from IDB.'}, :class => "btn btn-danger btn-block" do
+              %span(class="glyphicon glyphicon-trash")
+              Delete
           - else
             %button(type="button" class="btn btn-danger btn-block" name="cancel" onclick='window.location = "/"' )
               %span(class="glyphicon glyphicon-ban-circle" )

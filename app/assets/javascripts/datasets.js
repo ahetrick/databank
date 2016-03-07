@@ -336,6 +336,22 @@ function clear_help_form(){
     $('input .help').val('');
 }
 
+function tombstone(){
+
+    if (window.confirm("Are you sure? This will make this dataset unavailable.")) {
+        window.location = "/datasets/"+ datset_key + "/tombstone";
+    }
+
+
+}
+
+function nuke(){
+
+    if (window.confirm("Are you sure? This will overwrite the DataCite metadata with placeholder values and render it unavailable.")) {
+        window.location = "/datasets/"+ datset_key + "/nuke";
+    }
+}
+
 $(document).ready(ready);
 $(document).on('page:load', ready);
 
