@@ -17,7 +17,28 @@ module Effective
         #   render text: dataset.depositor_name
         # end
         array_column :citation, label: 'Search', sortable: false, filter: {fuzzy: true} do |dataset|
-          link_to(dataset.plain_text_citation, dataset_path(dataset.key))
+          table_description = nil
+          if dataset.description && !dataset.description.empty?
+            table_description = dataset.description.first(230)
+            if dataset.description.length > 230
+              table_description = table_description + "[...]"
+            end
+          end
+
+          table_keywords = nil
+          if dataset.keywords && dataset.keywords != ""
+            table_keywords = dataset.keywords
+          end
+
+          if table_description && table_keywords
+            render inline: %Q[<%= link_to("#{dataset.plain_text_citation}", "#{dataset_path(dataset.key)}") %><br/>#{table_description}<br/><span class="metadata-label">Keyword(s): </span>#{table_keywords} ]
+          elsif table_description
+            render inline: %Q[<%= link_to("#{dataset.plain_text_citation}", "#{dataset_path(dataset.key)}") %><br/>#{table_description}]
+          elsif table_keywords
+            render inline: %Q[<%= link_to("#{dataset.plain_text_citation}", "#{dataset_path(dataset.key)}") %><br/><span class="metadata-label">Keyword(s): </span>#{table_keywords}]
+          else
+            render inline: %Q[<%= link_to("#{dataset.plain_text_citation}", "#{dataset_path(dataset.key)}") %>]
+          end
         end
         array_column 'Visibility', filter: {type: :select, values: ['Private (Saved Draft)', 'Public (Published)', 'Public description, Private files (Standard Embargo)', 'Private (DOI Reserved Only)', 'Public Metadata, Private Files (Tombstoned)']} do |dataset|
           case dataset.publication_state
