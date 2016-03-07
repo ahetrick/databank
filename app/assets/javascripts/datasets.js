@@ -50,12 +50,12 @@ ready = function() {
         }
     });
 
-    $('#new-save-button').click(function () {
+    $('.new-save-button').click(function () {
         window.onbeforeunload = null;
         $('#new_dataset').submit();
 
     });
-    $('#new-save-button').hide();
+    $('.new-save-button').hide();
 
     $('.nav-item').click(function () {
 
@@ -275,7 +275,7 @@ function handleNotAgreed(){
     $('#show-agreement-modal-link').show();
     $('.review-deposit-agreement').hide();
     //$('.deposit-agreement-btn').removeAttr("disabled");
-    $('#new-save-button').hide();
+    $('.new-save-button').hide();
     window.scrollTo(0,0);
 }
 
@@ -290,7 +290,7 @@ function setDepositor(email, name){
     $('.add-attachment-subform-button').show();
     $('.deposit-agreement-warning').hide();
     $('#show-agreement-modal-link').hide();
-    $('#new-save-button').show();
+    $('.new-save-button').show();
     $('.review-deposit-agreement').show();
     //$('#show-agreement-modal-link').hide();
 }
