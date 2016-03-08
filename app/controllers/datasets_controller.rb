@@ -708,6 +708,10 @@ class DatasetsController < ApplicationController
       validation_error_messages << "email address for primary long term contact"
     end
 
+    if ((current_user.role != 'admin') && (@dataset.release_date > (Date.current + 1.years)))
+      validation_error_messages << "a release date no more than one year in the future"
+    end
+
     if @dataset.datafiles.count < 1
       validation_error_messages << "at least one file"
     end
