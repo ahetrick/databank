@@ -27,7 +27,7 @@ module Effective
 
         table_column :created_at, label: "Timestamp"
 
-        default_order :created_at, :asc
+        default_order :created_at, :desc
 
       end
 
