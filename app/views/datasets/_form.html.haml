@@ -93,9 +93,13 @@
                     =f.check_box :is_import, :class => "form-control dataset"
                 %span(class="col-md-1" )
                   .form-group.curator-only
+
                     =f.label :is_test, "test DOI", :class => "control-label"
                     %br
-                    =f.check_box :is_test, :class => "form-control dataset"
+                    - if @dataset.publication_state == Databank::PublicationState::DRAFT
+                      =f.check_box :is_test, class: "form-control dataset"
+                    -else
+                      =f.check_box :is_test, class: "form-control dataset", readonly: true
                 %span(class="col-md-4" )
                   .form-group.curator-only
                     = f.label :identifier, "DOI", :class => "control-label"

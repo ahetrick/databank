@@ -63,7 +63,7 @@ module Effective
 
       def collection
         current_email = attributes[:current_email]
-        Dataset.where.not(publication_state: Databank::PublicationState::DESTROYED).where("publication_state = ? OR publication_state = ? OR depositor_email = ?", Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED, current_email)
+        Dataset.where.not(publication_state: Databank::PublicationState::DESTROYED).where(is_test: false).where("publication_state = ? OR publication_state = ? OR depositor_email = ?", Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED, current_email)
       end
 
     end
