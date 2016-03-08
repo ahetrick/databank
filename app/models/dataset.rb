@@ -361,22 +361,31 @@ class Dataset < ActiveRecord::Base
   end
 
   def visibility
-    case self.publication_state
-      when Databank::PublicationState::DRAFT
-        return_string = "Private (Saved Draft)"
-      when Databank::PublicationState::RELEASED
-        return_string = "Public (Published)"
-      when Databank::PublicationState::FILE_EMBARGO
-        return_string = "Public description, Private files (Standard Embargo)"
-      when Databank::PublicationState::METADATA_EMBARGO
-        return_string = "Private (DOI Reserved Only)"
-      when Databank::PublicationState::TOMBSTONE
-        return_string = "Public Metadata, Private Files (Tombstoned)"
-      when Databank::PublicationState::DESTROYED
-        return_string = "Removed Metadata, Removed Files (Destroyed)"
-      else
-        #should never get here
-        return_string = "Unknown, please contact the Research Data Service"
+
+    return_string = ""
+
+    if self.curator_hold?
+      return_string = "Private (Curator Hold)"
+    else
+
+      case self.publication_state
+        when Databank::PublicationState::DRAFT
+          return_string = "Private (Saved Draft)"
+        when Databank::PublicationState::RELEASED
+          return_string = "Public (Published)"
+        when Databank::PublicationState::FILE_EMBARGO
+          return_string = "Public description, Private files"
+        when Databank::PublicationState::METADATA_EMBARGO
+          return_string = "Private (Delayed Publication)"
+        when Databank::PublicationState::TOMBSTONE
+          return_string = "Public Metadata, Private Files (Tombstoned)"
+        when Databank::PublicationState::DESTROYED
+          return_string = "Removed Metadata, Removed Files (Destroyed)"
+        else
+          #should never get here
+          return_string = "Unknown, please contact the Research Data Service"
+      end
+
     end
 
     if self.new_record?
