@@ -6,11 +6,11 @@
       -if @dataset.has_datacite_change &&  [Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED, Databank::PublicationState::TOMBSTONE].include?(@dataset.publication_state)
         .datacite-changes-warning
           %span(class="glyphicon glyphicon-alert" )
-          Changes have been made to this dataset record that have not yet been published.  Confirm & Publish to complete changes.
+          Changes have been made to this dataset record that have not yet been published.  Confirm to complete changes.
       -if @dataset.publication_state == Databank::PublicationState::METADATA_EMBARGO && (@dataset.embargo != Databank::PublicationState::METADATA_EMBARGO)
         .datacite-changes-warning
           %span(class="glyphicon glyphicon-alert" )
-          This dataset record has not yet been published.  Confirm & Publish to complete changes.
+          This dataset record has not yet been published.  Confirm to complete changes.
 
       -if @completion_check != 'ok'
         .completion-warning
