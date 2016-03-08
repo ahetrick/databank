@@ -6,7 +6,7 @@
         =f.label :embargo, "Publication Delay (embargo)", class: "control-label"
         %a(href="#" data-toggle="modal" data-target="#embargoModal" tabindex="-1")
           %span(class="glyphicon glyphicon-question-sign")
-        = f.select :embargo, options_for_select([["No Publication Delay"],["File Publication Delay (standard embargo)", Databank::PublicationState::FILE_EMBARGO],["File and Metadata Publication Delay (reserve DOI only)", Databank::PublicationState::METADATA_EMBARGO]], @dataset.embargo), {prompt: false}, {class: "form-control dataset"}
+        = f.select :embargo, options_for_select([["No Publication Delay"],["File Publication Delay", Databank::PublicationState::FILE_EMBARGO],["File and Metadata Publication Delay", Databank::PublicationState::METADATA_EMBARGO]], @dataset.embargo), {prompt: false}, {class: "form-control dataset"}
     .col-md-2
       %div(id="release-date-picker")
         =f.label :release_date, "Release Date",  :class => "control-label"
