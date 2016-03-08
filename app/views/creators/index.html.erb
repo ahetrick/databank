@@ -5,9 +5,10 @@
 <table class="table table-striped">
   <thead>
   <tr>
-    <th>Dataset</th>
+
     <th>Name</th>
     <th>ORCID iD</th>
+    <th>Dataset</th>
   </tr>
   </thead>
 
@@ -15,7 +16,6 @@
   <% @creators.each do |creator| %>
     <% if (can? :manage, creator) %>
       <tr>
-        <td><%= link_to("#{(Dataset.find(creator.dataset_id)).title}", "#{request.base_url}#{dataset_path(Dataset.find(creator.dataset_id))}") %></td>
         <td><%= "#{creator.family_name}, #{creator.given_name}" %></td>
         <td>
           <% if creator.identifier && creator.identifier != '' %>
@@ -24,6 +24,7 @@
             [Not Provided]
           <% end %>
         </td>
+        <td><%= link_to("#{(Dataset.find(creator.dataset_id)).plain_text_citation}", "#{request.base_url}#{dataset_path(Dataset.find(creator.dataset_id))}") %></td>
       </tr>
     <% end %>
   <% end %>
