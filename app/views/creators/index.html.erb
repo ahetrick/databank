@@ -4,32 +4,34 @@
 
 <table class="table table-striped">
   <thead>
-    <tr>
-      <th>Dataset</th>
-      <th>Family name</th>
-      <th>Given name</th>
-      <th>Institution name</th>
-      <th>Identifier</th>
-      <th>Type</th>
-      <th>Position</th>
-      <th colspan="3"></th>
-    </tr>
+  <tr>
+    <th>Dataset</th>
+    <th>Family name</th>
+    <th>Given name</th>
+    <th>ORCID iD</th>
+    <th>Position</th>
+    <th colspan="3"></th>
+  </tr>
   </thead>
 
   <tbody>
-    <% @creators.each do |creator| %>
-      <% if (can? :manage, creator)%>
-        <tr>
-          <td><%= creator.dataset_id %></td>
-          <td><%= creator.family_name %></td>
-          <td><%= creator.given_name %></td>
-          <td><%= creator.institution_name %></td>
-          <td><%= creator.identifier %></td>
-          <td><%= creator.type %></td>
-          <td><%= creator.row_order %></td>
-        </tr>
-     <% end %>
+  <% @creators.each do |creator| %>
+    <% if (can? :manage, creator) %>
+      <tr>
+        <td><%= link_to("#{request.base_url}#{dataset_path(Dataset.find(creator.dataset_id))}", "#{request.base_url}#{dataset_path(Dataset.find(creator.dataset_id))}") %></td>
+        <td><%= creator.family_name %></td>
+        <td><%= creator.given_name %></td>
+        <td>
+          <% if creator.identifier && creator.identifier != '' %>
+            <%= link_to("http://orcid.org/#{creator.identifier}", "http://orcid.org/#{creator.identifier}") %>
+          <% else %>
+            [Not Provided]
+          <% end %>
+        </td>
+        <td><%= creator.row_order %></td>
+      </tr>
     <% end %>
+  <% end %>
   </tbody>
 </table>
 
