@@ -7,29 +7,32 @@
 
   <% if ((!can? :edit, @dataset) && (@dataset.curator_hold?)) %>
     <br/>
+
     <div class="embargo-placeholder">
       This dataset is under curator review.
-      <a href="/help">Contact the Research Data Service</a> with any questions.
+      <a href="/help?context=hold&key=<%=@dataset.key%>">Contact the Research Data Service</a> with any questions.
     </div>
 
   <% elsif ((!can? :manage, @dataset) && (@dataset.publication_state == Databank::PublicationState::DESTROYED)) %>
     <br/>
+
     <div class="embargo-placeholder">
       This dataset is not available.
-      <a href="/help">Contact the Research Data Service</a> with any questions.
+      <a href="/help?context=destroyed&key=<%=@dataset.key%>">Contact the Research Data Service</a> with any questions.
     </div>
   <% else %>
 
 
     <% if ((!can? :edit, @dataset) && (@dataset.publication_state == Databank::PublicationState::METADATA_EMBARGO)) %>
       <br/>
+
       <div class="embargo-placeholder">
         This dataset will be available <%= @dataset.release_date %>.
-        <a href="/help">Contact the Research Data Service</a> with any questions.
+        <a href="/help?context=embargo&key=<%=@dataset.key%>">Contact the Research Data Service</a> with any questions.
       </div>
     <% end %>
 
-    <% if ( ((can? :manage, @dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::TOMBSTONE].include? @dataset.publication_state)) || ( (can? :edit, @dataset) && @dataset.publication_state != Databank::PublicationState::DESTROYED ) ) %>
+    <% if (((can? :manage, @dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::TOMBSTONE].include? @dataset.publication_state)) || ((can? :edit, @dataset) && @dataset.publication_state != Databank::PublicationState::DESTROYED)) %>
       <!-- BEGIN metadata section-->
       <h1><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></h1>
 
@@ -89,15 +92,16 @@
       <% if @dataset.related_materials.count > 0 %>
         <% @dataset.related_materials.each do |material| %>
           <div class="container-fluid">
-            <span class="metadata-label">Related <%= (material.material_type || material.material_type != "") ? material.material_type : "Material" %><%= (material.availability || material.availability != '') ? " (#{material.availability})" : "" %>: </span>
-            <% if material.link && material.link != ''%>
-             <a href="<%= material.link %>">
-               <% if material.citation && material.citation != '' %>
-                <%= material.citation %>
-               <% else %>
-                 <%= material.link %>
-               <% end %>
-             </a>
+            <span class="metadata-label">Related <%= (material.material_type || material.material_type != "") ? material.material_type : "Material" %><%= (material.availability || material.availability != '') ? " (#{material.availability})" : "" %>
+              : </span>
+            <% if material.link && material.link != '' %>
+              <a href="<%= material.link %>">
+                <% if material.citation && material.citation != '' %>
+                  <%= material.citation %>
+                <% else %>
+                  <%= material.link %>
+                <% end %>
+              </a>
 
             <% elsif material.citation & material.citation != '' %>
               <%= material.citation %>
@@ -251,12 +255,12 @@
               <% elsif @dataset.publication_state == Databank::PublicationState::FILE_EMBARGO %>
                 <div class="embargo-placeholder">
                   Files associated with this dataset will be made available <%= @dataset.release_date %>.
-                  <a href="/help">Contact the Research Data Service</a> with any questions.
+                  <a href="/help?context=embargo&key=<%=@dataset.key%>">Contact the Research Data Service</a> with any questions.
                 </div>
               <% elsif @dataset.publication_state == Databank::PublicationState::TOMBSTONE %>
                 <div class="embargo-placeholder">
                   Files associated with this dataset are not available.
-                  <a href="/help">Contact the Research Data Service</a> with any questions.
+                  <a href="/help?context=embargo&key=<%=@dataset.key%>">Contact the Research Data Service</a> with any questions.
                 </div>
               <% end %>
 
@@ -274,6 +278,26 @@
   <% end %>
 
 </div>
+
+<% if @dataset.publication_state != Databank::PublicationState::DRAFT %>
+  <div class="panel-group" id="changelog" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-default">
+      <div class="panel-heading" role="tab" id="changelogHeading">
+        <h4 class="panel-title">
+          <a role="button" data-toggle="collapse" data-parent="#funder" href="#changelogPanel" aria-expanded="false" aria-controls="funderPanel" class="accordion-toggle collapsed">
+            <span class="metadata-label">Change Log</span>
+          </a>
+        </h4>
+      </div>
+      <div class="panel-collapse collapse" id="changelogPanel" role="tabpanel" aria-labelledby="changelogHeading">
+        <div class="panel-body">
+          <p><a href="/help?context=changelog&key=<%=@dataset.key%>">Contact the Research Data Service</a> for help interpreting this log.</p>
+          <%= render_datatable(@changetable) %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
 
 <% if can? :manage, @dataset && @dataset.publication_state != Databank::PublicationState::DRAFT %>
   <div class="curator-only">

@@ -68,6 +68,11 @@ class DatasetsController < ApplicationController
     if params.has_key?(:selected_files)
       zip_and_download_selected
     end
+    @changetable = nil
+
+    if @dataset.publication_state != Databank::PublicationState::DRAFT
+      @changetable = Effective::Datatables::DatasetChanges.new(dataset_id: @dataset.id )
+    end
 
     @publish_modal_msg = publish_modal_msg(@dataset)
 
@@ -217,16 +222,15 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
 
-      if @dataset.update(dataset_params)
-        format.html { redirect_to dataset_path(@dataset.key)}
-        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
-      else
-        format.html { render :edit }
-        format.json { render json: @dataset.errors, status: :unprocessable_entity }
-      end
+        if @dataset.update(dataset_params)
+          format.html { redirect_to dataset_path(@dataset.key)}
+          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        else
+          format.html { render :edit }
+          format.json { render json: @dataset.errors, status: :unprocessable_entity }
+        end
 
     end
-
   end
 
   # DELETE /datasets/1
@@ -741,7 +745,7 @@ class DatasetsController < ApplicationController
   # def dataset_params
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, :is_test, :is_import, :curator_hold, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update], related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, :is_test, :is_import, :curator_hold, :audit_id, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update, :audit_id ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update, :audit_id], related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id])
   end
 
   def ezid_metadata_response

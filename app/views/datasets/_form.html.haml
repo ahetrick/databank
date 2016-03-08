@@ -105,7 +105,7 @@
                   .form-group.curator-only
                     = f.label :publication_year, "Pub Year", :class => "control-label"
                     %br
-                    = f.number_field :publication_year, :value => "#{Time.now.year}", :class => "form-control dataset", :min => "1800", :max => "#{Time.now.year + 1}", :maxlength => 4
+                    = f.number_field :publication_year, :value => @dataset.publication_year || "#{Time.now.year}", :class => "form-control dataset", :min => "1800", :max => "#{Time.now.year + 1}", :maxlength => 4
                 %span(class="col-md-1" )
                   .form-group.curator-only
                     =f.label :version, "Version", :class => "control-label"
@@ -118,7 +118,7 @@
                     %br
                     =f.check_box :curator_hold, :class => "form-control dataset"
             - else
-              = f.hidden_field :publication_year, :value => "#{Time.now.year}"
+              = f.hidden_field :publication_year, :value => @dataset.publication_year || "#{Time.now.year}"
 
     .panel-group(id="funder" role="tablist" aria-multiselectable="true")
       .panel.panel-default

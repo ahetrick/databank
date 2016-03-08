@@ -2,6 +2,7 @@ class Datafile < ActiveRecord::Base
 
   mount_uploader :binary, BinaryUploader
   belongs_to :dataset
+  audited associated_with: :dataset
 
   WEB_ID_LENGTH = 5
 

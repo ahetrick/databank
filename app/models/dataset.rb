@@ -2,6 +2,10 @@ require 'fileutils'
 
 class Dataset < ActiveRecord::Base
 
+  # audited only: [:title, :identifier, :publisher, :publication_year, :description, :license, :corresponding_creator_name, :corresponding_creator_email, :keywords, :publication_state, :version, :curator_hold, :release_date, :creators, :datafiles, :funders, :related_materials], allow_mass_assignment: true
+  audited except: [:creator_text, :key, :complete, :has_datacite_change, :is_test, :is_import, :updated_at, :embargo],  allow_mass_assignment: true
+  has_associated_audits
+
   MIN_FILES = 1
   MAX_FILES = 10000
 

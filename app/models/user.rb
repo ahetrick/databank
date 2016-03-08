@@ -63,6 +63,7 @@ class User < ActiveRecord::Base
       user.uid = auth["uid"]
       user.name =  authname
       user.email = auth["info"]["email"]
+      user.username = user.email.split('@').first
 
       if IDB_CONFIG[:local_mode]
         # Rails.logger.info "inside local mode check #{IDB_CONFIG[:local_mode]}"
