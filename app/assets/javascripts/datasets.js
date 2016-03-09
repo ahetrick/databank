@@ -340,7 +340,7 @@ function handlePrivateNo(){
         $('#private-na').attr('checked', false);
         $('#private-yes').attr('checked', false);
         window.location = "/help?context=sensitive";
-    } 
+    }
 }
 
 function clear_help_form(){

@@ -714,6 +714,13 @@ class DatasetsController < ApplicationController
       end
     end
 
+    if @dataset.identifier && @dataset.identifier != ''
+      dupcheck = Dataset.where(identifier: @dataset.identifier)
+      if dupcheck.count > 1
+        validation_error_messages << "a unique DOI"
+      end
+    end
+
     if @dataset.datafiles.count < 1
       validation_error_messages << "at least one file"
     end
