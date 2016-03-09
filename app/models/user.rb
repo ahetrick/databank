@@ -48,6 +48,7 @@ class User < ActiveRecord::Base
   end
 
   def update_with_omniauth(auth)
+    authname = auth["info"]["name"]./id
     self.provider = auth["provider"]
     self.uid = auth["uid"]
     self.name =  authname
