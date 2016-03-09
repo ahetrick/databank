@@ -3,7 +3,7 @@ require 'json'
 
 class User < ActiveRecord::Base
 
-  ROLES = %w[admin depositor guest]
+  ROLES = %w[admin depositor guest no_deposit]
   
   validates_uniqueness_of :uid, allow_blank: false
   validates :email, allow_blank: false, email: true

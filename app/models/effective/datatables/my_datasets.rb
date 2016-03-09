@@ -5,7 +5,7 @@ module Effective
       datatable do
         current_email = attributes[:current_email]
         array_column "search", sortable: false, filter: {fuzzy: true} do |dataset|
-          link_to(dataset.plain_text_citation, dataset_path(dataset.key))
+          link_to(dataset.plain_text_citation, "#{request.base_url}#{dataset_path(dataset.key)}")
         end
 
         array_column 'Visibility', filter: {type: :select, values: ['Private (Saved Draft)', 'Public (Published)', 'Public description, Private files', 'Private (Delayed Publication)', 'Public Metadata, Private Files (Tombstoned)', 'Private (Curator Hold)']} do |dataset|

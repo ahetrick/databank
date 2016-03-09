@@ -31,13 +31,13 @@ module Effective
           end
 
           if table_description && table_keywords
-            render inline: %Q[<%= link_to("#{dataset.plain_text_citation}", "#{dataset_path(dataset.key)}") %><br/>#{table_description}<br/><span class="metadata-label">Keyword(s): </span>#{table_keywords} ]
+            render inline: %Q[<%= link_to("#{dataset.plain_text_citation}", "#{request.base_url}#{dataset_path(dataset.key)}") %><br/>#{table_description}<br/><span class="metadata-label">Keyword(s): </span>#{table_keywords} ]
           elsif table_description
-            render inline: %Q[<%= link_to("#{dataset.plain_text_citation}", "#{dataset_path(dataset.key)}") %><br/>#{table_description}]
+            render inline: %Q[<%= link_to("#{dataset.plain_text_citation}", "#{request.base_url}#{dataset_path(dataset.key)}") %><br/>#{table_description}]
           elsif table_keywords
-            render inline: %Q[<%= link_to("#{dataset.plain_text_citation}", "#{dataset_path(dataset.key)}") %><br/><span class="metadata-label">Keyword(s): </span>#{table_keywords}]
+            render inline: %Q[<%= link_to("#{dataset.plain_text_citation}", "#{request.base_url}#{dataset_path(dataset.key)}") %><br/><span class="metadata-label">Keyword(s): </span>#{table_keywords}]
           else
-            render inline: %Q[<%= link_to("#{dataset.plain_text_citation}", "#{dataset_path(dataset.key)}") %>]
+            render inline: %Q[<%= link_to("#{dataset.plain_text_citation}", "#{request.base_url}#{dataset_path(dataset.key)}") %>]
           end
         end
         array_column 'Visibility', filter: {type: :select, values: ['Private (Saved Draft)', 'Public (Published)', 'Public description, Private files', 'Private (Delayed Publication)', 'Public Metadata, Private Files (Tombstoned)', 'Private (Curator Hold)']} do |dataset|
