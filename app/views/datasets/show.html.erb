@@ -92,8 +92,7 @@
       <% if @dataset.related_materials.count > 0 %>
         <% @dataset.related_materials.each do |material| %>
           <div class="container-fluid">
-            <span class="metadata-label">Related <%= (material.material_type || material.material_type != "") ? material.material_type : "Material" %><%= (material.availability || material.availability != '') ? " (#{material.availability})" : "" %>
-              : </span>
+            <span class="metadata-label">Related <%= (material.material_type && material.material_type != "") ? material.material_type : "Material" %><%= (material.availability && material.availability != '') ? " (#{material.availability})" : "" %>: </span>
             <% if material.link && material.link != '' %>
               <a href="<%= material.link %>">
                 <% if material.citation && material.citation != '' %>
