@@ -259,6 +259,8 @@ var Reflector = function(obj) {
     };
 }
 
+function pad(n){return n<10 ? '0'+n : n}
+
 function cancelUpload(datafile, job) {
 
     $("#job" + job).hide();
@@ -352,8 +354,6 @@ function tombstone(){
     if (window.confirm("Are you sure? This will make this dataset unavailable.")) {
         window.location = "/datasets/"+ datset_key + "/tombstone";
     }
-
-
 }
 
 function nuke(){
@@ -363,6 +363,18 @@ function nuke(){
     }
 }
 
+function validateReleaseDate(){
+    var yearFromNow = new Date(new Date().setFullYear(new Date().getFullYear() + 1));
+    var releaseDate = new Date($('#dataset_release_date').val());
+    
+    if (releaseDate > yearFromNow) {
+        alert('The maximum amount of time that data can be delayed for publication is is 1 year.');
+        //$('#dataset_release_date').val((yearFromNow.getMonth() + 1) + '/' + yearFromNow.getDate() + '/' +  yearFromNow.getFullYear());
+        //$('#dataset_release_date').val(yearFromNow.toISOString());
+        $('#dataset_release_date').val(yearFromNow.getFullYear() + '-' +  pad(yearFromNow.getMonth())  + '-' + pad(yearFromNow.getDate()) );
+    }
+
+}
 $(document).ready(ready);
 $(document).on('page:load', ready);
 
