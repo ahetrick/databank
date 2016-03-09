@@ -57,11 +57,11 @@ class User < ActiveRecord::Base
 
     if IDB_CONFIG[:local_mode]
       # Rails.logger.info "inside local mode check #{IDB_CONFIG[:local_mode]}"
-      self.role = user_role(auth["info"]["email"])
+      self.role = User.user_role(auth["info"]["email"])
     else
       # Rails.logger.info "failed local mode check #{IDB_CONFIG[:local_mode]}"
       Rails.logger.warn "auth: #{auth.to_yaml}"
-      self.role = user_role(auth["uid"])
+      self.role = User.user_role(auth["uid"])
     end
   end
 
