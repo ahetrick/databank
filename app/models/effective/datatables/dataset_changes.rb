@@ -42,7 +42,7 @@ module Effective
         if publication
           changes = changes.where("created_at > ?", publication)
         else
-          changes = {}
+          changes = Audited::Adapters::ActiveRecord::Audit.none
         end
         changes
       end
