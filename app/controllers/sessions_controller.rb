@@ -56,6 +56,30 @@ class SessionsController < ApplicationController
     redirect_to root_url, notice: "The supplied credentials could not be authenciated."
   end
 
+  def role_switch
+    new_role = params['role']
+    if ['depositor', 'guest', 'no_deposit'].include?(new_role)
+      current_user.role = new_role
+      current_user.save
+      Rails.logger.warn current_user.to_yaml
+      new_role_text = "new role"
+      case new_role
+        when 'depositor'
+          new_role_text = "depositor"
+        when 'guest'
+          new_role_text = "guest"
+        when 'no_deposit'
+          new_role_text = "undergrad, or other authenticated but not authorized agent"
+      end
+
+      redirect_to root_url, notice: "Successfully switched role to #{new_role_text}."
+    else
+      redirect_to root_url, notice: "Unable to switch roles."
+    end
+
+
+  end
+
   protected
 
   def clear_and_return_return_path

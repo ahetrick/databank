@@ -92,4 +92,6 @@ Rails.application.routes.draw do
 
   post "/help/help_mail", to: 'help#help_mail', as: :help_mail
 
+  post "/role_switch", to: 'sessions#role_switch'
+
 end
