@@ -368,7 +368,7 @@ function validateReleaseDate(){
         alert('The maximum amount of time that data can be delayed for publication is is 1 year.');
         //$('#dataset_release_date').val((yearFromNow.getMonth() + 1) + '/' + yearFromNow.getDate() + '/' +  yearFromNow.getFullYear());
         //$('#dataset_release_date').val(yearFromNow.toISOString());
-        $('#dataset_release_date').val(yearFromNow.getFullYear() + '-' +  pad(yearFromNow.getMonth())  + '-' + pad(yearFromNow.getDate()) );
+        $('#dataset_release_date').val(yearFromNow.getFullYear() + '-' +  pad((yearFromNow.getMonth() + 1))  + '-' + pad(yearFromNow.getDate()) );
     }
 
 }
