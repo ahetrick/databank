@@ -701,7 +701,7 @@ class DatasetsController < ApplicationController
     end
 
     unless contact
-      validation_error_messages << "at least one primary long term contact"
+      validation_error_messages << "select primary contact (from Description section author list)"
     end
 
     if contact.nil? || !contact.email || contact.email == ""
