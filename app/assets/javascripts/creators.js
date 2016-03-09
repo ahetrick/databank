@@ -2,7 +2,7 @@
 
 var creators_ready;
 creators_ready = function() {
-
+    $('.orcid-search-spinner').hide();
     var cells, desired_width, table_width;
     if ($("#creator_table tr").length > 0) {
         table_width = $('#creator_table').width();
@@ -35,7 +35,6 @@ creators_ready = function() {
 
     }
 
-    $('.orcid-search-spinner').hide();
     //alert("creators.js javascript working");
 }
 
