@@ -49,6 +49,11 @@ class User < ActiveRecord::Base
 
   def update_with_omniauth(auth)
     authname = auth["info"]["name"]
+
+    if ( (auth["provider"] == "shibboleth") &&  (auth["extra"]["raw_info"]["nickname"]) && ( (auth["extra"]["raw_info"]["nickname"]) != "") )
+      authname = "#{auth["extra"]["raw_info"]["nickname"]} #{auth["extra"]["raw_info"]["sn"]}"
+    end
+
     self.provider = auth["provider"]
     self.uid = auth["uid"]
     self.name =  authname
@@ -60,7 +65,7 @@ class User < ActiveRecord::Base
       self.role = User.user_role(auth["info"]["email"])
     else
       # Rails.logger.info "failed local mode check #{IDB_CONFIG[:local_mode]}"
-      Rails.logger.warn "auth: #{auth.to_yaml}"
+      # Rails.logger.warn "auth: #{auth.to_yaml}"
       self.role = User.user_role(auth["uid"])
     end
   end
@@ -88,7 +93,7 @@ class User < ActiveRecord::Base
         user.role = user_role(auth["info"]["email"])
       else
         # Rails.logger.info "failed local mode check #{IDB_CONFIG[:local_mode]}"
-        Rails.logger.warn "auth: #{auth.to_yaml}"
+        # Rails.logger.warn "auth: #{auth.to_yaml}"
         user.role = user_role(auth["uid"])
       end
 
