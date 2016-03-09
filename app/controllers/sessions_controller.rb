@@ -10,6 +10,7 @@ class SessionsController < ApplicationController
       redirect_to(shibboleth_login_path(Databank::Application.shibboleth_host))
     end
   end
+
   def create
     #raise request.env["omniauth.auth"].to_yaml
     auth = request.env["omniauth.auth"]
@@ -17,8 +18,15 @@ class SessionsController < ApplicationController
     if auth && auth[:uid]
 
       return_url = clear_and_return_return_path
+      user = User.find_by_provider_and_uid(auth["provider"], auth["uid"])
 
-      user = User.find_by_provider_and_uid(auth["provider"], auth["uid"]) || User.create_with_omniauth(auth)
+      if user
+        user.update_with_omniauth(auth)
+        user.save
+      else
+        user = User.create_with_omniauth(auth)
+      end
+
 
       if user.id
         session[:user_id] = user.id

@@ -88,8 +88,6 @@ ready = function() {
 
     $('#save-exit-button').click(function () {
 
-
-
         if ($(".invalid-input").length == 0) {
             alert("Your draft has been saved!  When you're ready to continue, click your name to access your saved draft and click 'Edit' to pick up where you left off.  We'll save your draft for at least six months.");
             window.onbeforeunload = null;
@@ -133,7 +131,6 @@ ready = function() {
         var current_user_email = $('input#current_user_email').val();
         window.location.assign('/datasets?depositor_email=' + current_user_email);
     });
-
 
     // console.log("val: " + $('#dataset_embargo').val());
 
