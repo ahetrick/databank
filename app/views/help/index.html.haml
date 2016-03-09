@@ -3,10 +3,10 @@
   -#  .alert.alert-info
   -#    = sanitize(value)
   = render partial: 'contact', locals: {dataset: @dataset}
+  = render partial: 'start'
+  %a(href="#top" class="pull-right" ) Go to Top
   = render partial: 'embargo'
   %a(href="#top" class="pull-right" ) Go to Top
-  %hr
   = render partial: 'license'
   %a(href="#top" class="pull-right" ) Go to Top
-  %hr
   = render partial: 'fix'
