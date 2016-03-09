@@ -106,6 +106,9 @@ gem "bunny", ">= 2.2.2"
 # Used audited-activerecord for dataset changelog
 gem "audited-activerecord", "~> 4.0"
 
+# Use google-analytics-rails to support Google Analytics
+gem 'google-analytics-rails', '1.1.0'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
