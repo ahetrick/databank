@@ -333,7 +333,7 @@ class DatasetsController < ApplicationController
           update_datacite_metadata
         end
         
-        if old_state == Databank::PublicationState::DRAFT
+        if old_state == Databank::PublicationState::DRAFT && !@dataset.is_test?
 
           @dataset.datafiles.each do |datafile|
             datafile.binary_name = datafile.binary.file.filename
