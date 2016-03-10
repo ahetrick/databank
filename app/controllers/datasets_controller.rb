@@ -219,8 +219,8 @@ class DatasetsController < ApplicationController
     if has_nested_param_change?
       @dataset.has_datacite_change = true
 
-      if !@dataset.is_test?
-
+      if (@dataset.publication_state != Databank::PublicationState::DRAFT) && !@dataset.is_test?
+        # for non-test published datasets, check for added datafiles to send to medusa
         @dataset.datafiles.each do |datafile|
           if datafile.binary && datafile.binary.path
 
