@@ -218,6 +218,34 @@ class DatasetsController < ApplicationController
 
     if has_nested_param_change?
       @dataset.has_datacite_change = true
+
+      if !@dataset.is_test?
+
+        @dataset.datafiles.each do |datafile|
+          if datafile.binary && datafile.binary.path
+
+            full_path = datafile.binary.path
+            full_path_arr = full_path.split("/")
+            staging_path = "#{full_path_arr[5]}/#{full_path_arr[6]}/#{full_path_arr[7]}"
+
+            existing_medusa_ingest = MedusaIngest.where(staging_path: staging_path)
+
+            if !existing_medusa_ingest || existing_medusa_ingest.count == 0
+
+              datafile.binary_name = datafile.binary.file.filename
+              datafile.binary_size = datafile.binary.size
+              medusa_ingest = MedusaIngest.new
+              medusa_ingest.staging_path = staging_path
+              medusa_ingest.idb_class = 'datafile'
+              medusa_ingest.idb_identifier = datafile.web_id
+              medusa_ingest.send_medusa_ingest_message(staging_path)
+              medusa_ingest.save
+            end
+          end
+        end
+
+      end
+
     end
 
     respond_to do |format|
