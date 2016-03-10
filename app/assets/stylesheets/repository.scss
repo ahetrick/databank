@@ -1,0 +1,45 @@
+.repository-footer-info{
+  padding-top: 15px;
+  text-align: center;
+}
+.repository-header{
+  font-family: "Times New Roman", Times, Serif;
+  font-size: 75px;
+  color: white;
+  background-color: $color__dark-orange;
+  padding-left: 15px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.library-logo-words{
+  color: white;
+  text-transform: uppercase;
+  font-family: "Times New Roman", Times, Serif;
+  font-size: 24px;
+}
+
+.university-logo-words{
+  color: $color__medium-grey;
+  text-transform: uppercase;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 12px;
+}
+
+.university-library-branding{
+  padding-left: 15px;
+}
+
+.banner-image-imark{
+  height: 24px;
+  padding-right: 15px;
+}
+.library-header{
+  margin-top: 0;
+  margin-bottom: 0;
+  background-color: $color__dark-navy;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}

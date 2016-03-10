@@ -41,19 +41,23 @@
 </head>
 <body>
 <div class="idb-anchor" id="page-top"></div>
-<div id="main-content" class="container-fluid">
-  <%= render :partial => 'shared/header_navbar' %>
+<div id="main-content">
+  <%= render partial: 'shared/library_header'%>
+  <%= render partial: 'shared/header' %>
+  <%= render partial: 'shared/navbar'%>
   <% flash.each do |key, value| %>
     <div class="idb-alert"><%= sanitize(value) %></div>
   <% end %>
   <%= yield %>
-
-  <div class="pull-right">
-    <a href="#page-top">Go to top</a>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-offset-10 col.md-2">
+        <a href="#page-top">Go to top</a>
+      </div>
+    </div>
   </div>
-
 </div>
-<%= render :partial => 'shared/footer' %>
+<%= render partial: "shared/library_footer" %>
 
 <% if @dataset %>
   <%= javascript_tag do %>
