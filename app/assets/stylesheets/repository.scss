@@ -1,7 +1,13 @@
-.repository-footer-info{
-  padding-top: 15px;
-  text-align: center;
+.library-header{
+  margin-bottom: 0;
+  background-color: $color__dark-navy;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 100%;
+  height: 44px;
+  margin-top: 0;
 }
+
 .repository-header{
   font-family: "Times New Roman", Times, Serif;
   font-size: 60px;
@@ -10,8 +16,17 @@
   padding-left: 15px;
   padding-top: 5px;
   padding-bottom: 10px;
-  margin-top: 0;
   margin-bottom: 0;
+  width: 100%;
+  height: 100px;
+  margin-top: 0;
+}
+
+#site-nav{
+  margin-bottom: 0;
+  width: 100%;
+  height: 50px;
+  margin-top: 0;
 }
 
 .library-logo-words{
@@ -37,18 +52,6 @@
   padding-right: 15px;
 }
 
-.library-header{
-  margin-top: 0;
-  margin-bottom: 0;
-  background-color: $color__dark-navy;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-#site-nav{
-  margin-bottom: 0;
-}
-
 .repository-header > a:link, .repository-header > a:visited, .repository-header > a:hover, .repository-header > a:active {
   color:white;
   text-decoration: none;
@@ -65,6 +68,11 @@
   text-decoration: none;
   background-color: $color__dark-navy;
   color: $color__medium-grey;
+}
+
+.repository-footer-info{
+  padding-top: 15px;
+  text-align: center;
 }
 
 /* begin Sticky footer styles
