@@ -11,7 +11,7 @@
  * file per style scope.
  *
  */
-@import "variables";
+@import "libguide-style";
 @import "jquery-ui";
 @import "jquery.fileupload";
 @import "jquery.fileupload-ui";
@@ -22,9 +22,6 @@
 @import "font-awesome";
 @import "databank";
 @import "datasets";
-@import "footer-style";
-@import "header-style";
-@import "navbar";
 @import "simple-sidebar";
 @import "effective_datatables";
 @import "repository"

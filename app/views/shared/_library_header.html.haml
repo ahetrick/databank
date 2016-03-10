@@ -6,8 +6,11 @@
         %table(id="library-banner-table")
           %tr
             %td
-              =image_tag("imark.png", class: "banner-image-imark", alt: "University of Illinois I-Mark")
+              %a(href="http://illinois.edu" )
+                =image_tag("imark.png", class: "banner-image-imark", alt: "University of Illinois I-Mark")
             %td(class="library-logo-words" )
-              University Library
+              %a(href="http://www.library.illinois.edu" )
+                University Library
               %span(class="university-logo-words" )
-                University of Illinois at Urbana Champaign
+                %a(href="http://illinois.edu" )
+                  University of Illinois at Urbana Champaign

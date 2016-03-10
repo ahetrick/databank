@@ -1,46 +1,43 @@
 .welcome
-  =image_tag('IDB_header_image_01.jpg', width: '100%')
-  .container-fluid
-    %h1 Welcome to the Illinois Data Bank
-    %p Research data deposited by Illinois graduate students, staff, and faculty, and openly available to anyone in the world.
+  %h1 Welcome to the Illinois Data Bank
+  %p Research data deposited by Illinois graduate students, staff, and faculty, and openly available to anyone in the world.
 
+  .row.workflow-graphic
+    .col-md-offset-2.col-md-2
+      %span(class="fa fa-pencil fa-4x workflow-graphic-image" )
+      %span(class="workflow-graphic-text") Describe
+    .col-md-2
+      %span(class="fa fa-cloud-upload fa-4x workflow-graphic-image" )
+      %span(class="workflow-graphic-text") Upload
+    .col-md-2
+      %span(class="fa fa-eye fa-4x workflow-graphic-image")
+      %span(class="workflow-graphic-text") Review
+    .col-md-2
+      %span(class="fa fa-paper-plane-o fa-4x workflow-graphic-image" )
+      %span(class="workflow-graphic-text") Publish
+  .row
+    .col-md-offset-2.col-md-7
+      .workflow-bar
 
-    .row.workflow-graphic
-      .col-md-offset-2.col-md-2
-        %span(class="fa fa-pencil fa-4x workflow-graphic-image" )
-        %span(class="workflow-graphic-text") Describe
-      .col-md-2
-        %span(class="fa fa-cloud-upload fa-4x workflow-graphic-image" )
-        %span(class="workflow-graphic-text") Upload
-      .col-md-2
-        %span(class="fa fa-eye fa-4x workflow-graphic-image")
-        %span(class="workflow-graphic-text") Review
-      .col-md-2
-        %span(class="fa fa-paper-plane-o fa-4x workflow-graphic-image" )
-        %span(class="workflow-graphic-text") Publish
-    .row
-      .col-md-offset-2.col-md-7
-        .workflow-bar
+  %h3 Deposit-ready data:
+  %ul
+    %li is in a final state and not expected to undergo revisions.
+    %li has had any private, confidential, or other legally protected information removed.
+    %li is approved for public distribution by all creator(s) and/or copyright owner(s).
+  .row
+    .col-md-offset-6.col.md-6
+      %a(href="/help") Read more about appropriate deposits
 
-    %h3 Deposit-ready data:
-    %ul
-      %li is in a final state and not expected to undergo revisions.
-      %li has had any private, confidential, or other legally protected information removed.
-      %li is approved for public distribution by all creator(s) and/or copyright owner(s).
-    .row
-      .col-md-offset-6.col.md-6
-        %a(href="/help") Read more about appropriate deposits
-
-    %h3 Published data:
-    %ul
-      %li
-        receives a stable identifier (
-        %a(href="http://www.doi.org/" target="_blank" ) DOI
-        ) for easy reference and citation.
-      %li is readily available for anyone to access for a minimum of 5 years.
-      %li is located in a stable environment that complies with many funder and publisher requirements.
-    .row
-      .col-md-offset-6.col.md-6
-        %a(href="/policies") Read more about our policies
+  %h3 Published data:
+  %ul
+    %li
+      receives a stable identifier (
+      %a(href="http://www.doi.org/" target="_blank" ) DOI
+      ) for easy reference and citation.
+    %li is readily available for anyone to access for a minimum of 5 years.
+    %li is located in a stable environment that complies with many funder and publisher requirements.
+  .row
+    .col-md-offset-6.col.md-6
+      %a(href="/policies") Read more about our policies
 
 

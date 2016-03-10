@@ -1,97 +1,4 @@
-$bgDefault: #002058;
-$bgHighlight: #606EB2;
-$colDefault: #ecf0f1;
-$colHighlight: #ffffff;
-$dropDown: false;
-.navbar-default {
-  margin: 0;
-  padding: 0;
-  background-color: $bgDefault;
-  border-color: $bgHighlight;
-  .navbar-brand {
-    color: $colDefault;
-    &:hover, &:focus {
-      color: $colHighlight;
-    }
-  }
-  .navbar-text {
-    color: $colDefault;
-  }
-  .navbar-nav {
-    > li {
-      > a {
-        color: $colDefault;
-        &:hover, &:focus {
-          color: $colHighlight;
-        }
-      }
-      @if $dropDown {
-        > .dropdown-menu {
-          background-color: $bgDefault;
-          > li > a {
-            color: $colDefault;
-            &:hover, &:focus {
-              color: $colHighlight;
-              background-color: $bgHighlight;
-            }
-          }
-          .divider {
-            background-color: $bgHighlight;
-          }
-        }
-      }
-    }
-    > .active {
-      > a, > a:hover, > a:focus {
-        color: $colHighlight;
-        background-color: $bgHighlight;
-      }
-    }
-    > .open {
-      > a, > a:hover, > a:focus {
-        color: $colHighlight;
-        background-color: $bgHighlight;
-      }
-    }
-  }
-  .navbar-toggle {
-    border-color: $bgHighlight;
-    &:hover, &:focus {
-      background-color: $bgHighlight;
-    }
-    .icon-bar {
-      background-color: $colDefault;
-    }
-  }
-  .navbar-collapse,
-  .navbar-form {
-    border-color: $colDefault;
-  }
-  .navbar-link {
-    color: $colDefault;
-    &:hover {
-      color: $colHighlight;
-    }
-  }
-}
-
-@media (max-width: 767px) {
-  .navbar-default .navbar-nav .open .dropdown-menu {
-    > li > a {
-      color: $colDefault;
-      &:hover, &:focus {
-        color: $colHighlight;
-      }
-    }
-    > .active {
-      > a, > a:hover, > a:focus {
-        color: $colHighlight;
-        background-color: $bgHighlight;
-      }
-    }
-  }
-}
-
+// uses variables from libguide-style.scss
 .idb-help ul {
   list-style-type: none;
 }
@@ -150,7 +57,6 @@ li.current {
   background-color: #F8F8F8;
 }
 .navbar-user {
-  color: $colDefault;
   padding-top: 15px;
   padding-bottom: 15px;
   position: relative;
@@ -161,7 +67,7 @@ li.current {
   margin-bottom: 5px;
 }
 .workflow-graphic {
-  color: $bgHighlight;
+  color: $color__dark-moderate-blue;
   margin: 0;
   padding: 0;
 }
@@ -216,25 +122,6 @@ li.current {
   background: yellow;
   padding-top: 5px;
   padding-bottom: 5px;
-}
-
-/* Sticky footer styles
--------------------------------------------------- */
-html {
-  position: relative;
-  min-height: 100%;
-}
-body {
-  /* Margin bottom by footer height */
-  margin-bottom: 150px;
-}
-
-body {
-  background-color: #fff;
-  color: #333;
-  font-family: verdana, arial, helvetica, sans-serif;
-  font-size: 13px;
-  line-height: 18px;
 }
 
 p, ol, ul, td {

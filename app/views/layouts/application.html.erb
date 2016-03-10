@@ -42,37 +42,41 @@
 <body>
 <div class="idb-anchor" id="page-top"></div>
 <div id="main-content">
-  <%= render partial: 'shared/library_header'%>
+  <%= render partial: 'shared/library_header' %>
   <%= render partial: 'shared/header' %>
-  <%= render partial: 'shared/navbar'%>
+  <% if current_page?(root_path) %>
+    <%= image_tag('IDB_header_image_01.jpg', width: '100%') %>
+  <% end %>
+  <%= render partial: 'shared/navbar' %>
   <% flash.each do |key, value| %>
     <div class="idb-alert"><%= sanitize(value) %></div>
   <% end %>
-  <%= yield %>
-  <div class="container">
+  <div class="container-fluid">
+    <%= yield %>
     <div class="row">
       <div class="col-md-offset-10 col.md-2">
         <a href="#page-top">Go to top</a>
       </div>
     </div>
   </div>
+
 </div>
 <%= render partial: "shared/library_footer" %>
 
 <% if @dataset %>
   <%= javascript_tag do %>
     window.dataset_key = '<%= j @dataset.key %>';
-  <% end%>
+  <% end %>
 <% end %>
 
 <% if current_user && current_user.role %>
   <%= javascript_tag do %>
     window.user_role = '<%= j current_user.role %>';
-  <% end%>
+  <% end %>
 <% else %>
   <%= javascript_tag do %>
     window.user_role = '<%= j 'guest' %>';
-  <% end%>
+  <% end %>
 <% end %>
 
 </body>
