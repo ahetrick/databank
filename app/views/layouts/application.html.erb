@@ -42,12 +42,12 @@
 <body>
 <div class="idb-anchor" id="page-top"></div>
 <%= render partial: 'shared/library_header' %>
-<%= render partial: 'shared/header_navbar' %>
+<%= render partial: 'shared/header' %>
 <% if current_page?(root_path) %>
   <%= image_tag('IDB_header_image_01.jpg', width: '100%') %>
 <% end %>
 
-
+<%= render partial: 'shared/navbar' %>
 <div id="main-content">
   <% flash.each do |key, value| %>
     <div class="idb-alert"><%= sanitize(value) %></div>
