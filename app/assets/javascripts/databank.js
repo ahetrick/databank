@@ -1,18 +1,24 @@
 
 var databank_ready;
 databank_ready = function () {
-    $('#describe-btn').click(function () {
+    $('.describe-btn').click(function () {
         window.location.assign('/help#describe');
     });
-    $('#upload-btn').click(function () {
+    $('.upload-btn').click(function () {
         window.location.assign('/help#upload');
     });
-    $('#review-btn').click(function () {
+    $('.review-btn').click(function () {
         window.location.assign('/help#review');
     });
-    $('#publish-btn').click(function () {
+    $('.publish-btn').click(function () {
         window.location.assign('/help#publish');
     });
+
+    //$('.workflow-graphic-row').click(function () {
+    //    window.location.assign('/help#start');
+    //});
+
+
     //alert("databank.js javascript working");
 }
 
