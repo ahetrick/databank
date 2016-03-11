@@ -9,18 +9,23 @@
 }
 
 .repository-header{
-  font-family: "Times New Roman", Times, Serif;
-  font-size: 60px;
-  color: white;
-  background-color: $color__dark-orange;
-  padding-left: 15px;
-  padding-top: 5px;
-  padding-bottom: 10px;
   margin-bottom: 0;
-  width: 100%;
-  height: 100px;
-  margin-top: 0;
 }
+
+
+//.repository-header{
+//  font-family: "Times New Roman", Times, Serif;
+//  font-size: 60px;
+//  color: white;
+//  background-color: $color__dark-orange;
+//  padding-left: 15px;
+//  padding-top: 5px;
+//  padding-bottom: 10px;
+//  margin-bottom: 0;
+//  width: 100%;
+//  height: 100px;
+//  margin-top: 0;
+//}
 
 #site-nav{
   margin-bottom: 0;
@@ -52,11 +57,11 @@
   padding-right: 15px;
 }
 
-.repository-header > a:link, .repository-header > a:visited, .repository-header > a:hover, .repository-header > a:active {
-  color:white;
-  text-decoration: none;
-  background-color: $color__dark-orange;
-}
+//.repository-header > a:link, .repository-header > a:visited, .repository-header > a:hover, .repository-header > a:active {
+//  color:white;
+//  text-decoration: none;
+//  background-color: $color__dark-orange;
+//}
 
 .library-logo-words> a:link, .library-logo-words > a:visited, .library-logo-words > a:hover, .library-logo-words > a:active {
   text-decoration: none;
@@ -70,10 +75,138 @@
   color: $color__medium-grey;
 }
 
+.navbar-header{
+
+}
+.navbar-brand{
+  font-family: "Times New Roman", Times, Serif;
+  font-size: 60px;
+}
+
 .repository-footer-info{
   padding-top: 15px;
   text-align: center;
 }
+
+/* begin Navbar styles
+-------------------------------------------------- */
+$bgDefault: $color__dark-orange;
+$bgHighlight: $color__orange;
+$colDefault: white;
+$colHighlight: white;
+
+.navbar-header{
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+.navbar-brand{
+  font-family: "Times New Roman", Times, Serif;
+  font-size: 60px;
+}
+
+#navbar{
+  padding-top: 30px;
+  padding-left: 30px;
+}
+#navbar > ul > li{
+  border: 2px solid white;
+}
+
+$dropDown: false;
+.navbar-default {
+  border-radius: 0;
+  background-color: $bgDefault;
+  border-color: $bgHighlight;
+  .navbar-brand {
+    color: $colDefault;
+    &:hover, &:focus {
+      color: $colHighlight;
+    }
+  }
+  .navbar-text {
+    color: $colDefault;
+  }
+  .navbar-nav {
+    > li {
+      > a {
+        color: $colDefault;
+        &:hover, &:focus {
+          color: $colHighlight;
+        }
+      }
+      @if $dropDown {
+        > .dropdown-menu {
+          background-color: $bgDefault;
+          > li > a {
+            color: $colDefault;
+            &:hover, &:focus {
+              color: $colHighlight;
+              background-color: $bgHighlight;
+            }
+          }
+          .divider {
+            background-color: $bgHighlight;
+          }
+        }
+      }
+    }
+    > .active {
+      > a, > a:hover, > a:focus {
+        color: $colHighlight;
+        background-color: $bgHighlight;
+      }
+    }
+    > .open {
+      > a, > a:hover, > a:focus {
+        color: $colHighlight;
+        background-color: $bgHighlight;
+      }
+    }
+  }
+  .navbar-toggle {
+    border-color: $bgHighlight;
+    &:hover, &:focus {
+      background-color: $bgHighlight;
+    }
+    .icon-bar {
+      background-color: $colDefault;
+    }
+  }
+  .navbar-collapse,
+  .navbar-form {
+    border-color: $colDefault;
+  }
+  .navbar-link {
+    color: $colDefault;
+    &:hover {
+      color: $colHighlight;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .navbar-default .navbar-nav .open .dropdown-menu {
+    > li > a {
+      color: $colDefault;
+      &:hover, &:focus {
+        color: $colHighlight;
+      }
+    }
+    > .active {
+      > a, > a:hover, > a:focus {
+        color: $colHighlight;
+        background-color: $bgHighlight;
+      }
+    }
+  }
+}
+
+
+
+
+/* end Navbar styles
+-------------------------------------------------- */
+
 
 /* begin Sticky footer styles
 -------------------------------------------------- */
