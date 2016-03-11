@@ -36,9 +36,15 @@ class ApplicationController < ActionController::Base
       alert_message = exception.message
 
       if exception.subject.class == Dataset && exception.action == :new
-        redirect_to '/welcome/deposit_login_modal'
+        if current_user && current_user.role == 'no_deposit'
+          redirect_to redirect_path, notice: "ACCOUNT NOT ELIGABLE TO DEPOSIT DATA.<br/>Faculty, staff, and graduate students are eligable to deposit data in Illinois Data Bank.<br/>Please <a href='/help'>contact the Research Data Service</a> if this determination is in error, or if you have any questions."
+        else
+
+          redirect_to '/welcome/deposit_login_modal'
+        end
+
       else
-        redirect_to redirect_path, :alert => alert_message
+        redirect_to redirect_path, alert: alert_message
       end
 
     else
