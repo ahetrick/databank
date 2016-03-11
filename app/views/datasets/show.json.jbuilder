@@ -1,1 +1,1 @@
-json.extract! @dataset, :id, :title, :identifier, :publisher, :publication_year, :creator_list, :description, :rights, :created_at, :updated_at
+json.extract! @dataset, :key, :title, :identifier, :publisher, :publication_year, :description, :license, :corresponding_creator_name, :created_at, :updated_at, :keywords, :has_datacite_change, :publication_state, :version, :curator_hold, :release_date, :embargo, :is_test, :is_import, :tombstone_date, :creators, :funders, :related_materials, :datafiles

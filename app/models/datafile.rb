@@ -17,6 +17,10 @@ class Datafile < ActiveRecord::Base
     self.web_id
   end
 
+  def as_json(options={})
+    super(:only => [:web_id,:bytestream_name,:bytestream_size,:medusa_id,:created_at,:updated_at] )
+  end
+
   def bytestream_name
     return_name = ""
     # Rails.logger.warn "datafile: #{self.to_yaml}"

@@ -20,7 +20,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :review_deposit_agreement
   skip_load_and_authorize_resource :only => :datacite_record
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :completion_check, :delete_datacite_id, :change_publication_state, :is_datacite_changed, :tombstone ]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :completion_check, :delete_datacite_id, :change_publication_state, :is_datacite_changed, :tombstone, :idb_datacite_xml ]
 
   @@num_box_ingest_deamons = 10
 
@@ -53,10 +53,6 @@ class DatasetsController < ApplicationController
       end
 
     end
-
-  end
-
-  def curator_index
 
   end
 
@@ -104,6 +100,9 @@ class DatasetsController < ApplicationController
         @license_expanded = @dataset.license
     end
 
+  end
+
+  def idb_datacite_xml
   end
 
   def cancel_box_upload
@@ -658,7 +657,6 @@ class DatasetsController < ApplicationController
     t.close
 
   end
-
 
   def datacite_record_hash
 

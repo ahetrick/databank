@@ -9,4 +9,8 @@ class Creator < ActiveRecord::Base
 
   enum type: [:person, :institution]
 
+  def as_json(options={})
+    super(:only => [:family_name,:given_name,:identifier,:is_contact,:row_position,:created_at,:updated_at] )
+  end
+
 end

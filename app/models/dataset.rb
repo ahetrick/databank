@@ -266,7 +266,10 @@ class Dataset < ActiveRecord::Base
 
     doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
 
+  end
 
+  def to_datacite_raw_xml
+    Nokogiri::XML::Document.parse(to_datacite_xml)
   end
 
   def placeholder_metadata
