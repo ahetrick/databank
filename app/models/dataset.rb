@@ -65,9 +65,7 @@ class Dataset < ActiveRecord::Base
 
   def to_datacite_xml
 
-    if !self.title || self.creator_list == ""
-      raise 'Dataset is not complete; a valid datacite xml document cannot be generated.'
-    end
+    begin
 
     # creatorArr = self.creator_list.split(";")
 
@@ -78,7 +76,7 @@ class Dataset < ActiveRecord::Base
     contact = Creator.where(dataset_id: self.id, is_contact: true).first
     raise ActiveRecord::RecordNotFound unless contact
 
-    doc = Nokogiri::XML::Document.parse(%Q(<?xml version="1.0"?><resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd"></resource>))
+    doc = Nokogiri::XML::Document.parse(%Q(<?xml version="1.0 encoding="UTF-8"?><resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd"></resource>))
     resourceNode = doc.first_element_child
 
     identifierNode = doc.create_element('identifier')
@@ -263,13 +261,19 @@ class Dataset < ActiveRecord::Base
 
     end
 
+    return doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
 
-    doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
+    rescue StandardError => error
+
+      default_doc = Nokogiri::XML::Document.parse(%Q[<?xml version="1.0 encoding="UTF-8"?><error>Dataset Incomplete.</error>])
+      return default_doc.to_xml
+
+    end
 
   end
 
   def to_datacite_raw_xml
-    Nokogiri::XML::Document.parse(to_datacite_xml)
+    Nokogiri::XML::Document.parse(to_datacite_xml).to_xml
   end
 
   def placeholder_metadata
