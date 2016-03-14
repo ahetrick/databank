@@ -15,7 +15,7 @@
   background-color: $color__dark-orange;
   padding-left: 15px;
   padding-top: 5px;
-  padding-bottom: 10px;
+  padding-bottom: 15px;
   margin-bottom: 0;
   width: 100%;
   height: 100px;
@@ -50,9 +50,16 @@
 .banner-image-imark{
   height: 24px;
   padding-right: 15px;
+  padding-bottom: 5px;
 }
 
 .repository-header > a:link, .repository-header > a:visited, .repository-header > a:hover, .repository-header > a:active {
+  color:white;
+  text-decoration: none;
+  background-color: $color__dark-orange;
+}
+
+.navbar-header > a:link, .navbar-header > a:visited, .navbar-header > a:hover, .navbar-header > a:active {
   color:white;
   text-decoration: none;
   background-color: $color__dark-orange;
@@ -62,6 +69,10 @@
   text-decoration: none;
   background-color: $color__dark-navy;
   color:white
+}
+
+.university-logo-words{
+  width: 100%;
 }
 
 .university-logo-words> a:link, .university-logo-words > a:visited, .university-logo-words > a:hover, .university-logo-words > a:active {
@@ -74,6 +85,20 @@
   padding-top: 15px;
   text-align: center;
 }
+
+.navbar-brand{
+  color: white;
+  background-color:  $color__dark-orange;
+  font-family: "Times New Roman", Times, Serif;
+  font-size: 24px;
+}
+
+@media (max-width: 767px) {
+  .navbar{
+    background-color: $color__dark-orange;
+  }
+}
+
 
 /* begin Sticky footer styles
 -------------------------------------------------- */
