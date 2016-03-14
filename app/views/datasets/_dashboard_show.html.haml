@@ -3,23 +3,36 @@
     -#.panel-heading
     -#  %span(class="metadata-label" )Dataset Dashboard
     .panel-body
-      -if @dataset.has_datacite_change &&  [Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED, Databank::PublicationState::TOMBSTONE].include?(@dataset.publication_state)
-        .datacite-changes-warning
-          %span(class="glyphicon glyphicon-alert" )
-          Changes have been made to this dataset record that have not yet been published.  Confirm to complete changes.
-      -if @dataset.publication_state == Databank::PublicationState::METADATA_EMBARGO && (@dataset.embargo != Databank::PublicationState::METADATA_EMBARGO)
-        .datacite-changes-warning
-          %span(class="glyphicon glyphicon-alert" )
-          This dataset record has not yet been published.  Confirm to complete changes.
-
-      -if @completion_check != 'ok'
-        .completion-warning
-          %span(class="glyphicon glyphicon-alert" )
-          = @completion_check
-          - if @dataset.publication_state == Databank::PublicationState::DRAFT || (can? :manage, @dataset)
-            Edit to complete dataset.
       .row
-        .col-md-7
+        .col-md-6
+          -if @dataset.has_datacite_change &&  [Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED, Databank::PublicationState::TOMBSTONE].include?(@dataset.publication_state)
+            .datacite-changes-warning
+              %span(class="glyphicon glyphicon-alert" )
+              Changes have been made to this dataset record that have not yet been published.  Confirm to complete changes.
+          -if @dataset.publication_state == Databank::PublicationState::METADATA_EMBARGO && (@dataset.embargo != Databank::PublicationState::METADATA_EMBARGO)
+            .datacite-changes-warning
+              %span(class="glyphicon glyphicon-alert" )
+              This dataset record has not yet been published.  Confirm to complete changes.
+
+          -if @completion_check != 'ok'
+            .completion-warning
+              %span(class="glyphicon glyphicon-alert" )
+              = @completion_check
+              - if @dataset.publication_state == Databank::PublicationState::DRAFT || (can? :manage, @dataset)
+                Edit to complete dataset.
+        - if (can? :manage, @dataset)
+          .col-md-2
+            %button(type="button" class="btn btn-warning btn-block" onclick="tombstone()" )
+              Tombstone
+          .col-md-2
+            %button(type="button" class="btn btn-danger btn-block" onclick="nuke()")
+              Destroy
+          .col-md-2
+            = link_to dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure? This removes all files and metadata from IDB.'}, :class => "btn btn-danger btn-block" do
+              %span(class="glyphicon glyphicon-trash")
+              Delete
+      .row
+        .col-md-6
           %span(class="glyphicon glyphicon-eye-open" )
           %span(class="metadata-label" ) Visibility:
           = @dataset.visibility
@@ -46,27 +59,20 @@
           -if @dataset.publication_state == Databank::PublicationState::METADATA_EMBARGO && @dataset.embargo != Databank::PublicationState::METADATA_EMBARGO
             %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit") Confirm
 
-        .col-md-2
-          =link_to("Request Dataset Review", "/help?context=review&key=#{@dataset.key}", class: "btn btn-success btn-block")
-
         .col-md-1
           = link_to(edit_dataset_path(@dataset), :class => "btn btn-info btn-block") do
             %span(class="glyphicon glyphicon-edit")
             Edit
-        .col-md-1
-          - if @dataset.publication_state == Databank::PublicationState::DRAFT
+
+        .col-md-2
+          =link_to("Request Dataset Review", "/help?context=review&key=#{@dataset.key}", class: "btn btn-success btn-block")
+        .col-md-2
+          - if @dataset.publication_state == Databank::PublicationState::DRAFT && (!can? :manage, @dataset)
             = link_to(dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure? This removes all files and metadata from IDB.'}, class: "btn btn-danger btn-block") do
               %span(class="glyphicon glyphicon-trash" )
-              Delete
-          - elsif (can? :manage, @dataset)
-            %button(type="button" class="btn btn-warning btn-block" onclick="tombstone()" )
-              Tombstone
-            %button(type="button" class="btn btn-danger btn-block" onclick="nuke()")
-              Destroy
-            = link_to dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure? This removes all files and metadata from IDB.'}, :class => "btn btn-danger btn-block" do
-              %span(class="glyphicon glyphicon-trash")
               Delete
           - else
             %button(type="button" class="btn btn-danger btn-block" name="cancel" onclick='window.location = "/"' )
               %span(class="glyphicon glyphicon-ban-circle" )
               Cancel
+

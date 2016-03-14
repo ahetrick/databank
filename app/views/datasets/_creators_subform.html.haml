@@ -1,3 +1,4 @@
+= render partial: 'orcid_help_modal'
 %label(class="control-label required")
   Author List
   (One primary long term contact required.
@@ -17,7 +18,10 @@
         .form-heading-required
           Given Name
       %th(class="col-md-2")
-        ORCID® iD
+        ORCiD®
+        %a(href="#" data-toggle="modal" data-target="#orcidHelpModal" tabindex="-1")
+          =image_tag 'iD_icon_16x16.png'
+          what's this?
       %th(class="col-md-1" )
       %th(class="col-md-2")
         Email
@@ -50,6 +54,7 @@
           %button(type="button" class="btn btn-primary btn-block orcid-search-btn" onclick="showOrcidSearchModal('#{i}')" )
             %span(class="glyphicon glyphicon-search" )
             Look Up
+            =image_tag 'iD_icon_16x16.png'
         %td(class="col-md-2")
           = cf.email_field :email, class: "form-control dataset creator-email", placeholder: "[Email, e.g.: netid@illinois.edu]", onchange: "handle_creator_email_change(this)"
         %td(class="col-md-1" align="center" )
