@@ -1,15 +1,16 @@
 <% if @dataset %>
-  <%= link_to dataset_path(@dataset.key), :class => "btn btn-primary btn-sm" do %>
-    <span class="glyphicon glyphicon-triangle-left"></span> Back
-  <% end %>
+
+  <% if File.exist?("#{IDB_CONFIG[:agreements_root_path]}/#{@dataset.key}/deposit_agreement.txt") %>
+    <%= (File.read("#{IDB_CONFIG[:agreements_root_path]}/#{@dataset.key}/deposit_agreement.txt")).gsub(/\n/, '<br />').html_safe %>
+  <% else %>
+    <%= "Dynamic License granted by #{@dataset.depositor_name} on #{@dataset.created_at.iso8601}"%>
+    <br/>
+    <br/>
+    <%= (File.read("#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.txt")).gsub(/\n/, '<br />').html_safe %>
+    <% end %>
 <% else %>
-  <div class='idb-dashboard panel panel-warning'>
-    <div class='panel-body'>
-      <span class='glyphicon glyphicon-info-sign'></span>
-      If you got to this page from a link on a new dataset, close this tab to get back to your dataset.
-    </div>
-  </div>
-  </div>
+  <%= "License granted by #{current_user.name} on #{Date.current().iso8601}"%>
+  <br/>
+  <br/>
+  <%= (File.read("#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.txt")).gsub(/\n/, '<br />').html_safe %>
 <% end %>
-<%= render partial: 'deposit_agreement' %>
-<%= javascript_tag "document.getElementById('collapseOne').className = 'panel-collapse';" %>

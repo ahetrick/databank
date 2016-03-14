@@ -20,7 +20,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :review_deposit_agreement
   skip_load_and_authorize_resource :only => :datacite_record
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :completion_check, :delete_datacite_id, :change_publication_state, :is_datacite_changed, :tombstone, :idb_datacite_xml ]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :completion_check, :delete_datacite_id, :change_publication_state, :is_datacite_changed, :tombstone, :idb_datacite_xml]
 
   @@num_box_ingest_deamons = 10
 
@@ -374,6 +374,19 @@ class DatasetsController < ApplicationController
             medusa_ingest.idb_identifier = datafile.web_id
             medusa_ingest.send_medusa_ingest_message(staging_path)
             medusa_ingest.save
+          end
+          if File.exist?("#{IDB_CONFIG[:agreements_root_path]}/#{@dataset.key}/deposit_agreement.txt")
+            medusa_ingest = MedusaIngest.new
+            full_path = "#{IDB_CONFIG[:agreements_root_path]}/#{@dataset.key}/deposit_agreement.txt"
+            full_path_arr = full_path.split("/")
+            staging_path = "#{full_path_arr[5]}/#{full_path_arr[6]}/#{full_path_arr[7]}"
+            medusa_ingest.staging_path = staging_path
+            medusa_ingest.idb_class = 'agreement'
+            medusa_ingest.idb_identifier = @dataset.key
+            medusa_ingest.send_medusa_ingest_message(staging_path)
+            medusa_ingest.save
+          else
+            raise "deposit agreement file not found for #{@dataset.key}"
           end
 
         end

@@ -10,6 +10,7 @@ development:
   :delayed_job_pid_dir: /tmp/pids
   :orcid_token: ORCID_TOKEN
   :key_prefix: idbdev
+  :agreements_root_path: /agreements
   #You can set anything here that you might pass to Bunny.new. Anything you don't set just gets the Bunny default.
   #Typical fields needed for our setup are shown below.
   amqp:

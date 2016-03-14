@@ -153,9 +153,7 @@ ready = function() {
         }
     });
 
-    $('.review-deposit-agreement').hide();
-
-    $('[data-toggle="tooltip"]').tooltip();
+   $('[data-toggle="tooltip"]').tooltip();
 
     var clip = new ZeroClipboard($("#d_clip_button"))
 

@@ -50,13 +50,13 @@ module MedusaAmqp
       Rails.logger.warn ingest_relation.to_yaml
       Rails.logger.warn "response_hash['staging_path']: #{response_hash['staging_path']}"
 
-      MedusaIngest.all.each do |ingest|
-        Rails.logger.warn ingest.staging_path
-      end
+      # MedusaIngest.all.each do |ingest|
+      #   Rails.logger.warn ingest.staging_path
+      # end
 
       if ingest_relation.count > 0
 
-        Rails.logger.warn("response hash: #{response_hash.to_yaml}" )
+        # Rails.logger.warn("response hash: #{response_hash.to_yaml}" )
         ingest = ingest_relation.first
         ingest.request_status = response_hash['status'].to_s
         ingest.medusa_path = response_hash['medusa_path']
@@ -84,6 +84,8 @@ module MedusaAmqp
           else
             Rails.logger.warn "Did not find datafile binary, staging_path_arr: #{staging_path_arr.to_yaml}"
           end
+        when 'agreements'
+          # ignore for now
         else
           Rails.logger.warn "Unrecognized staging_path in medusa ingest response #{response.to_yaml}"
       end

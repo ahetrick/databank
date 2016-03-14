@@ -1,0 +1,28 @@
+License granted by Colleen Fallaw on 2016-03-11T21:57:29Z
+Illinois Data Bank Deposit Agreement: Non-Exclusive Distribution and Preservation License
+
+To properly administer the Illinois Data Bank and preserve the contents for future use, the Board of Trustees of the University of Illinois on behalf of its Urbana-Champaign campus (the "University") requires certain permissions and warrants from you, the creator(s) and/or copyright owner. If copyright law is applicable to your dataset submission (see Guidance for Data Copyright TBA) and you are the copyright owner, by accepting this license, you still retain copyright to your work and do not give up the right to submit the work to publishers or other repositories. If you are not the copyright owner, you represent that the copyright owner has given you permission to deposit the work.
+
+By accepting (clicking through) this license, you grant to the University the non-exclusive right to reproduce, translate (as described below), and distribute the submission, including the descriptive information (metadata) and abstract, in any format or medium worldwide and royalty-free, including, but not limited to, publication over the Internet, except as provided for by an addendum to this agreement.
+
+You agree that the University may translate the submission to any medium or format and make multiple copies of the submission for the purposes of security, back-up, and preservation. You understand and agree that the University may correct inaccurate metadata but will not otherwise alter the submission.
+
+The University will clearly identify your name(s) as the creator(s) as well as the corresponding creator for the submission as well as the name(s) of the copyright owner(s) if different from your name(s). The University will also display the copyright license you choose for the submission.
+
+You understand that the University commits to preserving your submission in accordance with our Preservation Policy (TBA). The University also commits to public access through maintenance of persistent Illinois Data Bank webpages, metadata records, and identifiers and to providing access metrics (such as pageviews, downloads, and citations). The University commits to this level of preservation, access, and reporting for a period of at least 5 years from the date of deposit. The University will endeavor to retain the data beyond the initial commitment, but reserve the right to review the long-term viability of the deposit beyond the initial 5 year commitment. To learn more about how to enable the long-term preservation of your submission, please see our Preservation Review Guidelines (TBA).
+
+If you cannot make all of the following representations, then you must contact the Research Data Service at researchdata [at] library [dot] illinois [dot] edu before proceeding further. In order to make this submission, you represent that:
+
+  1. You have the right to grant the rights contained in the license.
+  2. This submission does not, to the best of your knowledge, infringe on anyone's copyright or other intellectual property rights.
+  3. If the submission does contain material for which you do not hold copyright and that exceeds fair use, you have obtained the unrestricted permission of the copyright owner to grant the University the rights required by this license and that such third-party owned material is clearly identified and acknowledged within the text or content of the submission.
+  4. The submission does not contain any private information, confidential information, proprietary information of others, export controlled information, or otherwise protected data or information that should not be publicly shared.
+  5. There are not any restrictions or required publication delays on the distribution of the submission by the University.
+  6. The information you provide about the submission is accurate.
+  7. Where applicable, you agree to release and hold harmless the University from any and all liability from claims arising out of any legal action concerning identification of research subjects, breaches of confidentiality, or invasions of privacy by or on behalf of said subjects.
+  8. The submission does not contain any software viruses or computer codes, files, or programs capable of allowing unauthorized access or disrupting, damaging, limiting or interfering with the proper functioning of the Illinois Data Bank or other users' software, hardware, or telecommunications equipment.
+You understand that if copyright terms for, or ownership of, the submission change, it is your responsibility to notify the University of these changes.
+
+If the submission is based upon work that has been sponsored or supported by an agency or organization other than the University, you must fulfill any right of review or other obligations required by the contract or agreement with such an agency or organization before depositing into the Illinois Data Bank.
+
+By accepting this license, you acknowledge that you have read and agreed to the terms of this agreement and all related Illinois Data Bank and University policies.

@@ -21,6 +21,7 @@ class Dataset < ActiveRecord::Base
   accepts_nested_attributes_for :related_materials, reject_if: proc { |attributes| ((attributes['link'].blank? ) && (attributes['citation'].blank? )) }, allow_destroy: true
 
   before_create 'set_key'
+  after_create 'store_agreement'
   before_save 'set_primary_contact'
   after_save 'remove_invalid_datafiles'
   after_update 'set_datacite_change'
@@ -497,5 +498,18 @@ class Dataset < ActiveRecord::Base
     end
   end
 
+  def store_agreement
+    dir_text = "#{IDB_CONFIG[:agreements_root_path]}/#{self.key}"
+    Dir.mkdir dir_text
+    FileUtils.chmod "u=wrx,go=rx", File.dirname(dir_text)
+    path = "#{dir_text}/deposit_agreement.txt"
+    base_content = File.read("#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.txt")
+    agent_text = "License granted by #{self.depositor_name} on #{self.created_at.iso8601}"
+    content = "#{agent_text}\n\n#{base_content}"
+    File.open(path, "w+") do |f|
+      f.write(content)
+    end
+    FileUtils.chmod "u=wrx,go=rx", path
+  end
 
 end
