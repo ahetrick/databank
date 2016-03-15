@@ -159,6 +159,12 @@ $dropDown: false;
 }
 
 @media (max-width: 767px) {
+
+  .navbar-default {
+    min-height: 35px !important;
+    padding: 0 !important;
+  }
+
   .navbar-default .navbar-nav .open .dropdown-menu {
     > li > a {
       color: $colDefault;
@@ -175,7 +181,7 @@ $dropDown: false;
   }
   .navbar-brand {
     font-size: 30px !important;
-    padding: 15px !important;
+    padding: 15px;
   }
 }
 
