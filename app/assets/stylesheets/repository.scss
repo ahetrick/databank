@@ -1,3 +1,8 @@
+body{
+  font-family: Univers, Ariel, Sans-Serif;
+  font-size: 16px;
+}
+
 .library-header {
   margin-bottom: 0;
   background-color: $color__dark-navy;
@@ -9,7 +14,7 @@
 }
 
 .repository-header {
-  font-family: "Times New Roman", Times, Serif;
+  font-family: "Garamond", "Times New Roman", Times, Serif;
   font-size: 55px;
   color: $color__text-light;
   background-color: $color__dark-orange;
@@ -85,7 +90,7 @@ $dropDown: false;
     padding-right: 50px;
     color: $colDefault;
     font-size: 55px;
-    font-family: "Times New Roman", Times, Serif;
+    font-family: "Garamond", "Times New Roman", Times, Serif;
     &:hover, &:focus {
       color: $colHighlight;
     }
