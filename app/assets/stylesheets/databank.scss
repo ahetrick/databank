@@ -66,27 +66,7 @@ li.current {
   margin-top: 5px;
   margin-bottom: 5px;
 }
-.workflow-graphic {
-  color: $color__dark-moderate-blue;
-  margin: 0;
-  padding: 0;
-}
 
-.workflow-graphic-text {
-  width: 100px;
-  margin-left: -70px;
-  padding: 15px 15px 15px 70px;
-  color: black;
-  background-color: lightgrey;
-}
-
-.workflow-bar {
-  opacity: 0.1;
-  padding: 0;
-  margin: -20px 0 0 10px;
-  height: 10px;
-  background-color: grey;
-}
 .add-file-controls {
   line-height: 30px;
   font-size: 16px;
@@ -129,17 +109,6 @@ pre {
   background-color: #eee;
   padding: 10px;
   font-size: 11px;
-}
-
-a {
-  color: #606eb2;
-  &:visited {
-    color: #606eb2;
-  }
-  &:hover {
-    color: #fff;
-    background-color: #000;
-  }
 }
 
 div {
