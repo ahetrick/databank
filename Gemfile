@@ -21,9 +21,6 @@ gem 'jquery-datatables-rails'
 gem 'jquery-ui-rails'
 gem 'highcharts-rails'
 
-# Use jquery-turbolinks to deal turbolinks tending to gum up the jquery works
-gem 'jquery-turbolinks'
-
 # Use zeroclipboard-rails to copy text to clipboards
 gem 'zeroclipboard-rails'
 
@@ -111,11 +108,6 @@ gem "audited-activerecord", "~> 4.0"
 
 # Use google-analytics-rails to support Google Analytics
 gem 'google-analytics-rails', '1.1.0'
-
-
-
-# Use cookies_eu to comply with eu cookie consent law
-gem 'cookies_eu'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

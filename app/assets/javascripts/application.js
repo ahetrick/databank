@@ -19,7 +19,4 @@
 //= require turbolinks
 //= require bootstrap-sprockets
 //= require effective_datatables
-//= require cookies_eu
 //= require_tree .
-//= require turbolinks
-

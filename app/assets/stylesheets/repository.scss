@@ -1,4 +1,4 @@
-.library-header{
+.library-header {
   margin-bottom: 0;
   background-color: $color__dark-navy;
   padding-top: 10px;
@@ -8,7 +8,7 @@
   margin-top: 0;
 }
 
-.repository-header{
+.repository-header {
   font-family: "Times New Roman", Times, Serif;
   font-size: 55px;
   color: $color__text-light;
@@ -19,17 +19,17 @@
 }
 
 .repository-header > a:link, .repository-header > a:visited, .repository-header > a:hover, .repository-header > a:active {
-  color:$color__text-light;
+  color: $color__text-light;
   text-decoration: none;
   background-color: $color__dark-orange;
 }
 
-.repository-footer-info{
+.repository-footer-info {
   padding-top: 15px;
   text-align: center;
 }
 
-#welcome-image{
+#welcome-image {
   // background-image: url("IDB_header_image_01.jpg");
   background-image: url("IDB_Filter_2.jpg");
   margin: 0;
@@ -38,7 +38,8 @@
   background-size: cover;
   height: 200px;
 }
-#welcome-overlay{
+
+#welcome-overlay {
   position: absolute;
   left: 30px;
   top: 75px;
@@ -46,7 +47,8 @@
   padding-left: 15px;
 
 }
-#welcome-overlay > p{
+
+#welcome-overlay > p {
   text-size: 20px;
   line-height: 23px;
   width: 580px;
@@ -171,18 +173,53 @@ $dropDown: false;
   }
 }
 
-
 /* end Navbar styling */
+
+/* begin Button styling  */
+
+//.btn-danger {
+//  background-color: #c02c2c;
+//  border-color: #c02c2c;
+//}
+//
+//.btn-danger:hover,
+//.btn-danger:focus,
+//.btn-danger:active,
+//.btn-danger.active {
+//  background-color: #ab2727;
+//  border-color: #972222;
+//}
+//
+//.btn-danger.disabled:hover,
+//.btn-danger.disabled:focus,
+//.btn-danger.disabled:active,
+//.btn-danger.disabled.active,
+//.btn-danger[disabled]:hover,
+//.btn-danger[disabled]:focus,
+//.btn-danger[disabled]:active,
+//.btn-danger[disabled].active,
+//fieldset[disabled] .btn-danger:hover,
+//fieldset[disabled] .btn-danger:focus,
+//fieldset[disabled] .btn-danger:active,
+//fieldset[disabled] .btn-danger.active {
+//  background-color: #c02c2c;
+//  border-color: #c02c2c;
+//}
+
+/* end Button styling */
+
 /* begin Sticky footer styles
 -------------------------------------------------- */
 html {
   position: relative;
   min-height: 100%;
 }
+
 body {
   /* Margin bottom by footer height */
   margin-bottom: 175px;
 }
+
 .library-footer {
   position: absolute;
   bottom: 0;
