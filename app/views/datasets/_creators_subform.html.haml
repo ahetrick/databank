@@ -53,7 +53,7 @@
 
           %button(type="button" class="btn btn-primary btn-block orcid-search-btn" onclick="showOrcidSearchModal('#{i}')" )
             %span(class="glyphicon glyphicon-search" )
-            Look Up
+            Look Up &nbsp;
             =image_tag 'iD_icon_16x16.png'
         %td(class="col-md-2")
           = cf.email_field :email, class: "form-control dataset creator-email", placeholder: "[Email, e.g.: netid@illinois.edu]", onchange: "handle_creator_email_change(this)"

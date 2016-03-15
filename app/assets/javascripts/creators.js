@@ -66,7 +66,7 @@ function add_creator_row(){
         '</td>'+
 
         '<td class="col-md-1">' +
-        '<button type="button" class="btn btn-primary btn-block orcid-search-btn" data-id="' + newId + '" onclick="showOrcidSearchModal('+ newId +')"><span class="glyphicon glyphicon-search"></span>&nbsp;Look Up</a>' +
+        '<button type="button" class="btn btn-primary btn-block orcid-search-btn" data-id="' + newId + '" onclick="showOrcidSearchModal('+ newId +')"><span class="glyphicon glyphicon-search"></span>&nbsp;Look Up&nbsp;<img src="/iD_icon_16x16.png">' +
         '</td>' +
         '<td class="col-md-2">' +
         '<input onchange="handle_creator_email_change(this)" class="form-control dataset creator-email" placeholder="[Email, e.g.: netid@illinois.edu]" type="email" name="dataset[creators_attributes][' + newId + '][email]" id="dataset_creators_attributes_' + newId + '_email" />' +
