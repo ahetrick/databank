@@ -234,7 +234,7 @@ ul.help-info{
 }
 
 .idb-dashboard .panel-body{
-  background-color: white;
+  background-color: $color__background-main-column;
 }
 .idb-dashboard .panel-heading{
   color: black;
@@ -272,7 +272,7 @@ ul.help-info{
  }
 
 .invalid-input {
-  border: 2px solid red;
+  border: 2px solid $color__red;
 }
 
 .dashboard-unicorn-image {
@@ -285,7 +285,7 @@ ul.help-info{
 }
 .availability-msg{
   padding: 10px;
-  background-color: #ffffe0;
+  background-color: $color__lightest-grey;
   font-weight: bold;
 }
 .confirm-modal-text li {
@@ -295,7 +295,7 @@ ul.help-info{
 }
 .embargo-placeholder {
   padding: 50px;
-  background-color: orange;
+  background-color: $color__orange;
   font-size: 18px;
   font-weight: bold;
 }

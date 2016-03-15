@@ -9,14 +9,14 @@
 }
 
 .idb-help-section-head {
-  border: 1px grey;
+  border: 1px $color__medium-grey;
 }
 .idb-help{
   padding-top: 10px;
 }
 
 li.current {
-  background-color: #BEC4DF;
+  background-color: $color__light-blue;
 }
 
 // Place all the styles related to the home controller here.
@@ -32,7 +32,7 @@ li.current {
   font-family: 'Glyphicons Halflings';
   content: "\e072"; /* "play" icon */
   float: right;
-  color: #F58723;
+  color: $color__light-orange;
   font-size: 18px;
   line-height: 22px;
   /* rotate "play" icon from > (right arrow) to down arrow */
@@ -54,7 +54,7 @@ li.current {
 }
 
 .bg-subtle  {
-  background-color: #F8F8F8;
+  background-color: $color__lightest-grey;
 }
 .navbar-user {
   padding-top: 15px;
@@ -87,20 +87,20 @@ li.current {
 
 .idb-alert{
   padding: 15px;
-  background-color: lightblue;
+  background-color: $color__light-blue;
 }
 .idb-callout {
-  background: yellow;
+  background: $color__yellow;
   padding: 5px;
 }
 .completion-warning{
-  background: yellow;
+  background: $color__yellow;
   padding-top: 5px;
   padding-bottom: 5px;
 }
 
 pre {
-  background-color: #eee;
+  background-color: $color__lightest-grey;
   padding: 10px;
   font-size: 11px;
 }
@@ -117,17 +117,17 @@ div {
 
 .field_with_errors {
   padding: 2px;
-  background-color: red;
+  background-color: $color__red;
   display: table;
 }
 
 #error_explanation {
   width: 450px;
-  border: 2px solid red;
+  border: 2px solid $color__red;
   padding: 7px;
   padding-bottom: 0;
   margin-bottom: 20px;
-  background-color: #f0f0f0;
+  background-color: $color__lightest-grey;
   h2 {
     text-align: left;
     font-weight: bold;
@@ -135,7 +135,7 @@ div {
     font-size: 12px;
     margin: -7px;
     margin-bottom: 0px;
-    background-color: #c00;
+    background-color: $color__red;
     color: #fff;
   }
   ul li {
@@ -145,17 +145,13 @@ div {
 }
 
 a.btn {
-  color: #fff;
-  &:visited {
-    color: #fff;
+  color: $color__text-light;
+&:visited {
+    color: $color__text-light;
   }
   &:hover {
-    color: #fff;
-    background-color: #000;
+    color: $color__text-light;
+    background-color: $color__dark-navy;
   }
 }
 
-p, li, .workflow-graphic-text{
-  font-size: 18px;
-  line-height: 22px;
-}

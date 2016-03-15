@@ -70,12 +70,12 @@ $sidebar-offset: -400px;
 .sidebar-nav li a {
     display: block;
     text-decoration: none;
-    color: #999999;
+    color: $color__light-grey;
 }
 
 .sidebar-nav li a:hover {
     text-decoration: none;
-    color: #fff;
+    color: $color__text-light;
     background: rgba(255,255,255,0.2);
 }
 
@@ -91,11 +91,11 @@ $sidebar-offset: -400px;
 }
 
 .sidebar-nav > .sidebar-brand a {
-    color: #999999;
+    color: $color__text-light;
 }
 
 .sidebar-nav > .sidebar-brand a:hover {
-    color: #fff;
+    color: $color__text-light;
     background: none;
 }
 
