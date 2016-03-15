@@ -67,10 +67,11 @@ a {
 }
 
 /* begin Navbar styling */
-$colDefault: $color__lightest-grey;
+// $colDefault: $color__lightest-grey;
+$colDefault: $color__text-light;
 $bgDefault: $color__dark-orange;
 $bgHighlight: $color__orange;
-$colHighlight: $color__text-light;
+$colHighlight: $color__lightest-grey;
 $dropDown: false;
 
 .navbar-default {
@@ -232,7 +233,6 @@ fieldset[disabled] .btn-primary.active {
   background-color: #265191;
   border-color: #265191;
 }
-
 
 .btn-success {
   background-color: #c86128;
