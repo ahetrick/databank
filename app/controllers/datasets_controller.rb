@@ -343,9 +343,18 @@ class DatasetsController < ApplicationController
 
     if completion_check == 'ok'
       @dataset.complete = true
-      if (@dataset.release_date && @dataset.release_date <= Date.current()) || !@dataset.embargo || @dataset.embargo == ""
+
+      if [Databank::PublicationState::DRAFT, Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::METADATA_EMBARGO].include?(old_state)
+        if (@dataset.release_date && @dataset.release_date <= Date.current()) || !@dataset.embargo || @dataset.embargo == ""
+          @dataset.release_date = Date.current()
+        end
+      end
+
+      if !@dataset.release_date
         @dataset.release_date = Date.current()
       end
+
+      
     else
       @dataset.complete = false
     end
