@@ -6,12 +6,9 @@
   font-weight: bold;
   font-size: large;
 }
-.logoOrange{
-  color: #E87722;
-  font-weight: bold;
-}
+
 .info-box {
-  background-color: #F8F8F8;
+  background-color: $color__lightest-grey;
 }
 
 .metadata-label {
@@ -27,7 +24,7 @@
 }
 
 div#citation-block {
-  background-color: #ecf0f1;
+  background-color: $color__lightest-grey;
   border-radius: 5px;
 }
 
@@ -55,24 +52,24 @@ div#citation-block {
   height: 550px;
 }
 .border{
-  border:1px solid #ddd;
-  border:1px solid #ddd;
-  border:1px solid #ddd;
+  border:1px solid $color__light-grey;
+  border:1px solid $color__light-grey;
+  border:1px solid $color__light-grey;
   padding-left: 10px;
 }
 
 fieldset.metadata-border {
-  border: 1px groove #C0C0C0 !important;
+  border: 1px groove $color__medium-grey !important;
   padding: 0 1.4em 1.4em 1.4em !important;
   margin: 0 0 1.5em 0 !important;
-  background-color: #F0FBFF;
+  background-color: $color__light-grey;
 }
 
 legend.metadata-border {
   width:inherit; /* Or auto */
   padding:0 10px; /* To give a bit of padding on the left and right */
   border-bottom:none;
-  background-color: #FFFFFF;
+  background-color: $color__text-light;
 }
 .deposit-agreement-warning {
   color:red;
@@ -81,19 +78,9 @@ legend.metadata-border {
   // padding-bottom: 20px;
   //font-size: 120%;
 }
-.selected-button {
-  outline: solid 5px #dfdfb8;
-}
-
-//#main-form-top {
-//  display: table-header-group;
-//}
-//#main-form-bottom {
-//  display:table-footer-group;
-//}
 
 .drop-area{
-  background-color: white;
+  background-color: $color__text-light;
   margin: 50px;
 }
 .modal-dialog {
@@ -143,11 +130,11 @@ legend.metadata-border {
 .curator-only{
   padding: 5px;
   border: 1px solid black;
-  background-color: #fff4e1;
+  background-color: $color__highlight-orange;
 }
 
 .panel-body{
-  background-color: #e1ecff;
+  background-color: $color__light-blue;
 }
 
 #creator_table{
