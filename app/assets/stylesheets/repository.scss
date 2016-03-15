@@ -11,57 +11,17 @@
 .repository-header{
   font-family: "Times New Roman", Times, Serif;
   font-size: 55px;
-  color: white;
+  color: $color__text-light;
   background-color: $color__dark-orange;
   padding-left: 15px;
   margin: 0;
   width: 100%;
 }
 
-.library-logo-words{
-  color: white;
-  text-transform: uppercase;
-  font-family: "Times New Roman", Times, Serif;
-  font-size: 24px;
-}
-
-.university-logo-words{
-  color: $color__medium-grey;
-  text-transform: uppercase;
-  font-family: Helvetica, Arial, sans-serif;
-  font-size: 12px;
-}
-
-.university-library-branding{
-  padding-left: 15px;
-}
-
-.banner-image-imark{
-  height: 24px;
-  padding-right: 15px;
-  padding-bottom: 5px;
-}
-
 .repository-header > a:link, .repository-header > a:visited, .repository-header > a:hover, .repository-header > a:active {
-  color:white;
+  color:$color__text-light;
   text-decoration: none;
   background-color: $color__dark-orange;
-}
-
-.library-logo-words> a:link, .library-logo-words > a:visited, .library-logo-words > a:hover, .library-logo-words > a:active {
-  text-decoration: none;
-  background-color: $color__dark-navy;
-  color:white
-}
-
-.university-logo-words{
-  width: 100%;
-}
-
-.university-logo-words> a:link, .university-logo-words > a:visited, .university-logo-words > a:hover, .university-logo-words > a:active {
-  text-decoration: none;
-  background-color: $color__dark-navy;
-  color: $color__medium-grey;
 }
 
 .repository-footer-info{
@@ -82,7 +42,7 @@
   position: absolute;
   left: 30px;
   top: 75px;
-  background-color: white;
+  background-color: $color__text-light;
   padding-left: 15px;
 
 }
@@ -108,18 +68,20 @@ a {
 $colDefault: $color__lightest-grey;
 $bgDefault: $color__dark-orange;
 $bgHighlight: $color__orange;
-$colHighlight: #ffffff;
+$colHighlight: $color__text-light;
 $dropDown: false;
 
 .navbar-default {
+  min-height: 75px;
   margin: 0;
-  padding: 0;
+  padding-top: 15px;
   border-radius: 0;
   background-color: $bgDefault;
-  border-color: $color__dark-orange;
+  border-color: $bgDefault;
   .navbar-brand {
+    padding-right: 50px;
     color: $colDefault;
-    font-size: 30px;
+    font-size: 55px;
     font-family: "Times New Roman", Times, Serif;
     &:hover, &:focus {
       color: $colHighlight;
@@ -133,11 +95,9 @@ $dropDown: false;
     > li {
       > a {
         color: $colDefault;
-        border: 1px solid $bgHighlight;
         &:hover, &:focus {
           color: $colHighlight;
           background-color: $bgHighlight;
-          border: 1px solid $colHighlight;
         }
       }
       @if $dropDown {
@@ -205,25 +165,13 @@ $dropDown: false;
       }
     }
   }
-}
-
-
-@media (max-width: 767px) {
-  .navbar-default .navbar-nav .open .dropdown-menu {
-    > li > a {
-      color: $colDefault;
-      &:hover, &:focus {
-        color: $colHighlight;
-      }
-    }
-    > .active {
-      > a, > a:hover, > a:focus {
-        color: $colHighlight;
-        background-color: $bgHighlight;
-      }
-    }
+  .navbar-brand {
+    font-size: 30px !important;
+    padding: 15px !important;
   }
 }
+
+
 /* end Navbar styling */
 /* begin Sticky footer styles
 -------------------------------------------------- */
