@@ -62,7 +62,7 @@ module Effective
             end
           end
         end
-        table_column :updated_at, visibile: false
+        table_column :updated_at, visible: false
         default_order :updated_at, :desc
       end
 
