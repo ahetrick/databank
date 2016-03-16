@@ -18,7 +18,7 @@
 
   <p>Contact person: <%= @dataset.corresponding_creator_name %></p>
 
-  <p>Deposit agreement link: <a href="https://rds-dev.library.illinois.edu/datasets/<%= @dataset.key %>/review_deposit_agreement">https://rds-dev.library.illinois.edu/datasets/<%= @dataset.key %>/review_deposit_agreement</a></p>
+  <p>Deposit agreement link: <a href="<%= IDB_CONFIG[:root_url_text] %>/datasets/<%= @dataset.key %>/review_deposit_agreement"><%= IDB_CONFIG[:root_url_text] %>/datasets/<%= @dataset.key %>/review_deposit_agreement</a></p>
 </blockquote>
 
 <p>

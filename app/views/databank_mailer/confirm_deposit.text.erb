@@ -6,7 +6,7 @@ Here is some information about the deposited dataset:
   Release date: <%= @dataset.release_date %>
   Depositor: <%= @dataset.depositor_name %>
   Contact person: <%= @dataset.corresponding_creator_name %>
-  Deposit agreement link: https://rds-dev.library.illinois.edu/datasets/<%= @dataset.key %>/review_deposit_agreement"
+  Deposit agreement link: <%= IDB_CONFIG[:root_url_text] %>/datasets/<%= @dataset.key %>/review_deposit_agreement"
 
 A curator may contact you with questions about this dataset. Please direct any questions you may have at this time or in the future to databank@library.illinois.edu.
 
