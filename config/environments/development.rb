@@ -48,6 +48,7 @@ Rails.application.configure do
   }
   config.action_mailer.perform_deliveries = true
   config.action_mailer.logger = Rails.logger
+  config.action_mailer.default_url_options = {host: "rds-dev.library.illinois.edu"}
 
 
   # Raises error for missing translations
