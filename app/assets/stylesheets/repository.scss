@@ -326,26 +326,28 @@ fieldset[disabled] .btn-warning.active {
 
 /* end Button styling */
 
-/* begin Sticky footer styles
+/* begin Sticky footer styles for full screen
 -------------------------------------------------- */
-html {
-  position: relative;
-  min-height: 100%;
-}
 
-body {
-  /* Margin bottom by footer height */
-  margin-bottom: 175px;
-}
+@media (max-width: 767px) {
+  html {
+    position: relative;
+    min-height: 100%;
+  }
 
-.library-footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  /* Set the fixed height of the footer here */
-  height: 175px;
-  background-color: #f5f5f5;
-}
+  body {
+    /* Margin bottom by footer height */
+    margin-bottom: 175px;
+  }
 
+  .library-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 175px;
+    background-color: #f5f5f5;
+  }
+}
 /* end Sticky footer styles
 -------------------------------------------------- */
