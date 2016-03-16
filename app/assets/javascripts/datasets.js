@@ -324,20 +324,48 @@ function download_selected(){
 }
 
 function handlePrivateYes(){
-    $('#private-na').attr('checked', false);
-    $('#private-no').attr('checked', false);
+    if ($('#private-yes').is(':checked')){
+        $('#dataset_removed_private').val('yes');
+        $('#review_link').html('<a href="/review_deposit_agreement?removed=yes" target="_blank">Review Deposit Agreement</a>');
+        $('#private-na').attr('checked', false);
+        $('#private-no').attr('checked', false);
+    } else {
+        $('#dataset_removed_private').val('no');
+    }
 }
 
 function handlePrivateNA(){
-    $('#private-yes').attr('checked', false);
-    $('#private-no').attr('checked', false);
+
+    if ($('#private-na').is(':checked')){
+        $('#review_link').html('<a href="/review_deposit_agreement?removed=na" target="_blank">Review Deposit Agreement</a>');
+        $('#dataset_removed_private').val('na');
+        $('#private-yes').attr('checked', false);
+        $('#private-no').attr('checked', false);
+    } else {
+        $('#dataset_removed_private').val('no');
+    }
 }
 
 function handlePrivateNo(){
     if ($('#private-no').is(':checked')){
+        $('#dataset_removed_private').val('no');
         $('#private-na').attr('checked', false);
         $('#private-yes').attr('checked', false);
         window.location = "/help?context=sensitive";
+    }
+}
+function handleOwnerYes(){
+    if ($('#owner-yes').is(':checked')){
+        $('#dataset_have_permission').val('yes');
+    } else {
+        $('#dataset_have_permission').val('no');
+    }
+}
+function handleAgreeYes(){
+    if ($('#agree-yes').is(':checked')){
+        $('#dataset_agree').val('yes');
+    } else {
+        $('#dataset_agree').val('no');
     }
 }
 

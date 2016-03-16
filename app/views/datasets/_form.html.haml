@@ -1,5 +1,8 @@
 %div(id="main-form-top")
   = form_for(@dataset, :html => {"data-toggle" => "validator", :multipart => true, :role => "form", :enctype => "multipart/form-data", :class => "input-append dataset-form" }) do |f|
+    =f.hidden_field :have_permission
+    =f.hidden_field :removed_private
+    =f.hidden_field :agree
     .panel-group(id="description" role="tablist" aria-multiselectable="true")
       .panel.panel-default
         .panel-heading(role="tab" id="descriptionHeading")
@@ -223,9 +226,10 @@
                       %div(id="box-select" data-link-type="direct" data-multiselect="true" data-client-id="r5tgofc05460skm84yjepz1ck16ptotr")
   .review-deposit-agreement.container-fluid
     - if (params[:action] == 'new')
-      %a(href="/review_deposit_agreement" target="_blank" ) Review Deposit Agreement
+      %div(id="review_link")
+        %a(href="/review_deposit_agreement" target="_blank" ) Review Deposit Agreement
     - else
-      %a(href="/datasets/#{@dataset.key}/review_deposit_agreement" target="_blank" ) Review Deposit Agreement
+      %a(href="/datasets/#{@dataset.key}/review_deposit_agreement?" target="_blank" ) Review Deposit Agreement
 
 = render partial: 'orcid_search'
 = render partial: 'license_help_modal'

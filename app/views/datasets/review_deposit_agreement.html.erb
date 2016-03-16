@@ -1,16 +1,73 @@
 <% if @dataset %>
 
   <% if File.exist?("#{IDB_CONFIG[:agreements_root_path]}/#{@dataset.key}/deposit_agreement.txt") %>
+    <br/>
     <%= (File.read("#{IDB_CONFIG[:agreements_root_path]}/#{@dataset.key}/deposit_agreement.txt")).gsub(/\n/, '<br />').html_safe %>
   <% else %>
-    <%= "Dynamic License granted by #{@dataset.depositor_name} on #{@dataset.created_at.iso8601}"%>
     <br/>
+    <%= "License granted by #{@dataset.depositor_name} on #{@dataset.created_at.iso8601}" %>
+    <br/>
+    <% if @dataset.removed_private && @dataset.removed_private != 'no' %>
+      <br/>
+      =================================================================================================================
+      <br/>
+      <br/>
+      Are you a creator of this dataset or have you been granted permission by the creator to deposit this dataset?
+      <br/>
+      [x] Yes
+      <br/>
+      <br/>
+      Have you removed any private, confidential, or other legally protected information from the dataset?
+      <br/>
+      [<%= @dataset.removed_private=='yes' ? 'x' : '  ' %>] Yes
+      <br/>
+      [<%= @dataset.removed_private=='no' ? 'x' : '  ' %>] No
+      <br/>
+      [<%= @dataset.removed_private=='na' ? 'x' : '  ' %>] Not applicable
+      <br/>
+      <br/>
+      Do you agree to the Illinois Data Bank Deposit Agreement in its entirety?
+      <br/>
+      [x] Yes
+      <br/>
+      <br/>
+      =================================================================================================================
+      <br/>
+    <% end %>
     <br/>
     <%= (File.read("#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.txt")).gsub(/\n/, '<br />').html_safe %>
-    <% end %>
+  <% end %>
 <% else %>
-  <%= "License granted by #{current_user.name} on #{Date.current().iso8601}"%>
   <br/>
+  <%= "License granted by #{current_user.name} on #{Date.current().iso8601}" %>
+  <br/>
+  <% if params['removed'] && (params['removed'] == 'yes' || params['removed'] == 'na') %>
+    <br/>
+    =================================================================================================================
+    <br/>
+    <br/>
+    Are you a creator of this dataset or have you been granted permission by the creator to deposit this dataset?
+    <br/>
+    [x] Yes
+    <br/>
+    <br/>
+    Have you removed any private, confidential, or other legally protected information from the dataset?
+    <br/>
+    [<%= params['removed'] == 'yes' ? 'x' : '  ' %>] Yes
+    <br/>
+    [  ] No
+    <br/>
+    [<%= params['removed'] == 'na' ? 'x' : '  ' %>] Not applicable
+    <br/>
+    <br/>
+    Do you agree to the Illinois Data Bank Deposit Agreement in its entirety?
+    <br/>
+    [x] Yes
+    <br/>
+    <br/>
+    =================================================================================================================
+    <br/>
+  <% end %>
   <br/>
   <%= (File.read("#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.txt")).gsub(/\n/, '<br />').html_safe %>
 <% end %>
