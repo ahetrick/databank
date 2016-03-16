@@ -26,7 +26,6 @@ module Effective
         # table_column :audited_changes
 
         table_column :created_at, label: "Timestamp"
-
         default_order :created_at, :desc
 
       end

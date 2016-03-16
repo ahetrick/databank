@@ -62,6 +62,8 @@ module Effective
             end
           end
         end
+        table_column :updated_at, visibile: false
+        default_order :updated_at, :desc
       end
 
       def collection
