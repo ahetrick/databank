@@ -91,7 +91,7 @@ class DatasetsController < ApplicationController
       when "license.txt"
         # @license_header = "See license.txt file in dataset"
         @dataset.datafiles.each do |datafile|
-          if (datafile.binary_name).downcase == "license.txt"
+          if  datafile.bytestream_name && ( (datafile.bytestream_name).downcase == "license.txt")
             @license_link = "#{request.base_url}/datafiles/#{datafile.web_id}/download"
           end
         end
@@ -760,6 +760,22 @@ class DatasetsController < ApplicationController
       if ((current_user.role != 'admin') && (@dataset.release_date && (@dataset.release_date > (Date.current + 1.years)) ) )
         validation_error_messages << "a release date no more than one year in the future"
       end
+    end
+
+    if @dataset.license && @dataset.license == "license.txt"
+      has_file = false
+      if @dataset.datafiles
+        @dataset.datafiles.each do |datafile|
+          if datafile.bytestream_name && ((datafile.bytestream_name).downcase == "license.txt")
+            has_file = true
+          end
+        end
+      end
+
+      if !has_file
+        validation_error_messages << "a license file named license.txt or a different license selection"
+      end
+
     end
 
     if @dataset.identifier && @dataset.identifier != ''
