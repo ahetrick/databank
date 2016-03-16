@@ -154,7 +154,32 @@ a.btn {
 
 /*  fixed headers for full screen */
 
-@media (min-width: 767px) {
+@media screen and (max-width: 1145px) and (min-width: 767px) {
+
+  .library-header{
+    z-index: 1001;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+  .navbar-default{
+    z-index: 1002;
+    position: fixed;
+    top: 32px;
+    width: 100%;
+
+  }
+  #not-header{
+    margin-top: 142px;
+  }
+  .bs-callout-info {
+    padding-top: 142px;
+    padding-bottom: 10px;
+  }
+}
+
+@media screen and (min-width: 1146px)  {
 
   .library-header{
     z-index: 1001;

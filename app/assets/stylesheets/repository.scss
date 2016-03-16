@@ -323,12 +323,13 @@ fieldset[disabled] .btn-warning.active {
   border-color: #F47F24;
 }
 
-
 /* end Button styling */
 
 /* begin Sticky footer styles for full screen
 -------------------------------------------------- */
-
+.library-footer {
+  position: relative;
+}
 @media (max-width: 767px) {
   html {
     position: relative;
