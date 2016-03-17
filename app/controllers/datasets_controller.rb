@@ -47,7 +47,7 @@ class DatasetsController < ApplicationController
             @datatable = Effective::Datatables::MyDatasets.new(current_email: current_user.email)
           else
             @datasets = Dataset.where.not(publication_state: Databank::PublicationState::DESTROYED).where("publication_state = ? OR publication_state = ? OR depositor_email = ?", Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED, current_user.email).order(updated_at: :desc)
-            @datatable = Effective::Datatables::DepositorDatasets.new(current_email: current_user.email, current_name: current_user.name )
+            @datatable = Effective::Datatables::DepositorDatasets.new(current_email: current_user.email, current_name: current_user.name)
           end
 
       end
@@ -67,7 +67,7 @@ class DatasetsController < ApplicationController
     @changetable = nil
 
     if @dataset.publication_state != Databank::PublicationState::DRAFT
-      @changetable = Effective::Datatables::DatasetChanges.new(dataset_id: @dataset.id )
+      @changetable = Effective::Datatables::DatasetChanges.new(dataset_id: @dataset.id)
     end
 
     @publish_modal_msg = publish_modal_msg(@dataset)
@@ -91,7 +91,7 @@ class DatasetsController < ApplicationController
       when "license.txt"
         # @license_header = "See license.txt file in dataset"
         @dataset.datafiles.each do |datafile|
-          if  datafile.bytestream_name && ( (datafile.bytestream_name).downcase == "license.txt")
+          if datafile.bytestream_name && ((datafile.bytestream_name).downcase == "license.txt")
             @license_link = "#{request.base_url}/datafiles/#{datafile.web_id}/download"
           end
         end
@@ -116,7 +116,7 @@ class DatasetsController < ApplicationController
       if @datafile.job_id
         @job_id_string = @datafile.job_id.to_s
         job = Delayed::Job.where(id: @datafile.job_id).first
-        if job && job.locked_by  && !job.locked_by.empty?
+        if job && job.locked_by && !job.locked_by.empty?
           locked_by_text = job.locked_by.to_s
 
           Rails.logger.warn "***\n   locked_by_text #{locked_by_text}"
@@ -195,7 +195,7 @@ class DatasetsController < ApplicationController
       if @dataset.save
 
         if params.has_key?('exit')
-          format.html { redirect_to dataset_path(@dataset.key)}
+          format.html { redirect_to dataset_path(@dataset.key) }
           format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
         else
           format.html { redirect_to edit_dataset_path(@dataset.key) }
@@ -249,13 +249,13 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
 
-        if @dataset.update(dataset_params)
-          format.html { redirect_to dataset_path(@dataset.key)}
-          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
-        else
-          format.html { render :edit }
-          format.json { render json: @dataset.errors, status: :unprocessable_entity }
-        end
+      if @dataset.update(dataset_params)
+        format.html { redirect_to dataset_path(@dataset.key) }
+        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+      else
+        format.html { render :edit }
+        format.json { render json: @dataset.errors, status: :unprocessable_entity }
+      end
 
     end
   end
@@ -354,7 +354,7 @@ class DatasetsController < ApplicationController
         @dataset.release_date = Date.current()
       end
 
-      
+
     else
       @dataset.complete = false
     end
@@ -368,7 +368,7 @@ class DatasetsController < ApplicationController
         if @dataset.is_import?
           update_datacite_metadata
         end
-        
+
         if old_state == Databank::PublicationState::DRAFT && !@dataset.is_test?
 
           @dataset.datafiles.each do |datafile|
@@ -417,13 +417,15 @@ class DatasetsController < ApplicationController
             if IDB_CONFIG.has_key?(:local_mode) && IDB_CONFIG[:local_mode]
               Rails.logger.warn "deposit OK for #{@dataset.key}"
             else
-              send_deposit_confirmation_email(old_state, @dataset)
-              confirmation = DatabankMailer.confirm_deposit(@dataset.key)
-              # Rails.logger.warn "confirmation: #{confirmation}"
-              confirmation.deliver_now
+              if current_user.role == 'depositor'
+                send_deposit_confirmation_email(old_state, @dataset)
+                confirmation = DatabankMailer.confirm_deposit(@dataset.key)
+                # Rails.logger.warn "confirmation: #{confirmation}"
+                confirmation.deliver_now
+              end
             end
 
-            format.html { redirect_to dataset_path(@dataset.key), notice: deposit_confirmation_notice(old_state, @dataset)}
+            format.html { redirect_to dataset_path(@dataset.key), notice: deposit_confirmation_notice(old_state, @dataset) }
             format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
           else
             format.html { redirect_to dataset_path(@dataset.key), notice: 'Error in publishing dataset has been logged by the Research Data Service.' }
@@ -456,7 +458,7 @@ class DatasetsController < ApplicationController
 
       else
         format.html { redirect_to edit_dataset_path(@dataset.key), notice: completion_check }
-        format.json {render json: completion_check, status: :unprocessable_entity}
+        format.json { render json: completion_check, status: :unprocessable_entity }
       end
     end
 
@@ -721,7 +723,7 @@ class DatasetsController < ApplicationController
   end
 
   def citation_text
-    render json:{"citation": @dataset.plain_text_citation}
+    render json: {"citation" => @dataset.plain_text_citation}
   end
 
   def completion_check
@@ -757,7 +759,7 @@ class DatasetsController < ApplicationController
     end
 
     if current_user
-      if ((current_user.role != 'admin') && (@dataset.release_date && (@dataset.release_date > (Date.current + 1.years)) ) )
+      if ((current_user.role != 'admin') && (@dataset.release_date && (@dataset.release_date > (Date.current + 1.years))))
         validation_error_messages << "a release date no more than one year in the future"
       end
     end
@@ -822,7 +824,7 @@ class DatasetsController < ApplicationController
   # def dataset_params
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, :is_test, :is_import, :curator_hold, :audit_id, :removed_private, :have_permission, :agree, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update, :audit_id ], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update, :audit_id], related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, :is_test, :is_import, :curator_hold, :audit_id, :removed_private, :have_permission, :agree, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update, :audit_id], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update, :audit_id], related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id])
   end
 
   def ezid_metadata_response
@@ -977,6 +979,7 @@ class DatasetsController < ApplicationController
     def escape(s)
       URI.escape(s, /[%:\n\r]/)
     end
+
     anvl = ''
     metadata.each do |n, v|
       anvl += escape(n.to_s) + ': ' + escape(v.to_s) + "\n"
