@@ -16,7 +16,6 @@ namespace :notify do
   task :send_embargo_approaching_1m_all => :environment do
     Dataset.all.each do |dataset|
       if ([Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState, Databank::PublicationState::METADATA_EMBARGO].include?(dataset.publication_state)) && (dataset.release_date.to_date == 1.month.from_now.to_date)
-        puts "sending message for #{dataset.key}"
         dataset.send_embargo_approaching_1m
       end
     end
