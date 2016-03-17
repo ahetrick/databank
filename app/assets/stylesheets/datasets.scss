@@ -161,7 +161,7 @@ legend.metadata-border {
 .license-info-column-header{
   border-radius: 5px 5px 0 0;
   border: 1px solid $color__dark-moderate-blue;
-  height: 125px;
+  min-height: 125px;
   background-color: $color__dark-moderate-blue;
   color: $color__text-light;
   padding: 5px;
@@ -172,14 +172,14 @@ legend.metadata-border {
   border-right: 1px solid $color__dark-moderate-blue;
   border-left: 1px solid $color__dark-moderate-blue;
   border-top: 1px solid $color__dark-moderate-blue;
-  height: 175px;
+  min-height: 175px;
   padding: 5px;
   background-color: $color__background-main-column;
 }
 .license-info-column-bottom-section{
   border-radius: 0 0 5px 5px;
   border: 1px solid $color__dark-moderate-blue;
-  height: 200px;
+  min-height: 200px;
   padding: 5px;
   background-color: $color__background-main-column;
 }
@@ -198,14 +198,14 @@ legend.metadata-border {
   border-left: 1px solid $color__dark-moderate-blue;
   border-top: 1px solid $color__dark-moderate-blue;
   padding: 10px;
-  height: 125px;
+  min-height: 125px;
   background-color: $color__background-main-column;
 }
 .embargo-info-column-bottom-section{
   border-radius: 0 0 5px 5px;
   border: 1px solid #003dac;
   padding: 10px;
-  height: 145px;
+  min-height: 145px;
   background-color: $color__background-main-column;
 }
 
