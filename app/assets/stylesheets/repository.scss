@@ -329,6 +329,7 @@ fieldset[disabled] .btn-warning.active {
 -------------------------------------------------- */
 .library-footer {
   position: relative;
+  z-index: 2000;
 }
 @media (min-width: 767px) {
   html {
