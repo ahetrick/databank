@@ -34,7 +34,7 @@ div#citation-block {
 
 .form-group.required .control-label:after {
   content:"*";
-  color:red;
+  color: $color__red;
 }
 
 .file-description-textfield {
@@ -72,7 +72,7 @@ legend.metadata-border {
   background-color: $color__text-light;
 }
 .deposit-agreement-warning {
-  color:red;
+  color: $color__red;
   font-weight: bold;
   font-style: italic;
   // padding-bottom: 20px;
@@ -138,95 +138,75 @@ legend.metadata-border {
 }
 
 #creator_table{
-  border: 1px solid grey;
+  border: 1px solid $color__medium-grey;
 }
 .form-heading-required:after {
-  content:"*";color:red;
+  content:"*";color: $color__red;
 }
 .input-field-required{
-  background-color: yellow !important;
+  background-color: $color__yellow !important;
 }
 .test{
-  border: 2px solid red;
+  border: 2px solid $color__red;
 }
 .highlight{
-  color: red;
+  color: $color__red;
   font-weight: bold;
 }
 
 .control-label.required:after{
-  content:"*";color:red;
+  content:"*";color:$color__red;
 }
-
-//body:after{
-//  content: "beta";
-//  position: fixed;
-//  width: 80px;
-//  height: 25px;
-//  background: #EE8E4A;
-//  top: 7px;
-//  left: -20px;
-//  text-align: center;
-//  font-size: 13px;
-//  font-family: sans-serif;
-//  text-transform: uppercase;
-//  font-weight: bold;
-//  color: #fff;
-//  line-height: 27px;
-//  -ms-transform:rotate(-45deg);
-//  -webkit-transform:rotate(-45deg);
-//  transform:rotate(-45deg);
-//}
 
 .license-info-column-header{
   border-radius: 5px 5px 0 0;
-  border: 1px solid #003dac;
+  border: 1px solid $color__dark-moderate-blue;
   height: 125px;
-  background-color: #002c7b;
-  color: white;
+  background-color: $color__dark-moderate-blue;
+  color: $color__text-light;
   padding: 5px;
 }
 
 .license-info-column-middle-section{
   border-radius: 0;
-  border-right: 1px solid #003dac;
-  border-left: 1px solid #003dac;
-  border-top: 1px solid #003dac;
+  border-right: 1px solid $color__dark-moderate-blue;
+  border-left: 1px solid $color__dark-moderate-blue;
+  border-top: 1px solid $color__dark-moderate-blue;
   height: 175px;
   padding: 5px;
-  background-color: white;
+  background-color: $color__background-main-column;
 }
 .license-info-column-bottom-section{
   border-radius: 0 0 5px 5px;
-  border: 1px solid #003dac;
+  border: 1px solid $color__dark-moderate-blue;
   height: 200px;
   padding: 5px;
-  background-color: white;
+  background-color: $color__background-main-column;
 }
 
 .embargo-info-column-header{
   border-radius: 5px 5px 0 0;
-  border: 1px solid #003dac;
-  background-color: #002c7b;
-  color: white;
+  border: 1px solid $color__dark-moderate-blue;
+  background-color: $color__dark-moderate-blue;
+  color: $color__text-light;
   padding: 10px;
 }
 
 .embargo-info-column-middle-section{
   border-radius: 0;
-  border-right: 1px solid #003dac;
-  border-left: 1px solid #003dac;
-  border-top: 1px solid #003dac;
+  border-right: 1px solid $color__dark-moderate-blue;
+  border-left: 1px solid $color__dark-moderate-blue;
+  border-top: 1px solid $color__dark-moderate-blue;
   padding: 10px;
   height: 125px;
-  background-color: white;
+  background-color: $color__background-main-column;
 }
 .embargo-info-column-bottom-section{
   border-radius: 0 0 5px 5px;
   border: 1px solid #003dac;
   padding: 10px;
   height: 145px;
-  background-color: white;
+  background-color: $color__background-main-column;
 }
 
 ul.help-info{
@@ -298,8 +278,4 @@ ul.help-info{
   background-color: $color__orange;
   font-size: 18px;
   font-weight: bold;
-}
-#not-header{
-  position: absolute;
-  width: 100%;
 }
