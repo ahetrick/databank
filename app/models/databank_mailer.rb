@@ -30,6 +30,7 @@ class DatabankMailer < ActionMailer::Base
   end
 
   def dataset_incomplete_1m(dataset_key)
+    @dataset = Dataset.where(key: dataset_key).first
     if @dataset
       mail(to: [@dataset.depositor_email, @dataset.corresponding_creator_email], bcc: 'databank@library.illinois.edu',  subject: '[Illinois Data Bank] Incomplete dataset deposit')
     else
@@ -38,6 +39,7 @@ class DatabankMailer < ActionMailer::Base
   end
 
   def embargo_approaching_1m(dataset_key)
+    @dataset = Dataset.where(key: dataset_key).first
     if @dataset
       mail(to: [@dataset.depositor_email, @dataset.corresponding_creator_email], bcc: 'databank@library.illinois.edu',  subject: '[Illinois Data Bank] Dataset embargo date approaching')
     else
@@ -46,6 +48,7 @@ class DatabankMailer < ActionMailer::Base
   end
 
   def embargo_approaching_1w(dataset_key)
+    @dataset = Dataset.where(key: dataset_key).first
     if @dataset
       mail(to: [@dataset.depositor_email, @dataset.corresponding_creator_email], bcc: 'databank@library.illinois.edu',  subject: '[Illinois Data Bank] Dataset embargo date approaching')
     else

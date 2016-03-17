@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'date'
 
 class Dataset < ActiveRecord::Base
 
@@ -520,6 +521,21 @@ class Dataset < ActiveRecord::Base
       f.write(content)
     end
     FileUtils.chmod "u=wrx,go=rx", path
+  end
+
+  def send_incomplete_1m
+    notification = DatabankMailer.dataset_incomplete_1m(self.key)
+    notification.deliver_now
+  end
+
+  def send_embargo_approaching_1m
+    notification = DatabankMailer.embargo_approaching_1m(self.key)
+    notification.deliver_now
+  end
+
+  def send_embargo_approaching_1w
+    notification = DatabankMailer.embargo_approaching_1w(self.key)
+    notification.deliver_now
   end
 
 end
