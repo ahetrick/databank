@@ -120,6 +120,10 @@ a.btn {
   }
 }
 
+.bs-callout-info {
+  padding-bottom: 10px;
+}
+
 .help-big-question {
   font-size: 24px;
   text-align: center;
@@ -148,7 +152,7 @@ a.btn {
   }
   .bs-callout-info {
     padding-top: 142px;
-    padding-bottom: 10px;
+    min-height: 750px;
   }
   .help-big-question {
     font-size: 45px;
@@ -175,7 +179,7 @@ a.btn {
   }
   .bs-callout-info {
     padding-top: 107px;
-    padding-bottom: 10px;
+    min-height: 750px;
   }
   .help-big-question {
     font-size: 55px;
