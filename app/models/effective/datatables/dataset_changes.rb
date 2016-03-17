@@ -18,10 +18,7 @@ module Effective
         # end
 
         array_column :changes do |change|
-          content = change.audited_changes
-          if !content.has_key?('medusa_path')
-            render text: "#{change.action}: #{change.audited_changes}"
-          end
+          render text: "#{change.action}: #{change.audited_changes}"
         end
 
         # table_column :action
@@ -35,14 +32,18 @@ module Effective
 
       def collection
         changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', attributes[:dataset_id],attributes[:dataset_id])
+        medusaChangesArr = Array.new
         publication = nil
         changes.each do |change|
+          if change.audited_changes.has_key?('medusa_path')
+            medusaChangesArr << change.id
+          end
           if ((change.audited_changes.keys.first == 'publication_state') && ((change.audited_changes)[change.audited_changes.keys.first][0] == 'draft'))
             publication = change.created_at
           end
         end
         if publication
-          changes = changes.where("created_at > ?", publication)
+          changes = changes.where("created_at > ?", publication).where.not(id: medusaChangesArr)
         else
           changes = Audited::Adapters::ActiveRecord::Audit.none
         end
