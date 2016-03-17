@@ -18,7 +18,10 @@ module Effective
         # end
 
         array_column :changes do |change|
-          render text: "#{change.action}: #{change.audited_changes}"
+          content = change.audited_changes
+          if !content.has_key?('medusa_path')
+            render text: "#{change.action}: #{change.audited_changes}"
+          end
         end
 
         # table_column :action
