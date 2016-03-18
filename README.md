@@ -146,34 +146,30 @@ Edit these as necessary.
 
 #### script example:
 
-`#!/usr/bin/env bash
-
+```#!/usr/bin/env bash
 # notify.sh
+# ensure a log file
+logfile=/path/to/log/file
+touch logfile
 
-# ensure a log file`
+# if using rvm, load RVM into shell session and specify context
+#[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
-`logfile=/path/to/log/file`
+# rvm use 2.2.1@idb_v1 >> $logfile
 
-`touch logfile`
+# log timestamp
 
-`# if using rvm, load RVM into shell session and specify context`
+echo $(date -u) >> $logfile
 
-`#[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*`
+# change context to current databank directory
+cd /path/to/databank/current
 
-`# rvm use 2.2.1@idb_v1 >> $logfile`
+# specify environment
+export RAILS_ENV=[test|development|production]
 
-`# log timestamp`
-
-`echo $(date -u) >> $logfile`
-
-`# change context to current databank directory`
-`cd /path/to/databank/current`
-
-`# specify environment`
-`export RAILS_ENV=[test|development|production]`
-
-`# run rake task to get and handle messages`
-`bundle exec rake medusa:get_medusa_ingest_responses >> $logfile`
+# run rake task to get and handle messages
+bundle exec rake medusa:get_medusa_ingest_responses >> $logfile
+```
 
 #### cron example (daily @ 2am):
 `0 2 * * * /path/to/scripts/notify.sh`
