@@ -126,7 +126,7 @@ module Datasets
       request.basic_auth(user, password)
       request.content_type = "text/plain;charset=UTF-8"
       request.body = make_anvl(metadata)
-      request.body.encode(Encoding::UTF_8)
+      # request.body.encode(Encoding::UTF_8)
 
       # Rails.logger.warn "***** REQUEST START *****"
       # Rails.logger.warn request.to_yaml

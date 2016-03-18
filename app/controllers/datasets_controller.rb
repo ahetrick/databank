@@ -943,11 +943,11 @@ class DatasetsController < ApplicationController
       request.basic_auth(user, password)
       request.content_type = "text/plain;charset=UTF-8"
       request.body = make_anvl(metadata)
-      request.body.encode(Encoding::UTF_8)
+      # request.body.encode(Encoding::UTF_8)
 
-      Rails.logger.warn "***** REQUEST START *****"
-      Rails.logger.warn request.to_yaml
-      Rails.logger.warn "***** REQUEST STOP *****"
+      # Rails.logger.warn "***** REQUEST START *****"
+      # Rails.logger.warn request.to_yaml
+      # Rails.logger.warn "***** REQUEST STOP *****"
 
       sock = Net::HTTP.new(uri.host, uri.port)
       # sock.set_debug_output $stderr
@@ -994,8 +994,8 @@ class DatasetsController < ApplicationController
       end
       anvl.force_encoding("UTF-8")
       Rails.logger.warn anvl
-      anvl
     end
+    anvl
   end
 
 end
