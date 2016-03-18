@@ -150,8 +150,10 @@ cd /path/to/databank/current
 # specify environment
 export RAILS_ENV=[test|development|production]
 
-# run rake task to get and handle messages
-bundle exec rake medusa:get_medusa_ingest_responses >> $logfile
+# run rake tasks to send notificaiton messages
+bundle exec rake notify:send_incomplete_1m_all >> $logfile
+bundle exec rake notify:send_embargo_approaching_1m_all >> $logfile
+bundle exec rake notify:send_embargo_approaching_1w_all >> $logfile
 ```
 
 #### cron example (daily @ 2am):
