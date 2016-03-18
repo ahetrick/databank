@@ -139,11 +139,9 @@ touch logfile
 
 # if using rvm, load RVM into shell session and specify context
 #[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-
 # rvm use 2.2.1@idb_v1 >> $logfile
 
 # log timestamp
-
 echo $(date -u) >> $logfile
 
 # change context to current databank directory
