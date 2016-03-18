@@ -49,6 +49,8 @@ function handleMaterialTable() {
 
 function add_material_row() {
 
+    console.log(user_role);
+
     var maxId = Number($('#material_index_max').val());
     var newId = 0;
 
@@ -57,7 +59,7 @@ function add_material_row() {
     }
     $('#material_index_max').val(newId);
 
-    if (role = 'admin') {
+    if (user_role == 'admin') {
 
         var material_row = '<tr class="item row" id="material_index_' + newId + '">' +
             '<td>' +

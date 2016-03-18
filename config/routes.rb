@@ -4,9 +4,6 @@ Rails.application.routes.draw do
   resources :funder_infos
   resources :funders
   resources :definitions
-  #special temporary work-around
-  get '/datasets/r1epy', to: redirect('https://www.ideals.illinois.edu/handle/2142/65511')
-
   resources :medusa_ingests
   resources :license_infos
   resources :datafiles
