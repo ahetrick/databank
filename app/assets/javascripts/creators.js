@@ -41,7 +41,7 @@ creators_ready = function() {
 function add_creator_row(){
 
     var maxId = Number($('#creator_index_max').val());
-    var newId = 0;
+    var newId = 1;
 
     if (maxId != NaN) {
         newId = maxId + 1;
