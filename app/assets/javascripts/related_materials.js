@@ -49,8 +49,6 @@ function handleMaterialTable() {
 
 function add_material_row() {
 
-    console.log(user_role);
-
     var maxId = Number($('#material_index_max').val());
     var newId = 0;
 
