@@ -993,7 +993,7 @@ class DatasetsController < ApplicationController
         anvl << "\n"
       end
       anvl.force_encoding("UTF-8")
-      Rails.logger.warn anvl
+      # Rails.logger.warn anvl
     end
     anvl
   end
