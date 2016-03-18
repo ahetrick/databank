@@ -141,7 +141,7 @@ function add_material_row() {
             '<option value="Other">Other:</option></select>' +
             '</td>' +
             '<td>' +
-            '<input class="form-control dataset material-text" type="text" name="dataset[related_materials_attributes][' + newId + '][material_type]" id="dataset_related_materials_attributes_' + newId + '_material_type style="visibility: hidden;" />' +
+            '<input class="form-control dataset material-text" type="text" name="dataset[related_materials_attributes][' + newId + '][material_type]" id="dataset_related_materials_attributes_' + newId + '_material_type style="style="visibility: hidden;" />' +
             '</td>' +
             '<td>' +
             '<select class="form-control dataset" name="dataset[related_materials_attributes][' + newId + '][availability]" id="dataset_related_materials_attributes_' + newId + '_availability">' +
