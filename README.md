@@ -62,7 +62,7 @@ Edit these as necessary.
 ## Integration with archive (Medusa)
 ### Depends on RabbitMQ Server set up as configured in databank.yml
 ### Sending messages triggered by actions in databank app
-### Getting triggered by cron running a script
+### Getting messages triggered by cron running a script
 #### script example:
 
 `#!/usr/bin/env bash`
