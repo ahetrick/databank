@@ -150,7 +150,7 @@ cd /path/to/databank/current
 # specify environment
 export RAILS_ENV=[test|development|production]
 
-# run rake tasks to send notificaiton messages
+# run rake tasks to send notificaiton email
 bundle exec rake notify:send_incomplete_1m_all >> $logfile
 bundle exec rake notify:send_embargo_approaching_1m_all >> $logfile
 bundle exec rake notify:send_embargo_approaching_1w_all >> $logfile
