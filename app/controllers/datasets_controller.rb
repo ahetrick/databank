@@ -941,8 +941,9 @@ class DatasetsController < ApplicationController
 
       request = Net::HTTP::Post.new(uri.request_uri)
       request.basic_auth(user, password)
-      request.content_type = "text/plain"
+      request.content_type = "text/plain;charset=UTF-8"
       request.body = make_anvl(metadata)
+      request.body.encode(Encoding::UTF_8)
 
       sock = Net::HTTP.new(uri.host, uri.port)
       # sock.set_debug_output $stderr
@@ -980,14 +981,17 @@ class DatasetsController < ApplicationController
       URI.escape(s, /[%:\n\r]/)
     end
 
-    anvl = ''
-    metadata.each do |n, v|
-      anvl += escape(n.to_s) + ': ' + escape(v.to_s) + "\n"
+    anvl = ""
+    metadata_count = metadata.count
+    metadata.each_with_index do |(n, v), i|
+      anvl << escape(n.to_s) << ": " << escape(v.to_s)
+      if ((i+1) < metadata_count)
+        anvl << "\n"
+      end
+      anvl.force_encoding("UTF-8")
+      Rails.logger.warn anvl
+      anvl
     end
-    # remove last newline. there is probably a really good way to
-    # avoid adding it in the first place. if you know it, please fix.
-    anvl.strip.encode!('UTF-8')
   end
-
 
 end
