@@ -146,7 +146,8 @@ Edit these as necessary.
 
 #### script example:
 
-```#!/usr/bin/env bash
+```bash
+#!/usr/bin/env bash
 # notify.sh
 # ensure a log file
 logfile=/path/to/log/file
