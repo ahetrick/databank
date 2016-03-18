@@ -65,37 +65,39 @@ Edit these as necessary.
 ### Getting messages triggered by cron running a script
 #### script example:
 
-`#!/usr/bin/env bash`
+```bash
+#!/usr/bin/env bash
 
-`# get_medusa_messages.sh`
+# get_medusa_messages.sh
 
-`# ensure a log file`
+# ensure a log file
 
-`logfile=/path/to/log/file" `
+logfile=/path/to/log/file" 
 
-`touch logfile`
+touch logfile
 
-`# if using rvm, load RVM into shell session and specify context`
+# if using rvm, load RVM into shell session and specify context
 
-`#[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*`
+#[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
-`# rvm use 2.2.1@idb_v1 >> $logfile`
+# rvm use 2.2.1@idb_v1 >> $logfile
 
-`# log timestamp`
+# log timestamp
 
-`echo $(date -u) >> $logfile`
+echo $(date -u) >> $logfile
 
-`# change context to current databank directory`
+# change context to current databank directory
 
-`cd /path/to/databank/current`
+cd /path/to/databank/current
 
-`# specify environment`
+# specify environment
 
-`export RAILS_ENV=[test|development|production]`
+export RAILS_ENV=[test|development|production]
 
-`# run rake task to get and handle messages`
+# run rake task to get and handle messages
 
-`bundle exec rake medusa:get_medusa_ingest_responses >> $logfile`
+bundle exec rake medusa:get_medusa_ingest_responses >> $logfile
+```
 
 #### cron example (hourly):
 `0 * * * * /path/to/scripts/get_medusa_messages.sh`
@@ -105,37 +107,29 @@ Edit these as necessary.
 
 #### script example:
 
-`#!/usr/bin/env bash`
+```bash
+#!/usr/bin/env bash
+# update_pubstate.sh
+# ensure a log file
+logfile=/path/to/log/file
+touch logfile
 
-`# update_pubstate.sh`
+# if using rvm, load RVM into shell session and specify context
+#[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+# rvm use 2.2.1@idb_v1 >> $logfile
 
-`# ensure a log file`
+# log timestamp
+echo $(date -u) >> $logfile
 
-`logfile=/path/to/log/file`
+# change context to current databank directory
+cd /path/to/databank/current
 
-`touch logfile`
+# specify environment
+export RAILS_ENV=[test|development|production]
 
-`# if using rvm, load RVM into shell session and specify context`
-
-`#[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*`
-
-`# rvm use 2.2.1@idb_v1 >> $logfile`
-
-`# log timestamp`
-
-`echo $(date -u) >> $logfile`
-
-`# change context to current databank directory`
-
-`cd /path/to/databank/current`
-
-`# specify environment`
-
-`export RAILS_ENV=[test|development|production]`
-
-`# run rake task to get and handle messages`
-
-`bundle exec rake pub:update_state >> $logfile`
+# run rake task to get and handle messages
+bundle exec rake pub:update_state >> $logfile
+```
 
 #### cron example (daily @ 1am):
 `0 1 * * * /path/to/scripts/update_pubstate.sh`
