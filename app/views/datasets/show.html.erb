@@ -10,7 +10,7 @@
 
     <div class="embargo-placeholder">
       This dataset is under curator review.
-      <a href="/help?context=hold&key=<%=@dataset.key%>">Contact the Research Data Service</a> with any questions.
+      <a href="/help?context=hold&key=<%= @dataset.key %>">Contact the Research Data Service</a> with any questions.
     </div>
 
   <% elsif ((!can? :manage, @dataset) && (@dataset.publication_state == Databank::PublicationState::DESTROYED)) %>
@@ -18,7 +18,8 @@
 
     <div class="embargo-placeholder">
       This dataset is not available.
-      <a href="/help?context=destroyed&key=<%=@dataset.key%>">Contact the Research Data Service</a> with any questions.
+      <a href="/help?context=destroyed&key=<%= @dataset.key %>">Contact the Research Data Service</a> with any
+      questions.
     </div>
   <% else %>
 
@@ -28,7 +29,8 @@
 
       <div class="embargo-placeholder">
         This dataset will be available <%= @dataset.release_date %>.
-        <a href="/help?context=embargo&key=<%=@dataset.key%>">Contact the Research Data Service</a> with any questions.
+        <a href="/help?context=embargo&key=<%= @dataset.key %>">Contact the Research Data Service</a> with any
+        questions.
       </div>
     <% end %>
 
@@ -92,7 +94,8 @@
       <% if @dataset.related_materials.count > 0 %>
         <% @dataset.related_materials.each do |material| %>
           <div class="container-fluid">
-            <span class="metadata-label">Related <%= (material.material_type && material.material_type != "") ? material.material_type : "Material" %><%= (material.availability && material.availability != '') ? " (#{material.availability})" : "" %>: </span>
+            <span class="metadata-label">Related <%= (material.material_type && material.material_type != "") ? material.material_type : "Material" %><%= (material.availability && material.availability != '') ? " (#{material.availability})" : "" %>
+              : </span>
             <% if material.link && material.link != '' %>
               <a href="<%= material.link %>">
                 <% if material.citation && material.citation != '' %>
@@ -251,12 +254,14 @@
               <% elsif @dataset.publication_state == Databank::PublicationState::FILE_EMBARGO %>
                 <div class="embargo-placeholder">
                   Files associated with this dataset will be made available <%= @dataset.release_date %>.
-                  <a href="/help?context=embargo&key=<%=@dataset.key%>">Contact the Research Data Service</a> with any questions.
+                  <a href="/help?context=embargo&key=<%= @dataset.key %>">Contact the Research Data Service</a> with any
+                  questions.
                 </div>
               <% elsif @dataset.publication_state == Databank::PublicationState::TOMBSTONE %>
                 <div class="embargo-placeholder">
                   Files associated with this dataset are not available.
-                  <a href="/help?context=embargo&key=<%=@dataset.key%>">Contact the Research Data Service</a> with any questions.
+                  <a href="/help?context=embargo&key=<%= @dataset.key %>">Contact the Research Data Service</a> with any
+                  questions.
                 </div>
               <% end %>
 
@@ -287,7 +292,8 @@
       </div>
       <div class="panel-collapse collapse" id="changelogPanel" role="tabpanel" aria-labelledby="changelogHeading">
         <div class="panel-body">
-          <p><a href="/help?context=changelog&key=<%=@dataset.key%>">Contact the Research Data Service</a> for help interpreting this log.</p>
+          <p><a href="/help?context=changelog&key=<%= @dataset.key %>">Contact the Research Data Service</a> for help
+            interpreting this log.</p>
           <%= render_datatable(@changetable) %>
         </div>
       </div>
@@ -297,22 +303,11 @@
 
 <% if can? :manage, @dataset && @dataset.publication_state != Databank::PublicationState::DRAFT %>
   <div class="curator-only">
-    <h2>DataCite Record:</h2>
-    <% @datacite_record.each do |key, value| %>
-
-      <div class="row">
-        <span class="col-md-1"><%= key %>:</span>
-        <% if key == "metadata" %>
-
-          <span class="col-md-11"><pre><code><%= value %></code></pre></span>
-
-        <% else %>
-
-          <span class="col-md-11"><%= value %></span>
-
-        <% end %>
-      </div>
-    <% end %>
+    <p><a href="http://ezid.lib.purdue.edu/manage/display_xml/doi:<%= @dataset.identifier %>" target="_blank">DataCite
+      Metadata in XML format (via EZID)</a></p>
+    <p><a href="http://ezid.lib.purdue.edu/id/doi:<%= @dataset.identifier %>" target="_blank">DataCite Metadata on EZID
+      page</a>
+    </p>
   </div>
 <% end %>
 

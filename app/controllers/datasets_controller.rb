@@ -59,7 +59,7 @@ class DatasetsController < ApplicationController
   # GET /datasets/1
   # GET /datasets/1.json
   def show
-    @datacite_record = datacite_record_hash
+    # @datacite_record = datacite_record_hash
     @completion_check = self.completion_check
     if params.has_key?(:selected_files)
       zip_and_download_selected
@@ -836,7 +836,7 @@ class DatasetsController < ApplicationController
       uri = URI.parse("http://#{host}/id/doi:#{@dataset.identifier}")
       response = Net::HTTP.get_response(uri)
 
-      # Rails.logger.warn response.to_yaml
+      Rails.logger.warn response.to_yaml
 
       case response
         when Net::HTTPSuccess, Net::HTTPRedirection
@@ -944,6 +944,10 @@ class DatasetsController < ApplicationController
       request.content_type = "text/plain;charset=UTF-8"
       request.body = make_anvl(metadata)
       request.body.encode(Encoding::UTF_8)
+
+      Rails.logger.warn "***** REQUEST START *****"
+      Rails.logger.warn request.to_yaml
+      Rails.logger.warn "***** REQUEST STOP *****"
 
       sock = Net::HTTP.new(uri.host, uri.port)
       # sock.set_debug_output $stderr
