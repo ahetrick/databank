@@ -14,7 +14,7 @@ body{
   font-family: "Garamond", "Times New Roman", Times, Serif;
   font-size: 55px;
   color: $color__text-light;
-  background-color: $color__dark-orange;
+  background-color: $color__burnt-orange;
   padding-left: 15px;
   margin: 0;
   width: 100%;
@@ -23,7 +23,7 @@ body{
 .repository-header > a:link, .repository-header > a:visited, .repository-header > a:hover, .repository-header > a:active {
   color: $color__text-light;
   text-decoration: none;
-  background-color: $color__dark-orange;
+  background-color: $color__burnt-orange;
 }
 
 .repository-footer-info {
@@ -71,7 +71,7 @@ a {
 /* begin Navbar styling */
 // $colDefault: $color__lightest-grey;
 $colDefault: $color__text-light;
-$bgDefault: $color__dark-orange;
+$bgDefault: $color__burnt-orange;
 $bgHighlight: $color__orange;
 $colHighlight: $color__lightest-grey;
 $dropDown: false;
@@ -243,15 +243,15 @@ fieldset[disabled] .btn-primary.active {
 }
 
 .btn-success {
-  background-color: #acbe38;
-  border-color: #acbe38;
+  background-color: #89982c;
+  border-color: #89982c;
 }
 .btn-success:hover,
 .btn-success:focus,
 .btn-success:active,
 .btn-success.active {
-  background-color: #9aaa32;
-  border-color: #88972c;
+  background-color: #778426;
+  border-color: #657021;
 }
 .btn-success.disabled:hover,
 .btn-success.disabled:focus,
@@ -265,9 +265,10 @@ fieldset[disabled] .btn-success:hover,
 fieldset[disabled] .btn-success:focus,
 fieldset[disabled] .btn-success:active,
 fieldset[disabled] .btn-success.active {
-  background-color: #acbe38;
-  border-color: #acbe38;
+  background-color: #89982c;
+  border-color: #89982c;
 }
+
 
 .btn-info {
   background-color: #c86128;

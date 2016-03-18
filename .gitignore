@@ -27,6 +27,8 @@ prod_start.sh
 prod_restart.sh
 
 /uploads
+/public/agreements
+
 
 
 
