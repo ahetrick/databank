@@ -4,7 +4,7 @@ confirmOnPageExit = function (e)
     // If we haven't been passed the event get the window.event
     e = e || window.event;
 
-    var message = 'If you navigate away from this page, unsaved changes will be lost.';
+    var message = 'If you navigate away from this page, unsaved changes may be lost.';
 
     // For IE6-8 and Firefox prior to version 4
     if (e)
