@@ -11,6 +11,9 @@ development:
   :orcid_token: ORCID_TOKEN
   :key_prefix: idbdev
   :agreements_root_path: /agreements
+  :root_url_text: "http://localhost:3000"
+  :system_user_name: "System"
+  :system_user_email: "system@example.edu"
   #You can set anything here that you might pass to Bunny.new. Anything you don't set just gets the Bunny default.
   #Typical fields needed for our setup are shown below.
   amqp:

@@ -20,7 +20,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :review_deposit_agreement
   skip_load_and_authorize_resource :only => :datacite_record
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :completion_check, :delete_datacite_id, :change_publication_state, :is_datacite_changed, :tombstone, :idb_datacite_xml]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :delete_datacite_id, :change_publication_state, :is_datacite_changed, :tombstone, :idb_datacite_xml]
 
   @@num_box_ingest_deamons = 10
 
@@ -60,7 +60,7 @@ class DatasetsController < ApplicationController
   # GET /datasets/1.json
   def show
     # @datacite_record = datacite_record_hash
-    @completion_check = self.completion_check
+    @completion_check = Dataset.completion_check(@dataset, current_user)
     if params.has_key?(:selected_files)
       zip_and_download_selected
     end
@@ -176,7 +176,7 @@ class DatasetsController < ApplicationController
     @dataset.creators.build unless @dataset.creators.count > 0
     @dataset.funders.build unless @dataset.funders.count > 0
     @dataset.related_materials.build unless @dataset.related_materials.count > 0
-    @completion_check = self.completion_check
+    @completion_check = Dataset.completion_check(@dataset, current_user)
   end
 
   # POST /datasets
@@ -288,7 +288,7 @@ class DatasetsController < ApplicationController
     else
       respond_to do |format|
         @dataset.has_datacite_change = false
-        if @dataset.save && update_datacite_metadata
+        if @dataset.save && @dataset.update_datacite_metadata(current_user)
           format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata has been replaced with minimal placeholder values and all files have been hidden.] }
           format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
         else
@@ -313,7 +313,7 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       @dataset.has_datacite_change = false
-      if @dataset.save && update_datacite_metadata
+      if @dataset.save && @dataset.update_datacite_metadata(current_user)
         format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset has been successfully tombstoned.] }
         format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
       else
@@ -333,7 +333,7 @@ class DatasetsController < ApplicationController
 
     old_state = @dataset.publication_state
 
-    if completion_check == 'ok'
+    if Dataset.completion_check(@dataset, current_user) == 'ok'
       @dataset.complete = true
 
       if [Databank::PublicationState::DRAFT, Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::METADATA_EMBARGO].include?(old_state)
@@ -358,7 +358,7 @@ class DatasetsController < ApplicationController
         end
 
         if @dataset.is_import?
-          update_datacite_metadata
+          @dataset.update_datacite_metadata(current_user)
         end
 
         if old_state == Databank::PublicationState::DRAFT && !@dataset.is_test?
@@ -420,7 +420,7 @@ class DatasetsController < ApplicationController
             format.json { render json: @dataset.errors, status: :unprocessable_entity }
           end
         else
-          if @dataset.save && update_datacite_metadata
+          if @dataset.save && @dataset.update_datacite_metadata(current_user)
             if (@dataset.release_date && @dataset.release_date <= Date.current()) || !@dataset.embargo || @dataset.embargo == ""
               @dataset.publication_state = Databank::PublicationState::RELEASED
             else
@@ -444,8 +444,8 @@ class DatasetsController < ApplicationController
         end
 
       else
-        format.html { redirect_to edit_dataset_path(@dataset.key), notice: completion_check }
-        format.json { render json: completion_check, status: :unprocessable_entity }
+        format.html { redirect_to edit_dataset_path(@dataset.key), notice: Dataset.completion_check(@dataset, current_user) }
+        format.json { render json: Dataset.completion_check(@dataset, current_user), status: :unprocessable_entity }
       end
     end
 
@@ -707,91 +707,7 @@ class DatasetsController < ApplicationController
     render json: {"citation" => @dataset.plain_text_citation}
   end
 
-  def completion_check
-    response = 'ok'
-    validation_error_messages = Array.new
-    validation_error_message = ""
 
-    if !@dataset.title || @dataset.title.empty?
-      validation_error_messages << "title"
-    end
-
-    if @dataset.creator_list.empty?
-      validation_error_messages << "at least one creator"
-    end
-
-    if !@dataset.license || @dataset.license.empty?
-      validation_error_messages << "license"
-    end
-
-    contact = nil
-    @dataset.creators.each do |creator|
-      if creator.is_contact?
-        contact = creator
-      end
-    end
-
-    unless contact
-      validation_error_messages << "select primary contact (from Description section author list)"
-    end
-
-    if contact.nil? || !contact.email || contact.email == ""
-      validation_error_messages << "email address for primary long term contact"
-    end
-
-    if current_user
-      if ((current_user.role != 'admin') && (@dataset.release_date && (@dataset.release_date > (Date.current + 1.years))))
-        validation_error_messages << "a release date no more than one year in the future"
-      end
-    end
-
-    if @dataset.license && @dataset.license == "license.txt"
-      has_file = false
-      if @dataset.datafiles
-        @dataset.datafiles.each do |datafile|
-          if datafile.bytestream_name && ((datafile.bytestream_name).downcase == "license.txt")
-            has_file = true
-          end
-        end
-      end
-
-      if !has_file
-        validation_error_messages << "a license file named license.txt or a different license selection"
-      end
-
-    end
-
-    if @dataset.identifier && @dataset.identifier != ''
-      dupcheck = Dataset.where(identifier: @dataset.identifier)
-      if dupcheck.count > 1
-        validation_error_messages << "a unique DOI"
-      end
-    end
-
-    if @dataset.datafiles.count < 1
-      validation_error_messages << "at least one file"
-    end
-
-    if @dataset.embargo && [Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::METADATA_EMBARGO].include?(@dataset.embargo)
-      if !@dataset.release_date || @dataset.release_date <= Date.current
-        validation_error_messages << "a future release date for delayed publication (embargo) selection"
-      end
-    end
-
-    if validation_error_messages.length > 0
-      validation_error_message << "Required elements for a complete dataset missing: "
-      validation_error_messages.each_with_index do |m, i|
-        if i > 0
-          validation_error_message << ", "
-        end
-        validation_error_message << m
-      end
-      validation_error_message << "."
-
-      response = validation_error_message
-    end
-    response
-  end
 
   private
 
@@ -879,75 +795,7 @@ class DatasetsController < ApplicationController
 
   end
 
-  def update_datacite_metadata
 
-    if completion_check == 'ok'
-
-      user = nil
-      password = nil
-      host = IDB_CONFIG[:ezid_host]
-
-      if @dataset.is_test?
-        user = 'apitest'
-        password = 'apitest'
-      else
-        user = IDB_CONFIG[:ezid_username]
-        password = IDB_CONFIG[:ezid_password]
-      end
-
-      target = "#{request.base_url}#{dataset_path(@dataset.key)}"
-
-      metadata = {}
-      if [Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED].include?(@dataset.publication_state)
-        metadata['_status'] = 'public'
-      elsif [Databank::PublicationState::TOMBSTONE, Databank::PublicationState::DESTROYED].include?(@dataset.publication_state)
-        metadata['_status'] = 'unavailable'
-      end
-
-      metadata['_target'] = target
-
-      if [Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED, Databank::PublicationState::TOMBSTONE].include?(@dataset.publication_state)
-        metadata['datacite'] = @dataset.to_datacite_xml
-      elsif @dataset.publication_state == Databank::PublicationState::DESTROYED
-        metadata['datacite'] = @dataset.placeholder_metadata
-      end
-
-      uri = URI.parse("https://#{host}/id/doi:#{@dataset.identifier}")
-
-      request = Net::HTTP::Post.new(uri.request_uri)
-      request.basic_auth(user, password)
-      request.content_type = "text/plain;charset=UTF-8"
-      request.body = make_anvl(metadata)
-
-      sock = Net::HTTP.new(uri.host, uri.port)
-
-      if uri.scheme == 'https'
-        sock.use_ssl = true
-      end
-
-      begin
-
-        response = sock.start { |http| http.request(request) }
-
-      rescue Net::HTTPBadResponse, Net::HTTPServerError => error
-        Rails.logger.warn error.message
-        Rails.logger.warn response.body
-      end
-
-      case response
-        when Net::HTTPSuccess, Net::HTTPRedirection
-          return true
-
-        else
-          Rails.logger.warn response.to_yaml
-          return false
-      end
-    else
-      Rails.logger.warn "dataset not detected as complete - #{completion_check}"
-      return false
-    end
-
-  end
 
   def make_anvl(metadata)
     def escape(s)

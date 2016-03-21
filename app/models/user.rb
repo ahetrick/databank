@@ -70,10 +70,18 @@ class User < ActiveRecord::Base
     end
   end
 
-  def self.create_with_omniauth(auth)
+  def self.create_system_user
+    create! do |user|
+      user.provider = "system"
+      user.uid = IDB_CONFIG[:system_user_email]
+      user.name =  IDB_CONFIG[:system_user_name]
+      user.email = IDB_CONFIG[:system_user_email]
+      user.username = IDB_CONFIG[:system_user_name]
+      user.role = "admin"
+    end
+  end
 
-    # Rails.logger.warn "\n*** auth to yaml"
-    # Rails.logger.warn auth.to_yaml
+  def self.create_with_omniauth(auth)
 
     authname = auth["info"]["name"]
 

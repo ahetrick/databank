@@ -276,6 +276,164 @@ class Dataset < ActiveRecord::Base
     Nokogiri::XML::Document.parse(to_datacite_xml).to_xml
   end
 
+
+  def update_datacite_metadata(current_user)
+
+    if completion_check == 'ok'
+
+      user = nil
+      password = nil
+      host = IDB_CONFIG[:ezid_host]
+
+      if self.is_test?
+        user = 'apitest'
+        password = 'apitest'
+      else
+        user = IDB_CONFIG[:ezid_username]
+        password = IDB_CONFIG[:ezid_password]
+      end
+
+      target = "#{IDB_CONFIG[:root_url_text]}#{dataset_path(self.key)}"
+
+      metadata = {}
+      if [Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED].include?(self.publication_state)
+        metadata['_status'] = 'public'
+      elsif [Databank::PublicationState::TOMBSTONE, Databank::PublicationState::DESTROYED].include?(self.publication_state)
+        metadata['_status'] = 'unavailable'
+      end
+
+      metadata['_target'] = target
+
+      if [Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED, Databank::PublicationState::TOMBSTONE].include?(self.publication_state)
+        metadata['datacite'] = self.to_datacite_xml
+      elsif self.publication_state == Databank::PublicationState::DESTROYED
+        metadata['datacite'] = self.placeholder_metadata
+      end
+
+      uri = URI.parse("https://#{host}/id/doi:#{self.identifier}")
+
+      request = Net::HTTP::Post.new(uri.request_uri)
+      request.basic_auth(user, password)
+      request.content_type = "text/plain;charset=UTF-8"
+      request.body = make_anvl(metadata)
+
+      sock = Net::HTTP.new(uri.host, uri.port)
+
+      if uri.scheme == 'https'
+        sock.use_ssl = true
+      end
+
+      begin
+
+        response = sock.start { |http| http.request(request) }
+
+      rescue Net::HTTPBadResponse, Net::HTTPServerError => error
+        Rails.logger.warn error.message
+        Rails.logger.warn response.body
+      end
+
+      case response
+        when Net::HTTPSuccess, Net::HTTPRedirection
+          return true
+
+        else
+          Rails.logger.warn response.to_yaml
+          return false
+      end
+    else
+      Rails.logger.warn "dataset not detected as complete - #{Dataset.completion_check(self, current_user)}"
+      return false
+    end
+
+  end
+
+  # making completion_check a class method with passed-in dataset, so it can be used by controller before save
+  def self.completion_check(dataset, current_user)
+    response = 'ok'
+    validation_error_messages = Array.new
+    validation_error_message = ""
+
+    if !dataset.title || dataset.title.empty?
+      validation_error_messages << "title"
+    end
+
+    if dataset.creator_list.empty?
+      validation_error_messages << "at least one creator"
+    end
+
+    if !dataset.license || dataset.license.empty?
+      validation_error_messages << "license"
+    end
+
+    contact = nil
+    dataset.creators.each do |creator|
+      if creator.is_contact?
+        contact = creator
+      end
+    end
+
+    unless contact
+      validation_error_messages << "select primary contact (from Description section author list)"
+    end
+
+    if contact.nil? || !contact.email || contact.email == ""
+      validation_error_messages << "email address for primary long term contact"
+    end
+
+    if current_user
+      if ((current_user.role != 'admin') && (dataset.release_date && (dataset.release_date > (Date.current + 1.years))))
+        validation_error_messages << "a release date no more than one year in the future"
+      end
+    end
+
+    if dataset.license && dataset.license == "license.txt"
+      has_file = false
+      if dataset.datafiles
+        dataset.datafiles.each do |datafile|
+          if datafile.bytestream_name && ((datafile.bytestream_name).downcase == "license.txt")
+            has_file = true
+          end
+        end
+      end
+
+      if !has_file
+        validation_error_messages << "a license file named license.txt or a different license selection"
+      end
+
+    end
+
+    if dataset.identifier && dataset.identifier != ''
+      dupcheck = Dataset.where(identifier: dataset.identifier)
+      if dupcheck.count > 1
+        validation_error_messages << "a unique DOI"
+      end
+    end
+
+    if dataset.datafiles.count < 1
+      validation_error_messages << "at least one file"
+    end
+
+    if dataset.embargo && [Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::METADATA_EMBARGO].include?(dataset.embargo)
+      if !dataset.release_date || dataset.release_date <= Date.current
+        validation_error_messages << "a future release date for delayed publication (embargo) selection"
+      end
+    end
+
+    if validation_error_messages.length > 0
+      validation_error_message << "Required elements for a complete dataset missing: "
+      validation_error_messages.each_with_index do |m, i|
+        if i > 0
+          validation_error_message << ", "
+        end
+        validation_error_message << m
+      end
+      validation_error_message << "."
+
+      response = validation_error_message
+    end
+    response
+  end
+  
   def placeholder_metadata
     doc = Nokogiri::XML::Document.parse(%Q(<?xml version="1.0"?><resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd"></resource>))
     resourceNode = doc.first_element_child
