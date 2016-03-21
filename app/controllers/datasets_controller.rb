@@ -795,23 +795,4 @@ class DatasetsController < ApplicationController
 
   end
 
-
-
-  def make_anvl(metadata)
-    def escape(s)
-      URI.escape(s, /[%:\n\r]/)
-    end
-
-    anvl = ""
-    metadata_count = metadata.count
-    metadata.each_with_index do |(n, v), i|
-      anvl << escape(n.to_s) << ": " << escape(v.to_s)
-      if ((i+1) < metadata_count)
-        anvl << "\n"
-      end
-      anvl.force_encoding("UTF-8")
-    end
-    anvl
-  end
-
 end

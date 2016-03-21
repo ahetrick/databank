@@ -279,7 +279,7 @@ class Dataset < ActiveRecord::Base
 
   def update_datacite_metadata(current_user)
 
-    if completion_check == 'ok'
+    if Dataset.completion_check(self, current_user) == 'ok'
 
       user = nil
       password = nil
@@ -293,7 +293,7 @@ class Dataset < ActiveRecord::Base
         password = IDB_CONFIG[:ezid_password]
       end
 
-      target = "#{IDB_CONFIG[:root_url_text]}#{dataset_path(self.key)}"
+      target = "#{IDB_CONFIG[:root_url_text]}/datasets/#{self.key}"
 
       metadata = {}
       if [Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED].include?(self.publication_state)
@@ -692,6 +692,23 @@ class Dataset < ActiveRecord::Base
   def send_embargo_approaching_1w
     notification = DatabankMailer.embargo_approaching_1w(self.key)
     notification.deliver_now
+  end
+
+  def make_anvl(metadata)
+    def escape(s)
+      URI.escape(s, /[%:\n\r]/)
+    end
+
+    anvl = ""
+    metadata_count = metadata.count
+    metadata.each_with_index do |(n, v), i|
+      anvl << escape(n.to_s) << ": " << escape(v.to_s)
+      if ((i+1) < metadata_count)
+        anvl << "\n"
+      end
+      anvl.force_encoding("UTF-8")
+    end
+    anvl
   end
 
 end
