@@ -61,7 +61,6 @@ class SessionsController < ApplicationController
     if ['depositor', 'guest', 'no_deposit'].include?(new_role)
       current_user.role = new_role
       current_user.save
-      Rails.logger.warn current_user.to_yaml
       new_role_text = "new role"
       case new_role
         when 'depositor'

@@ -108,7 +108,6 @@ class DatasetsController < ApplicationController
   def cancel_box_upload
 
     @job_id_string = "0"
-    Rails.logger.warn "params: #{params.to_yaml}"
 
     @datafile = Datafile.find_by_web_id(params[:web_id])
 
@@ -119,11 +118,7 @@ class DatasetsController < ApplicationController
         if job && job.locked_by && !job.locked_by.empty?
           locked_by_text = job.locked_by.to_s
 
-          Rails.logger.warn "***\n   locked_by_text #{locked_by_text}"
-
           pid = locked_by_text.split(":").last
-
-          Rails.logger.warn "***\n    pid: #{pid}"
 
           if !pid.empty?
 
@@ -131,7 +126,6 @@ class DatasetsController < ApplicationController
 
               Process.kill('QUIT', Integer(pid))
               Dir.foreach(IDB_CONFIG[:delayed_job_pid_dir]) do |item|
-                Rails.logger.warn("item: #{item}")
                 next if item == '.' or item == '..'
                 next unless item.include? 'delayed_job'
                 file_contents = IO.read(item)
@@ -212,8 +206,6 @@ class DatasetsController < ApplicationController
   # PATCH/PUT /datasets/1
   # PATCH/PUT /datasets/1.json
   def update
-
-    # Rails.logger.warn "inside update dataset"
 
     if has_nested_param_change?
       @dataset.has_datacite_change = true
@@ -420,7 +412,6 @@ class DatasetsController < ApplicationController
               if current_user.role == 'depositor'
                 send_deposit_confirmation_email(old_state, @dataset)
                 confirmation = DatabankMailer.confirm_deposit(@dataset.key)
-                # Rails.logger.warn "confirmation: #{confirmation}"
                 confirmation.deliver_now
               end
             end
@@ -445,7 +436,6 @@ class DatasetsController < ApplicationController
               Rails.logger.warn "deposit update OK for #{@dataset.key}"
             else
               confirmation = DatabankMailer.confirm_deposit_update(@dataset.key)
-              # Rails.logger.warn "confirmation: #{confirmation}"
               confirmation.deliver_now
             end
             format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Changes have been successfully published.] }
@@ -476,11 +466,9 @@ class DatasetsController < ApplicationController
     params[:dataset][:related_materials_attributes].each do |key, material_attributes|
       if material_attributes.has_key?(:_destroy)
         if material_attributes[:_destroy] == true
-          # Rails.logger.warn 'removed related material'
           return true
         end
       else
-        # Rails.logger.warn 'added related material'
         return true
       end
     end
@@ -488,11 +476,9 @@ class DatasetsController < ApplicationController
     params[:dataset][:creators_attributes].each do |key, creator_attributes|
       if creator_attributes.has_key?(:_destroy)
         if creator_attributes[:_destroy] == true
-          # Rails.logger.warn 'removed creator'
           return true
         end
       else
-        # Rails.logger.warn 'added creator'
         return true
       end
     end
@@ -500,11 +486,9 @@ class DatasetsController < ApplicationController
     params[:dataset][:funders_attributes].each do |key, funder_attributes|
       if funder_attributes.has_key?(:_destroy)
         if funder_attributes[:_destroy] == true
-          # Rails.logger.warn 'removed funder'
           return true
         end
       elsif funder_attributes[:name] != ''
-        # Rails.logger.warn 'added funder'
         return true
       end
     end
@@ -836,14 +820,11 @@ class DatasetsController < ApplicationController
       uri = URI.parse("http://#{host}/id/doi:#{@dataset.identifier}")
       response = Net::HTTP.get_response(uri)
 
-      Rails.logger.warn response.to_yaml
-
       case response
         when Net::HTTPSuccess, Net::HTTPRedirection
           return response
 
         else
-          Rails.logger.warn response.to_yaml
           raise "error getting DataCite metadata record from EZID"
       end
 
@@ -934,23 +915,14 @@ class DatasetsController < ApplicationController
         metadata['datacite'] = @dataset.placeholder_metadata
       end
 
-
-      # Rails.logger.warn metadata.to_yaml
-
       uri = URI.parse("https://#{host}/id/doi:#{@dataset.identifier}")
 
       request = Net::HTTP::Post.new(uri.request_uri)
       request.basic_auth(user, password)
       request.content_type = "text/plain;charset=UTF-8"
       request.body = make_anvl(metadata)
-      # request.body.encode(Encoding::UTF_8)
-
-      # Rails.logger.warn "***** REQUEST START *****"
-      # Rails.logger.warn request.to_yaml
-      # Rails.logger.warn "***** REQUEST STOP *****"
 
       sock = Net::HTTP.new(uri.host, uri.port)
-      # sock.set_debug_output $stderr
 
       if uri.scheme == 'https'
         sock.use_ssl = true
@@ -993,7 +965,6 @@ class DatasetsController < ApplicationController
         anvl << "\n"
       end
       anvl.force_encoding("UTF-8")
-      # Rails.logger.warn anvl
     end
     anvl
   end

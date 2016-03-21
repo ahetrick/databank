@@ -3,10 +3,6 @@ module Datasets
   module PublicationStateMethods
     extend ActiveSupport::Concern
 
-    def send_deposit_confirmation_email (old_state, dataset)
-      Rails.logger.warn "inside send_deposit_confirmation_email method for old_state #{old_state}, new_state: #{dataset.publication_state}, dataset: #{dataset.key}"
-    end
-
     def deposit_confirmation_notice (old_state, dataset)
 
       new_state = dataset.publication_state
@@ -113,7 +109,6 @@ module Datasets
       else
         metadata['_status'] = 'public'
         metadata['datacite'] = dataset.to_datacite_xml
-        #Rails.logger.warn dataset.to_datacite_xml
       end
 
       if dataset.identifier && dataset.identifier != ''
@@ -126,11 +121,6 @@ module Datasets
       request.basic_auth(user, password)
       request.content_type = "text/plain;charset=UTF-8"
       request.body = make_anvl(metadata)
-      # request.body.encode(Encoding::UTF_8)
-
-      # Rails.logger.warn "***** REQUEST START *****"
-      # Rails.logger.warn request.to_yaml
-      # Rails.logger.warn "***** REQUEST STOP *****"
 
       sock = Net::HTTP.new(uri.host, uri.port)
       sock.set_debug_output $stderr
@@ -151,9 +141,7 @@ module Datasets
       case response
         when Net::HTTPSuccess, Net::HTTPRedirection
           response_split = response.body.split(" ")
-          Rails.logger.warn response_split
           response_split2 = response_split[1].split(":")
-          Rails.logger.warn response_split2
           doi = response_split2[1]
 
         else
@@ -214,9 +202,7 @@ module Datasets
       case response
         when Net::HTTPSuccess, Net::HTTPRedirection
           response_split = response.body.split(" ")
-          Rails.logger.warn response_split
           response_split2 = response_split[1].split(":")
-          Rails.logger.warn response_split2
           doi = response_split2[1]
 
         else

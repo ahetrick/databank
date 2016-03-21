@@ -23,13 +23,10 @@ class Datafile < ActiveRecord::Base
 
   def bytestream_name
     return_name = ""
-    # Rails.logger.warn "datafile: #{self.to_yaml}"
     if self.binary_name && self.binary_name != ""
       return_name = self.binary_name
-      #Rails.logger.warn "using self.binary_name"
     elsif self.binary && self.binary.file
       return_name = self.binary.file.filename
-      #Rails.logger.warn "using self.binary.file.filename"
     end
     return_name
   end
@@ -55,7 +52,6 @@ class Datafile < ActiveRecord::Base
   end
 
   def remove_directory
-    # Rails.logger.warn "#{IDB_CONFIG[:datafile_store_dir]}/#{self.web_id}"
     dir = "#{IDB_CONFIG[:datafile_store_dir]}/#{self.web_id}"
     if Dir.exists? dir
       FileUtils.remove_dir(dir)

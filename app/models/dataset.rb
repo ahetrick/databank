@@ -41,8 +41,6 @@ class Dataset < ActiveRecord::Base
 
       search_terms.each do |term|
 
-        #Rails.logger.warn "term class is: #{term.class}"
-
         clean_term = term.strip.downcase
 
         if !clean_term.empty?
