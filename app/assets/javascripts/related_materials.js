@@ -11,23 +11,24 @@ related_materials_ready = function () {
 
 function handleMaterialChange(materialIndex) {
     materialSelectVal = $("#dataset_related_materials_attributes_" + materialIndex + "_selected_type").val();
-    console.log(materialSelectVal);
 
     switch (materialSelectVal) {
-        case 'Article' || 'Code' || 'Presentation':
+        case 'Article':
+        case 'Code':
+        case 'Presentation':
+        case 'Dataset':
             $('#dataset_related_materials_attributes_' + materialIndex + '_material_type').val(materialSelectVal);
             $('#dataset_related_materials_attributes_' + materialIndex + '_material_type').css("visibility", "hidden");
             break;
         case 'Other':
             $('#dataset_related_materials_attributes_' + materialIndex + '_material_type').val('');
-            $('.material-text').css("visibility", "visible");
-            $('.material-text').focus();
+            $('#dataset_related_materials_attributes_' + materialIndex + '_material_type').css("visibility", "visible");
+
+            $('#dataset_related_materials_attributes_' + materialIndex + '_material_type').focus();
             break;
         // should not get to default
         default:
             $('#dataset_related_materials_attributes_' + materialIndex + '_material_type').val('');
-            console.log("material: " + materialSelectVal)
-            console.log("material_index: " + materialIndex)
     }
 
 }
@@ -141,7 +142,7 @@ function add_material_row() {
             '<option value="Other">Other:</option></select>' +
             '</td>' +
             '<td>' +
-            '<input class="form-control dataset material-text" type="text" name="dataset[related_materials_attributes][' + newId + '][material_type]" id="dataset_related_materials_attributes_' + newId + '_material_type style="style="visibility: hidden;" />' +
+            '<input class="form-control dataset material-text" type="text" name="dataset[related_materials_attributes][' + newId + '][material_type]" id="dataset_related_materials_attributes_' + newId + '_material_type" style="visibility: hidden;" />' +
             '</td>' +
             '<td>' +
             '<select class="form-control dataset" name="dataset[related_materials_attributes][' + newId + '][availability]" id="dataset_related_materials_attributes_' + newId + '_availability">' +

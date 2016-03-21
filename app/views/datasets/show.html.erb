@@ -105,7 +105,7 @@
                 <% end %>
               </a>
 
-            <% elsif material.citation & material.citation != '' %>
+            <% elsif material.citation && material.citation != '' %>
               <%= material.citation %>
             <% else %>
               [Details not provided.]
