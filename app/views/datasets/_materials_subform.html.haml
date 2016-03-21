@@ -1,6 +1,6 @@
 %p Provide information about materials related to this dataset, such as articles, code repositories, and/or other datasets, including identifiers (e.g., DOI, Handle, ARK, URL) where possible. The information entered here will be displayed on the dataset’s IDB data download page and may be reviewed by IDB curators so that others can find materials related to the dataset.
 
-%input(type="hidden" name="material_index_max" id="material_index_max" value="#{@dataset.related_materials.count.to_i - 1}" )
+%input(type="hidden" name="material_index_max" id="material_index_max" value="#{@dataset.related_materials.count.to_i}" )
   %table(id="material_table" class="table table-striped")
     %thead
       %tr(class="row" )
