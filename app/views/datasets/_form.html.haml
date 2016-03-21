@@ -175,6 +175,7 @@
                           .row
                             %span(class="col-md-8")
                               = datafile.bytestream_name
+                              %input(type="text" class="bytestream_name" value="#{datafile.bytestream_name}" )
                             %span(class="col-md-2")
                               = number_to_human_size(datafile.bytestream_size)
                             %span(class="col-md-2")

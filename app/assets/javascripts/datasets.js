@@ -21,6 +21,9 @@ confirmOnPageExit = function (e)
 var ready;
 ready = function() {
 
+    //$('.bytestream_name').css("visibility", "hidden");
+    $('.bytestream_name').css("visibility", "hidden");
+
     $("#checkFileSelectedCount").html('0');
 
     $("#checkAllFiles").click(function () {
@@ -164,21 +167,28 @@ ready = function() {
     $("#new_datafile").fileupload({
         downloadTemplate: null,
         downloadTemplateId: null,
-
         add: function(e, data) {
             file = data.files[0];
             num_bytes = file.size||file.fileSize;
+            //check filesize and check for duplicate filename
             if (num_bytes < 2147483648 ){
+                if (filename_isdup(file.name)){
+                    alert("Duplicate file error: A file named " + file.name + " is already in this dataset.  For help, please contact the Research Data Service.");
+                }
+                else {
                 data.context = $(tmpl("template-upload", data.files[0]));
                 $('#datafiles_upload_progress').append(data.context);
                 return data.submit();
+                }
             } else if (typeof num_bytes === "undefined") {
                 alert("No file contents were detected for file named " + file.name + ".  For help, please contact the Research Data Service.");
             }
             else {
-                alert('num_bytes: ' + num_bytes);
-                //alert("For files larger than 2GB, please contact the Research Data Service.");
+                //alert('num_bytes: ' + num_bytes);
+                alert("For files larger than 2GB, please import from box.");
             }
+
+
       },
         progress: function(e, data) {
             var progress;
@@ -190,7 +200,7 @@ ready = function() {
         downloadTemplate: function (o) {
             var file = o.files[0];
 
-            var row = '<tr><td><div class = "row"><span class="col-md-8">' + file.name + '</span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
+            var row = '<tr><td><div class = "row"><span class="col-md-8">' + file.name + '<input class="bytestream_name" value="' + file.name+ '" style="visibility: hidden;"></input></span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
             if (file.error){
                 row = row + '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-warning-sign"></span>';
             } else {
@@ -209,22 +219,26 @@ ready = function() {
     var boxSelect = new BoxSelect();
     // Register a success callback handler
     boxSelect.success(function(response) {
-        console.log(response);
-
+        //console.log(response);
 
         $.each(response, function(i, boxItem){
 
-            boxItem.dataset_key = dataset_key;
+            if (filename_isdup(boxItem.name)){
+                alert("Duplicate file error: A file named " + boxItem.name + " is already in this dataset.  For help, please contact the Research Data Service.");
+            }
+            else {
+                boxItem.dataset_key = dataset_key;
 
-            $.ajax({
-                type: "POST",
-                url: "/datafiles/create_from_box",
-                data: boxItem,
-                success: function(data) {
-                    eval($(data).text());
-                },
-                dataType: 'script'
-            });
+                $.ajax({
+                    type: "POST",
+                    url: "/datafiles/create_from_box",
+                    data: boxItem,
+                    success: function (data) {
+                        eval($(data).text());
+                    },
+                    dataType: 'script'
+                });
+            }
 
         });
 
@@ -399,6 +413,24 @@ function validateReleaseDate(){
     }
 
 }
+
+function filename_isdup(proposed_name){
+    var returnVal = false;
+
+    $.each($('.bytestream_name'), function( index, value ) {
+        //console.log('proposed_name: ' + proposed_name + ' val: ' + $(value).val())
+
+        if (proposed_name == $(value).val()) {
+            //console.log ('equality detected');
+            returnVal = true;
+        }
+
+    });
+
+   return returnVal;
+
+}
+
 $(document).ready(ready);
 $(document).on('page:load', ready);
 
