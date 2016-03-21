@@ -120,7 +120,7 @@ module Datasets
       request = Net::HTTP::Put.new(uri.request_uri)
       request.basic_auth(user, password)
       request.content_type = "text/plain;charset=UTF-8"
-      request.body = make_anvl(metadata)
+      request.body = Dataset.make_anvl(metadata)
 
       sock = Net::HTTP.new(uri.host, uri.port)
       sock.set_debug_output $stderr
@@ -181,7 +181,7 @@ module Datasets
       request = Net::HTTP::Post.new(uri.request_uri)
       request.basic_auth(user, password)
       request.content_type = "text/plain"
-      request.body = make_anvl(metadata)
+      request.body = Dataset.make_anvl(metadata)
 
       sock = Net::HTTP.new(uri.host, uri.port)
       # sock.set_debug_output $stderr
