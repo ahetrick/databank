@@ -409,11 +409,8 @@ class DatasetsController < ApplicationController
             if IDB_CONFIG.has_key?(:local_mode) && IDB_CONFIG[:local_mode]
               Rails.logger.warn "deposit OK for #{@dataset.key}"
             else
-              if current_user.role == 'depositor'
-                send_deposit_confirmation_email(old_state, @dataset)
-                confirmation = DatabankMailer.confirm_deposit(@dataset.key)
-                confirmation.deliver_now
-              end
+              confirmation = DatabankMailer.confirm_deposit(@dataset.key)
+              confirmation.deliver_now
             end
 
             format.html { redirect_to dataset_path(@dataset.key), notice: deposit_confirmation_notice(old_state, @dataset) }
