@@ -502,10 +502,16 @@ class DatasetsController < ApplicationController
     web_ids = params[:selected_files]
     web_ids.each do |web_id|
       df = Datafile.find_by_web_id(web_id)
-      total_zip_size = total_zip_size + df.bytestream_size
-      if !df.medusa_path || df.medusa_path == ""
-        all_in_medusa = false
+      if df
+        total_zip_size = total_zip_size + df.bytestream_size
+        if !df.medusa_path || df.medusa_path == ""
+          all_in_medusa = false
+        end
       end
+    end
+
+    if all_in_medusa
+      DownloaderClient.get_download_link( web_ids, "DOI-#{@dataset.identifier}".parameterize )
     end
 
     if @dataset.identifier && !@dataset.identifier.empty?

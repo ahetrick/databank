@@ -20,6 +20,7 @@ config/secrets.yml
 config/shibboleth.yml
 public/uploads
 config/unicorn.rb
+config/medusa_downloader.yml
 mock_medusa
 /scripts
 
@@ -30,6 +31,4 @@ prod_restart.sh
 /public/agreements
 
 /public/sitemaps
-
-
 /public/robots.txt

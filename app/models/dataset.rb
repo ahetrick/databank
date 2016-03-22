@@ -328,20 +328,21 @@ class Dataset < ActiveRecord::Base
       begin
 
         response = sock.start { |http| http.request(request) }
+        case response
+          when Net::HTTPSuccess, Net::HTTPRedirection
+            return true
+
+          else
+            Rails.logger.warn response.to_yaml
+            return false
+        end
 
       rescue Net::HTTPBadResponse, Net::HTTPServerError => error
         Rails.logger.warn error.message
         Rails.logger.warn response.body
       end
 
-      case response
-        when Net::HTTPSuccess, Net::HTTPRedirection
-          return true
 
-        else
-          Rails.logger.warn response.to_yaml
-          return false
-      end
     else
       Rails.logger.warn "dataset not detected as complete - #{Dataset.completion_check(self, current_user)}"
       return false
