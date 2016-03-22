@@ -514,7 +514,10 @@ class DatasetsController < ApplicationController
 
         web_ids.each do |web_id|
 
-          ar.add_file("/datafiles/#{web_id}/download") # add file to zip archive
+          df = Datafile.find_by_web_id(web_id)
+          if df
+            ar.add_file(df.bytestream_path) # add file to zip archive
+          end
 
         end
 
