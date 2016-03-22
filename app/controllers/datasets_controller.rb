@@ -510,9 +510,9 @@ class DatasetsController < ApplicationController
       end
     end
 
-    if all_in_medusa
-      DownloaderClient.get_download_link( web_ids, "DOI-#{@dataset.identifier}".parameterize )
-    end
+    # if all_in_medusa
+    #   DownloaderClient.get_download_link( web_ids, "DOI-#{@dataset.identifier}".parameterize )
+    # end
 
     if @dataset.identifier && !@dataset.identifier.empty?
       file_name = "DOI-#{@dataset.identifier}".parameterize + ".zip"
