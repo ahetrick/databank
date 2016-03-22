@@ -31,7 +31,7 @@ class DownloaderClient
       end
     end
 
-    if target_arr.count == 0
+    if targets_arr.count == 0
       return nil
     end
 
