@@ -68,7 +68,7 @@ class DownloaderClient
       req.body = download_request_json
 
       Rails.logger.warn "Medusa Downloader Request START"
-      Rails.logger.warn req
+      Rails.logger.warn req.to_yaml
       Rails.logger.warn "Medusa Downloader Request END"
 
       # re-issue request with Authorization
