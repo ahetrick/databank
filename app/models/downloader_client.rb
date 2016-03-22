@@ -67,13 +67,15 @@ class DownloaderClient
       response = sock.start { |http| http.request(request) }
       case response
         when Net::HTTPSuccess, Net::HTTPRedirection
-          Rails.logger.warn "success response start"
+          Rails.logger.warn "*** success response START ***"
           Rails.logger.warn response.to_yaml
+          Rails.logger.warn "*** success response END ***"
           return nil
 
         else
+          Rails.logger.warn "failure response START"
           Rails.logger.warn response.to_yaml
-          Rails.logger.warn "failure response start"
+          Rails.logger.warn "failure response END"
           return nil
       end
 
