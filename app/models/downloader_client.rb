@@ -2,7 +2,6 @@ require 'fileutils'
 require 'json'
 require 'uri'
 require 'net/http'
-require 'net/http/digest_auth'
 
 class DownloaderClient
   include ActiveModel::Conversion
@@ -43,54 +42,48 @@ class DownloaderClient
 
     download_request_json = download_request_hash.to_json
 
-    digest_auth = Net::HTTP::DigestAuth.new
+    user = IDB_CONFIG['downloader']['user']
+    password = IDB_CONFIG['downloader']['password']
 
     uri = URI.parse("#{IDB_CONFIG['downloader']['host']}:#{IDB_CONFIG['downloader']['port']}/downloads/create")
-    uri.user = IDB_CONFIG['downloader']['user']
-    uri.password =  IDB_CONFIG['downloader']['password']
 
-    h = Net::HTTP.new uri.host, uri.port
+    request = Net::HTTP::Post.new(uri.request_uri)
+    request.basic_auth(user, password)
+    request.content_type = "application/json"
+    request.body = download_request_json
 
-    req = Net::HTTP::Post.new uri.request_uri
+    Rails.logger.warn "request START"
+    Rails.logger.warn request.to_yaml
+    Rails.logger.warn "request STOP"
+
+    sock = Net::HTTP.new(uri.host, uri.port)
+
+    if uri.scheme == 'https'
+      sock.use_ssl = true
+    end
 
     begin
 
-      res = h.request req
-      # res is a 401 response with a WWW-Authenticate header
-
-      auth = digest_auth.auth_header uri, res['www-authenticate'], 'POST'
-
-      # create a new request with the Authorization header
-      req = Net::HTTP::Post.new uri.request_uri
-      req.add_field 'Authorization', auth
-
-      req.content_type = "application/json"
-      req.body = download_request_json
-
-      Rails.logger.warn "Medusa Downloader Request START"
-      Rails.logger.warn req.to_yaml
-      Rails.logger.warn "Medusa Downloader Request END"
-
-      # re-issue request with Authorization
-      res = h.request req
-
-      case res
+      response = sock.start { |http| http.request(request) }
+      case response
         when Net::HTTPSuccess, Net::HTTPRedirection
-          Rails.logger.warn "Medusa Downloader Response START"
-          Rails.logger.warn res.to_yaml
-          Rails.logger.warn "Medusa Downloader Response START"
-          return "www.google.com"
+          Rails.logger.warn "success response start"
+          Rails.logger.warn response.to_yaml
+          return nil
 
         else
-          Rails.logger.warn res.to_yaml
+          Rails.logger.warn response.to_yaml
+          Rails.logger.warn "failure response start"
           return nil
       end
+
     rescue Net::HTTPBadResponse, Net::HTTPServerError => error
       Rails.logger.warn error.message
-      Rails.logger.warn res.to_yaml
+      Rails.logger.warn response.body
       return nil
     end
 
+    return nil
 
 
   end
