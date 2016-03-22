@@ -496,6 +496,17 @@ class DatasetsController < ApplicationController
 
   def zip_and_download_selected
 
+    all_in_medusa = true
+    total_zip_size = 0
+
+    web_ids = params[:selected_files]
+    web_ids.each do |web_id|
+      df = Datafile.find_by_web_id(web_id)
+      total_zip_size = total_zip_size + df.bytestream_size
+      if !df.medusa_path || df.medusa_path == ""
+        all_in_medusa = false
+      end
+    end
 
     if @dataset.identifier && !@dataset.identifier.empty?
       file_name = "DOI-#{@dataset.identifier}".parameterize + ".zip"
@@ -532,6 +543,10 @@ class DatasetsController < ApplicationController
       temp_zipfile.close
       temp_zipfile.unlink
     end
+
+  end
+
+  def get_medusa_downloader_zip
 
   end
 

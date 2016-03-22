@@ -56,6 +56,7 @@ module Databank
     config.autoload_once_paths << File.join(Rails.root, 'app/models')
     config.autoload_once_paths << File.join(Rails.root, 'app/models/concerns')
     config.active_job.queue_adapter = :delayed_job
+
     # config.after_initialize do
     #   # Rails.logger.warn "inside after initialize"
     #   MedusaIngest.subscribe_to_incoming

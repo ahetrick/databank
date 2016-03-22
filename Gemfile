@@ -109,6 +109,12 @@ gem "audited-activerecord", "~> 4.0"
 # Use google-analytics-rails to support Google Analytics
 gem 'google-analytics-rails', '1.1.0'
 
+# Use builder to support sitemaps generator
+gem 'builder', '~> 3.2', '>= 3.2.2'
+
+# Use SitemapGenerator to generate sitemaps
+gem 'sitemap_generator', '~> 5.1'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
@@ -118,6 +124,12 @@ group :development, :test do
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+
+  # Use mocha to support stubs for testing
+  gem 'mocha', '~> 1.1'
+
+  #Use rspec to support testing
+  gem 'rspec', '~> 3.4'
 
   # Use Capistrano for deployment
 
