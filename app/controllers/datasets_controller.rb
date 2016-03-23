@@ -507,11 +507,12 @@ class DatasetsController < ApplicationController
         if !df.medusa_path || df.medusa_path == ""
           all_in_medusa = false
         end
+        all_in_medusa = false
       end
     end
 
     if all_in_medusa
-      DownloaderClient.get_download_link( web_ids, "DOI-#{@dataset.identifier}".parameterize )
+      download_zip
     end
 
     if @dataset.identifier && !@dataset.identifier.empty?
@@ -552,8 +553,8 @@ class DatasetsController < ApplicationController
 
   end
 
-  def get_medusa_downloader_zip
-
+  def download_zip
+    @zip_link = DownloaderClient.get_download_link( params[:selected_files], "DOI-#{@dataset.identifier}".parameterize )
   end
 
   def download_endNote_XML

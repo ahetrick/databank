@@ -29,9 +29,8 @@ class DownloaderClient
           return nil
         end
         target_hash = Hash.new
-        target_hash['type']='file'
-        target_path = df.medusa_path
-        target_hash['path']=target_path
+        target_hash["type"]="file"
+        target_hash["path"]="#{df.medusa_path}"
         targets_arr.push(target_hash)
       end
     end
@@ -44,33 +43,41 @@ class DownloaderClient
 
     download_request_hash["root"]="idb"
     download_request_hash["zip_name"]="#{zipname}"
-    download_request_hash["targets"]="#{targets_arr}"
+    download_request_hash["targets"]=targets_arr
 
     download_request_json = download_request_hash.to_json
-    Rails.logger.warn download_request_json
 
     user = IDB_CONFIG['downloader']['user']
     password = IDB_CONFIG['downloader']['password']
 
     url = "#{IDB_CONFIG['downloader']['host']}:#{IDB_CONFIG['downloader']['port']}/downloads/create"
-    Rails.logger.warn url
 
     begin
 
-    client = Curl::Easy.new(url)
-    client.http_auth_types = :digest
-    client.username = user
-    client.password = password
-    client.post_body = download_request_json
-    client.post
-    client.headers = {'Content-Type' => 'application/json'}
-    response = client.perform
-    Rails.logger.warn client.body_str
+      client = Curl::Easy.new(url)
+      client.http_auth_types = :digest
+      client.username = user
+      client.password = password
+      client.post_body = download_request_json
+      client.post
+      client.headers = {'Content-Type' => 'application/json'}
+      response = client.perform
+      response_json = client.body_str
+      response_hash = JSON.parse(client.body_str)
+      if response_hash.has_key?("download_url")
+        return response_hash["download_url"]
+      else
+        Rails.logger.warn download_request_json
+        Rails.logger.warn "unexpected downloader response: #{client.body_str}"
+        return nil
+      end
+
     rescue StandardError => error
       Rails.looger.warn error
       return nil
     end
 
+    #should not get here
     return nil
 
 
