@@ -43,6 +43,11 @@ class DownloaderClient
     user = IDB_CONFIG['downloader']['user']
     password = IDB_CONFIG['downloader']['password']
 
+    url = "#{IDB_CONFIG['downloader']['host']}:#{IDB_CONFIG['downloader']['port']}/downloads/create"
+    Rails.logger.warn url
+
+    begin
+
     client = Curl::Easy.new("#{IDB_CONFIG['downloader']['host']}:#{IDB_CONFIG['downloader']['port']}/downloads/create")
     client.http_auth_types = :digest
     client.username = user
@@ -52,6 +57,13 @@ class DownloaderClient
     client.headers = {'Content-Type' => 'application/json'}
     response = client.perform
     Rails.logger.warn client.body_str
+    Rails.logger.warn "*** response:"
+    Rails.logger.warn response
+    rescue StandardError => error
+      Rails.looger.warn error
+      return nil
+
+    end
 
     return nil
 
