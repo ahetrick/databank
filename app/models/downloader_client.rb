@@ -1,10 +1,12 @@
 require 'json'
 require 'curb'
 
+
 class DownloaderClient
   include ActiveModel::Conversion
   include ActiveModel::Naming
 
+  #precondition: all targets are in Medusa
   def self.get_download_link(web_ids, zipname)
     #web_ids is expected to be an array
     num_files = 0
@@ -20,11 +22,15 @@ class DownloaderClient
     targets_arr = Array.new
     web_ids.each do |web_id|
       df = Datafile.find_by_web_id(web_id)
+
       if df
+        if !df.medusa_path || df.medusa_path = ''
+          return nil
+        end
         target_hash = Hash.new
         target_hash['type']='file'
-        target_hash['path']=df.bytestream_path
-        targets_arr.push(target_hash.to_json)
+        target_hash['path']=df.medusa_path
+        targets_arr.push(target_hash)
       end
     end
 
@@ -39,6 +45,7 @@ class DownloaderClient
     download_request_hash["targets"]="#{targets_arr}"
 
     download_request_json = download_request_hash.to_json
+    Rails.logger.warn download_request_json
 
     user = IDB_CONFIG['downloader']['user']
     password = IDB_CONFIG['downloader']['password']
@@ -57,12 +64,9 @@ class DownloaderClient
     client.headers = {'Content-Type' => 'application/json'}
     response = client.perform
     Rails.logger.warn client.body_str
-    Rails.logger.warn "*** response:"
-    Rails.logger.warn response
     rescue StandardError => error
       Rails.looger.warn error
       return nil
-
     end
 
     return nil
