@@ -516,48 +516,50 @@ class DatasetsController < ApplicationController
 
     if all_in_medusa
       download_zip
-    end
-
-    if @dataset.identifier && !@dataset.identifier.empty?
-      file_name = "DOI-#{@dataset.identifier}".parameterize + ".zip"
     else
-      file_name = "datafiles.zip"
-    end
 
-    temp_zipfile = Tempfile.new("#{@dataset.key}.zip")
+      if @dataset.identifier && !@dataset.identifier.empty?
+        file_name = "DOI-#{@dataset.identifier}".parameterize + ".zip"
+      else
+        file_name = "datafiles.zip"
+      end
 
-    begin
+      temp_zipfile = Tempfile.new("#{@dataset.key}.zip")
 
-      web_ids = params[:selected_files]
+      begin
+
+        web_ids = params[:selected_files]
 
 
-      Zip::Archive.open(temp_zipfile.path, Zip::CREATE, Zip::BEST_SPEED) do |ar|
+        Zip::Archive.open(temp_zipfile.path, Zip::CREATE, Zip::BEST_SPEED) do |ar|
 
-        web_ids.each do |web_id|
+          web_ids.each do |web_id|
 
-          df = Datafile.find_by_web_id(web_id)
-          if df
-            ar.add_file(df.bytestream_path) # add file to zip archive
+            df = Datafile.find_by_web_id(web_id)
+            if df
+              ar.add_file(df.bytestream_path) # add file to zip archive
+            end
+
           end
 
         end
 
+        zip_data = File.read(temp_zipfile.path)
+
+        send_data(zip_data, :type => 'application/zip', :filename => file_name)
+
+
+      ensure
+        temp_zipfile.close
+        temp_zipfile.unlink
       end
 
-      zip_data = File.read(temp_zipfile.path)
-
-      send_data(zip_data, :type => 'application/zip', :filename => file_name)
-
-
-    ensure
-      temp_zipfile.close
-      temp_zipfile.unlink
     end
 
   end
 
   def download_zip
-    @zip_link = DownloaderClient.get_download_link( params[:selected_files], "DOI-#{@dataset.identifier}".parameterize )
+    @zip_link = DownloaderClient.get_download_link(params[:selected_files], "DOI-#{@dataset.identifier}".parameterize)
   end
 
   def download_endNote_XML
@@ -733,7 +735,6 @@ class DatasetsController < ApplicationController
   def citation_text
     render json: {"citation" => @dataset.plain_text_citation}
   end
-
 
 
   private
