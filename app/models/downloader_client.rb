@@ -48,7 +48,7 @@ class DownloaderClient
 
     begin
 
-    client = Curl::Easy.new("#{IDB_CONFIG['downloader']['host']}:#{IDB_CONFIG['downloader']['port']}/downloads/create")
+    client = Curl::Easy.new(url)
     client.http_auth_types = :digest
     client.username = user
     client.password = password
