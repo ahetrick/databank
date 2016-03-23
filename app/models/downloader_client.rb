@@ -29,7 +29,11 @@ class DownloaderClient
         end
         target_hash = Hash.new
         target_hash['type']='file'
-        target_hash['path']=df.medusa_path
+        target_path = df.medusa_path
+        if df.medusa_path[0,8] == "156/182/"
+          target_path = df.medusa_path[x..-8]
+        end
+        target_hash['path']=target_path
         targets_arr.push(target_hash)
       end
     end
