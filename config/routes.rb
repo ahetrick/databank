@@ -91,4 +91,6 @@ Rails.application.routes.draw do
 
   post "/role_switch", to: 'sessions#role_switch'
 
+  get "/datasets/:id/download_link", to: 'datasets#download_link', defaults: {format: 'json'}
+
 end

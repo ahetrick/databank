@@ -2,6 +2,7 @@ require 'open-uri'
 require 'net/http'
 require 'boxr'
 require 'zipruby'
+require 'json'
 
 class DatasetsController < ApplicationController
   include Datasets::PublicationStateMethods
@@ -20,7 +21,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :review_deposit_agreement
   skip_load_and_authorize_resource :only => :datacite_record
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :delete_datacite_id, :change_publication_state, :is_datacite_changed, :tombstone, :idb_datacite_xml]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :delete_datacite_id, :change_publication_state, :is_datacite_changed, :tombstone, :idb_datacite_xml]
 
   @@num_box_ingest_deamons = 10
 
@@ -514,54 +515,77 @@ class DatasetsController < ApplicationController
       end
     end
 
-    if all_in_medusa
-      download_zip
+
+    if @dataset.identifier && !@dataset.identifier.empty?
+      file_name = "DOI-#{@dataset.identifier}".parameterize + ".zip"
     else
+      file_name = "datafiles.zip"
+    end
 
-      if @dataset.identifier && !@dataset.identifier.empty?
-        file_name = "DOI-#{@dataset.identifier}".parameterize + ".zip"
-      else
-        file_name = "datafiles.zip"
-      end
+    temp_zipfile = Tempfile.new("#{@dataset.key}.zip")
 
-      temp_zipfile = Tempfile.new("#{@dataset.key}.zip")
+    begin
 
-      begin
-
-        web_ids = params[:selected_files]
+      web_ids = params[:selected_files]
 
 
-        Zip::Archive.open(temp_zipfile.path, Zip::CREATE, Zip::BEST_SPEED) do |ar|
+      Zip::Archive.open(temp_zipfile.path, Zip::CREATE, Zip::BEST_SPEED) do |ar|
 
-          web_ids.each do |web_id|
+        web_ids.each do |web_id|
 
-            df = Datafile.find_by_web_id(web_id)
-            if df
-              ar.add_file(df.bytestream_path) # add file to zip archive
-            end
-
+          df = Datafile.find_by_web_id(web_id)
+          if df
+            ar.add_file(df.bytestream_path) # add file to zip archive
           end
 
         end
 
-        zip_data = File.read(temp_zipfile.path)
-
-        send_data(zip_data, :type => 'application/zip', :filename => file_name)
-
-
-      ensure
-        temp_zipfile.close
-        temp_zipfile.unlink
       end
 
+      zip_data = File.read(temp_zipfile.path)
+
+      send_data(zip_data, :type => 'application/zip', :filename => file_name)
+
+    ensure
+      temp_zipfile.close
+      temp_zipfile.unlink
     end
 
   end
 
-  def download_zip
-    Rails.logger.warn "inside download_zip"
-    @zip_link = DownloaderClient.get_download_link(params[:selected_files], "DOI-#{@dataset.identifier}".parameterize)
-    Rails.logger.warn @zip_link
+  # precondition: all valid web_ids in medusa
+  def download_link
+
+    return_hash = Hash.new
+
+    if params.has_key?('web_ids')
+      web_ids_str = params['web_ids']
+      web_ids = web_ids_str.split('~')
+
+      if !web_ids.respond_to?(:count) || web_ids.count < 1
+        return_hash["status"]="error"
+        return_hash["error"]="no web_ids after split"
+        render(json: return_hash.to_json, content_type: request.format, :layout => false)
+      end
+
+      web_ids.each(&:strip!)
+
+      zip_link = DownloaderClient.get_download_link(web_ids, "DOI-#{@dataset.identifier}".parameterize)
+      Rails.logger.warn "zip_link: #{zip_link}"
+      if zip_link
+        return_hash["status"]="ok"
+        return_hash["url"]=zip_link
+      else
+        return_hash["status"]="error"
+        return_hash["error"]="nil zip link returned"
+      end
+      render(json: return_hash.to_json, content_type: request.format, :layout => false)
+    else
+      return_hash["status"]="error"
+      return_hash["error"]="no web_ids in request"
+      render(json: return_hash.to_json, content_type: request.format, :layout => false)
+    end
+
   end
 
   def download_endNote_XML
@@ -751,7 +775,7 @@ class DatasetsController < ApplicationController
   # def dataset_params
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, :is_test, :is_import, :curator_hold, :audit_id, :removed_private, :have_permission, :agree, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update, :audit_id], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update, :audit_id], related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, :is_test, :is_import, :curator_hold, :audit_id, :removed_private, :have_permission, :agree, :web_ids, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update, :audit_id], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update, :audit_id], related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id])
   end
 
   def ezid_metadata_response

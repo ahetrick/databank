@@ -390,14 +390,14 @@ function clear_help_form(){
 function tombstone(){
 
     if (window.confirm("Are you sure? This will make this dataset unavailable.")) {
-        window.location = "/datasets/"+ datset_key + "/tombstone";
+        window.location = "/datasets/"+ dataset_key + "/tombstone";
     }
 }
 
 function nuke(){
 
     if (window.confirm("Are you sure? This will overwrite the DataCite metadata with placeholder values and render it unavailable.")) {
-        window.location = "/datasets/"+ datset_key + "/nuke";
+        window.location = "/datasets/"+ dataset_key + "/nuke";
     }
 }
 
@@ -429,6 +429,32 @@ function filename_isdup(proposed_name){
 
    return returnVal;
 
+}
+
+function custom_zip(){
+    var selected_files = $('input[name="selected_files[]"]:checked');
+    var web_id_string = ""
+
+    $.each(selected_files, function( index, value ) {
+        if (web_id_string != ""){
+            web_id_string = web_id_string + "~";
+        }
+        web_id_string = web_id_string + $(value).val();
+    });
+    if (web_id_string != ""){
+        console.log(web_id_string)
+        $.ajax({
+            url: "/datasets/" + dataset_key + "/download_link?",
+            data: {"web_ids":web_id_string},
+            dataType: 'json',
+            success: function(result){
+                console.log(result);
+            }
+            //context: document.body
+        }).done(function() {
+            console.log("done");
+        });
+    }
 }
 
 $(document).ready(ready);
