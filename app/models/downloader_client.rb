@@ -65,6 +65,7 @@ class DownloaderClient
       response_json = client.body_str
       response_hash = JSON.parse(client.body_str)
       if response_hash.has_key?("download_url")
+        Rails.logger.warn "inside downloader client: #{response_hash["download_url"]}"
         return response_hash["download_url"]
       else
         Rails.logger.warn download_request_json

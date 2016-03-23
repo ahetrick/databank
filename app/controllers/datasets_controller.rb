@@ -559,7 +559,9 @@ class DatasetsController < ApplicationController
   end
 
   def download_zip
+    Rails.logger.warn "inside download_zip"
     @zip_link = DownloaderClient.get_download_link(params[:selected_files], "DOI-#{@dataset.identifier}".parameterize)
+    Rails.logger.warn @zip_link
   end
 
   def download_endNote_XML
