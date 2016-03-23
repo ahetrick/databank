@@ -1,4 +1,6 @@
 // uses variables from libguide-style.scss
+$one-line-header-height: 102px;
+$two-line-header-height: 137px;
 .idb-help ul {
   list-style-type: none;
 }
@@ -148,10 +150,10 @@ a.btn {
 
   }
   #not-header{
-    margin-top: 142px;
+    margin-top: $two-line-header-height;
   }
   .bs-callout-info {
-    padding-top: 142px;
+    padding-top: $two-line-header-height;
     min-height: 750px;
   }
   .help-big-question {
@@ -175,10 +177,10 @@ a.btn {
     width: 100%;
   }
   #not-header{
-    margin-top: 107px;
+    margin-top: $one-line-header-height;
   }
   .bs-callout-info {
-    padding-top: 107px;
+    padding-top: $one-line-header-height;
     min-height: 750px;
   }
   .help-big-question {

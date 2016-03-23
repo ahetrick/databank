@@ -12,7 +12,7 @@ body{
 
 .repository-header {
   font-family: "Garamond", "Times New Roman", Times, Serif;
-  font-size: 55px;
+  font-size: 45px;
   color: $color__text-light;
   background-color: $color__burnt-orange;
   padding-left: 15px;
@@ -77,16 +77,16 @@ $colHighlight: $color__lightest-grey;
 $dropDown: false;
 
 .navbar-default {
-  min-height: 75px;
+  min-height: 70px;
   margin: 0;
-  padding-top: 15px;
+  padding-top: 10px;
   border-radius: 0;
   background-color: $bgDefault;
   border-color: $bgDefault;
   .navbar-brand {
     padding-right: 50px;
     color: $colDefault;
-    font-size: 55px;
+    font-size: 45px;
     font-family: "Garamond", "Times New Roman", Times, Serif;
     &:hover, &:focus {
       color: $colHighlight;
