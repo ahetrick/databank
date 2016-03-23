@@ -115,6 +115,9 @@ gem 'builder', '~> 3.2', '>= 3.2.2'
 # Use SitemapGenerator to generate sitemaps
 gem 'sitemap_generator', '~> 5.1'
 
+# Use curb to wrap curl
+gem 'curb', '~> 0.9.1'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'

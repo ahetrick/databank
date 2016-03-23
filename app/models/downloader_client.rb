@@ -1,7 +1,5 @@
-require 'fileutils'
 require 'json'
-require 'uri'
-require 'net/http'
+require 'curb'
 
 class DownloaderClient
   include ActiveModel::Conversion
@@ -45,45 +43,15 @@ class DownloaderClient
     user = IDB_CONFIG['downloader']['user']
     password = IDB_CONFIG['downloader']['password']
 
-    uri = URI.parse("#{IDB_CONFIG['downloader']['host']}:#{IDB_CONFIG['downloader']['port']}/downloads/create")
-
-    request = Net::HTTP::Post.new(uri.request_uri)
-    request.basic_auth(user, password)
-    request.content_type = "application/json"
-    request.body = download_request_json
-
-    Rails.logger.warn "request START"
-    Rails.logger.warn request.to_yaml
-    Rails.logger.warn "request STOP"
-
-    sock = Net::HTTP.new(uri.host, uri.port)
-
-    if uri.scheme == 'https'
-      sock.use_ssl = true
-    end
-
-    begin
-
-      response = sock.start { |http| http.request(request) }
-      case response
-        when Net::HTTPSuccess, Net::HTTPRedirection
-          Rails.logger.warn "*** success response START ***"
-          Rails.logger.warn response.to_yaml
-          Rails.logger.warn "*** success response END ***"
-          return nil
-
-        else
-          Rails.logger.warn "failure response START"
-          Rails.logger.warn response.to_yaml
-          Rails.logger.warn "failure response END"
-          return nil
-      end
-
-    rescue Net::HTTPBadResponse, Net::HTTPServerError => error
-      Rails.logger.warn error.message
-      Rails.logger.warn response.body
-      return nil
-    end
+    client = Curl::Easy.new("#{IDB_CONFIG['downloader']['host']}:#{IDB_CONFIG['downloader']['port']}/downloads/create")
+    client.http_auth_types = :digest
+    client.username = user
+    client.password = password
+    client.post_body = download_request_json
+    client.post
+    client.headers = {'Content-Type' => 'application/json'}
+    response = client.perform
+    Rails.logger.warn client.body_str
 
     return nil
 

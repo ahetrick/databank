@@ -94,6 +94,7 @@ GEM
       execjs
     coffee-script-source (1.10.0)
     concurrent-ruby (1.0.0)
+    curb (0.9.1)
     daemons (1.2.3)
     debug_inspector (0.0.2)
     delayed_job (4.1.1)
@@ -315,6 +316,7 @@ DEPENDENCIES
   capistrano3-unicorn
   carrierwave
   coffee-rails (~> 4.1.0)
+  curb (~> 0.9.1)
   daemons
   delayed_job_active_record
   effective_datatables
