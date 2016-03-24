@@ -448,9 +448,16 @@ function offerDownloadLink(){
             data: {"web_ids":web_id_string},
             dataType: 'json',
             success: function(result){
-                console.log(result);
-                $('.download-link').html("<a href='http://www.google.com' target='_blank'>http://www.google.com</a>")
-                $('#downloadLinkModal').modal('show');
+                if(result.status == 'ok'){
+                    $('.download-link').html("<a href='" + result.url + "' target='_blank'>" + result.url +  "</a>");
+                    $('#downloadLinkModal').modal('show');
+                } else {
+                    console.log(result);
+                    $('.download-link').html("An unexpected error occurred.<br/>Details have been logged for review.<br/><a href='/help' target='_blank'>Contact the Research Data Service Team</a> with any questions.");
+                    $('#downloadLinkModal').modal('show');
+                }
+
+
             }
             //context: document.body
         }).done(function() {

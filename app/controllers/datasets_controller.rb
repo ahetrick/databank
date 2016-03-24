@@ -71,7 +71,7 @@ class DatasetsController < ApplicationController
       @total_files_size = @total_files_size + df.bytestream_size
       if !df.medusa_path || df.medusa_path == ""
         # Rails.logger.warn "no path found for #{df.to_yaml}"
-        # @all_in_medusa = false
+        @all_in_medusa = false
       end
 
     end
