@@ -449,7 +449,7 @@ function offerDownloadLink(){
             dataType: 'json',
             success: function(result){
                 if(result.status == 'ok'){
-                    $('.download-link').html("<a href='" + result.url + "' target='_blank'>" + result.url +  "</a>");
+                    $('.download-link').html("<a href='" + result.url + "' target='_blank'>Download</a>");
                     $('#downloadLinkModal').modal('show');
                 } else {
                     console.log(result);
