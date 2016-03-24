@@ -34,6 +34,7 @@ class Ability
       can :review_deposit_agreement, Dataset
     else
       can :read, :all
+      can :download_link, Dataset
       can :stream_file, Dataset
       can :download_datafiles, Dataset
       can :download_endNote_XML, Dataset

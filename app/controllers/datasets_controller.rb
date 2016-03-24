@@ -20,6 +20,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :show_agreement
   skip_load_and_authorize_resource :only => :review_deposit_agreement
   skip_load_and_authorize_resource :only => :datacite_record
+  skip_load_and_authorize_resource :only => :download_link
 
   before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :delete_datacite_id, :change_publication_state, :is_datacite_changed, :tombstone, :idb_datacite_xml]
 
@@ -60,7 +61,21 @@ class DatasetsController < ApplicationController
   # GET /datasets/1
   # GET /datasets/1.json
   def show
-    # @datacite_record = datacite_record_hash
+
+    @all_in_medusa = true
+    @total_files_size = 0
+    @local_zip_max_size = 750000000
+
+    @dataset.datafiles.each do |df|
+
+      @total_files_size = @total_files_size + df.bytestream_size
+      if !df.medusa_path || df.medusa_path == ""
+        # Rails.logger.warn "no path found for #{df.to_yaml}"
+        # @all_in_medusa = false
+      end
+
+    end
+
     @completion_check = Dataset.completion_check(@dataset, current_user)
     if params.has_key?(:selected_files)
       zip_and_download_selected
@@ -496,25 +511,6 @@ class DatasetsController < ApplicationController
   end
 
   def zip_and_download_selected
-
-    all_in_medusa = true
-    total_zip_size = 0
-
-    web_ids = params[:selected_files]
-    web_ids.each do |web_id|
-      df = Datafile.find_by_web_id(web_id)
-      if df
-        total_zip_size = total_zip_size + df.bytestream_size
-        if !df.medusa_path || df.medusa_path == ""
-          Rails.logger.warn "no path found for #{df.to_yaml}"
-          all_in_medusa = false
-        end
-      else
-        Rails.logger.warn "no df found for #{web_id}"
-        all_in_medusa = false
-      end
-    end
-
 
     if @dataset.identifier && !@dataset.identifier.empty?
       file_name = "DOI-#{@dataset.identifier}".parameterize + ".zip"

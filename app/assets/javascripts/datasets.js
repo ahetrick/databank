@@ -431,7 +431,7 @@ function filename_isdup(proposed_name){
 
 }
 
-function custom_zip(){
+function offerDownloadLink(){
     var selected_files = $('input[name="selected_files[]"]:checked');
     var web_id_string = ""
 
@@ -449,6 +449,8 @@ function custom_zip(){
             dataType: 'json',
             success: function(result){
                 console.log(result);
+                $('.download-link').html("<a href='http://www.google.com' target='_blank'>http://www.google.com</a>")
+                $('#downloadLinkModal').modal('show');
             }
             //context: document.body
         }).done(function() {

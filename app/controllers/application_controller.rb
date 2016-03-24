@@ -32,7 +32,6 @@ class ApplicationController < ActionController::Base
   def error_occurred(exception)
 
     if exception.class == CanCan::AccessDenied
-
       alert_message = exception.message
 
       if exception.subject.class == Dataset && exception.action == :new
