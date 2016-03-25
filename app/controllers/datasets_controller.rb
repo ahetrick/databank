@@ -82,7 +82,9 @@ class DatasetsController < ApplicationController
     end
     @changetable = nil
 
-    if @dataset.publication_state != Databank::PublicationState::DRAFT
+    changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', @dataset.id, @dataset.id)
+
+    if changes && changes.count > 0 && @dataset.publication_state != Databank::PublicationState::DRAFT
       @changetable = Effective::Datatables::DatasetChanges.new(dataset_id: @dataset.id)
     end
 
