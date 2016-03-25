@@ -40,9 +40,9 @@ module MedusaAmqp
       staging_path_arr = (response_hash['staging_path']).split('/')
 
       ingest_relation = MedusaIngest.where("staging_path = ?", response_hash['staging_path'])
-      Rails.logger.warn "ingest_relation"
-      Rails.logger.warn ingest_relation.to_yaml
-      Rails.logger.warn "response_hash['staging_path']: #{response_hash['staging_path']}"
+      #Rails.logger.warn "ingest_relation"
+      #Rails.logger.warn ingest_relation.to_yaml
+      #Rails.logger.warn "response_hash['staging_path']: #{response_hash['staging_path']}"
 
       if ingest_relation.count > 0
 
