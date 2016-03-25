@@ -567,7 +567,6 @@ class DatasetsController < ApplicationController
       web_ids.each(&:strip!)
 
       zip_link = DownloaderClient.get_download_link(web_ids, "DOI-#{@dataset.identifier}".parameterize)
-      Rails.logger.warn "zip_link: #{zip_link}"
       if zip_link
         return_hash["status"]="ok"
         return_hash["url"]=zip_link
