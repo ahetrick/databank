@@ -3,6 +3,9 @@
   <%= render partial: "confirm_deposit_modal" %>
   <%= render partial: 'dashboard_show' %>
 <% end %>
+<% if (can? :manage, @dataset) %>
+  <%= render partial: 'curator_access_controls' %>
+<% end %>
 
 <div class="container-fluid" id="main-show-div">
 
