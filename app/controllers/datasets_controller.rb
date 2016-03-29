@@ -399,14 +399,13 @@ class DatasetsController < ApplicationController
           if File.exist?("#{IDB_CONFIG[:agreements_root_path]}/#{@dataset.key}/deposit_agreement.txt")
             medusa_ingest = MedusaIngest.new
             full_path = "#{IDB_CONFIG[:agreements_root_path]}/#{@dataset.key}/deposit_agreement.txt"
-            full_path_arr = full_path.split("/")
-            full_staging_path = "#{staging_dir}/system/#{full_path_arr[8]}"
+            full_staging_path = "#{staging_dir}/system/deposit_agreement.txt"
             # make symlink
             FileUtils.symlink(full_path, full_staging_path)
             FileUtils.chmod "u=wrx,go=rx", full_staging_path
             # point to symlink for path
             #staging_path = "#{full_path_arr[5]}/#{full_path_arr[6]}/#{full_path_arr[7]}"
-            staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/#{full_path_arr[8]}"
+            staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/deposit_agreement.txt"
             medusa_ingest.staging_path = staging_path
             medusa_ingest.idb_class = 'agreement'
             medusa_ingest.idb_identifier = @dataset.key
