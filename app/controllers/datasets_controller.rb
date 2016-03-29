@@ -22,7 +22,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :datacite_record
   skip_load_and_authorize_resource :only => :download_link
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :deposit, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :delete_datacite_id, :change_publication_state, :is_datacite_changed, :tombstone, :idb_datacite_xml]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :delete_datacite_id, :change_publication_state, :is_datacite_changed, :tombstone, :idb_datacite_xml, :serialization]
 
   @@num_box_ingest_deamons = 10
 
@@ -227,34 +227,6 @@ class DatasetsController < ApplicationController
 
     if has_nested_param_change?
       @dataset.has_datacite_change = true
-
-      if (@dataset.publication_state != Databank::PublicationState::DRAFT) && !@dataset.is_test?
-        # for non-test published datasets, check for added datafiles to send to medusa
-        @dataset.datafiles.each do |datafile|
-          if datafile.binary && datafile.binary.path
-
-            full_path = datafile.binary.path
-            full_path_arr = full_path.split("/")
-            staging_path = "#{full_path_arr[5]}/#{full_path_arr[6]}/#{full_path_arr[7]}"
-
-            existing_medusa_ingest = MedusaIngest.where(staging_path: staging_path)
-
-            if !existing_medusa_ingest || existing_medusa_ingest.count == 0
-
-              datafile.binary_name = datafile.binary.file.filename
-              datafile.binary_size = datafile.binary.size
-              medusa_ingest = MedusaIngest.new
-              medusa_ingest.staging_path = staging_path
-              medusa_ingest.idb_class = 'datafile'
-              medusa_ingest.idb_identifier = datafile.web_id
-              medusa_ingest.send_medusa_ingest_message(staging_path)
-              medusa_ingest.save
-            end
-          end
-        end
-
-      end
-
     end
 
     respond_to do |format|
@@ -347,30 +319,31 @@ class DatasetsController < ApplicationController
 
   end
 
-  def deposit
+  # publishing in IDB means interacting with DataCite and Medusa
+  def publish
 
     old_state = @dataset.publication_state
 
+    # only publish complete datsets
     if Dataset.completion_check(@dataset, current_user) == 'ok'
       @dataset.complete = true
-
+      # set relase date
       if [Databank::PublicationState::DRAFT, Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::METADATA_EMBARGO].include?(old_state)
         if (@dataset.release_date && @dataset.release_date <= Date.current()) || !@dataset.embargo || @dataset.embargo == ""
           @dataset.release_date = Date.current()
         end
       end
-
       if !@dataset.release_date
         @dataset.release_date = Date.current()
       end
-
-
     else
       @dataset.complete = false
     end
 
     respond_to do |format|
       if @dataset.complete?
+
+        # register with DataCite for new datasets, update for imports and changes to other previously published datasets
         if !@dataset.identifier || @dataset.identifier.empty? || (@dataset.publication_state == Databank::PublicationState::DRAFT && !@dataset.is_import?)
           @dataset.identifier = create_doi(@dataset)
         end
@@ -379,15 +352,44 @@ class DatasetsController < ApplicationController
           @dataset.update_datacite_metadata(current_user)
         end
 
+        # create or confirm dataset_staging directory for dataset
+        dataset_dirname = "DOI-#{(@dataset.identifier).parameterize}"
+        staging_dir = "#{IDB_CONFIG[:staging_root]}/#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}"
+        FileUtils.mkdir_p "#{staging_dir}/dataset_files"
+        FileUtils.mkdir_p "#{staging_dir}/system"
+        FileUtils.chmod "u=wrx,go=rx", File.dirname(staging_dir)
+        
+        file_time = Time.now.strftime('%Y-%m-%d_%H-%M')
+        description_xml = @dataset.to_datacite_xml
+        File.open("#{staging_dir}/system/description.#{file_time}.xml", "w") do |description_file|
+          description_file.puts(description_xml)
+        end
+        FileUtils.chmod 0755, "#{staging_dir}/system/description.#{file_time}.xml"
+
+        medusa_ingest = MedusaIngest.new
+        staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/description.#{file_time}.xml"
+        medusa_ingest.staging_path = staging_path
+        medusa_ingest.idb_class = 'description'
+        medusa_ingest.idb_identifier = @dataset.key
+        medusa_ingest.send_medusa_ingest_message(staging_path)
+        medusa_ingest.save
+
         if old_state == Databank::PublicationState::DRAFT && !@dataset.is_test?
 
           @dataset.datafiles.each do |datafile|
+
             datafile.binary_name = datafile.binary.file.filename
             datafile.binary_size = datafile.binary.size
             medusa_ingest = MedusaIngest.new
             full_path = datafile.binary.path
             full_path_arr = full_path.split("/")
-            staging_path = "#{full_path_arr[5]}/#{full_path_arr[6]}/#{full_path_arr[7]}"
+            full_staging_path = "#{staging_dir}/dataset_files/#{full_path_arr[7]}"
+            # make symlink
+            FileUtils.symlink(full_path, full_staging_path)
+            FileUtils.chmod "u=wrx,go=rx", full_staging_path
+            # point to symlink for path
+            # staging_path = "#{full_path_arr[5]}/#{full_path_arr[6]}/#{full_path_arr[7]}"
+            staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/dataset_files/#{full_path_arr[7]}"
             medusa_ingest.staging_path = staging_path
             medusa_ingest.idb_class = 'datafile'
             medusa_ingest.idb_identifier = datafile.web_id
@@ -398,7 +400,13 @@ class DatasetsController < ApplicationController
             medusa_ingest = MedusaIngest.new
             full_path = "#{IDB_CONFIG[:agreements_root_path]}/#{@dataset.key}/deposit_agreement.txt"
             full_path_arr = full_path.split("/")
-            staging_path = "#{full_path_arr[5]}/#{full_path_arr[6]}/#{full_path_arr[7]}"
+            full_staging_path = "#{staging_dir}/system/#{full_path_arr[8]}"
+            # make symlink
+            FileUtils.symlink(full_path, full_staging_path)
+            FileUtils.chmod "u=wrx,go=rx", full_staging_path
+            # point to symlink for path
+            #staging_path = "#{full_path_arr[5]}/#{full_path_arr[6]}/#{full_path_arr[7]}"
+            staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/#{full_path_arr[8]}"
             medusa_ingest.staging_path = staging_path
             medusa_ingest.idb_class = 'agreement'
             medusa_ingest.idb_identifier = @dataset.key
@@ -411,6 +419,33 @@ class DatasetsController < ApplicationController
         end
 
         @dataset.has_datacite_change = false
+        serialization_json = (@dataset.recovery_serialization).to_json
+        File.open("#{staging_dir}/system/serialization.#{file_time}.json", "w") do |serialization_file|
+          serialization_file.puts(serialization_json)
+        end
+        FileUtils.chmod 0755, "#{staging_dir}/system/serialization.#{file_time}.json"
+
+        medusa_ingest = MedusaIngest.new
+        staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/serialization.#{file_time}.json"
+        medusa_ingest.staging_path = staging_path
+        medusa_ingest.idb_class = 'serialization'
+        medusa_ingest.idb_identifier = @dataset.key
+        medusa_ingest.send_medusa_ingest_message(staging_path)
+        medusa_ingest.save
+
+
+        changelog_json = (@dataset.full_changelog).to_json
+        File.open("#{staging_dir}/system/changelog.#{file_time}.json", "w") do |changelog_file|
+          changelog_file.write(changelog_json)
+        end
+        FileUtils.chmod 0755, "#{staging_dir}/system/changelog.#{file_time}.json"
+        medusa_ingest = MedusaIngest.new
+        staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/changelog.#{file_time}.json"
+        medusa_ingest.staging_path = staging_path
+        medusa_ingest.idb_class = 'changelog'
+        medusa_ingest.idb_identifier = @dataset.key
+        medusa_ingest.send_medusa_ingest_message(staging_path)
+        medusa_ingest.save
 
         if old_state == Databank::PublicationState::DRAFT
 
@@ -473,7 +508,6 @@ class DatasetsController < ApplicationController
     if params.has_key?(:id)
       set_dataset
     end
-
   end
 
   def has_nested_param_change?
@@ -759,6 +793,14 @@ class DatasetsController < ApplicationController
     render json: {"citation" => @dataset.plain_text_citation}
   end
 
+  def serialization
+
+    @serialization_json = self.recovery_serialization.to_json
+    respond_to do |format|
+      format.html
+      format.json
+    end
+  end
 
   private
 
@@ -843,7 +885,7 @@ class DatasetsController < ApplicationController
         return false
     end
 
-
   end
+
 
 end

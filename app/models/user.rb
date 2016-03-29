@@ -2,6 +2,7 @@ require 'open-uri'
 require 'json'
 
 class User < ActiveRecord::Base
+  include ActiveModel::Serialization
 
   ROLES = %w[admin depositor guest no_deposit]
   

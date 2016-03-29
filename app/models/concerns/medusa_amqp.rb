@@ -52,29 +52,27 @@ module MedusaAmqp
         ingest.medusa_uuid = response_hash['medusa_uuid']
         ingest.response_time = Time.now.utc.iso8601
         ingest.save!
-      else
-        Rails.logger.warn "could not find ingest record for medusa succeeded message: #{response_hash['staging_path']}"
-      end
 
-      case staging_path_arr[0]
-        when 'uploads'
-          datafile = Datafile.find_by_web_id(staging_path_arr[1])
-          if datafile && datafile.binary && datafile.binary.file
-            datafile.medusa_path = response_hash['medusa_path']
-            datafile.medusa_id = response_hash['medusa_uuid']
-            if File.exists?("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{datafile.medusa_path}") &&  datafile.binary && FileUtils.identical?(datafile.binary.path, "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{datafile.medusa_path}")
+        if File.exists?("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{datafile.medusa_path}") &&  FileUtils.identical?("#{IDB_CONFIG[:staging_root]}/#{response_hash['staging_path']}", "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{datafile.medusa_path}")
+          Rails.logger.warn "changing Medusa interaction"
+          Rails.logger.warn ingest
+          if ingest.idb_class == 'datafile'
+            datafile = Datafile.find_by_web_id(ingest.idb_identifier)
+            if datafile && datafile.binary
               datafile.remove_binary!
               datafile.save
             else
-              Rails.logger.warn "Copy unverified for medusa ingest response #{response.to_yaml}"
+              Rails.logger.warn "Datafile already gone for #{ingest.to_yaml}"
             end
-          else
-            Rails.logger.warn "Did not find datafile binary, staging_path_arr: #{staging_path_arr.to_yaml}"
           end
-        when 'agreements'
-          # ignore for now
+          # delete file or symlink from staging directory
+          File.delete("#{IDB_CONFIG[:staging_root]}/#{response_hash['staging_path']}")
         else
-          Rails.logger.warn "Unrecognized staging_path in medusa ingest response #{response.to_yaml}"
+          Rails.logger.warn "did not delete file because Medusa version does not exist or is not verified for #{ingest.to_yaml}"
+        end
+
+      else
+        Rails.logger.warn "could not find ingest record for medusa succeeded message: #{response_hash['staging_path']}"
       end
 
     end

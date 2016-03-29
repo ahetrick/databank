@@ -1,4 +1,5 @@
 class RelatedMaterial < ActiveRecord::Base
+  include ActiveModel::Serialization
   belongs_to :dataset
   audited associated_with: :dataset
   def as_json(options={})

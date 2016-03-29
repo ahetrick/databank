@@ -52,7 +52,7 @@ Rails.application.routes.draw do
   # delete '/datafiles/:web_id', to: 'datafiles#destroy'
 
   # deposit
-  get '/datasets/:id/deposit', to: 'datasets#deposit'
+  get '/datasets/:id/publish', to: 'datasets#publish'
 
   # tombstone
   get '/datasets/:id/tombstone', to: 'datasets#tombstone'
@@ -92,5 +92,7 @@ Rails.application.routes.draw do
   post "/role_switch", to: 'sessions#role_switch'
 
   get "/datasets/:id/download_link", to: 'datasets#download_link', defaults: {format: 'json'}
+
+  get "/datasets/:id/serialization", to: 'datasets#serialization', defaults: {format: 'json'}
 
 end

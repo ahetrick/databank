@@ -1,5 +1,5 @@
 class Datafile < ActiveRecord::Base
-
+  include ActiveModel::Serialization
   mount_uploader :binary, BinaryUploader
   belongs_to :dataset
   audited associated_with: :dataset

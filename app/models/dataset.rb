@@ -4,6 +4,7 @@ require 'open-uri'
 require 'net/http'
 
 class Dataset < ActiveRecord::Base
+  include ActiveModel::Serialization
 
   # audited only: [:title, :identifier, :publisher, :publication_year, :description, :license, :corresponding_creator_name, :corresponding_creator_email, :keywords, :publication_state, :version, :curator_hold, :release_date, :creators, :datafiles, :funders, :related_materials], allow_mass_assignment: true
   audited except: [:creator_text, :key, :complete, :has_datacite_change, :is_test, :is_import, :updated_at, :embargo],  allow_mass_assignment: true
@@ -276,6 +277,29 @@ class Dataset < ActiveRecord::Base
 
   def to_datacite_raw_xml
     Nokogiri::XML::Document.parse(to_datacite_xml).to_xml
+  end
+  
+  def recovery_serialization
+    dataset = self.serializable_hash
+    creators = Array.new
+    self.creators.each do |creator|
+      creators << creator.serializable_hash
+    end
+    datafiles = Array.new
+    self.datafiles.each do |datafile|
+      datafiles << datafile.serializable_hash
+    end
+    funders = Array.new
+    self.funders.each do |funder|
+      funders << funder.serializable_hash
+    end
+    materials = Array.new
+    self.related_materials do |material|
+      materials << material.serializable_hash
+    end
+
+    {"idb_dataset":{"model":IDB_CONFIG[:model], "dataset":dataset, "creators":creators, "funders":funders, "materials":materials, "datafiles":datafiles }}
+
   end
 
 
@@ -695,6 +719,23 @@ class Dataset < ActiveRecord::Base
   def send_embargo_approaching_1w
     notification = DatabankMailer.embargo_approaching_1w(self.key)
     notification.deliver_now
+  end
+
+  def full_changelog
+    changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', self.id, self.id)
+    changesArr = Array.new
+    changes.each do |change|
+      agent = nil
+      user = User.find(Integer(change.user_id))
+      if user
+        agent = user.serializable_hash
+      else
+        agent = {"user_id":change.user_id}
+      end
+      changesArr << {"change":change, "agent":agent}
+    end
+    changesHash = {"changes":changesArr, "model":"v0.1"}
+    changesHash
   end
 
   def self.make_anvl(metadata)
