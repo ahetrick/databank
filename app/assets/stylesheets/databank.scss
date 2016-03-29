@@ -1,6 +1,8 @@
 // uses variables from libguide-style.scss
 $one-line-header-height: 102px;
 $two-line-header-height: 137px;
+$minibar-height: 50px;
+
 .idb-help ul {
   list-style-type: none;
 }
@@ -132,7 +134,16 @@ a.btn {
 }
 
 /*  fixed headers for full screen */
+/*
 
+@media screen and (min-width: 767px) {
+  #not-header{
+    margin-top: $minibar-height;
+  }
+}
+*/
+
+/*
 @media screen and (max-width: 1145px) and (min-width: 767px) {
 
   .library-header{
@@ -144,7 +155,7 @@ a.btn {
   }
   .navbar-default{
     z-index: 1002;
-    position: fixed;
+    position: fixed;s
     top: 32px;
     width: 100%;
 
@@ -187,5 +198,6 @@ a.btn {
     font-size: 55px;
   }
 }
+*/
 
 

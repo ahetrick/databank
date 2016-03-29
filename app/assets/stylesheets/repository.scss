@@ -4,6 +4,8 @@ body{
 }
 
 .library-header {
+  position: relative;
+  z-index: 1002;
   margin-bottom: 0;
   background-color: $color__dark-navy;
   width: 100%;
@@ -77,6 +79,8 @@ $colHighlight: $color__lightest-grey;
 $dropDown: false;
 
 .navbar-default {
+  position: relative;
+  z-index: 1001;
   min-height: 70px;
   margin: 0;
   padding-top: 10px;
@@ -183,6 +187,99 @@ $dropDown: false;
 }
 
 /* end Navbar styling */
+
+/* begin Minibar styling */
+
+.navbar-mini {
+  width: 100%;
+  z-index: 500;
+  position: fixed;
+  height: 50px;
+  margin: 0;
+  padding: 0 50px 0 0;
+  border-radius: 0;
+  background-color: $color__dark-navy;
+  border-color: $color__dark-navy;
+  .minibar-brand {
+    font-size: 24px;
+    color: $colDefault;
+    font-family: "Garamond", "Times New Roman", Times, Serif;
+    &:hover, &:focus {
+      color: $colHighlight;
+    }
+  }
+
+  .navbar-text {
+    color: $colDefault;
+  }
+  .navbar-nav {
+    > li {
+      > a {
+        color: $colDefault;
+        &:hover, &:focus {
+          color: $colHighlight;
+          background-color: $bgHighlight;
+        }
+      }
+      @if $dropDown {
+        > .dropdown-menu {
+          background-color: $color__dark-navy;
+          > li > a {
+            color: $colDefault;
+            &:hover, &:focus {
+              color: $colHighlight;
+              background-color: $bgHighlight;
+            }
+          }
+          .divider {
+            background-color: $bgHighlight;
+          }
+        }
+      }
+    }
+    > .active {
+      > a, > a:hover, > a:focus {
+        color: $colHighlight;
+        background-color: $bgHighlight;
+      }
+    }
+    > .open {
+      > a, > a:hover, > a:focus {
+        color: $colHighlight;
+        background-color: $bgHighlight;
+      }
+    }
+  }
+  .navbar-toggle {
+    border-color: $bgHighlight;
+    &:hover, &:focus {
+      background-color: $bgHighlight;
+    }
+    .icon-bar {
+      background-color: $colDefault;
+    }
+  }
+  .navbar-collapse,
+  .navbar-form {
+    border-color: $colDefault;
+  }
+  .navbar-link {
+    color: $colDefault;
+    &:hover {
+      color: $colHighlight;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+
+  .navbar-mini{
+    visibility: hidden;
+  }
+}
+
+
+/* end Minibar styling */
 
 /* begin Button styling  */
 

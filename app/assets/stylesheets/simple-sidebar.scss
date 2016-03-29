@@ -10,6 +10,7 @@ $sidebar-width: 400px;
 $sidebar-offset: -400px;
 
 #wrapper {
+
     padding-left: 0;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
@@ -22,7 +23,8 @@ $sidebar-offset: -400px;
 }
 
 #sidebar-wrapper {
-    z-index: 1000;
+    margin-top: -150px;
+    z-index: 499;
     position: fixed;
     left: $sidebar-width;
     width: 0;
@@ -58,7 +60,7 @@ $sidebar-offset: -400px;
     top: 0;
     width: $sidebar-width;
     margin: 0;
-    padding: 0;
+    padding: 200px 0 0 0;
     list-style: none;
 }
 
