@@ -39,12 +39,7 @@ module MedusaAmqp
     def on_medusa_succeeded_message(response_hash)
       staging_path_arr = (response_hash['staging_path']).split('/')
 
-      Rails.logger.warn response_hash.to_yaml
-
       ingest_relation = MedusaIngest.where("staging_path = ?", response_hash['staging_path'])
-      #Rails.logger.warn "ingest_relation"
-      #Rails.logger.warn ingest_relation.to_yaml
-      #Rails.logger.warn "response_hash['staging_path']: #{response_hash['staging_path']}"
 
       if ingest_relation.count > 0
 
@@ -55,12 +50,8 @@ module MedusaAmqp
         ingest.response_time = Time.now.utc.iso8601
         ingest.save!
 
-        Rails.logger.warn "test exists: #{IDB_CONFIG['medusa']['medusa_path_root']}/#{response_hash['medusa_path']}"
-        Rails.logger.warn "test identical: #{IDB_CONFIG[:staging_root]}/#{response_hash['staging_path']}"
-
         if File.exists?("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{response_hash['medusa_path']}") &&  FileUtils.identical?("#{IDB_CONFIG[:staging_root]}/#{response_hash['staging_path']}", "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{response_hash['medusa_path']}")
-          Rails.logger.warn "changing Medusa interaction"
-          Rails.logger.warn ingest.to_yaml
+
           if ingest.idb_class == 'datafile'
             datafile = Datafile.find_by_web_id(ingest.idb_identifier)
             if datafile && datafile.binary
@@ -79,20 +70,19 @@ module MedusaAmqp
       else
         Rails.logger.warn "could not find ingest record for medusa succeeded message: #{response_hash['staging_path']}"
       end
-
     end
 
     def on_medusa_failed_message(response_hash)
-      ingest = MedusaIngest.where(staging_path: response.staging_path)
+      ingest = MedusaIngest.where(staging_path: response_hash['staging_path'])
       if ingest
         Rails.logger.warn "medusa failed message:"
         Rails.logger.warn ingest.to_yaml
-        ingest.request_status = response.status
-        ingest.error_text = response.error
+        ingest.request_status = response_hash['status']
+        ingest.error_text = response_hash['error']
         ingest.response_time = Time.now.utc.iso8601
         ingest.save
       else
-        Rails.logger.warn "could not find file for medusa failure message: #{response.staging_path}"
+        Rails.logger.warn "could not find file for medusa failure message: #{response_hash['staging_path']}"
       end
     end
 
