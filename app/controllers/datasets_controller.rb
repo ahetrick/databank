@@ -601,10 +601,16 @@ class DatasetsController < ApplicationController
 
       web_ids.each(&:strip!)
 
-      zip_link = DownloaderClient.get_download_link(web_ids, "DOI-#{@dataset.identifier}".parameterize)
-      if zip_link
-        return_hash["status"]="ok"
-        return_hash["url"]=zip_link
+      download_hash = DownloaderClient.get_download_hash(web_ids, "DOI-#{@dataset.identifier}".parameterize)
+      if download_hash
+        if download_hash['status']== 'ok'
+          return_hash["status"]="ok"
+          return_hash["url"]=download_hash['download_url']
+          return_hash["total_size"]=download_hash['total_size']
+        else
+          return_hash["status"]="error"
+          return_hash["error"]=download_hash["error"]
+        end
       else
         return_hash["status"]="error"
         return_hash["error"]="nil zip link returned"

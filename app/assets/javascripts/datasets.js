@@ -433,7 +433,8 @@ function filename_isdup(proposed_name){
 
 function offerDownloadLink(){
     var selected_files = $('input[name="selected_files[]"]:checked');
-    var web_id_string = ""
+    var web_id_string = "";
+    var zip64_threshold = 4000000000;
 
     $.each(selected_files, function( index, value ) {
         if (web_id_string != ""){
@@ -450,6 +451,10 @@ function offerDownloadLink(){
             success: function(result){
                 if(result.status == 'ok'){
                     $('.download-link').html("<a href='" + result.url + "' target='_blank'>Download</a>");
+                    if(Number(result.total_size) > zip64_threshold ){
+                        $('.download-help').html("<p>For selections of files larger than 4GB, the zip file will be in zip64 format. To open a zip64 formatted file on OS X (Mac), requires additional software not build into the operating system since verion 10.11. Options include 7zip and The Unarchiver.</p>")
+                    }
+
                     $('#downloadLinkModal').modal('show');
                 } else {
                     console.log(result);
