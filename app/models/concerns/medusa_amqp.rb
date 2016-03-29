@@ -53,7 +53,7 @@ module MedusaAmqp
         ingest.response_time = Time.now.utc.iso8601
         ingest.save!
 
-        if File.exists?("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{datafile.medusa_path}") &&  FileUtils.identical?("#{IDB_CONFIG[:staging_root]}/#{response_hash['staging_path']}", "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{datafile.medusa_path}")
+        if File.exists?("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{response_hash['medusa_path']}") &&  FileUtils.identical?("#{IDB_CONFIG[:staging_root]}/#{response_hash['staging_path']}", "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{response_hash['medusa_path']}")
           Rails.logger.warn "changing Medusa interaction"
           Rails.logger.warn ingest
           if ingest.idb_class == 'datafile'
