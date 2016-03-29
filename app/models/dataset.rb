@@ -734,7 +734,7 @@ class Dataset < ActiveRecord::Base
       end
       changesArr << {"change":change, "agent":agent}
     end
-    changesHash = {"changes":changesArr, "model":"v0.1"}
+    changesHash = {"changes":changesArr, "model":"#{IDB_CONFIG[:model]}"}
     changesHash
   end
 
