@@ -169,7 +169,7 @@
           <%= (!@dataset.corresponding_creator_name || @dataset.corresponding_creator_name.empty?) ? "[corresponding creator name not provided]" : @dataset.corresponding_creator_name %>
         </span>
           <% if can? :manage, @dataset %>
-          <span class="col-md-6">
+          <span class="col-md-6 curator-only">
             <span class="metadata-label">Depositor:</span>
             <%= @dataset.depositor_name %>
           </span>
@@ -177,19 +177,17 @@
         </div>
         <% if can? :manage, @dataset %>
           <div class="row">
-          <span class="col-md-6">
+          <span class="col-md-6 curator-only">
             <span class="metadata-label">Corresponding Creator Email: </span>
             <%= (!@dataset.corresponding_creator_email || @dataset.corresponding_creator_email.empty?) ? "[corresponding creator email not provided]" : @dataset.corresponding_creator_email %>
           </span>
-        <span class="col-md-6">
-          <span class="metadata-label">Depositor Email:</span>
-          <%= @dataset.depositor_email %>
-          </span>
+          <span class="col-md-6 curator-only">
+            <span class="metadata-label">Depositor Email:</span>
+            <%= @dataset.depositor_email %>
+            </span>
           </div>
         <% end %>
-
       </div>
-
 
       <!-- END metadata section-->
 
@@ -218,7 +216,8 @@
                               <span class="col-md-4">
                                 <% if @all_in_medusa %>
                                   <button class="btn btn-primary" type="button" onclick="offerDownloadLink()">
-                                    <span class="glyphicon glyphicon-download"></span> Get Custom Zip and Download Link for Selected
+                                    <span class="glyphicon glyphicon-download"></span> Get Custom Zip and Download Link
+                                    for Selected
                                     (<span id="checkFileSelectedCount"></span>)
                                   </button>
                                 <% else %>
@@ -231,7 +230,8 @@
                             </div>
                             <div class="row">
                               <span class=" checkbox col-md-4">
-                                <label><input type="checkbox" id="checkAllFiles" value="checkAllFiles">Select all (<%= @dataset.datafiles.count %>) </label>
+                                <label><input type="checkbox" id="checkAllFiles" value="checkAllFiles">Select all
+                                  (<%= @dataset.datafiles.count %>) </label>
                               </span>
                             </div>
                           </td>
