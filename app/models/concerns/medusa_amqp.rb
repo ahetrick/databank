@@ -89,7 +89,8 @@ module MedusaAmqp
   end
 
   def send_medusa_ingest_message(staging_path)
-    AmqpConnector.instance.send_message(self.outgoing_queue, create_medusa_ingest_message(staging_path))
+    # Temporarily turn off messaging by commenting out the line below
+    # AmqpConnector.instance.send_message(self.outgoing_queue, create_medusa_ingest_message(staging_path))
   end
 
   def create_medusa_ingest_message(staging_path)
