@@ -7,8 +7,14 @@
       </div>
 
       <div class="modal-footer container-fluid">
+        <div class="idb-callout">
+          <h2>Publishing temporarily disabled</h2>
+          <em>email or instant message Colleen Fallaw (mfall3@illinois.edu) for more information or updates</em>
+          <br/>
+        </div>
+        <br/>
 
-        <button onclick='window.location = "/datasets/<%=@dataset.key%>/publish"', type="button" class="btn btn-primary" data-dismiss="modal" id="login-button">
+        <button onclick='window.location = "/datasets/<%=@dataset.key%>/publish"', type="button" disabled class="btn btn-primary" data-dismiss="modal" id="login-button">
           <span class="glyphicon glyphicon-send"></span> Publish
         </button>
 
