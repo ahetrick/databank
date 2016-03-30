@@ -27,6 +27,7 @@ class Dataset < ActiveRecord::Base
   before_create 'set_key'
   after_create 'store_agreement'
   before_save 'set_primary_contact'
+  before_save 'set_version'
   after_save 'remove_invalid_datafiles'
   after_update 'set_datacite_change'
 
@@ -543,10 +544,6 @@ class Dataset < ActiveRecord::Base
       return true
     end
 
-    if self.release_date_changed?
-      return true
-    end
-
     # if we get here, no DataCite-relevant changes have been detected
     return false
 
@@ -664,6 +661,13 @@ class Dataset < ActiveRecord::Base
       end
     end
   end
+
+  def set_version
+    if !self.version
+      self.version = "1"
+    end
+  end
+
 
   def remove_invalid_datafiles
     self.datafiles.each do |datafile|
