@@ -55,6 +55,8 @@ module MedusaAmqp
           if ingest.idb_class == 'datafile'
             datafile = Datafile.find_by_web_id(ingest.idb_identifier)
             if datafile && datafile.binary
+              datafile.medusa_path = response_hash['medusa_path']
+              datafile.medusa_id = response_hash['medusa_uuid']
               datafile.remove_binary!
               datafile.save
             else

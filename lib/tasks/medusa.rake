@@ -108,4 +108,18 @@ namespace :medusa do
 
   end
 
+  desc 'update medusa_path of datafile from ingest'
+  task :update_paths => :environment do
+    datafiles = Datafile.all
+    datafiles.each do |df|
+      if !df.binary  && !df.medusa_path
+        ingest = MedusaIngest.find_by_idb_identifier(df.id)
+        if ingest
+          df.medusa_path = ingest.medusa_path
+          df.save
+        end
+      end
+    end
+  end
+
 end
