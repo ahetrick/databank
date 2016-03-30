@@ -650,14 +650,16 @@ class Dataset < ActiveRecord::Base
   end
 
   def set_primary_contact
-
     self.corresponding_creator_name = nil
     self.corresponding_creator_email = nil
 
     self.creators.each do |creator|
       if creator.is_contact?
+        Rails.logger.warn "inside is contact"
         self.corresponding_creator_name = "#{creator.given_name} #{creator.family_name}"
         self.corresponding_creator_email = creator.email
+      else
+        Rails.logger.warn "not is contact #{creator.family_name}"
       end
     end
   end
