@@ -655,11 +655,8 @@ class Dataset < ActiveRecord::Base
 
     self.creators.each do |creator|
       if creator.is_contact?
-        Rails.logger.warn "inside is contact"
         self.corresponding_creator_name = "#{creator.given_name} #{creator.family_name}"
         self.corresponding_creator_email = creator.email
-      else
-        Rails.logger.warn "not is contact #{creator.family_name}"
       end
     end
   end
@@ -732,7 +729,10 @@ class Dataset < ActiveRecord::Base
     changesArr = Array.new
     changes.each do |change|
       agent = nil
-      user = User.find(Integer(change.user_id))
+      user = nil
+      if change.user_id && change.user_id != ''
+        user = User.find(Integer(change.user_id))
+      end
       if user
         agent = user.serializable_hash
       else
