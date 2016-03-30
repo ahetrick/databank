@@ -113,7 +113,7 @@ namespace :medusa do
     datafiles = Datafile.all
     datafiles.each do |df|
       if !df.binary  && !df.medusa_path
-        ingest = MedusaIngest.find_by_idb_identifier(df.id)
+        ingest = MedusaIngest.find_by_idb_identifier(df.web_id)
         if ingest
           df.medusa_path = ingest.medusa_path
           df.save
