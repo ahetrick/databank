@@ -63,6 +63,8 @@ namespace :demo do
           material.save
         end
       end
+      dataset.creators = Creator.where(dataset_id: dataset.id)
+      dataset.save
     end
   end
 end
