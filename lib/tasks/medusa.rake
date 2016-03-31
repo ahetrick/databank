@@ -131,7 +131,7 @@ namespace :medusa do
         if ingest
           puts "has ingest"
           df.medusa_path = ingest.medusa_path
-          df.medusa_uuid = ingest.medusa_uuid
+          df.medusa_id = ingest.medusa_uuid
           df.remove_binary!
           df.save
         else
