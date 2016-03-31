@@ -1,65 +1,66 @@
 <div data-no-turbolink>
   <!-- Static navbar -->
+  <div aria-hidden="true">
+    <nav class="navbar navbar-mini">
 
-  <nav class="navbar navbar-mini">
-
-    <div id="minibar">
-      <ul class="nav navbar-nav">
-        <li class="minibar-brand">
-          <a href="/">Illinois Data Bank</a>
-        </li>
-        <li>
-          <a href="/datasets/new"><span class="glyphicon glyphicon-plus"></span> Deposit Dataset</a></li>
-       <li>
-          <a href="/datasets"><span class="glyphicon glyphicon-search"></span> Find Data</a></li>
-        <li>
-          <a href="/policies"><span class="glyphicon glyphicon-info-sign"></span> Policies</a></li>
-        <li>
-          <a href="/help"><span class="glyphicon glyphicon-question-sign"></span> Help</a></li>
-      </ul>
+      <div id="minibar">
+        <ul class="nav navbar-nav">
+          <li class="minibar-brand">
+            <a href="/">Illinois Data Bank</a>
+          </li>
+          <li>
+            <a href="/datasets/new"><span class="glyphicon glyphicon-plus"></span> Deposit Dataset</a></li>
+          <li>
+            <a href="/datasets"><span class="glyphicon glyphicon-search"></span> Find Data</a></li>
+          <li>
+            <a href="/policies"><span class="glyphicon glyphicon-info-sign"></span> Policies</a></li>
+          <li>
+            <a href="/help"><span class="glyphicon glyphicon-question-sign"></span> Help</a></li>
+        </ul>
 
 
-      <ul class="nav navbar-nav navbar-right">
-        <% if current_user %>
-          <li><a href="/datasets?depositor=<%= current_user.name %>"> <%= current_user.name %></a></li>
-          <li><%= link_to "Log out", :logout %></li>
-        <% else %>
-
-          <% if IDB_CONFIG.has_key?(:local_mode) && IDB_CONFIG[:local_mode] %>
-
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Log
-                In <span class="caret"></span></a>
-              <ul class="dropdown-menu login-form">
-                <%= form_tag "/auth/identity/callback" do %>
-                  <li>
-                    <div class="form-group">
-                      <%= label_tag :auth_key, "Email", :class => "control-label" %><br/>
-                      <%= text_field_tag :auth_key %>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="form-group">
-                      <%= label_tag :password, "Password", :class => "control-label" %><br/>
-                      <%= password_field_tag :password %>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="actions">
-                      <%= submit_tag "Log In" %><br/>
-                      <%= link_to "Create Account", "/auth/identity/register" %>
-                    </div>
-                  </li>
-                <% end %>
-              </ul>
-            </li>
+        <ul class="nav navbar-nav navbar-right">
+          <% if current_user %>
+            <li><a href="/datasets?depositor=<%= current_user.name %>"> <%= current_user.name %></a></li>
+            <li><%= link_to "Log out", :logout %></li>
           <% else %>
-            <li><%= link_to "Log in with NetID", :login %></li>
-          <% end %>
-        <% end %>
-      </ul>
 
-    </div>
-    <!--/.nav-collapse -->
-  </nav>
+            <% if IDB_CONFIG.has_key?(:local_mode) && IDB_CONFIG[:local_mode] %>
+
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Log
+                  In <span class="caret"></span></a>
+                <ul class="dropdown-menu login-form">
+                  <%= form_tag "/auth/identity/callback" do %>
+                    <li>
+                      <div class="form-group">
+                        <%= label_tag :auth_key, "Email", :class => "control-label" %><br/>
+                        <%= text_field_tag :auth_key %>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="form-group">
+                        <%= label_tag :password, "Password", :class => "control-label" %><br/>
+                        <%= password_field_tag :password %>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="actions">
+                        <%= submit_tag "Log In" %><br/>
+                        <%= link_to "Create Account", "/auth/identity/register" %>
+                      </div>
+                    </li>
+                  <% end %>
+                </ul>
+              </li>
+            <% else %>
+              <li><%= link_to "Log in with NetID", :login %></li>
+            <% end %>
+          <% end %>
+        </ul>
+
+      </div>
+      <!--/.nav-collapse -->
+    </nav>
+  </div>
 </div>
