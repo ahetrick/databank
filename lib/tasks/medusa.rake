@@ -135,7 +135,7 @@ namespace :medusa do
           df.remove_binary!
           df.save
         else
-          puts "has no ingest"
+          puts "has no ingest for web_id: #{df.web_id}"
         end
       end
     end
