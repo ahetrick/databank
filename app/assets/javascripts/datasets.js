@@ -471,9 +471,25 @@ function offerDownloadLink(){
     }
 }
 
-function temp_supress_metadata(){
-    alert("temporarily supress file(s) and metadata")
+function tmpSuppressMetadata(){
+    alert("not yet implemented");
+    $('#tmpSuppressMetadataBtn').html("UNSUPPRESS File(s) and Metadata");
+    $('#tmpSuppressMetadataBtn').attr('onclick', 'unsuppress()');
 }
+function unsuppress(){
+    alert("not yet implemented");
+    $('#tmpSuppressMetadataBtn').html("Temporarily Suppress File(s) and Metadata");
+    $('#tmpSuppressMetadataBtn').attr('onclick', 'tmpSuppressMetadata()');
+    $('#tmpSuppressFilesBtn').html("Temporarily Suppress File(s) Only");
+    $('#tmpSuppressFilesBtn').attr('onclick', 'tmpSuppressFiles()');
+}
+function permSuppressMetadata(){
+    alert("not yet implemented");
+}
+function permSuppressMetadata(){
+    alert("not yet implemented");
+}
+
 
 $(document).ready(ready);
 $(document).on('page:load', ready);
