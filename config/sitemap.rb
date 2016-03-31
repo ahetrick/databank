@@ -4,7 +4,7 @@ require 'sitemap_generator'
 SitemapGenerator::Sitemap.default_host = IDB_CONFIG[:root_url_text]
 SitemapGenerator::Sitemap.create do
   Dataset.all.each do |dataset|
-    if [Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO].include?(dataset.publication_state)
+    if [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE].include?(dataset.publication_state)
       add dataset_url(dataset, host: IDB_CONFIG[:root_url_text])
     end
   end

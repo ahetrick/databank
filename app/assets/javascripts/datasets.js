@@ -471,6 +471,10 @@ function offerDownloadLink(){
     }
 }
 
+function temp_supress_metadata(){
+    alert("temporarily supress file(s) and metadata")
+}
+
 $(document).ready(ready);
 $(document).on('page:load', ready);
 

@@ -8,13 +8,27 @@ Bundler.require(*Rails.groups)
 
 module Databank
 
+  # file means all files only
+  # metadata means all files + metadata
+  # TempSupress states should be able to stack with other states
+  # Most restrictive state is effective
+
   class PublicationState
     DRAFT = 'draft'
     RELEASED = 'released'
-    METADATA_EMBARGO = 'metadata embargo'
-    FILE_EMBARGO = 'file embargo'
-    TOMBSTONE = 'tombstone'
-    DESTROYED = 'destroyed'
+    class Embargo
+      FILE = 'file embargo'
+      METADATA = 'metadata embargo'
+    end
+    class TempSupress
+      NONE = 'none'
+      FILE = 'files temporarily supressed'
+      METADATA = 'metadata temporarily supressed'
+    end
+    class PermSupress
+      FILE = 'files permanently supressed'
+      METADATA = 'metadata permanently supressed'
+    end
   end
 
   class Relationship

@@ -31,27 +31,7 @@ module Effective
 
         array_column 'Visibility', filter: {type: :select, values: ['Private (Saved Draft)', 'Public (Published)', 'Public description, Private files', 'Private (Delayed Publication)', 'Public Metadata, Private Files (Tombstoned)', 'Removed Metadata, Removed Files (Destroyed)', 'Private (Curator Hold)']} do |dataset|
 
-          if dataset.curator_hold?
-            render text: "Private (Curator Hold)"
-          else
-            case dataset.publication_state
-              when Databank::PublicationState::DRAFT
-                render text: "Private (Saved Draft)"
-              when Databank::PublicationState::RELEASED
-                render text: "Public (Published)"
-              when Databank::PublicationState::FILE_EMBARGO
-                render text: "Public description, Private files"
-              when Databank::PublicationState::METADATA_EMBARGO
-                render text: "Private (Delayed Publication)"
-              when Databank::PublicationState::TOMBSTONE
-                render text: "Public Metadata, Private Files (Tombstoned)"
-              when Databank::PublicationState::DESTROYED
-                render text: "Removed Metadata, Removed Files (Destroyed)"
-              else
-                #should never get here
-                render text: "Unknown, please contact the Research Data Service"
-            end
-          end
+          render text: "#{dataset.visibility}"
         end
         table_column :updated_at, label: 'search by update date'
         default_order :updated_at, :desc

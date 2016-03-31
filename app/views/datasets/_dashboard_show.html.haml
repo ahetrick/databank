@@ -5,11 +5,11 @@
     .panel-body
       .row
         .col-md-6
-          -if @dataset.has_datacite_change &&  [Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED, Databank::PublicationState::TOMBSTONE].include?(@dataset.publication_state)
+          -if @dataset.has_datacite_change &&  [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED, Databank::PublicationState::PermSupress::FILE].include?(@dataset.publication_state)
             .datacite-changes-warning
               %span(class="glyphicon glyphicon-alert" )
               Changes have been made to this dataset record that have not yet been published.  Confirm to complete changes.
-          -if @dataset.publication_state == Databank::PublicationState::METADATA_EMBARGO && (@dataset.embargo != Databank::PublicationState::METADATA_EMBARGO)
+          -if @dataset.publication_state == Databank::PublicationState::Embargo::METADATA && (@dataset.embargo != Databank::PublicationState::Embargo::METADATA)
             .datacite-changes-warning
               %span(class="glyphicon glyphicon-alert" )
               This dataset record has not yet been published.  Confirm to complete changes.
@@ -36,16 +36,16 @@
             You can edit the description for the dataset to correct an error, but you would need to contact the
             %a(href="/help#contact" )Research Data Service
             if there is an error in the files that needs to be corrected.
-          -if @completion_check == 'ok' && (@dataset.publication_state == Databank::PublicationState::DRAFT || (@dataset.has_datacite_change && [Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::TOMBSTONE].include?(@dataset.publication_state) ) )
+          -if @completion_check == 'ok' && (@dataset.publication_state == Databank::PublicationState::DRAFT || (@dataset.has_datacite_change && [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSupress::FILE].include?(@dataset.publication_state) ) )
             Click Confirm for final confirmation and to publish this dataset.
-          -if @dataset.publication_state == Databank::PublicationState::METADATA_EMBARGO && @dataset.embargo != Databank::PublicationState::METADATA_EMBARGO
+          -if @dataset.publication_state == Databank::PublicationState::Embargo::METADATA && @dataset.embargo != Databank::PublicationState::Embargo::METADATA
             Click Confirm for final confirmation and to publish changes to this dataset.
 
         .col-md-1
           -# confirm button conditional complex, so broken into two statements
-          -if @completion_check == 'ok' && (@dataset.publication_state == Databank::PublicationState::DRAFT || (@dataset.has_datacite_change && [Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::TOMBSTONE].include?(@dataset.publication_state) ) )
+          -if @completion_check == 'ok' && (@dataset.publication_state == Databank::PublicationState::DRAFT || (@dataset.has_datacite_change && [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSupress::FILE].include?(@dataset.publication_state) ) )
             %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit") Confirm
-          -if @dataset.publication_state == Databank::PublicationState::METADATA_EMBARGO && @dataset.embargo != Databank::PublicationState::METADATA_EMBARGO
+          -if @dataset.publication_state == Databank::PublicationState::Embargo::METADATA && @dataset.embargo != Databank::PublicationState::Embargo::METADATA
             %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit") Confirm
 
         .col-md-1

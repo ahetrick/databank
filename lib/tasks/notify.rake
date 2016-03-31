@@ -15,7 +15,7 @@ namespace :notify do
   desc 'send all approaching embargo 1 month alerts'
   task :send_embargo_approaching_1m_all => :environment do
     Dataset.all.each do |dataset|
-      if ([Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState, Databank::PublicationState::METADATA_EMBARGO].include?(dataset.publication_state)) && (dataset.release_date.to_date == 1.month.from_now.to_date)
+      if ([Databank::PublicationState::Embargo::FILE, Databank::PublicationState, Databank::PublicationState::Embargo::METADATA].include?(dataset.publication_state)) && (dataset.release_date.to_date == 1.month.from_now.to_date)
         dataset.send_embargo_approaching_1m
       end
     end
@@ -24,7 +24,7 @@ namespace :notify do
   desc 'send all approaching embargo 1 week alerts'
   task :send_embargo_approaching_1w_all => :environment do
     Dataset.all.each do |dataset|
-      if ([Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState, Databank::PublicationState::METADATA_EMBARGO].include?(dataset.publication_state)) && (dataset.release_date.to_date == 1.week.from_now.to_date)
+      if ([Databank::PublicationState::Embargo::FILE, Databank::PublicationState, Databank::PublicationState::Embargo::METADATA].include?(dataset.publication_state)) && (dataset.release_date.to_date == 1.week.from_now.to_date)
         dataset.send_embargo_approaching_1w
       end
     end

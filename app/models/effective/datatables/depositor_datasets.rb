@@ -42,25 +42,7 @@ module Effective
         end
         array_column 'Visibility', filter: {type: :select, values: ['Private (Saved Draft)', 'Public (Published)', 'Public description, Private files', 'Private (Delayed Publication)', 'Public Metadata, Private Files (Tombstoned)', 'Private (Curator Hold)']} do |dataset|
 
-          if dataset.curator_hold?
-            render text: "Private (Curator Hold)"
-          else
-            case dataset.publication_state
-              when Databank::PublicationState::DRAFT
-                render text: "Private (Saved Draft)"
-              when Databank::PublicationState::RELEASED
-                render text: "Public (Published)"
-              when Databank::PublicationState::FILE_EMBARGO
-                render text: "Public description, Private files"
-              when Databank::PublicationState::METADATA_EMBARGO
-                render text: "Private (Delayed Publication)"
-              when Databank::PublicationState::TOMBSTONE
-                render text: "Public Metadata, Private Files (Tombstoned)"
-              else
-                #should never get here
-                render text: "Unknown, please contact the Research Data Service"
-            end
-          end
+          render text: "#{dataset.visibility}"
         end
         table_column :updated_at, visible: false
         default_order :updated_at, :desc
@@ -68,7 +50,7 @@ module Effective
 
       def collection
         current_email = attributes[:current_email]
-        Dataset.where.not(publication_state: Databank::PublicationState::DESTROYED).where(is_test: false).where("publication_state = ? OR publication_state = ? OR depositor_email = ?", Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED, current_email)
+        Dataset.where.not(publication_state: Databank::PublicationState::PermSupress::METADATA).where(is_test: false).where("publication_state = ? OR publication_state = ? OR depositor_email = ?", Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED, current_email)
       end
 
     end

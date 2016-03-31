@@ -43,7 +43,11 @@
                   %a(href="#" data-toggle="modal" data-target="#licenseModal" tabindex="-1")
                     %span(class="fa fa-question-circle")
                     what's this?
-                  = f.collection_select :license, LicenseInfo.order('code ASC'), :code, :name, {:prompt => true}, {:class => "form-control dataset"}
+                  - if [Databank::PublicationState::DRAFT, Databank::PublicationState::Embargo::METADATA].include? @databank.publication_state
+                    = f.collection_select :license, LicenseInfo.order('code ASC'), :code, :name, {:prompt => true}, {:class => "form-control dataset"}
+                  -else
+                    - license_info = LicenseInfo.find_by_code(@dataset.license)
+                    = license_info.name
 
             = render partial: 'creators_subform', locals: {f: f}
 
@@ -62,17 +66,17 @@
                   = f.text_field :keywords, :class => "form-control dataset", :placeholder => "[Semi-colon separated list of keywords or phrases, e.g.: (institutional repositories; file formats)]"
                   %span(class="help-block") Use a semi-colon (;) to separate keywords or phrases (e.g.: repositories; file formats).
 
-              -if ( params[:action]=='new' || (can? :manage, @dataset) || ((can? :edit, @dataset) && ([Databank::PublicationState::METADATA_EMBARGO, Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::DRAFT].include?(@dataset.publication_state))))
+              -if ( params[:action]=='new' || (can? :manage, @dataset) || ((can? :edit, @dataset) && ([Databank::PublicationState::Embargo::METADATA, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::DRAFT].include?(@dataset.publication_state))))
                 .col-md-4
                   .form-group
                     =f.label :embargo, "Publication Delay (embargo)", class: "control-label"
                     %a(href="#" data-toggle="modal" data-target="#embargoModal" tabindex="-1")
                       %span(class="fa fa-question-circle")
                       what's this?
-                    - if [Databank::PublicationState::DRAFT, Databank::PublicationState::METADATA_EMBARGO].include?(@dataset.publication_state)
-                      = f.select :embargo, options_for_select([["File Publication Delay", Databank::PublicationState::FILE_EMBARGO],["File and Metadata Publication Delay", Databank::PublicationState::METADATA_EMBARGO]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
+                    - if [Databank::PublicationState::DRAFT, Databank::PublicationState::Embargo::METADATA].include?(@dataset.publication_state)
+                      = f.select :embargo, options_for_select([["File Publication Delay", Databank::PublicationState::Embargo::FILE],["File and Metadata Publication Delay", Databank::PublicationState::Embargo::METADATA]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
                     -else
-                      = f.select :embargo, options_for_select([["File Publication Delay", Databank::PublicationState::FILE_EMBARGO]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
+                      = f.select :embargo, options_for_select([["File Publication Delay", Databank::PublicationState::Embargo::FILE]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
                 .col-md-2
                   %div(id="release-date-picker")
                     =f.label :release_date, "Release Date",  :class => "control-label"
@@ -121,12 +125,6 @@
                     =f.label :version, "Version", :class => "control-label"
                     %br
                     =f.text_field :version, :class => "form-control dataset"
-
-                %span(class="col-md-1" )
-                  .form-group.curator-only
-                    =f.label :curator_hold, "curator hold", :class => "control-label"
-                    %br
-                    =f.check_box :curator_hold, :class => "form-control dataset"
             - else
               = f.hidden_field :publication_year, :value => @dataset.publication_year || "#{Time.now.year}"
 

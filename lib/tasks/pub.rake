@@ -11,7 +11,7 @@ namespace :pub do
     end
 
     Dataset.all.each do |dataset|
-      if [Databank::PublicationState::METADATA_EMBARGO, Databank::PublicationState::FILE_EMBARGO].include?(dataset.publication_state) && dataset.release_date <= Date.current()
+      if [Databank::PublicationState::Embargo::METADATA, Databank::PublicationState::Embargo::FILE].include?(dataset.publication_state) && dataset.release_date <= Date.current()
         dataset.publication_state = Databank::PublicationState::RELEASED
         dataset.embargo = ''
         dataset.save

@@ -6,8 +6,7 @@ require 'net/http'
 class Dataset < ActiveRecord::Base
   include ActiveModel::Serialization
 
-  # audited only: [:title, :identifier, :publisher, :publication_year, :description, :license, :corresponding_creator_name, :corresponding_creator_email, :keywords, :publication_state, :version, :curator_hold, :release_date, :creators, :datafiles, :funders, :related_materials], allow_mass_assignment: true
-  audited except: [:creator_text, :key, :complete, :has_datacite_change, :is_test, :is_import, :updated_at, :embargo],  allow_mass_assignment: true
+  audited except: [:creator_text, :key, :complete, :has_datacite_change, :is_test, :is_import, :updated_at, :embargo], allow_mass_assignment: true
   has_associated_audits
 
   MIN_FILES = 1
@@ -22,7 +21,7 @@ class Dataset < ActiveRecord::Base
   accepts_nested_attributes_for :datafiles, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :creators, reject_if: proc { |attributes| (attributes['family_name'].blank? && attributes['institution_name'].blank?) }, allow_destroy: true
   accepts_nested_attributes_for :funders, reject_if: proc { |attributes| (attributes['name'].blank?) }, allow_destroy: true
-  accepts_nested_attributes_for :related_materials, reject_if: proc { |attributes| ((attributes['link'].blank? ) && (attributes['citation'].blank? )) }, allow_destroy: true
+  accepts_nested_attributes_for :related_materials, reject_if: proc { |attributes| ((attributes['link'].blank?) && (attributes['citation'].blank?)) }, allow_destroy: true
 
   before_create 'set_key'
   after_create 'store_agreement'
@@ -71,201 +70,201 @@ class Dataset < ActiveRecord::Base
 
     begin
 
-    # creatorArr = self.creator_list.split(";")
+      # creatorArr = self.creator_list.split(";")
 
-    if self.keywords
-      keywordArr = self.keywords.split(";")
-    end
-
-    contact = Creator.where(dataset_id: self.id, is_contact: true).first
-    raise ActiveRecord::RecordNotFound unless contact
-
-    doc = Nokogiri::XML::Document.parse(%Q(<?xml version="1.0 encoding="UTF-8"?><resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd"></resource>))
-    resourceNode = doc.first_element_child
-
-    identifierNode = doc.create_element('identifier')
-    identifierNode['identifierType'] = "DOI"
-    # for imports and post-v1 versions, use specified identifier, otherwise assert v1
-    if self.identifier && self.identifier != ''
-      identifierNode.content = self.identifier
-    else
-      identifierNode.content = "#{IDB_CONFIG[:ezid_placeholder_identifier]}#{self.key}_v1"
-    end
-    identifierNode.parent = resourceNode
-
-    creatorsNode = doc.create_element('creators')
-    creatorsNode.parent = resourceNode
-
-    self.creators.each do |creator|
-      creatorNode = doc.create_element('creator')
-      creatorNode.parent = creatorsNode
-
-      creatorNameNode = doc.create_element('creatorName')
-
-      creatorNameNode.content = "#{creator.family_name.strip}, #{creator.given_name.strip}"
-      creatorNameNode.parent = creatorNode
-
-      # ORCID assumption hard-coded here, but in the model there is a field for identifier_scheme
-      if creator.identifier && creator.identifier != ""
-        creatorIdentifierNode = doc.create_element('nameIdentifier')
-        creatorIdentifierNode['schemeURI'] = "http://orcid.org/"
-        creatorIdentifierNode['nameIdentifierScheme'] = "ORCID"
-        creatorIdentifierNode.content = "#{creator.identifier}"
-        creatorIdentifierNode.parent = creatorNode
+      if self.keywords
+        keywordArr = self.keywords.split(";")
       end
 
-    end
+      contact = Creator.where(dataset_id: self.id, is_contact: true).first
+      raise ActiveRecord::RecordNotFound unless contact
 
-    titlesNode = doc.create_element('titles')
-    titlesNode.parent = resourceNode
+      doc = Nokogiri::XML::Document.parse(%Q(<?xml version="1.0 encoding="UTF-8"?><resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd"></resource>))
+      resourceNode = doc.first_element_child
 
-    titleNode = doc.create_element('title')
-    titleNode.content = self.title || "Dataset Title"
-    titleNode.parent = titlesNode
-
-    contributorsNode = doc.create_element('contributors')
-    contributorsNode.parent = resourceNode
-
-    contactNode = doc.create_element('contributor')
-    contactNode['contributorType'] = "ContactPerson"
-    contactNode.parent = contributorsNode
-
-    if contact.family_name && contact.given_name
-      contactNameNode = doc.create_element('contributorName')
-      contactNameNode.content = "#{contact.family_name}, #{contact.given_name}"
-      contactNameNode.parent = contactNode
-
-      if contact.identifier && contact.identifier != ""
-        contactIdentifierNode = doc.create_element('nameIdentifier')
-        contactIdentifierNode["schemeURI"] = "http://orcid.org/"
-        contactIdentifierNode["nameIdentifierScheme"] = "ORCID"
-        contactIdentifierNode.content = "#{contact.identifier}"
-        contactIdentifierNode.parent = contactNode
+      identifierNode = doc.create_element('identifier')
+      identifierNode['identifierType'] = "DOI"
+      # for imports and post-v1 versions, use specified identifier, otherwise assert v1
+      if self.identifier && self.identifier != ''
+        identifierNode.content = self.identifier
+      else
+        identifierNode.content = "#{IDB_CONFIG[:ezid_placeholder_identifier]}#{self.key}_v1"
       end
-    end
+      identifierNode.parent = resourceNode
 
-    self.funders.each do |funder|
-      if (funder.name && funder.name != '') || (funder.identifier && funder.identifer != '')
+      creatorsNode = doc.create_element('creators')
+      creatorsNode.parent = resourceNode
 
-        funderNode = doc.create_element('contributor')
-        funderNode['contributorType'] = "Funder"
-        funderNode.parent = contributorsNode
+      self.creators.each do |creator|
+        creatorNode = doc.create_element('creator')
+        creatorNode.parent = creatorsNode
 
-        funderNameNode = doc.create_element('contributorName')
-        funderNameNode.content = funder.name ||= '[Name not provided]'
-        funderNameNode.parent = funderNode
+        creatorNameNode = doc.create_element('creatorName')
 
-        if funder.identifier && funder.identifier != ''
-          funderIdentifierNode = doc.create_element('nameIdentifier')
-          funderIdentifierNode["schemeURI"] = "http://dx.doi.org/"
-          funderIdentifierNode["nameIdentifierScheme"] = "DOI"
-          funderIdentifierNode.content = "#{funder.identifier}"
-          funderIdentifierNode.parent = funderNode
+        creatorNameNode.content = "#{creator.family_name.strip}, #{creator.given_name.strip}"
+        creatorNameNode.parent = creatorNode
+
+        # ORCID assumption hard-coded here, but in the model there is a field for identifier_scheme
+        if creator.identifier && creator.identifier != ""
+          creatorIdentifierNode = doc.create_element('nameIdentifier')
+          creatorIdentifierNode['schemeURI'] = "http://orcid.org/"
+          creatorIdentifierNode['nameIdentifierScheme'] = "ORCID"
+          creatorIdentifierNode.content = "#{creator.identifier}"
+          creatorIdentifierNode.parent = creatorNode
+        end
+
+      end
+
+      titlesNode = doc.create_element('titles')
+      titlesNode.parent = resourceNode
+
+      titleNode = doc.create_element('title')
+      titleNode.content = self.title || "Dataset Title"
+      titleNode.parent = titlesNode
+
+      contributorsNode = doc.create_element('contributors')
+      contributorsNode.parent = resourceNode
+
+      contactNode = doc.create_element('contributor')
+      contactNode['contributorType'] = "ContactPerson"
+      contactNode.parent = contributorsNode
+
+      if contact.family_name && contact.given_name
+        contactNameNode = doc.create_element('contributorName')
+        contactNameNode.content = "#{contact.family_name}, #{contact.given_name}"
+        contactNameNode.parent = contactNode
+
+        if contact.identifier && contact.identifier != ""
+          contactIdentifierNode = doc.create_element('nameIdentifier')
+          contactIdentifierNode["schemeURI"] = "http://orcid.org/"
+          contactIdentifierNode["nameIdentifierScheme"] = "ORCID"
+          contactIdentifierNode.content = "#{contact.identifier}"
+          contactIdentifierNode.parent = contactNode
         end
       end
-    end
 
+      self.funders.each do |funder|
+        if (funder.name && funder.name != '') || (funder.identifier && funder.identifer != '')
 
-    publisherNode = doc.create_element('publisher')
-    publisherNode.content = self.publisher || "University of Illinois at Urbana-Champaign"
-    publisherNode.parent = resourceNode
+          funderNode = doc.create_element('contributor')
+          funderNode['contributorType'] = "Funder"
+          funderNode.parent = contributorsNode
 
-    publicationYearNode = doc.create_element('publicationYear')
-    publicationYearNode.content = self.publication_year || Time.now.year
-    publicationYearNode.parent = resourceNode
+          funderNameNode = doc.create_element('contributorName')
+          funderNameNode.content = funder.name ||= '[Name not provided]'
+          funderNameNode.parent = funderNode
 
-    if self.keywords
-
-      subjectsNode = doc.create_element('subjects')
-      subjectsNode.parent = resourceNode
-
-      keywordArr.each do |keyword|
-        subjectNode = doc.create_element('subject')
-        subjectNode.content = keyword.strip
-        subjectNode.parent = subjectsNode
+          if funder.identifier && funder.identifier != ''
+            funderIdentifierNode = doc.create_element('nameIdentifier')
+            funderIdentifierNode["schemeURI"] = "http://dx.doi.org/"
+            funderIdentifierNode["nameIdentifierScheme"] = "DOI"
+            funderIdentifierNode.content = "#{funder.identifier}"
+            funderIdentifierNode.parent = funderNode
+          end
+        end
       end
 
-    end
 
-    datesNode = doc.create_element('dates')
-    datesNode.parent = resourceNode
+      publisherNode = doc.create_element('publisher')
+      publisherNode.content = self.publisher || "University of Illinois at Urbana-Champaign"
+      publisherNode.parent = resourceNode
 
-    releasedateNode = doc.create_element('date')
-    releasedateNode["dateType"] = "Available"
-    if self.tombstone_date && self.tombstone_date != ""
-      releasedateNode.content =  "#{self.release_date.iso8601}/#{self.tombstone_date.iso8601} "
-    else
+      publicationYearNode = doc.create_element('publicationYear')
+      publicationYearNode.content = self.publication_year || Time.now.year
+      publicationYearNode.parent = resourceNode
+
+      if self.keywords
+
+        subjectsNode = doc.create_element('subjects')
+        subjectsNode.parent = resourceNode
+
+        keywordArr.each do |keyword|
+          subjectNode = doc.create_element('subject')
+          subjectNode.content = keyword.strip
+          subjectNode.parent = subjectsNode
+        end
+
+      end
+
+      datesNode = doc.create_element('dates')
+      datesNode.parent = resourceNode
+
+      releasedateNode = doc.create_element('date')
+      releasedateNode["dateType"] = "Available"
+      if self.tombstone_date && self.tombstone_date != ""
+        releasedateNode.content = "#{self.release_date.iso8601}/#{self.tombstone_date.iso8601} "
+      else
+        releasedateNode.content = self.release_date.iso8601 || Date.current().iso8601
+      end
       releasedateNode.content = self.release_date.iso8601 || Date.current().iso8601
-    end
-    releasedateNode.content = self.release_date.iso8601 || Date.current().iso8601
-    releasedateNode.parent = datesNode
+      releasedateNode.parent = datesNode
 
-    # languageNode = doc.create_element('language')
-    # languageNode.content = "en-us"
-    # languageNode.parent = resourceNode
+      # languageNode = doc.create_element('language')
+      # languageNode.content = "en-us"
+      # languageNode.parent = resourceNode
 
-    if self.license && !self.license.blank?
-      rightsListNode = doc.create_element('rightsList')
-      rightsListNode.parent = resourceNode
+      if self.license && !self.license.blank?
+        rightsListNode = doc.create_element('rightsList')
+        rightsListNode.parent = resourceNode
 
-      rightsNode = doc.create_element('rights')
-      rightsNode.content = self.license
-      rightsNode.parent = rightsListNode
-    end
+        rightsNode = doc.create_element('rights')
+        rightsNode.content = self.license
+        rightsNode.parent = rightsListNode
+      end
 
-    if self.description && !self.description.blank?
-      descriptionsNode = doc.create_element('descriptions')
-      descriptionsNode.parent = resourceNode
-      descriptionNode = doc.create_element('description')
-      descriptionNode['descriptionType'] = "Abstract"
-      descriptionNode.content = self.description
-      descriptionNode.parent = descriptionsNode
-    end
+      if self.description && !self.description.blank?
+        descriptionsNode = doc.create_element('descriptions')
+        descriptionsNode.parent = resourceNode
+        descriptionNode = doc.create_element('description')
+        descriptionNode['descriptionType'] = "Abstract"
+        descriptionNode.content = self.description
+        descriptionNode.parent = descriptionsNode
+      end
 
-    resourceTypeNode = doc.create_element('resourceType')
-    resourceTypeNode['resourceTypeGeneral'] = "Dataset"
-    resourceTypeNode.content = "Dataset"
-    resourceTypeNode.parent = resourceNode
+      resourceTypeNode = doc.create_element('resourceType')
+      resourceTypeNode['resourceTypeGeneral'] = "Dataset"
+      resourceTypeNode.content = "Dataset"
+      resourceTypeNode.parent = resourceNode
 
 
-    if self.related_materials.count > 0
+      if self.related_materials.count > 0
 
-      ready_count = 0
+        ready_count = 0
 
-      relatedIdentifiersNode = doc.create_element('relatedIdentifiers')
-      relatedIdentifiersNode.parent = resourceNode
+        relatedIdentifiersNode = doc.create_element('relatedIdentifiers')
+        relatedIdentifiersNode.parent = resourceNode
 
-      self.related_materials.each do |material|
+        self.related_materials.each do |material|
 
-        if material.uri && material.uri != ''
+          if material.uri && material.uri != ''
 
-          datacite_arr = Array.new
+            datacite_arr = Array.new
 
-          if material.datacite_list && material.datacite_list != ''
-            datacite_arr = material.datacite_list.split(',')
-          else
-            datacite_arr << 'IsSupplementTo'
+            if material.datacite_list && material.datacite_list != ''
+              datacite_arr = material.datacite_list.split(',')
+            else
+              datacite_arr << 'IsSupplementTo'
+            end
+
+            datacite_arr.each do |relationship|
+              ready_count = ready_count + 1
+              relatedMaterialNode = doc.create_element('relatedIdentifier')
+              relatedMaterialNode['relatedIdentifierType'] = material.uri_type || 'URL'
+              relatedMaterialNode['relationType'] = relationship
+              relatedMaterialNode.content = material.uri
+              relatedMaterialNode.parent = relatedIdentifiersNode
+            end
+
           end
-
-          datacite_arr.each do |relationship|
-            ready_count = ready_count + 1
-            relatedMaterialNode = doc.create_element('relatedIdentifier')
-            relatedMaterialNode['relatedIdentifierType'] = material.uri_type || 'URL'
-            relatedMaterialNode['relationType'] = relationship
-            relatedMaterialNode.content = material.uri
-            relatedMaterialNode.parent = relatedIdentifiersNode
-          end
-
         end
+
+        if ready_count == 0
+          relatedIdentifiersNode.remove
+        end
+
       end
 
-      if ready_count == 0
-        relatedIdentifiersNode.remove
-      end
-
-    end
-
-    return doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
+      return doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
 
     rescue StandardError => error
 
@@ -279,7 +278,7 @@ class Dataset < ActiveRecord::Base
   def to_datacite_raw_xml
     Nokogiri::XML::Document.parse(to_datacite_xml).to_xml
   end
-  
+
   def recovery_serialization
     dataset = self.serializable_hash
     creators = Array.new
@@ -299,7 +298,7 @@ class Dataset < ActiveRecord::Base
       materials << material.serializable_hash
     end
 
-    {"idb_dataset":{"model":IDB_CONFIG[:model], "dataset":dataset, "creators":creators, "funders":funders, "materials":materials, "datafiles":datafiles }}
+    {"idb_dataset" => {"model" => IDB_CONFIG[:model], "dataset" => dataset, "creators" => creators, "funders" => funders, "materials" => materials, "datafiles" => datafiles}}
 
   end
 
@@ -323,17 +322,17 @@ class Dataset < ActiveRecord::Base
       target = "#{IDB_CONFIG[:root_url_text]}/datasets/#{self.key}"
 
       metadata = {}
-      if [Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED].include?(self.publication_state)
+      if [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED].include?(self.publication_state)
         metadata['_status'] = 'public'
-      elsif [Databank::PublicationState::TOMBSTONE, Databank::PublicationState::DESTROYED].include?(self.publication_state)
+      elsif [Databank::PublicationState::PermSupress::FILE, Databank::PublicationState::PermSupress::METADATA].include?(self.publication_state)
         metadata['_status'] = 'unavailable'
       end
 
       metadata['_target'] = target
 
-      if [Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED, Databank::PublicationState::TOMBSTONE].include?(self.publication_state)
+      if [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED, Databank::PublicationState::PermSupress::FILE].include?(self.publication_state)
         metadata['datacite'] = self.to_datacite_xml
-      elsif self.publication_state == Databank::PublicationState::DESTROYED
+      elsif self.publication_state == Databank::PublicationState::PermSupress::METADATA
         metadata['datacite'] = self.placeholder_metadata
       end
 
@@ -441,7 +440,7 @@ class Dataset < ActiveRecord::Base
       validation_error_messages << "at least one file"
     end
 
-    if dataset.embargo && [Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::METADATA_EMBARGO].include?(dataset.embargo)
+    if dataset.embargo && [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA].include?(dataset.embargo)
       if !dataset.release_date || dataset.release_date <= Date.current
         validation_error_messages << "a future release date for delayed publication (embargo) selection"
       end
@@ -461,7 +460,7 @@ class Dataset < ActiveRecord::Base
     end
     response
   end
-  
+
   def placeholder_metadata
     doc = Nokogiri::XML::Document.parse(%Q(<?xml version="1.0"?><resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd"></resource>))
     resourceNode = doc.first_element_child
@@ -553,36 +552,47 @@ class Dataset < ActiveRecord::Base
 
     return_string = ""
 
-    if self.curator_hold?
-      return_string = "Private (Curator Hold)"
-    else
+    case self.hold_state
+      when Databank::PublicationState::TempSupress::METADATA
+        return_string = "Private (Curator Hold)"
+      when Databank::PublicationState::TempSupress::FILE
+        case self.publication_state
+          when Databank::PublicationState::DRAFT
+            return_string = "Private (Saved Draft)"
+          when Databank::PublicationState::Embargo::FILE
+            return_string = "Public description, Private files"
+          when Databank::PublicationState::Embargo::METADATA
+            return_string = "Private (Delayed Publication)"
+          when Databank::PublicationState::PermSupress::FILE
+            return_string = "Public Metadata, Private Files (Tombstoned)"
+          when Databank::PublicationState::PermSupress::METADATA
+            return_string = "Removed Metadata, Removed Files (Destroyed)"
+          else
+            return_string = "Public description, Private files (Curator Hold)"
+        end
 
-      case self.publication_state
-        when Databank::PublicationState::DRAFT
-          return_string = "Private (Saved Draft)"
-        when Databank::PublicationState::RELEASED
-          return_string = "Public (Published)"
-        when Databank::PublicationState::FILE_EMBARGO
-          return_string = "Public description, Private files"
-        when Databank::PublicationState::METADATA_EMBARGO
-          return_string = "Private (Delayed Publication)"
-        when Databank::PublicationState::TOMBSTONE
-          return_string = "Public Metadata, Private Files (Tombstoned)"
-        when Databank::PublicationState::DESTROYED
-          return_string = "Removed Metadata, Removed Files (Destroyed)"
-        else
-          #should never get here
-          return_string = "Unknown, please contact the Research Data Service"
-      end
-
+      else
+        case self.publication_state
+          when Databank::PublicationState::DRAFT
+            return_string = "Private (Saved Draft)"
+          when Databank::PublicationState::RELEASED
+            return_string = "Public (Published)"
+          when Databank::PublicationState::Embargo::FILE
+            return_string = "Public description, Private files"
+          when Databank::PublicationState::Embargo::METADATA
+            return_string = "Private (Delayed Publication)"
+          when Databank::PublicationState::PermSupress::FILE
+            return_string = "Public Metadata, Private Files (Tombstoned)"
+          when Databank::PublicationState::PermSupress::METADATA
+            return_string = "Removed Metadata, Removed Files (Destroyed)"
+          else
+            #should never get here
+            return_string = "Unknown, please contact the Research Data Service"
+        end
     end
 
     if self.new_record?
       return_string = "Private (Not Yet Saved)"
-    end
-
-    if self.curator_hold
-      return_string = "Private (Curator Hold)"
     end
 
     return_string
@@ -736,11 +746,11 @@ class Dataset < ActiveRecord::Base
       if user
         agent = user.serializable_hash
       else
-        agent = {"user_id":change.user_id}
+        agent = {"user_id" => change.user_id}
       end
-      changesArr << {"change":change, "agent":agent}
+      changesArr << {"change" => change, "agent" => agent}
     end
-    changesHash = {"changes":changesArr, "model":"#{IDB_CONFIG[:model]}"}
+    changesHash = {"changes" => changesArr, "model" => "#{IDB_CONFIG[:model]}"}
     changesHash
   end
 

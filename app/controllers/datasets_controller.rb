@@ -11,7 +11,6 @@ class DatasetsController < ApplicationController
 
   load_resource :find_by => :key
   authorize_resource
-  skip_load_and_authorize_resource :only => :download_datafiles
   skip_load_and_authorize_resource :only => :download_endNote_XML
   skip_load_and_authorize_resource :only => :download_plaintext_citation
   skip_load_and_authorize_resource :only => :download_BibTeX
@@ -22,7 +21,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :datacite_record
   skip_load_and_authorize_resource :only => :download_link
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_datafiles, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :datacite_record, :update_datacite_metadata, :zip_and_download_selected, :cancel_box_upload, :citation_text, :delete_datacite_id, :change_publication_state, :is_datacite_changed, :tombstone, :idb_datacite_xml, :serialization]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :cancel_box_upload, :citation_text, :tombstone, :idb_datacite_xml, :serialization]
 
   @@num_box_ingest_deamons = 10
 
@@ -35,7 +34,7 @@ class DatasetsController < ApplicationController
   # GET /datasets.json
   def index
 
-    @datasets = Dataset.where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::FILE_EMBARGO]).order(updated_at: :desc)
+    @datasets = Dataset.where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE]).order(updated_at: :desc)
     @datatable = Effective::Datatables::GuestDatasets.new
 
     if current_user && current_user.role
@@ -45,10 +44,10 @@ class DatasetsController < ApplicationController
           @datatable = Effective::Datatables::CuratorDatasets.new
         when "depositor"
           if params.has_key?('depositor')
-            @datasets = Dataset.where.not(publication_state: Databank::PublicationState::DESTROYED).where("depositor_email = ?", current_user.email).order(updated_at: :desc)
+            @datasets = Dataset.where.not(publication_state: Databank::PublicationState::PermSupress::METADATA).where("depositor_email = ?", current_user.email).order(updated_at: :desc)
             @datatable = Effective::Datatables::MyDatasets.new(current_email: current_user.email)
           else
-            @datasets = Dataset.where.not(publication_state: Databank::PublicationState::DESTROYED).where("publication_state = ? OR publication_state = ? OR depositor_email = ?", Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::RELEASED, current_user.email).order(updated_at: :desc)
+            @datasets = Dataset.where.not(publication_state: Databank::PublicationState::PermSupress::METADATA).where("publication_state = ? OR publication_state = ? OR depositor_email = ?", Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED, current_user.email).order(updated_at: :desc)
             @datatable = Effective::Datatables::DepositorDatasets.new(current_email: current_user.email, current_name: current_user.name)
           end
 
@@ -254,12 +253,12 @@ class DatasetsController < ApplicationController
 
   def nuke
     old_state = @dataset.publication_state
-    @dataset.publication_state = Databank::PublicationState::DESTROYED
+    @dataset.publication_state = Databank::PublicationState::PermSupress::METADATA
     @dataset.has_datacite_change = false
     @dataset.tombstone_date = Date.current.iso8601
     notice_msg = ""
 
-    if old_state == Databank::PublicationState::METADATA_EMBARGO
+    if old_state == Databank::PublicationState::Embargo::METADATA
       respond_to do |format|
         @dataset.has_datacite_change = false
         if @dataset.save && delete_datacite_id
@@ -298,7 +297,7 @@ class DatasetsController < ApplicationController
 
     old_state = @dataset.publication_state
 
-    @dataset.publication_state = Databank::PublicationState::TOMBSTONE
+    @dataset.publication_state = Databank::PublicationState::PermSupress::FILE
     @dataset.tombstone_date = Date.current
 
     respond_to do |format|
@@ -328,7 +327,7 @@ class DatasetsController < ApplicationController
     if Dataset.completion_check(@dataset, current_user) == 'ok'
       @dataset.complete = true
       # set relase date
-      if [Databank::PublicationState::DRAFT, Databank::PublicationState::FILE_EMBARGO, Databank::PublicationState::METADATA_EMBARGO].include?(old_state)
+      if [Databank::PublicationState::DRAFT, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA].include?(old_state)
         if (@dataset.release_date && @dataset.release_date <= Date.current()) || !@dataset.embargo || @dataset.embargo == ""
           @dataset.release_date = Date.current()
         end
@@ -757,7 +756,7 @@ class DatasetsController < ApplicationController
   def datacite_record_hash
 
     return {"status" => "dataset not published"} if @dataset.publication_state == Databank::PublicationState::DRAFT
-    return {"status" => "DOI Reserved Only"} if @dataset.publication_state == Databank::PublicationState::FILE_EMBARGO
+    return {"status" => "DOI Reserved Only"} if @dataset.publication_state == Databank::PublicationState::Embargo::FILE
 
 
     response_hash = Hash.new
@@ -819,7 +818,7 @@ class DatasetsController < ApplicationController
   # def dataset_params
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, :is_test, :is_import, :curator_hold, :audit_id, :removed_private, :have_permission, :agree, :web_ids, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update, :audit_id], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update, :audit_id], related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, :is_test, :is_import, :audit_id, :removed_private, :have_permission, :agree, :web_ids, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update, :audit_id], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update, :audit_id], related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id])
   end
 
   def ezid_metadata_response

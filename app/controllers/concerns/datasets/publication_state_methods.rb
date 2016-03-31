@@ -11,10 +11,10 @@ module Datasets
         when Databank::PublicationState::RELEASED
           return %Q[Dataset was successfully published and the DataCite DOI is #{dataset.identifier}.<br/>The persistent link to this dataset is now <a href = "http://dx.doi.org/#{dataset.identifier}">http://dx.doi.org/#{dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.]
 
-        when Databank::PublicationState::METADATA_EMBARGO
+        when Databank::PublicationState::Embargo::METADATA
           return %Q[DataCite DOI #{dataset.identifier} successfully reserved.<br/>The persistent link to this dataset will be <a href = "http://dx.doi.org/#{dataset.identifier}">http://dx.doi.org/#{dataset.identifier}</a> starting #{dataset.release_date}.]
 
-        when Databank::PublicationState::FILE_EMBARGO
+        when Databank::PublicationState::Embargo::FILE
           return %Q[Dataset record was successfully published and the DataCite DOI is #{dataset.identifier}.<br/>Although the record for your dataset will be publicly visible, your data files will not be made available until #{dataset.release_date.iso8601}.<br/>The persistent link to this dataset is now <a href = "http://dx.doi.org/#{dataset.identifier}">http://dx.doi.org/#{dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.]
       end
 
@@ -37,7 +37,7 @@ module Datasets
 
       case effective_embargo
 
-        when Databank::PublicationState::FILE_EMBARGO
+        when Databank::PublicationState::Embargo::FILE
           if dataset.publication_state == Databank::PublicationState::DRAFT
             msg << "<h4>This action will make your record public and create a DOI.</h4><hr/>"
             msg << "<ul>"
@@ -49,14 +49,14 @@ module Datasets
             msg << "<ul>"
           end
 
-        when Databank::PublicationState::METADATA_EMBARGO
+        when Databank::PublicationState::Embargo::METADATA
           if dataset.publication_state == Databank::PublicationState::DRAFT
             msg << "<h4>This action will reserve a DOI</h4><hr/>"
             msg << "<ul>"
             msg << "<li>The DOI link will fail until #{effective_release_date}.</li>"
             msg << "<li>The record for your dataset is not visible, nor are your data files available until #{effective_release_date}.</li>"
           else
-            # Should never get here, DataCite record changes are not relevant to METADATA_EMBARGO
+            # Should never get here, DataCite record changes are not relevant to Embargo::METADATA
             msg << "<h3>This action will not do anything.  The record for your dataset is not visible, and the DOI is already reserved.</h3>"
             msg << "<ul>"
           end
@@ -104,7 +104,7 @@ module Datasets
 
       metadata = {}
       metadata['_target'] = target
-      if @dataset.publication_state == Databank::PublicationState::METADATA_EMBARGO
+      if @dataset.publication_state == Databank::PublicationState::Embargo::METADATA
         metadata['_status'] = 'reserved'
       else
         metadata['_status'] = 'public'
@@ -169,7 +169,7 @@ module Datasets
 
       metadata = {}
       metadata['_target'] = target
-      if @dataset.publication_state == Databank::PublicationState::METADATA_EMBARGO
+      if @dataset.publication_state == Databank::PublicationState::Embargo::METADATA
         metadata['_status'] = 'reserved'
       else
         metadata['_status'] = 'public'
