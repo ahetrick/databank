@@ -113,10 +113,29 @@ namespace :medusa do
     datafiles = Datafile.all
     datafiles.each do |df|
       if !df.binary  && !df.medusa_path
+        puts "no binary or no medusa_path"
         ingest = MedusaIngest.find_by_idb_identifier(df.web_id)
         if ingest
+          puts "has ingest"
           df.medusa_path = ingest.medusa_path
           df.save
+        else
+          puts "has no ingest"
+        end
+      end
+    end
+    datafiles.each do |df|
+      if df.binary  && !df.medusa_path
+        puts "binary but no medusa path"
+        ingest = MedusaIngest.find_by_idb_identifier(df.web_id)
+        if ingest
+          puts "has ingest"
+          df.medusa_path = ingest.medusa_path
+          df.medusa_uuid = ingest.medusa_uuid
+          df.remove_binary!
+          df.save
+        else
+          puts "has no ingest"
         end
       end
     end
