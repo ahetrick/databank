@@ -55,7 +55,6 @@ module MedusaAmqp
           if ingest.idb_class == 'datafile'
             datafile = Datafile.find_by_web_id(ingest.idb_identifier)
             if datafile && datafile.binary
-              Rails.logger.warn "Datafile found for ingest #{ingest.id}, path: #{response_hash['medusa_path']}"
               datafile.medusa_path = ingest.medusa_path
               datafile.medusa_id = ingest.medusa_uuid
               datafile.remove_binary!
