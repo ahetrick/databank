@@ -7,6 +7,9 @@
         .completion-warning
           %span(class="glyphicon glyphicon-alert" )
           = @completion_check
+      - if (@dataset.publication_state != Databank::PublicationState::RELEASED && (!can? :manage, @dataset))
+        .idb-callout
+          Private information is displayed because you are the depositor of this dataset. Log out to see the public view.
       .row
         .col-md-6
           %span(class="glyphicon glyphicon-eye-open" )

@@ -29,8 +29,7 @@ module Effective
           end
         end
 
-        array_column 'Visibility', filter: {type: :select, values: ['Private (Saved Draft)', 'Public (Published)', 'Public description, Private files', 'Private (Delayed Publication)', 'Public Metadata, Private Files (Tombstoned)', 'Removed Metadata, Removed Files (Destroyed)', 'Private (Curator Hold)']} do |dataset|
-
+        array_column 'Visibility', filter: {type: :select, values: ['Private (Not Yet Saved)','Private (Saved Draft)','Private (Delayed Publication)','Public description, Private files (Delayed Publication)','Public (Published)','Public description, Private files (Curator Hold)','Private (Curator Hold)','Public Metadata, Redacted Files','Redacted']} do |dataset|
           render text: "#{dataset.visibility}"
         end
         table_column :updated_at, label: 'search by update date'

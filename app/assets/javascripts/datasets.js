@@ -470,26 +470,45 @@ function offerDownloadLink(){
         });
     }
 }
+function tmpSuppressFiles(){
+    alert("not yet implemented");
+    $('#tmpSuppressFilesBtn').html("UNSUPPRESS File(s)");
+    $('#tmpSuppressFilesBtn').attr('onclick', 'unsuppress()');
+}
 
 function tmpSuppressMetadata(){
     alert("not yet implemented");
     $('#tmpSuppressMetadataBtn').html("UNSUPPRESS File(s) and Metadata");
     $('#tmpSuppressMetadataBtn').attr('onclick', 'unsuppress()');
+    $('#tmpSuppressFilesBtn').html("Temporarily Suppress File(s) Only");
+    $('#tmpSuppressFilesBtn').attr('onclick', 'tmpSuppressFiles()');
+    $('#tmpSuppressFilesBtn').prop("disabled", true);
 }
+
 function unsuppress(){
     alert("not yet implemented");
     $('#tmpSuppressMetadataBtn').html("Temporarily Suppress File(s) and Metadata");
     $('#tmpSuppressMetadataBtn').attr('onclick', 'tmpSuppressMetadata()');
     $('#tmpSuppressFilesBtn').html("Temporarily Suppress File(s) Only");
     $('#tmpSuppressFilesBtn').attr('onclick', 'tmpSuppressFiles()');
-}
-function permSuppressMetadata(){
-    alert("not yet implemented");
-}
-function permSuppressMetadata(){
-    alert("not yet implemented");
+    if (!($('#permSuppressFilesBtn').is(':disabled'))) {
+        $('#tmpSuppressFilesBtn').attr("disabled", false);
+    }
 }
 
+function permSuppressFiles(){
+    alert("not yet implemented");
+    $('#tmpSuppressFilesBtn').prop("disabled", true);
+    $('#permSuppressFilesBtn').prop("disabled", true);
+}
+
+function permSuppressMetadata(){
+    alert("not yet implemented");
+    $('#tmpSuppressFilesBtn').prop("disabled", true);
+    $('#tmpSuppressMetadataBtn').prop("disabled", true);
+    $('#permSuppressFilesBtn').prop("disabled", true);
+    $('#permSuppressMetadataBtn').prop("disabled", true);
+}
 
 $(document).ready(ready);
 $(document).on('page:load', ready);

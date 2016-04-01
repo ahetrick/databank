@@ -44,10 +44,10 @@ class DatasetsController < ApplicationController
           @datatable = Effective::Datatables::CuratorDatasets.new
         when "depositor"
           if params.has_key?('depositor')
-            @datasets = Dataset.where.not(publication_state: Databank::PublicationState::PermSupress::METADATA).where("depositor_email = ?", current_user.email).order(updated_at: :desc)
+            @datasets = Dataset.where.not(publication_state: Databank::PublicationState::PermSuppress::METADATA).where("depositor_email = ?", current_user.email).order(updated_at: :desc)
             @datatable = Effective::Datatables::MyDatasets.new(current_email: current_user.email)
           else
-            @datasets = Dataset.where.not(publication_state: Databank::PublicationState::PermSupress::METADATA).where("publication_state = ? OR publication_state = ? OR depositor_email = ?", Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED, current_user.email).order(updated_at: :desc)
+            @datasets = Dataset.where.not(publication_state: Databank::PublicationState::PermSuppress::METADATA).where("publication_state = ? OR publication_state = ? OR depositor_email = ?", Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED, current_user.email).order(updated_at: :desc)
             @datatable = Effective::Datatables::DepositorDatasets.new(current_email: current_user.email, current_name: current_user.name)
           end
 
@@ -253,7 +253,7 @@ class DatasetsController < ApplicationController
 
   def nuke
     old_state = @dataset.publication_state
-    @dataset.publication_state = Databank::PublicationState::PermSupress::METADATA
+    @dataset.publication_state = Databank::PublicationState::PermSuppress::METADATA
     @dataset.has_datacite_change = false
     @dataset.tombstone_date = Date.current.iso8601
     notice_msg = ""
@@ -297,7 +297,7 @@ class DatasetsController < ApplicationController
 
     old_state = @dataset.publication_state
 
-    @dataset.publication_state = Databank::PublicationState::PermSupress::FILE
+    @dataset.publication_state = Databank::PublicationState::PermSuppress::FILE
     @dataset.tombstone_date = Date.current
 
     respond_to do |format|

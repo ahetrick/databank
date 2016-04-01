@@ -324,15 +324,15 @@ class Dataset < ActiveRecord::Base
       metadata = {}
       if [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED].include?(self.publication_state)
         metadata['_status'] = 'public'
-      elsif [Databank::PublicationState::PermSupress::FILE, Databank::PublicationState::PermSupress::METADATA].include?(self.publication_state)
+      elsif [Databank::PublicationState::PermSuppress::FILE, Databank::PublicationState::PermSuppress::METADATA].include?(self.publication_state)
         metadata['_status'] = 'unavailable'
       end
 
       metadata['_target'] = target
 
-      if [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED, Databank::PublicationState::PermSupress::FILE].include?(self.publication_state)
+      if [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED, Databank::PublicationState::PermSuppress::FILE].include?(self.publication_state)
         metadata['datacite'] = self.to_datacite_xml
-      elsif self.publication_state == Databank::PublicationState::PermSupress::METADATA
+      elsif self.publication_state == Databank::PublicationState::PermSuppress::METADATA
         metadata['datacite'] = self.placeholder_metadata
       end
 
@@ -549,24 +549,22 @@ class Dataset < ActiveRecord::Base
   end
 
   def visibility
-
     return_string = ""
-
     case self.hold_state
-      when Databank::PublicationState::TempSupress::METADATA
+      when Databank::PublicationState::TempSuppress::METADATA
         return_string = "Private (Curator Hold)"
-      when Databank::PublicationState::TempSupress::FILE
+      when Databank::PublicationState::TempSuppress::FILE
         case self.publication_state
           when Databank::PublicationState::DRAFT
             return_string = "Private (Saved Draft)"
           when Databank::PublicationState::Embargo::FILE
-            return_string = "Public description, Private files"
+            return_string = "Public description, Private files (Delayed Publication)"
           when Databank::PublicationState::Embargo::METADATA
             return_string = "Private (Delayed Publication)"
-          when Databank::PublicationState::PermSupress::FILE
-            return_string = "Public Metadata, Private Files (Tombstoned)"
-          when Databank::PublicationState::PermSupress::METADATA
-            return_string = "Removed Metadata, Removed Files (Destroyed)"
+          when Databank::PublicationState::PermSuppress::FILE
+            return_string = "Public Metadata, Redacted Files"
+          when Databank::PublicationState::PermSuppress::METADATA
+            return_string = "Redacted"
           else
             return_string = "Public description, Private files (Curator Hold)"
         end
@@ -578,13 +576,13 @@ class Dataset < ActiveRecord::Base
           when Databank::PublicationState::RELEASED
             return_string = "Public (Published)"
           when Databank::PublicationState::Embargo::FILE
-            return_string = "Public description, Private files"
+            return_string = "Public description, Private files (Delayed Publication)"
           when Databank::PublicationState::Embargo::METADATA
             return_string = "Private (Delayed Publication)"
-          when Databank::PublicationState::PermSupress::FILE
-            return_string = "Public Metadata, Private Files (Tombstoned)"
-          when Databank::PublicationState::PermSupress::METADATA
-            return_string = "Removed Metadata, Removed Files (Destroyed)"
+          when Databank::PublicationState::PermSuppress::FILE
+            return_string = "Public Metadata, Redacted Files"
+          when Databank::PublicationState::PermSuppress::METADATA
+            return_string = "Redacted"
           else
             #should never get here
             return_string = "Unknown, please contact the Research Data Service"

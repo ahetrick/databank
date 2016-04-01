@@ -10,7 +10,7 @@ module Databank
 
   # file means all files only
   # metadata means all files + metadata
-  # TempSupress states should be able to stack with other states
+  # TempSuppress states should be able to stack with other states
   # Most restrictive state is effective
 
   class PublicationState
@@ -20,14 +20,14 @@ module Databank
       FILE = 'file embargo'
       METADATA = 'metadata embargo'
     end
-    class TempSupress
+    class TempSuppress
       NONE = 'none'
-      FILE = 'files temporarily supressed'
-      METADATA = 'metadata temporarily supressed'
+      FILE = 'files temporarily suppressed'
+      METADATA = 'metadata temporarily suppressed'
     end
-    class PermSupress
-      FILE = 'files permanently supressed'
-      METADATA = 'metadata permanently supressed'
+    class PermSuppress
+      FILE = 'files permanently suppressed'
+      METADATA = 'metadata permanently suppressed'
     end
   end
 

@@ -40,7 +40,7 @@ module Effective
             render inline: %Q[<%= link_to(%Q[#{dataset.plain_text_citation}], "#{request.base_url}#{dataset_path(dataset.key)}") %>]
           end
         end
-        array_column 'Visibility', filter: {type: :select, values: ['Private (Saved Draft)', 'Public (Published)', 'Public description, Private files', 'Private (Delayed Publication)', 'Public Metadata, Private Files (Tombstoned)', 'Private (Curator Hold)']} do |dataset|
+        array_column 'Visibility', filter: {type: :select, values: ['Private (Not Yet Saved)', 'Private (Saved Draft)', 'Private (Delayed Publication)', 'Public description, Private files (Delayed Publication)', 'Public (Published)', 'Public description, Private files (Curator Hold)', 'Private (Curator Hold)', 'Public Metadata, Redacted Files']} do |dataset|
 
           render text: "#{dataset.visibility}"
         end
@@ -50,7 +50,7 @@ module Effective
 
       def collection
         current_email = attributes[:current_email]
-        Dataset.where.not(publication_state: Databank::PublicationState::PermSupress::METADATA).where(is_test: false).where("publication_state = ? OR publication_state = ? OR depositor_email = ?", Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED, current_email)
+        Dataset.where(is_test: false).where(:depositor_email => current_email).where.not(publication_state: Databank::PublicationState::PermSuppress::METADATA).where("publication_state = ? OR publication_state = ? OR publication_state = ? OR publication_state = ? OR depositor_email = ?", Databank::PublicationState::RELEASED, Databank::PublicationState::TempSuppress::FILE, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE, current_email)
       end
 
     end
