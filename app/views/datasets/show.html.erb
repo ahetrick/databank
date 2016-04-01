@@ -3,7 +3,7 @@
   <%= render partial: "confirm_deposit_modal" %>
   <%= render partial: 'dashboard_show' %>
 <% end %>
-<% if (can? :manage, @dataset) %>
+<% if ((can? :manage, @dataset) && (@dataset.publication_state != Databank::PublicationState::DRAFT)) %>
   <%= render partial: 'curator_access_controls' %>
 <% end %>
 
@@ -35,7 +35,12 @@
       questions.
     </div>
 
-  <% elsif (((can? :manage, @dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE].include? @dataset.publication_state)) || ((can? :edit, @dataset) && @dataset.publication_state != Databank::PublicationState::PermSuppress::METADATA)) %>
+  <% elsif ( ( can? :manage, @dataset ) ||
+           ( ( [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE].include? @dataset.publication_state ) &&
+             ( @dataset.hold_state != Databank::PublicationState::TempSuppress::METADATA ) ) ||
+           ( ( can? :edit, @dataset ) &&
+             ( @dataset.publication_state != Databank::PublicationState::PermSuppress::METADATA  ) )
+  ) %>
     <!-- BEGIN metadata section-->
     <div class="dataset-metadata">
 
@@ -204,7 +209,7 @@
           <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
             <div class="panel-body">
 
-              <% if ((can? :edit, @dataset) || (@dataset.publication_state == Databank::PublicationState::RELEASED)) %>
+              <% if ((can? :edit, @dataset) || ((@dataset.publication_state == Databank::PublicationState::RELEASED) && (@dataset.hold_state != Databank::PublicationState::TempSuppress::FILE) )  ) %>
                 <form role="form">
                   <div class="form-group" id="select-files-form-group">
                     <table class="table table-striped">

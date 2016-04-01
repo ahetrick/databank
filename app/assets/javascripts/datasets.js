@@ -1,14 +1,12 @@
 var confirmOnPageExit
-confirmOnPageExit = function (e)
-{
+confirmOnPageExit = function (e) {
     // If we haven't been passed the event get the window.event
     e = e || window.event;
 
     var message = 'If you navigate away from this page, unsaved changes may be lost.';
 
     // For IE6-8 and Firefox prior to version 4
-    if (e)
-    {
+    if (e) {
         e.returnValue = message;
     }
 
@@ -19,7 +17,7 @@ confirmOnPageExit = function (e)
 // work-around turbo links to trigger ready function stuff on every page.
 
 var ready;
-ready = function() {
+ready = function () {
 
     //$('.bytestream_name').css("visibility", "hidden");
     $('.bytestream_name').css("visibility", "hidden");
@@ -33,7 +31,7 @@ ready = function() {
 
     $(".checkFileGroup").change(function () {
         $("#checkFileSelectedCount").html($('.checkFile:checked').size());
-        $('#checkAllFiles').prop('checked', false );
+        $('#checkAllFiles').prop('checked', false);
     });
 
     $('#term-supports').tooltip();
@@ -43,13 +41,12 @@ ready = function() {
         handleNotAgreed();
     });
 
-    $('#dropdown-login').click(function(event)
-    {
-        if (event.stopPropagation){
+    $('#dropdown-login').click(function (event) {
+        if (event.stopPropagation) {
             event.stopPropagation();
         }
-        else if(window.event){
-            window.event.cancelBubble=true;
+        else if (window.event) {
+            window.event.cancelBubble = true;
         }
     });
 
@@ -102,14 +99,14 @@ ready = function() {
 
     });
 
-    $('input.dataset').change(function() {
-        if ($(this).val() != ""){
+    $('input.dataset').change(function () {
+        if ($(this).val() != "") {
             window.onbeforeunload = confirmOnPageExit;
         }
-     });
+    });
 
-    $('#dataset_title').change(function() {
-        if ($("input[name='dataset[publication_state]']").val() == 'draft' || $(this).val() != "" ) {
+    $('#dataset_title').change(function () {
+        if ($("input[name='dataset[publication_state]']").val() == 'draft' || $(this).val() != "") {
             $('#title-preview').html($(this).val() + '.');
             $('#update-save-button').prop('disabled', false);
         } else {
@@ -118,11 +115,11 @@ ready = function() {
         }
     });
 
-    $('#dataset_publication_year').change(function() {
+    $('#dataset_publication_year').change(function () {
         $('#year-preview').html('(' + $(this).val() + '):');
     });
 
-    $('#dataset_identifier').change(function() {
+    $('#dataset_identifier').change(function () {
         $('#doi-preview').html("http://dx.doi.org/" + $(this).val());
     });
 
@@ -142,8 +139,8 @@ ready = function() {
         $('#release-date-picker').hide();
     }
 
-    $( "#dataset_embargo" ).change(function() {
-        switch($(this).val()){
+    $("#dataset_embargo").change(function () {
+        switch ($(this).val()) {
             case 'file embargo':
                 $('#release-date-picker').show();
                 break;
@@ -156,7 +153,7 @@ ready = function() {
         }
     });
 
-   $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="tooltip"]').tooltip();
 
     var clip = new ZeroClipboard($("#d_clip_button"))
 
@@ -167,18 +164,18 @@ ready = function() {
     $("#new_datafile").fileupload({
         downloadTemplate: null,
         downloadTemplateId: null,
-        add: function(e, data) {
+        add: function (e, data) {
             file = data.files[0];
-            num_bytes = file.size||file.fileSize;
+            num_bytes = file.size || file.fileSize;
             //check filesize and check for duplicate filename
-            if (num_bytes < 2147483648 ){
-                if (filename_isdup(file.name)){
+            if (num_bytes < 2147483648) {
+                if (filename_isdup(file.name)) {
                     alert("Duplicate file error: A file named " + file.name + " is already in this dataset.  For help, please contact the Research Data Service.");
                 }
                 else {
-                data.context = $(tmpl("template-upload", data.files[0]));
-                $('#datafiles_upload_progress').append(data.context);
-                return data.submit();
+                    data.context = $(tmpl("template-upload", data.files[0]));
+                    $('#datafiles_upload_progress').append(data.context);
+                    return data.submit();
                 }
             } else if (typeof num_bytes === "undefined") {
                 alert("No file contents were detected for file named " + file.name + ".  For help, please contact the Research Data Service.");
@@ -189,8 +186,8 @@ ready = function() {
             }
 
 
-      },
-        progress: function(e, data) {
+        },
+        progress: function (e, data) {
             var progress;
             if (data.context) {
                 progress = parseInt(data.loaded / data.total * 100, 10);
@@ -200,16 +197,16 @@ ready = function() {
         downloadTemplate: function (o) {
             var file = o.files[0];
 
-            var row = '<tr><td><div class = "row"><span class="col-md-8">' + file.name + '<input class="bytestream_name" value="' + file.name+ '" style="visibility: hidden;"></input></span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
-            if (file.error){
+            var row = '<tr><td><div class = "row"><span class="col-md-8">' + file.name + '<input class="bytestream_name" value="' + file.name + '" style="visibility: hidden;"></input></span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
+            if (file.error) {
                 row = row + '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-warning-sign"></span>';
             } else {
                 row = row + '<a data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" data-method="delete" href="/datafiles/' + file.web_id + '"><span class="glyphicon glyphicon-trash"></span></a></span>';
             }
 
             row = row + '</span></div></td></tr>';
-            if (file.error){
-                $("#datafiles > tbody:last-child").append('<tr><td><div class="row"><p>' + file.name + ': ' +  file.error + '</p></div></td></tr>');
+            if (file.error) {
+                $("#datafiles > tbody:last-child").append('<tr><td><div class="row"><p>' + file.name + ': ' + file.error + '</p></div></td></tr>');
             } else {
                 $("#datafiles > tbody:last-child").append(row);
             }
@@ -218,12 +215,12 @@ ready = function() {
 
     var boxSelect = new BoxSelect();
     // Register a success callback handler
-    boxSelect.success(function(response) {
+    boxSelect.success(function (response) {
         //console.log(response);
 
-        $.each(response, function(i, boxItem){
+        $.each(response, function (i, boxItem) {
 
-            if (filename_isdup(boxItem.name)){
+            if (filename_isdup(boxItem.name)) {
                 alert("Duplicate file error: A file named " + boxItem.name + " is already in this dataset.  For help, please contact the Research Data Service.");
             }
             else {
@@ -245,7 +242,7 @@ ready = function() {
     });
 
     // Register a cancel callback handler
-    boxSelect.cancel(function() {
+    boxSelect.cancel(function () {
         console.log("The user clicked cancel or closed the popup");
     });
 
@@ -256,8 +253,8 @@ ready = function() {
 
 }
 
-var Reflector = function(obj) {
-    this.getProperties = function() {
+var Reflector = function (obj) {
+    this.getProperties = function () {
         var properties = [];
         for (var prop in obj) {
             if (typeof obj[prop] != 'function') {
@@ -268,22 +265,24 @@ var Reflector = function(obj) {
     };
 }
 
-function pad(n){return n<10 ? '0'+n : n}
+function pad(n) {
+    return n < 10 ? '0' + n : n
+}
 
 function cancelUpload(datafile, job) {
 
     $("#job" + job).hide();
 
     $.ajax({
-        type : 'GET',
-        url : '/datasets/'+ dataset_key + '/datafiles/' + datafile + '/cancel_box_upload',
-        dataType : 'script'
+        type: 'GET',
+        url: '/datasets/' + dataset_key + '/datafiles/' + datafile + '/cancel_box_upload',
+        dataType: 'script'
     });
 
     return false;
 }
 
-function handleNotAgreed(){
+function handleNotAgreed() {
 
     $('.save').hide();
     $('.dataset').attr("disabled", true);
@@ -298,10 +297,10 @@ function handleNotAgreed(){
     $('.review-deposit-agreement').hide();
     //$('.deposit-agreement-btn').removeAttr("disabled");
     $('.new-save').hide();
-    window.scrollTo(0,0);
+    window.scrollTo(0, 0);
 }
 
-function setDepositor(email, name){
+function setDepositor(email, name) {
 
     $('#depositor_email').val(email);
     $('#depositor_name').val(name);
@@ -317,28 +316,28 @@ function setDepositor(email, name){
     //$('#show-agreement-modal-link').hide();
 }
 
-function handleAgreeModal(email, name){
+function handleAgreeModal(email, name) {
 
-    if ($('#owner-yes').is(":checked") && $('#agree-yes').is(":checked") && ($('#private-yes').is(":checked") ||$('#private-na').is(":checked") ) )  {
+    if ($('#owner-yes').is(":checked") && $('#agree-yes').is(":checked") && ($('#private-yes').is(":checked") || $('#private-na').is(":checked") )) {
         setDepositor(email, name);
     } else {
         handleNotAgreed();
     }
 }
 
-function download_selected(){
-    var file_ids = $("input[name='selected_files[]']:checked").map(function(index,domElement) {
+function download_selected() {
+    var file_ids = $("input[name='selected_files[]']:checked").map(function (index, domElement) {
         return $(domElement).val();
     });
 
-    $.each(file_ids, function(i, file_id){
+    $.each(file_ids, function (i, file_id) {
         fileURL = "<iframe class='hidden' src='/datasets/" + dataset_key + "/stream_file/" + file_id + "'></iframe>";
         $('#frames').append(fileURL);
     });
 }
 
-function handlePrivateYes(){
-    if ($('#private-yes').is(':checked')){
+function handlePrivateYes() {
+    if ($('#private-yes').is(':checked')) {
         $('#dataset_removed_private').val('yes');
         $('#review_link').html('<a href="/review_deposit_agreement?removed=yes" target="_blank">Review Deposit Agreement</a>');
         $('#private-na').attr('checked', false);
@@ -348,9 +347,9 @@ function handlePrivateYes(){
     }
 }
 
-function handlePrivateNA(){
+function handlePrivateNA() {
 
-    if ($('#private-na').is(':checked')){
+    if ($('#private-na').is(':checked')) {
         $('#review_link').html('<a href="/review_deposit_agreement?removed=na" target="_blank">Review Deposit Agreement</a>');
         $('#dataset_removed_private').val('na');
         $('#private-yes').attr('checked', false);
@@ -360,64 +359,50 @@ function handlePrivateNA(){
     }
 }
 
-function handlePrivateNo(){
-    if ($('#private-no').is(':checked')){
+function handlePrivateNo() {
+    if ($('#private-no').is(':checked')) {
         $('#dataset_removed_private').val('no');
         $('#private-na').attr('checked', false);
         $('#private-yes').attr('checked', false);
         window.location = "/help?context=sensitive";
     }
 }
-function handleOwnerYes(){
-    if ($('#owner-yes').is(':checked')){
+function handleOwnerYes() {
+    if ($('#owner-yes').is(':checked')) {
         $('#dataset_have_permission').val('yes');
     } else {
         $('#dataset_have_permission').val('no');
     }
 }
-function handleAgreeYes(){
-    if ($('#agree-yes').is(':checked')){
+function handleAgreeYes() {
+    if ($('#agree-yes').is(':checked')) {
         $('#dataset_agree').val('yes');
     } else {
         $('#dataset_agree').val('no');
     }
 }
 
-function clear_help_form(){
+function clear_help_form() {
     $('input .help').val('');
 }
 
-function tombstone(){
-
-    if (window.confirm("Are you sure? This will make this dataset unavailable.")) {
-        window.location = "/datasets/"+ dataset_key + "/tombstone";
-    }
-}
-
-function nuke(){
-
-    if (window.confirm("Are you sure? This will overwrite the DataCite metadata with placeholder values and render it unavailable.")) {
-        window.location = "/datasets/"+ dataset_key + "/nuke";
-    }
-}
-
-function validateReleaseDate(){
+function validateReleaseDate() {
     var yearFromNow = new Date(new Date().setFullYear(new Date().getFullYear() + 1));
     var releaseDate = new Date($('#dataset_release_date').val());
-    
+
     if (releaseDate > yearFromNow) {
         alert('The maximum amount of time that data can be delayed for publication is is 1 year.');
         //$('#dataset_release_date').val((yearFromNow.getMonth() + 1) + '/' + yearFromNow.getDate() + '/' +  yearFromNow.getFullYear());
         //$('#dataset_release_date').val(yearFromNow.toISOString());
-        $('#dataset_release_date').val(yearFromNow.getFullYear() + '-' +  pad((yearFromNow.getMonth() + 1))  + '-' + pad(yearFromNow.getDate()) );
+        $('#dataset_release_date').val(yearFromNow.getFullYear() + '-' + pad((yearFromNow.getMonth() + 1)) + '-' + pad(yearFromNow.getDate()));
     }
 
 }
 
-function filename_isdup(proposed_name){
+function filename_isdup(proposed_name) {
     var returnVal = false;
 
-    $.each($('.bytestream_name'), function( index, value ) {
+    $.each($('.bytestream_name'), function (index, value) {
         //console.log('proposed_name: ' + proposed_name + ' val: ' + $(value).val())
 
         if (proposed_name == $(value).val()) {
@@ -427,31 +412,31 @@ function filename_isdup(proposed_name){
 
     });
 
-   return returnVal;
+    return returnVal;
 
 }
 
-function offerDownloadLink(){
+function offerDownloadLink() {
     var selected_files = $('input[name="selected_files[]"]:checked');
     var web_id_string = "";
     var zip64_threshold = 4000000000;
 
-    $.each(selected_files, function( index, value ) {
-        if (web_id_string != ""){
+    $.each(selected_files, function (index, value) {
+        if (web_id_string != "") {
             web_id_string = web_id_string + "~";
         }
         web_id_string = web_id_string + $(value).val();
     });
-    if (web_id_string != ""){
+    if (web_id_string != "") {
         console.log(web_id_string)
         $.ajax({
             url: "/datasets/" + dataset_key + "/download_link?",
-            data: {"web_ids":web_id_string},
+            data: {"web_ids": web_id_string},
             dataType: 'json',
-            success: function(result){
-                if(result.status == 'ok'){
+            success: function (result) {
+                if (result.status == 'ok') {
                     $('.download-link').html("<h2><a href='" + result.url + "' target='_blank'>Download</a></h2>");
-                    if(Number(result.total_size) > zip64_threshold ){
+                    if (Number(result.total_size) > zip64_threshold) {
                         $('.download-help').html("<p>For selections of files larger than 4GB, the zip file will be in zip64 format. To open a zip64 formatted file on OS X (Mac), requires additional software not build into the operating system since version 10.11. Options include 7zip and The Unarchiver.</p>")
                     }
 
@@ -465,49 +450,46 @@ function offerDownloadLink(){
 
             }
             //context: document.body
-        }).done(function() {
+        }).done(function () {
             console.log("done");
         });
     }
 }
-function tmpSuppressFiles(){
-    alert("not yet implemented");
-    $('#tmpSuppressFilesBtn').html("UNSUPPRESS File(s)");
-    $('#tmpSuppressFilesBtn').attr('onclick', 'unsuppress()');
-}
 
-function tmpSuppressMetadata(){
-    alert("not yet implemented");
-    $('#tmpSuppressMetadataBtn').html("UNSUPPRESS File(s) and Metadata");
-    $('#tmpSuppressMetadataBtn').attr('onclick', 'unsuppress()');
-    $('#tmpSuppressFilesBtn').html("Temporarily Suppress File(s) Only");
-    $('#tmpSuppressFilesBtn').attr('onclick', 'tmpSuppressFiles()');
-    $('#tmpSuppressFilesBtn').prop("disabled", true);
-}
+function tmpSuppressFiles() {
 
-function unsuppress(){
-    alert("not yet implemented");
-    $('#tmpSuppressMetadataBtn').html("Temporarily Suppress File(s) and Metadata");
-    $('#tmpSuppressMetadataBtn').attr('onclick', 'tmpSuppressMetadata()');
-    $('#tmpSuppressFilesBtn').html("Temporarily Suppress File(s) Only");
-    $('#tmpSuppressFilesBtn').attr('onclick', 'tmpSuppressFiles()');
-    if (!($('#permSuppressFilesBtn').is(':disabled'))) {
-        $('#tmpSuppressFilesBtn').attr("disabled", false);
+    if (window.confirm("Are you sure?")) {
+        $('#suppression_action').val("temporarily_suppress_files");
+        $('#suppression_form').submit();
     }
 }
 
-function permSuppressFiles(){
-    alert("not yet implemented");
-    $('#tmpSuppressFilesBtn').prop("disabled", true);
-    $('#permSuppressFilesBtn').prop("disabled", true);
+function tmpSuppressMetadata() {
+    if (window.confirm("Are you sure?")) {
+        $('#suppression_action').val("temporarily_suppress_metadata");
+        $('#suppression_form').submit();
+    }
 }
 
-function permSuppressMetadata(){
-    alert("not yet implemented");
-    $('#tmpSuppressFilesBtn').prop("disabled", true);
-    $('#tmpSuppressMetadataBtn').prop("disabled", true);
-    $('#permSuppressFilesBtn').prop("disabled", true);
-    $('#permSuppressMetadataBtn').prop("disabled", true);
+function unsuppress() {
+    if (window.confirm("Are you sure?")) {
+        $('#suppression_action').val("unsuppress");
+        $('#suppression_form').submit();
+    }
+}
+
+function permSuppressFiles() {
+    if (window.confirm("Are you sure?")) {
+        $('#suppression_action').val("permanently_suppress_files");
+        $('#suppression_form').submit();
+    }
+}
+
+function permSuppressMetadata() {
+    if (window.confirm("Are you sure?")) {
+        $('#suppression_action').val("permanently_suppress_metadata");
+        $('#suppression_form').submit();
+    }
 }
 
 $(document).ready(ready);

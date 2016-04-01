@@ -322,18 +322,22 @@ class Dataset < ActiveRecord::Base
       target = "#{IDB_CONFIG[:root_url_text]}/datasets/#{self.key}"
 
       metadata = {}
-      if [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED].include?(self.publication_state)
+
+      Rails.logger.warn self.publication_state
+      Rails.logger.warn self.hold_state
+      if  ((self.publication_state == Databank::PublicationState::PermSuppress::METADATA) || (self.hold_state == Databank::PublicationState::TempSuppress::METADATA))
+        metadata['_status'] = "unavailable | Removed by Illinois Data Bank curators. Contact us for more information. #{ IDB_CONFIG[:root_url_text] }/help"
+      elsif [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED].include?(self.publication_state)
         metadata['_status'] = 'public'
-      elsif [Databank::PublicationState::PermSuppress::FILE, Databank::PublicationState::PermSuppress::METADATA].include?(self.publication_state)
-        metadata['_status'] = 'unavailable'
       end
+      Rails.logger.warn metadata.to_yaml
 
       metadata['_target'] = target
 
-      if [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED, Databank::PublicationState::PermSuppress::FILE].include?(self.publication_state)
-        metadata['datacite'] = self.to_datacite_xml
-      elsif self.publication_state == Databank::PublicationState::PermSuppress::METADATA
+      if ((self.publication_state == Databank::PublicationState::PermSuppress::METADATA) || (self.hold_state == Databank::PublicationState::TempSuppress::METADATA))
         metadata['datacite'] = self.placeholder_metadata
+      else
+        metadata['datacite'] = metadata['datacite'] = self.to_datacite_xml
       end
 
       uri = URI.parse("https://#{host}/id/doi:#{self.identifier}")
@@ -483,7 +487,7 @@ class Dataset < ActiveRecord::Base
 
     creatorNameNode = doc.create_element('creatorName')
 
-    creatorNameNode.content = "University of Illinois at Urbana-Champaign"
+    creatorNameNode.content = "[Redacted]"
     creatorNameNode.parent = creatorNode
 
 
@@ -491,7 +495,7 @@ class Dataset < ActiveRecord::Base
     titlesNode.parent = resourceNode
 
     titleNode = doc.create_element('title')
-    titleNode.content = "Removed Dataset"
+    titleNode.content = "[Redacted]"
     titleNode.parent = titlesNode
 
     publisherNode = doc.create_element('publisher')
@@ -506,7 +510,7 @@ class Dataset < ActiveRecord::Base
     descriptionsNode.parent = resourceNode
     descriptionNode = doc.create_element('description')
     descriptionNode['descriptionType'] = "Other"
-    descriptionNode.content = "Dataset has been removed. Contact the Research Data Service of the University of Illinois at Urbana-Champaign with any questions. http://researchdataservice.illinois.edu"
+    descriptionNode.content = "Removed by Illinois Data Bank curators. Contact us for more information. #{ IDB_CONFIG[:root_url_text] }/help"
     descriptionNode.parent = descriptionsNode
 
     doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)

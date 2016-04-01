@@ -35,9 +35,6 @@
             = link_to(dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn btn-danger btn-block") do
               %span(class="glyphicon glyphicon-trash" )
               Delete
-          - elsif (can? :manage, @dataset)
-            %button(type="button" class="btn btn-danger btn-block" )
-              Tombstone
           -else
             %button(type="button" class="btn btn-danger btn-block" name="cancel" onclick='window.location = "/"' )
               %span(class="glyphicon glyphicon-ban-circle" )

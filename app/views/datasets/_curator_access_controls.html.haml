@@ -1,3 +1,5 @@
+%form(role="form" id="suppression_form")
+  %input(id="suppression_action" type="hidden" name="suppression_action" )
 .curator-only
   .panel-group(id="access" role="tablist" aria-multiselectable="true")
     .panel.panel-default
@@ -12,14 +14,19 @@
             Review the Illinois Data Bank Preservation Review, Revision, Retention, and Withdrawal Procedures document (link TBD)
           %hr
           .row
-            .col-md-3
-              -if @dataset.hold_state == Databank::PublicationState::TempSuppress::FILE
-                %button(id="tmpSuppressFilesBtn" type="button" class="btn btn-lg btn-warning btn-block" onclick="unsuppress()")
-                  UNSUPPRESS File(s)
-              -else
-                %button(id="tmpSuppressFilesBtn" type="button" class="btn btn-lg btn-warning btn-block" onclick="tmpSuppressFiles()")
-                  Temporarily Suppress File(s) Only
-            .col-md-9
+            .col-md-4
+              - case @dataset.visibility
+                -when 'Public (Published)', 'Private (Delayed Publication)', 'Public description, Private files (Delayed Publication)'
+                  %button(id="tmpSuppressFilesBtn" type="button" class="btn btn-lg btn-warning btn-block" onclick="tmpSuppressFiles()")
+                    Temporarily Suppress File(s) Only
+                -when 'Public description, Private files (Curator Hold)'
+                  %button(id="tmpSuppressFilesBtn" type="button" class="btn btn-lg btn-warning btn-block" onclick="unsuppress()")
+                    UNSUPPRESS File(s)
+                -when 'Private (Curator Hold)', 'Public Metadata, Redacted Files', 'Redacted'
+                  %button(disabled id="tmpSuppressFilesBtn" type="button" class="btn btn-lg btn-warning btn-block" onclick="tmpSuppressFiles()")
+                    Temporarily Suppress File(s) Only
+
+            .col-md-8
               %ul
                 %li
                   Example Issue:
@@ -32,14 +39,19 @@
                 %li EZID DOI status: _status = public
           %hr
           .row
-            .col-md-3
-              -if @dataset.hold_state == Databank::PublicationState::TempSuppress::METADATA
-                %button(id="tmpSuppressMetadataBtn" type="button" class="btn btn-lg btn-warning btn-block" onclick="unsuppress()")
-                  UNSUPPRESS File(s) and Metadata
-              -else
-                %button(id="tmpSuppressMetadataBtn" type="button" class="btn btn-lg btn-warning btn-block" onclick="tmpSuppressMetadata()")
-                  Temporarily Suppress File(s) and Metadata
-            .col-md-9
+            .col-md-4
+              - case @dataset.visibility
+                -when 'Public (Published)', 'Private (Delayed Publication)', 'Public description, Private files (Delayed Publication)', 'Public Metadata, Redacted Files', 'Public description, Private files (Curator Hold)'
+                  %button(id="tmpSuppressMetadataBtn" type="button" class="btn btn-lg btn-warning btn-block" onclick="tmpSuppressMetadata()")
+                    Temporarily Suppress File(s) and Metadata
+                -when 'Private (Curator Hold)'
+                  %button(id="tmpSuppressMetadataBtn" type="button" class="btn btn-lg btn-warning btn-block" onclick="unsuppress()")
+                    UNSUPPRESS File(s) and Metadata
+                -when 'Redacted'
+                  %button(disabled id="tmpSuppressMetadataBtn" type="button" class="btn btn-lg btn-warning btn-block" onclick="tmpSuppressMetadata()")
+                    Temporarily Suppress File(s) and Metadata
+
+            .col-md-8
               %ul
                 %li
                   Example Issue:
@@ -60,10 +72,14 @@
               Do not select any of the following without team discussion.
           %hr
           .row
-            .col-md-3
-              %button(id="permSuppressFilesBtn" type="button" class="btn btn-lg btn-danger btn-block" onclick="permSuppressFiles()")
-                Permanently Suppress File(s) Only
-            .col-md-9
+            .col-md-4
+              -if [Databank::PublicationState::PermSuppress::METADATA, Databank::PublicationState::PermSuppress::FILE].include? @dataset.publication_state
+                %button(disabled id="permSuppressFilesBtn" type="button" class="btn btn-lg btn-danger btn-block" onclick="permSuppressFiles()")
+                  Permanently Suppress File(s) Only
+              -else
+                %button(id="permSuppressFilesBtn" type="button" class="btn btn-lg btn-danger btn-block" onclick="permSuppressFiles()")
+                  Permanently Suppress File(s) Only
+            .col-md-8
               %ul
                 %li
                   Example Issues:
@@ -72,15 +88,19 @@
                     %li Deprecated by new version of Dataset that corrects a sensitive data issue
                 %li Visibility: files are suppressed; metadata remains public
                 %li Tombstone Page: No
-                %li Retain Copy in IDB/Medusa:  Yes (for provenance)
+                %li Retain Copy in IDB/Medusa: Yes (for provenance)
                 %li EZID Metadata: No Change
                 %li EZID DOI status: _status = public
           %hr
           .row
-            .col-md-3
-              %button(id="permSuppressMetadataBtn" type="button" class="btn btn-lg btn-danger btn-block" onclick="permSuppressMetadata()")
-                Permanently Suppress File(s) and Metadata
-            .col-md-9
+            .col-md-4
+              -if @dataset.publication_state == Databank::PublicationState::PermSuppress::METADATA
+                %button(disabled id="permSuppressMetadataBtn" type="button" class="btn btn-lg btn-danger btn-block" onclick="permSuppressMetadata()")
+                  Permanently Suppress File(s) and Metadata
+              -else
+                %button(id="permSuppressMetadataBtn" type="button" class="btn btn-lg btn-danger btn-block" onclick="permSuppressMetadata()")
+                  Permanently Suppress File(s) and Metadata
+            .col-md-8
               %ul
                 %li
                   Example Issue:
@@ -105,10 +125,10 @@
               Do not select either of the options below without Director approval. (not yet implemented)
           %hr
             .row
-              .col-md-3
-                %button(id="medusaSuppressMetadataBtn" type="button" class="btn btn-lg btn-default btn-block" disabled)
+              .col-md-4
+                %button(id="medusaSuppressFilesBtn" type="button" class="btn btn-lg btn-default btn-block" disabled)
                   Delete File(s) Only from Medusa
-              .col-md-9
+              .col-md-8
                 %ul
                   %li
                     Example Issue:
@@ -129,10 +149,10 @@
                   %li EZID DOI status: _status = public
           %hr
             .row
-              .col-md-3
-                %button(id="medusaSuppressFilesBtn" type="button" class="btn btn-lg btn-default btn-block" disabled)
+              .col-md-4
+                %button(id="medusaSuppressMetadataBtn" type="button" class="btn btn-lg btn-default btn-block" disabled)
                   Delete File(s) and Metadata from Medusa
-              .col-md-9
+              .col-md-8
                 %ul
                   %li
                     Example Issue:

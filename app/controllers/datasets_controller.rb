@@ -21,7 +21,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :datacite_record
   skip_load_and_authorize_resource :only => :download_link
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :cancel_box_upload, :citation_text, :tombstone, :idb_datacite_xml, :serialization]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :cancel_box_upload, :citation_text, :idb_datacite_xml, :serialization]
 
   @@num_box_ingest_deamons = 10
 
@@ -61,6 +61,26 @@ class DatasetsController < ApplicationController
   # GET /datasets/1.json
   def show
 
+    if params.has_key?(:selected_files)
+      zip_and_download_selected
+    end
+
+    if params.has_key?(:suppression_action)
+      case params[:suppression_action]
+        when "temporarily_suppress_files"
+          temporarily_suppress_files
+        when "temporarily_suppress_metadata"
+          temporarily_suppress_metadata
+        when "permanently_suppress_files"
+          permanently_suppress_files
+        when "permanently_suppress_metadata"
+          permanently_suppress_metadata
+        when "unsuppress"
+          unsuppress
+      end
+    end
+
+
     @all_in_medusa = true
     @total_files_size = 0
     @local_zip_max_size = 750000000
@@ -76,9 +96,7 @@ class DatasetsController < ApplicationController
     end
 
     @completion_check = Dataset.completion_check(@dataset, current_user)
-    if params.has_key?(:selected_files)
-      zip_and_download_selected
-    end
+
     @changetable = nil
 
     changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', @dataset.id, @dataset.id)
@@ -89,24 +107,14 @@ class DatasetsController < ApplicationController
 
     @publish_modal_msg = publish_modal_msg(@dataset)
 
-    # # clean up incomplete datasfiles
-    # @dataset.datafiles.each do |datafile|
-    #   datafile.destroy unless (datafile.binary && datafile.binary.file && datafile.binary.file.filename)
-    # end
-
-    # @license_header = ""
-    # @license_expanded = ""
     @license_link = ""
 
     @license = LicenseInfo.where(:code => @dataset.license).first
     case @dataset.license
       when "CC01", "CCBY4"
-        # @license_header = @license.name
-        # File.open(@license.full_text_url){ |f| f.each_line {|row| @license_expanded << row } }
         @license_link = @license.external_info_url
 
       when "license.txt"
-        # @license_header = "See license.txt file in dataset"
         @dataset.datafiles.each do |datafile|
           if datafile.bytestream_name && ((datafile.bytestream_name).downcase == "license.txt")
             @license_link = "#{request.base_url}/datafiles/#{datafile.web_id}/download"
@@ -116,7 +124,6 @@ class DatasetsController < ApplicationController
       else
         @license_expanded = @dataset.license
     end
-
   end
 
   def idb_datacite_xml
@@ -251,65 +258,40 @@ class DatasetsController < ApplicationController
     end
   end
 
-  def nuke
-    old_state = @dataset.publication_state
-    @dataset.publication_state = Databank::PublicationState::PermSuppress::METADATA
-    @dataset.has_datacite_change = false
-    @dataset.tombstone_date = Date.current.iso8601
-    notice_msg = ""
+  def temporarily_suppress_files
 
-    if old_state == Databank::PublicationState::Embargo::METADATA
-      respond_to do |format|
-        @dataset.has_datacite_change = false
-        if @dataset.save && delete_datacite_id
-          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Reserved DOI has been deleted and all files have been hidden.] }
-          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
-        else
-          @dataset.publication_state = old_state
-          @dataset.tombstone_date = nil
-          @dataset.has_datacite_change = false
-          @dataset.save
-          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
-          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
-
-        end
-      end
-    else
-      respond_to do |format|
-        @dataset.has_datacite_change = false
-        if @dataset.save && @dataset.update_datacite_metadata(current_user)
-          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata has been replaced with minimal placeholder values and all files have been hidden.] }
-          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
-        else
-          @dataset.publication_state = old_state
-          @dataset.tombstone_date = nil
-          @dataset.has_datacite_change = false
-          @dataset.save
-          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
-          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
-
-        end
-      end
-    end
-  end
-
-  def tombstone
-
-    old_state = @dataset.publication_state
-
-    @dataset.publication_state = Databank::PublicationState::PermSuppress::FILE
-    @dataset.tombstone_date = Date.current
+    @dataset.hold_state = Databank::PublicationState::TempSuppress::FILE
 
     respond_to do |format|
-      @dataset.has_datacite_change = false
-      if @dataset.save && @dataset.update_datacite_metadata(current_user)
-        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset has been successfully tombstoned.] }
+      if @dataset.save
+        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset files have been temporarily suppressed.] }
         format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
       else
-        @dataset.publication_state = old_state
-        @dataset.tombstone_date = nil
-        @dataset.has_datacite_change = false
-        @dataset.save
+        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
+        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+      end
+    end
+
+  end
+
+  def temporarily_suppress_metadata
+
+    @dataset.hold_state = Databank::PublicationState::TempSuppress::METADATA
+
+    respond_to do |format|
+
+      if @dataset.save
+
+        if @dataset.update_datacite_metadata(current_user)
+          @dataset.has_datacite_change = false
+          @dataset.save
+          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been temporarily suppressed.] }
+          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        else
+          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been temporarily suppressed in IDB, but DataCite was not updated.] }
+          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        end
+      else
         format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
         format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
 
@@ -317,6 +299,96 @@ class DatasetsController < ApplicationController
     end
 
   end
+
+  def unsuppress
+    @dataset.hold_state = nil
+
+    respond_to do |format|
+
+      if @dataset.save
+
+        if @dataset.update_datacite_metadata(current_user)
+          @dataset.has_datacite_change = false
+          @dataset.save
+          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset has been unsuppressed.] }
+          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        else
+          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset has been unsuppressed in IDB, but DataCite was not updated.] }
+          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        end
+      else
+        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
+        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+
+      end
+    end
+  end
+
+  def permanently_suppress_files
+
+    @dataset.publication_state = Databank::PublicationState::PermSuppress::FILE
+    @dataset.tombstone_date = Date.current
+
+    respond_to do |format|
+
+      if @dataset.save
+        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset files have been permanently supressed.] }
+        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+      else
+        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
+        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+      end
+
+    end
+
+  end
+
+
+  def permanently_suppress_metadata
+
+    old_state = @dataset.publication_state
+    @dataset.publication_state = Databank::PublicationState::PermSuppress::METADATA
+    @dataset.tombstone_date = Date.current.iso8601
+
+    if old_state == Databank::PublicationState::Embargo::METADATA
+      respond_to do |format|
+
+        if @dataset.save
+          if delete_datacite_id
+            @dataset.has_datacite_change = false
+            @dataset.save
+            format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Reserved DOI has been deleted and all files have been permanently supressed.] }
+            format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+          else
+            format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been permenantly suppressed in IDB, but DataCite has not been updated.] }
+            format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+          end
+        else
+          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
+          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        end
+      end
+
+    else
+      respond_to do |format|
+
+        if @dataset.save
+          if  @dataset.update_datacite_metadata(current_user)
+            format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and all files have permanently supressed.] }
+            format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+          else
+            format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been permanently supressed in IDB, but DataCite has not been updated.] }
+            format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+          end
+        else
+          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
+          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        end
+
+      end
+    end
+  end
+
 
   # publishing in IDB means interacting with DataCite and Medusa
   def publish
@@ -357,7 +429,7 @@ class DatasetsController < ApplicationController
         FileUtils.mkdir_p "#{staging_dir}/dataset_files"
         FileUtils.mkdir_p "#{staging_dir}/system"
         FileUtils.chmod "u=wrx,go=rx", File.dirname(staging_dir)
-        
+
         file_time = Time.now.strftime('%Y-%m-%d_%H-%M')
         description_xml = @dataset.to_datacite_xml
         File.open("#{staging_dir}/system/description.#{file_time}.xml", "w") do |description_file|

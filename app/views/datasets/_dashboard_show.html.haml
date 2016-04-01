@@ -59,7 +59,7 @@
         .col-md-2
           =link_to("Request Dataset Review", "/help?context=review&key=#{@dataset.key}", class: "btn btn-success btn-block")
         .col-md-2
-          - if @dataset.publication_state == Databank::PublicationState::DRAFT && (!can? :manage, @dataset)
+          - if @dataset.publication_state == Databank::PublicationState::DRAFT
             = link_to(dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure? This removes all files and metadata from IDB.'}, class: "btn btn-danger btn-block") do
               %span(class="glyphicon glyphicon-trash" )
               Delete
