@@ -29,7 +29,7 @@ module Effective
           end
         end
 
-        array_column 'Visibility', filter: {type: :select, values: ['Private (Not Yet Saved)','Private (Saved Draft)','Private (Delayed Publication)','Public description, Private files (Delayed Publication)','Public (Published)','Public description, Private files (Curator Hold)','Private (Curator Hold)','Public Metadata, Redacted Files']} do |dataset|
+        array_column 'Visibility', filter: {type: :select, values: ['Private (Saved Draft)','Private (Delayed Publication)','Public description, Private files (Delayed Publication)','Public (Published)','Public description, Private files (Curator Hold)','Private (Curator Hold)','Public Metadata, Redacted Files']} do |dataset|
           render text: "#{dataset.visibility}"
         end
 
