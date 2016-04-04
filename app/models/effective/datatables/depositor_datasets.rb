@@ -3,13 +3,14 @@ module Effective
     class DepositorDatasets < Effective::Datatable
 
       datatable do
+        default_order 'Depositors', :asc
         current_email = attributes[:current_email]
         current_name = attributes[:current_name]
-        array_column 'My Datasets + All', sortable: false, filter: {type: :select, values: ['mine']} do |dataset|
+        array_column 'Depositors', sortable: false, visible: false, filter: {type: :select, values: ['me', 'other']} do |dataset|
           if dataset.depositor_email == current_email
-            render text: 'mine'
+            render text: 'me'
           else
-            render text: ''
+            render text: 'other'
           end
         end
 
@@ -44,8 +45,9 @@ module Effective
 
           render text: "#{dataset.visibility}"
         end
+        table_column :depositor_email, visible: false
         table_column :updated_at, visible: false
-        default_order :updated_at, :desc
+        table_column :created_at, visible: false
       end
 
       def collection
