@@ -3,7 +3,7 @@
     %h1 Datasets
   .col-md-3
     %br
-    - if params.has_key?('depositor')
+    - if params.has_key?('depositor') current_user && current_user.role != 'admin'
       %button(type="button" class="btn btn-primary btn-block" onclick='window.location = "/datasets"')
         List
         %strong ALL
