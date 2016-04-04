@@ -19,8 +19,12 @@ confirmOnPageExit = function (e) {
 var ready;
 ready = function () {
 
-    //$('.bytestream_name').css("visibility", "hidden");
     $('.bytestream_name').css("visibility", "hidden");
+
+    if (!Modernizr.inputtypes.date) {
+        $("#dataset_release_date").prop({type:"text"});
+        $("#dataset_release_date").datepicker();
+    }
 
     $("#checkFileSelectedCount").html('0');
 

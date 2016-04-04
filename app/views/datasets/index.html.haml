@@ -8,7 +8,7 @@
         List
         %strong ALL
         Datasets
-    - else
+    - elsif current_user
       %button(type="button" class="btn btn-primary btn-block" onclick='window.location = "/datasets?depositor=#{current_user.name}"')
         List Just
         %strong MY
