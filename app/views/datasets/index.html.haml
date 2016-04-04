@@ -5,8 +5,12 @@
     %br
     - if params.has_key?('depositor')
       %button(type="button" class="btn btn-primary btn-block" onclick='window.location = "/datasets"')
-        List All Datasets
+        List
+        %strong ALL
+        Datasets
     - else
       %button(type="button" class="btn btn-primary btn-block" onclick='window.location = "/datasets?depositor=#{current_user.name}"')
-        List Just My Datasets
+        List Just
+        %strong MY
+        Datasets
 = render_datatable(@datatable)
