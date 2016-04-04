@@ -131,29 +131,19 @@ namespace :test do
   task :send_medusa_dup => :environment do
 
     File.open("#{IDB_CONFIG[:datafile_store_dir]}/test/test.txt", "w") do |test_file|
-      test_file.write("Initial placeholder content for test file.")
+      test_file.write("Initial placeholder content.")
     end
     puts "creating ingest message"
     medusa_ingest = MedusaIngest.new
     staging_path = "uploads/test/test.txt"
     medusa_ingest.staging_path = staging_path
     medusa_ingest.idb_class = 'test'
-    medusa_ingest.idb_identifier = "test_1"
+    medusa_ingest.idb_identifier = "test_#{Time.now.strftime('%Y-%m-%d_%H-%M')}"
+    puts "sending message"
     medusa_ingest.send_medusa_ingest_message(staging_path)
     medusa_ingest.save
-
-    File.open("#{IDB_CONFIG[:datafile_store_dir]}/test/test.txt", "w") do |test_file|
-      test_file.write("Changed content for test file. If this gets into Medusa, something has gone wrong.")
-    end
-    puts "creating ingest message"
-    medusa_ingest = MedusaIngest.new
-    staging_path = "uploads/test/test.txt"
-    medusa_ingest.staging_path = staging_path
-    medusa_ingest.idb_class = 'test'
-    medusa_ingest.idb_identifier = "test_2"
-    medusa_ingest.send_medusa_ingest_message(staging_path)
-    medusa_ingest.save
-
+    puts "Ingest Message Record:"
+    puts medusa_ingest.to_yaml
 
   end
   
