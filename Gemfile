@@ -118,6 +118,9 @@ gem 'sitemap_generator', '~> 5.1'
 # Use curb to wrap curl
 gem 'curb', '~> 0.9.1'
 
+# Use modernizr-rails to handle different browsers differently
+gem 'modernizr-rails'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
