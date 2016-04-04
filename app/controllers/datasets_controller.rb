@@ -107,23 +107,8 @@ class DatasetsController < ApplicationController
 
     @publish_modal_msg = publish_modal_msg(@dataset)
 
-    @license_link = ""
+    set_license(@dataset)
 
-    @license = LicenseInfo.where(:code => @dataset.license).first
-    case @dataset.license
-      when "CC01", "CCBY4"
-        @license_link = @license.external_info_url
-
-      when "license.txt"
-        @dataset.datafiles.each do |datafile|
-          if datafile.bytestream_name && ((datafile.bytestream_name).downcase == "license.txt")
-            @license_link = "#{request.base_url}/datafiles/#{datafile.web_id}/download"
-          end
-        end
-
-      else
-        @license_expanded = @dataset.license
-    end
   end
 
   def idb_datacite_xml
@@ -201,6 +186,7 @@ class DatasetsController < ApplicationController
     @dataset.funders.build unless @dataset.funders.count > 0
     @dataset.related_materials.build unless @dataset.related_materials.count > 0
     @completion_check = Dataset.completion_check(@dataset, current_user)
+    set_license(@dataset)
   end
 
   # POST /datasets
@@ -884,6 +870,27 @@ class DatasetsController < ApplicationController
   def set_dataset
     @dataset = Dataset.find_by_key(params[:id])
     raise ActiveRecord::RecordNotFound unless @dataset
+  end
+
+  def set_license(dataset)
+
+    @license_link = ""
+
+    @license = LicenseInfo.where(:code => dataset.license).first
+    case dataset.license
+      when "CC01", "CCBY4"
+        @license_link = @license.external_info_url
+
+      when "license.txt"
+        @dataset.datafiles.each do |datafile|
+          if datafile.bytestream_name && ((datafile.bytestream_name).downcase == "license.txt")
+            @license_link = "#{request.base_url}/datafiles/#{datafile.web_id}/download"
+          end
+        end
+
+      else
+        @license_expanded = dataset.license
+    end
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.

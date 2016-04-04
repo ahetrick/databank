@@ -43,11 +43,16 @@
                   %a(href="#" data-toggle="modal" data-target="#licenseModal" tabindex="-1")
                     %span(class="fa fa-question-circle")
                     what's this?
-                  - if [Databank::PublicationState::DRAFT, Databank::PublicationState::Embargo::METADATA].include? @dataset.publication_state
+                  - if ((can? :manage, @dataset) || ([Databank::PublicationState::DRAFT, Databank::PublicationState::Embargo::METADATA].include? @dataset.publication_state))
                     = f.collection_select :license, LicenseInfo.order('code ASC'), :code, :name, {:prompt => true}, {:class => "form-control dataset"}
                   -else
-                    - license_info = LicenseInfo.find_by_code(@dataset.license)
-                    = license_info.name
+                    %br
+                    - if @license_link == ""
+                      = (@dataset.license && @dataset.license != "") ? @dataset.license : "[License not selected]"
+                    - else
+                      %a(href="#{@license_link}")
+                        = @license.name
+            <% end %>
 
             = render partial: 'creators_subform', locals: {f: f}
 
