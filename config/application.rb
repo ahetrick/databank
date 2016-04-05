@@ -43,6 +43,7 @@ module Databank
     CODE = 'Code'
     DATASET = 'Dataset'
     PRESENTATION = 'Presentation'
+    THESIS = 'Thesis'
     OTHER = 'Other'
   end
 

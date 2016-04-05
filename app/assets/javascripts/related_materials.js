@@ -68,6 +68,7 @@ function add_material_row() {
             '<option value="Code">Code</option>' +
             '<option value="Dataset">Dataset</option>' +
             '<option value="Presentation">Presentation</option>' +
+            '<option value="Thesis">Thesis</option>' +
             '<option value="Other">Other:</option></select>' +
             '</td>' +
             '<td>' +
@@ -139,6 +140,7 @@ function add_material_row() {
             '<option value="Code">Code</option>' +
             '<option value="Dataset">Dataset</option>' +
             '<option value="Presentation">Presentation</option>' +
+            '<option value="Thesis">Thesis</option>' +
             '<option value="Other">Other:</option></select>' +
             '</td>' +
             '<td>' +
