@@ -52,7 +52,7 @@
             %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit") Confirm
 
         .col-md-1
-          = link_to(edit_dataset_path(@dataset), :class => "btn btn-info btn-block") do
+          = link_to(edit_dataset_path(@dataset), :class => "btn idb btn-info btn-block") do
             %span(class="glyphicon glyphicon-edit")
             Edit
 
@@ -60,7 +60,7 @@
           =link_to("Request Dataset Review", "/help?context=review&key=#{@dataset.key}", class: "btn btn-success btn-block")
         .col-md-2
           - if @dataset.publication_state == Databank::PublicationState::DRAFT
-            = link_to(dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure? This removes all files and metadata from IDB.'}, class: "btn btn-danger btn-block") do
+            = link_to(dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure? This removes all files and metadata from IDB.'}, class: "btn idb btn-danger btn-block") do
               %span(class="glyphicon glyphicon-trash" )
               Delete
           - else

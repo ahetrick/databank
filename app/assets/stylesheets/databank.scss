@@ -137,6 +137,17 @@ div {
 .flame-icon{
   color: $color__red;
 }
+
+a.btn.idb {
+  color: $color__text-light;
+  &:visited {
+    color: $color__text-light;
+  }
+  &:hover {
+    color: $color__text-light;
+    background-color: $color__dark-navy;
+  }
+}
 /*  fixed headers for full screen */
 /*
 

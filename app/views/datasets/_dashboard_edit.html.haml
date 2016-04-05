@@ -32,7 +32,7 @@
             Save & Review
         .col-md-2
           - if @dataset.publication_state == Databank::PublicationState::DRAFT
-            = link_to(dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn btn-danger btn-block") do
+            = link_to(dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn idb btn-danger btn-block") do
               %span(class="glyphicon glyphicon-trash" )
               Delete
           -else
