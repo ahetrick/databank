@@ -3,7 +3,7 @@ module Effective
     class DepositorDatasets < Effective::Datatable
 
       datatable do
-        default_order 'Depositors', :asc
+        default_order :updated_at, :desc
         current_email = attributes[:current_email]
         current_name = attributes[:current_name]
         array_column 'Depositors', sortable: false, visible: false, filter: {type: :select, values: ['me', 'other']} do |dataset|
