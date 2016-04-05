@@ -222,7 +222,7 @@ ul.help-info{
   /* symbol for "opening" panels */
   //font-family: 'FontAwesome';
   //content: "[\f068]";
-  font-family: Ariel, Sans-Serif;
+  font-family: Helvetica,Arial,sans-serif;
   content: "[-]";
   float: left;
   color: black;
@@ -236,7 +236,7 @@ ul.help-info{
 }
 
 .panel-heading .accordion-toggle.collapsed:after {
-   font-family: Ariel, Sans-Serif;
+   font-family: Helvetica,Arial,sans-serif;
    content: "[+]";
    float: left;
    color: black;

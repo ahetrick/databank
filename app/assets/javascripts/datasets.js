@@ -23,7 +23,17 @@ ready = function () {
 
     if (!Modernizr.inputtypes.date) {
         $("#dataset_release_date").prop({type:"text"});
-        $("#dataset_release_date").datepicker();
+        $("#dataset_release_date").prop({placeholder: "MM/DD/YYYY"});
+        $("#dataset_release_date").prop({"data-mask": "99/99/9999"});
+
+        $("#dataset_release_date").datepicker({
+            inline: true,
+            showOtherMonths: true,
+            minDate: 0,
+            maxDate: "+1Y",
+            defaultDate: (new Date())
+
+        });
     }
 
     $("#checkFileSelectedCount").html('0');

@@ -1,7 +1,7 @@
 <%= render partial: "download_link_modal" %>
 <% if (can? :edit, @dataset) %>
   <%= render partial: "confirm_deposit_modal" %>
-  <%= render partial: 'dashboard_show' %>
+  <%= render partial: 'datasets/dashboards/show' %>
 <% end %>
 <% if ((can? :manage, @dataset) && (@dataset.publication_state != Databank::PublicationState::DRAFT)) %>
   <%= render partial: 'curator_access_controls' %>

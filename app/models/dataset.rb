@@ -404,7 +404,7 @@ class Dataset < ActiveRecord::Base
     end
 
     unless contact
-      validation_error_messages << "select primary contact (from Description section author list)"
+      validation_error_messages << "select primary contact from author list"
     end
 
     if contact.nil? || !contact.email || contact.email == ""
