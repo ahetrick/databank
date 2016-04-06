@@ -342,7 +342,7 @@
   </div>
 <% end %>
 
-<% if (@dataset.title.downcase.include? 'unicorn') && ((can? :edit, @dataset) && [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state)) %>
+<% if (@dataset.title) && (@dataset.title.downcase.include? 'unicorn') && ((can? :edit, @dataset) && [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state)) %>
   <div class="pull-right">
     <%= image_tag('Rainbow_Unicorn.png') %>
   </div>
