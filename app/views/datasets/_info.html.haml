@@ -6,7 +6,7 @@
       %h4(class="panel-title")
         %a( role="button" data-toggle="collapse" data-parent="#license" href="#licensePanel" aria-expanded="false" aria-controls="licensePanel" class="accordion-toggle collapsed" )
           %span( class="metadata-label" ) You will need to select a license for your dataset. (click to expand for more information)
-    .panel-collapse.collapse(id="funderPanel" role="tabpanel" aria-labelledby="funderHeading" )
+    .panel-collapse.collapse(id="licensePanel" role="tabpanel" aria-labelledby="licenseHeading" )
       .panel-body
         %p
           Datasets are complex objects, and understanding how copyright law applies to datasets is similarly complex.
@@ -15,14 +15,14 @@
           %a(href="/help#license")
             Research Data Copyright and Licensing
           %br
-          Your choices will be:
-          =image_tag('license_options.png')
-          %br
+          Your dataset license options in Illinois Data Bank are:
+        =render partial: 'license_infographic'
+        %p
           %a(href="https://creativecommons.org/about/cc0" target="_blank" ) Find out more about CCO
           %br
           %a(href="https://creativecommons.org/licenses/by/4.0" target="_blank" ) Find out more more about CC BY
           %br
-          If you choose the license.txt option, you will need to upload your license.txt file as part of your dataset.
+          %span(class="strong") If you choose to use a license.txt file, upload it with your other dataset files.
 
 .panel-group(id="contact" role="tablist" aria-multiselectable="true")
   .panel.panel-default
@@ -30,12 +30,11 @@
       %h4(class="panel-title")
         %a( role="button" data-toggle="collapse" data-parent="#contact" href="#contactPanel" aria-expanded="false" aria-controls="contactPanel" class="accordion-toggle collapsed" )
           %span( class="metadata-label" ) You will need to select a long-term primary contact for your dataset. (click to expand for more information)
-    .panel-collapse.collapse(id="funderPanel" role="tabpanel" aria-labelledby="funderHeading" )
+    .panel-collapse.collapse(id="contactPanel" role="tabpanel" aria-labelledby="contactHeading" )
       .panel-body
         %p
         Select one of the authors from the author list to be the long-term primary contact.  If there is only one author, select that author.
         %br
-        Two author example:
         =image_tag('select_contact.png', height: 150)
 
 .panel-group(id="embargo" role="tablist" aria-multiselectable="true")
@@ -44,14 +43,17 @@
       %h4(class="panel-title")
         %a( role="button" data-toggle="collapse" data-parent="#embargo" href="#embargoPanel" aria-expanded="false" aria-controls="embargoPanel" class="accordion-toggle collapsed" )
           %span( class="metadata-label" ) You will offered the option to delay publication of your dataset. (click to expand for more information)
-    .panel-collapse.collapse(id="funderPanel" role="tabpanel" aria-labelledby="funderHeading" )
+    .panel-collapse.collapse(id="embargoPanel" role="tabpanel" aria-labelledby="embargoHeading" )
       .panel-body
         %p
-          Due to publisher or other requirements, researchers may need to deposit their dataset but make it temporarily unavailable for download.  For more guidance, review our help section on the topic:
-          %a(href="/help#embargo") Delaying Publication of/embargoing your dataset
+          Due to publisher or other requirements, researchers may need to deposit their dataset but make it temporarily unavailable for download.
           %br
-          Your choices will be:
-          =image_tag('embargo_options.png')
+          For more guidance, review our help section on the topic:
+          %a(href="/help#embargo") Delaying Publication of/embargoing your dataset
+        %p
+          Your publicaiton delay (embargo) option in Illinois Data Bank are No Publication Delay (default) and:
+          =render partial: 'embargo_infographic'
+
 
 
 
