@@ -135,7 +135,7 @@ function add_material_row() {
         var material_row = '<tr class="item row" id="material_index_' + newId + '">' +
             '<td>' +
             '<select class="form-control dataset" onchange="handleMaterialChange(' + newId + ')" name="dataset[related_materials_attributes][' + newId + '][selected_type]" id="dataset_related_materials_attributes_' + newId + '_selected_type">' +
-            '<option value="">Please select</option>' +
+            '<option value="">Select...</option>' +
             '<option value="Article">Article</option>' +
             '<option value="Code">Code</option>' +
             '<option value="Dataset">Dataset</option>' +
@@ -148,7 +148,7 @@ function add_material_row() {
             '</td>' +
             '<td>' +
             '<select class="form-control dataset" name="dataset[related_materials_attributes][' + newId + '][availability]" id="dataset_related_materials_attributes_' + newId + '_availability">' +
-            '<option value="">Please select</option>' +
+            '<option value="">Select...</option>' +
             '<option value="Forthcoming">Forthcoming</option>' +
             '<option value="Available">Available</option></select>' +
             '</td>' +
