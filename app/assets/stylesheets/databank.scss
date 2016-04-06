@@ -138,16 +138,26 @@ div {
   color: $color__red;
 }
 
-a.btn.idb {
+/* unvisited link */
+a.idb:link {
   color: $color__text-light !important;
-  &:visited {
-    color: $color__text-light !important;
-  }
-  &:hover {
-    color: $color__text-light;
-    background-color: $color__dark-navy !important;
-  }
 }
+
+/* visited link */
+a.idb:visited {
+  color: $color__text-light !important;
+}
+
+/* mouse over link */
+a.idb:hover {
+  color: $color__text-light !important;
+}
+
+/* selected link */
+a.idb:active {
+  color: $color__text-light !important;
+}
+
 
 .idb-info-body{
   margin-left: 25px;
