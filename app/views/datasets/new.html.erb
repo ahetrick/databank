@@ -4,6 +4,13 @@
 <%= render partial: 'deposit_agreement_modal', :layout => false %>
 <%= render partial: 'datasets/dashboards/new_top' %>
 <%= render partial: 'info' %>
+<%= render partial: 'new_form' %>
 <%= render partial: 'datasets/dashboards/new_bottom' %>
+<% if !@dataset.depositor_email %>
+  <script>
+    handleNotAgreed();
+    $("#agreement").modal('show');
+  </script>
+<% end %>
 
 

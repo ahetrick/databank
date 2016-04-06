@@ -240,10 +240,3 @@
   %script
     handleNotAgreed();
     $("#agreement").modal('show');
-
-- if (params[:action == 'new'])
-  $(".review-deposit-agreement").hide();
-
-- if (params[:action] != 'new' && @dataset.datafiles.count < 1)
-  %script
-    $("#descriptionPanel").collapse('hide');
