@@ -57,6 +57,8 @@ li.current {
 .idb-alert{
   padding: 15px;
   background-color: $color__light-blue;
+  position: relative;
+  z-index: 2100;
 }
 .idb-callout {
   background: $color__yellow;
