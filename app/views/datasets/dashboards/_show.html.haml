@@ -25,7 +25,9 @@
           = @dataset.visibility
           %br
           - if (@dataset.publication_state != Databank::PublicationState::RELEASED && (!can? :manage, @dataset))
-            (Private information is displayed because you are the depositor of this dataset. Log out to see the public view.)
+            (Private information is displayed because you are the depositor of this dataset.
+            =link_to("Log out", :logout)
+            to see the public view.)
             %br
           %span(class="glyphicon glyphicon-triangle-right" )
           %span(class="metadata-label" ) Progress:

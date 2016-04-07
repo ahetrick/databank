@@ -1,5 +1,6 @@
 # Databank
-Illinois Data Bank institutional data repository
+
+Databank is the Ruby on Rails web application component of Illinois Data Bank, which is a public access repository for research data from the University of Illinois at Urbana-Champaign.
 
 ## Installing
 
@@ -59,10 +60,16 @@ Edit these as necessary.
 
 `$ ./idb_start.sh`
 
-## Integration with archive (Medusa)
-### Depends on RabbitMQ Server set up as configured in databank.yml
-### Sending messages triggered by actions in databank app
-### Getting messages triggered by cron running a script
+## Integration with digital preservation repository @Illinois (Medusa)
+
+The digital preservation component of Illinois Data Bank is supported by integration with the Medusa collection registry. For more information, read the [Medusa FAQ](https://wiki.cites.illinois.edu/wiki/display/LibraryDigitalPreservation/Medusa+FAQ).
+
+Databank exchanges AMPQ messages with Medusa.
+
+* Exchange depends on a RabbitMQ Server set up as configured in databank.default.yml
+* Sending messages is triggered by actions in databank app
+* Getting messages is triggered by cron running a script
+
 #### script example:
 
 ```bash
