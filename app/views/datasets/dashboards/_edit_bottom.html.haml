@@ -6,8 +6,9 @@
       .row
         .col-md-3.col-md-offset-9
           %button(type="button" class="btn btn-primary update save-button btn-block" id="update-save-button")
-            Save & Review
-          %button(type="button" class="btn btn-success update save-button btn-block" id="save-exit-button")
+            Save & Continue
+            %span(class="glyphicon glyphicon-triangle-right" )
+          %button(type="button" class="btn btn-warning update save-button btn-block" id="save-exit-button")
             Save & Exit
           - if @dataset.publication_state == Databank::PublicationState::DRAFT
             = link_to(dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure?'}, :class => "btn idb btn-danger btn-block") do
