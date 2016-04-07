@@ -156,7 +156,7 @@ class Dataset < ActiveRecord::Base
 
           if funder.identifier && funder.identifier != ''
             funderIdentifierNode = doc.create_element('nameIdentifier')
-            funderIdentifierNode["schemeURI"] = "http://dx.doi.org/"
+            funderIdentifierNode["schemeURI"] = "https://doi.org/"
             funderIdentifierNode["nameIdentifierScheme"] = "DOI"
             funderIdentifierNode.content = "#{funder.identifier}"
             funderIdentifierNode.parent = funderNode
@@ -636,7 +636,7 @@ class Dataset < ActiveRecord::Base
 
     end
 
-    citation_id = (identifier && !identifier.empty?) ? "http://dx.doi.org/#{identifier}" : ""
+    citation_id = (identifier && !identifier.empty?) ? "https://doi.org/#{identifier}" : ""
 
     return "#{creator_list} (#{publication_year}): #{citationTitle}. #{publisher}. #{citation_id}"
   end
