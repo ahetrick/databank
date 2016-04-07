@@ -45,13 +45,19 @@
         .col-md-3
           -# confirm button conditional complex, so broken into two statements
           -if @completion_check == 'ok' && (@dataset.publication_state == Databank::PublicationState::DRAFT || (@dataset.has_datacite_change && [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE].include?(@dataset.publication_state) ) )
-            %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit") Confirm
+            %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit")
+              Confirm
+              %span(class="glyphicon glyphicon-triangle-right" )
           -if @dataset.publication_state == Databank::PublicationState::Embargo::METADATA && @dataset.embargo != Databank::PublicationState::Embargo::METADATA
-            %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit") Confirm
-          = link_to(edit_dataset_path(@dataset), :class => "btn idb btn-info btn-block") do
+            %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit")
+              Confirm
+              %span(class="glyphicon glyphicon-triangle-right" )
+          = link_to(edit_dataset_path(@dataset), :class => "btn idb btn-success btn-block") do
             %span(class="glyphicon glyphicon-edit")
             Edit
-          =link_to("Request Dataset Review", "/help?context=review&key=#{@dataset.key}", class: "btn btn-success btn-block")
+          %button(type="button" onclick='window.location= "/help?context=review&key=#{@dataset.key}"' class="btn btn-info btn-block")
+            %span(class="glyphicon glyphicon-question-sign")
+            Request Dataset Review
           - if @dataset.publication_state == Databank::PublicationState::DRAFT
             = link_to(dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure? This removes all files and metadata.'}, class: "btn idb btn-danger btn-block") do
               %span(class="glyphicon glyphicon-trash" )
