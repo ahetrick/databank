@@ -134,7 +134,7 @@ ready = function () {
     });
 
     $('#dataset_identifier').change(function () {
-        $('#doi-preview').html("http://dx.doi.org/" + $(this).val());
+        $('#doi-preview').html("https://doi.org/" + $(this).val());
     });
 
     $('#show-all-button').click(function () {
