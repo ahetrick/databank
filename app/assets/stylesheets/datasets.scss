@@ -25,8 +25,13 @@
 
 div#citation-block {
   background-color: $color__lightest-grey;
-  border-radius: 5px;
+  border: 1px solid $color__light-grey;
 }
+.metadata-block {
+  background-color: $color__background-main-column;
+  border: 1px solid $color__light-grey;
+}
+
 
 #citation, #citation-download, #citation-standards {
   padding: .5em;
@@ -279,3 +284,8 @@ ul.help-info{
   font-weight: bold;
 }
 
+div.dataset-metadata {
+  border-radius: 5px;
+  background-color: $color__light-blue;
+  padding: 15px;
+}
