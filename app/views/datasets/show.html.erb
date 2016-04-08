@@ -44,60 +44,60 @@
     <!-- BEGIN metadata section-->
     <div class="dataset-metadata">
 
-    <h1><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></h1>
+      <h1><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></h1>
 
-    <div class="container-fluid" id="citation-block">
+      <div class="container-fluid" id="citation-block">
 
-      <div class="row bg-citation">
-        <div id="citation" class="col-md-9" onclick="if (event.target) { selectText(event.target); } else{ selectText(this); }"><%= @dataset.plain_text_citation %></div>
-        <div class="col-md-3 text-right" id="citation-download">
-          <div class="dropdown">
-            <button type="button" id="downloadCitation" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-              <span class="glyphicon glyphicon-list"></span> Citation <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu pull-right text-left" role="menu">
-              <li>
-                <a id="datasetForm:endNoteLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_endNote_XML"'>
-                  EndNote XML
-                </a>
-              </li>
-              <li>
-                <a id="datasetForm:risLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_RIS"'>
-                  RIS Format
-                </a>
-              </li>
-              <li>
-                <a id="datasetForm:BibTeXLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_BibTeX"'>
-                  BibTeX Format
-                </a>
-              </li>
-              <li>
-                <a id="datasetForm:plainTextCitationLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_plaintext_citation"'>
-                  Plain Text
-                </a>
-              </li>
-            </ul>
+        <div class="row bg-citation">
+          <div id="citation" class="col-md-9" onclick="if (event.target) { selectText(event.target); } else{ selectText(this); }"><%= @dataset.plain_text_citation %></div>
+          <div class="col-md-3 text-right" id="citation-download">
+            <div class="dropdown">
+              <button type="button" id="downloadCitation" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span class="glyphicon glyphicon-list"></span> Citation <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu pull-right text-left" role="menu">
+                <li>
+                  <a id="datasetForm:endNoteLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_endNote_XML"'>
+                    EndNote XML
+                  </a>
+                </li>
+                <li>
+                  <a id="datasetForm:risLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_RIS"'>
+                    RIS Format
+                  </a>
+                </li>
+                <li>
+                  <a id="datasetForm:BibTeXLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_BibTeX"'>
+                    BibTeX Format
+                  </a>
+                </li>
+                <li>
+                  <a id="datasetForm:plainTextCitationLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_plaintext_citation"'>
+                    Plain Text
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="row bg-muted">
-        <span id="citation-standards" class="col-md-9 text-muted small">If you use these data, please add this citation to your scholarly resources. </span>
+        <div class="row bg-muted">
+          <span id="citation-standards" class="col-md-9 text-muted small">If you use these data, please add this citation to your scholarly resources. </span>
         <span class="col-md-3 pull-right text-right">
           <!--<span class="label label-primary">Downloads <span class="badge">42</span></span>-->
         </span>
-      </div>
+        </div>
 
-      <% if @dataset.complete? %>
-        <div class="row bg-muted">
+        <% if @dataset.complete? %>
+          <div class="row bg-muted">
           <span id="citation-standards" class="col-md-9 text-muted small"><button class='my_clip_button btn btn-sm btn-default' data-clipboard-target='fe_text' data-clipboard-text="https://doi.org/<%= @dataset.identifier %>" id='d_clip_button' title='Click me to copy to clipboard.'>
             <span class="glyphicon glyphicon-copy"></span>
             <b>Copy persistent link to clipboard...</b>
           </button> Persistent link for this item: <a href="https://doi.org/<%= @dataset.identifier %>">https://doi.org/<%= @dataset.identifier %></a></span>
-          <input type="hidden" value="https://doi.org/<%= @dataset.identifier %>" name="fe_text" id="fe_text">
-        </div>
-      <% end %>
-    </div>
+            <input type="hidden" value="https://doi.org/<%= @dataset.identifier %>" name="fe_text" id="fe_text">
+          </div>
+        <% end %>
+      </div>
       <div class="metadata-block">
 
         <% if @dataset.related_materials.count > 0 %>
@@ -309,50 +309,48 @@
 
   <% if can? :edit, @dataset %>
     <a href="/datasets/<%= @dataset.key %>/review_deposit_agreement">Review Deposit Agreement</a>
-
-  <% end %>
-  </div>
-
-  <% if @changetable && @dataset.publication_state != Databank::PublicationState::DRAFT %>
-    <div class="panel-group" id="changelog" role="tablist" aria-multiselectable="true">
-      <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="changelogHeading">
-          <h4 class="panel-title">
-            <a role="button" data-toggle="collapse" data-parent="#funder" href="#changelogPanel" aria-expanded="false" aria-controls="funderPanel" class="accordion-toggle collapsed">
-              <span class="metadata-label">Change Log</span>
-            </a>
-          </h4>
-        </div>
-        <div class="panel-collapse collapse" id="changelogPanel" role="tabpanel" aria-labelledby="changelogHeading">
-          <div class="panel-body">
-            <p><a href="/help?context=changelog&key=<%= @dataset.key %>">Contact the Research Data Service</a> for help
-              interpreting this log.</p>
-            <%= render_datatable(@changetable) %>
+    <% if @changetable && @dataset.publication_state != Databank::PublicationState::DRAFT %>
+      <div class="panel-group" id="changelog" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="changelogHeading">
+            <h4 class="panel-title">
+              <a role="button" data-toggle="collapse" data-parent="#funder" href="#changelogPanel" aria-expanded="false" aria-controls="funderPanel" class="accordion-toggle collapsed">
+                <span class="metadata-label">Change Log</span>
+              </a>
+            </h4>
+          </div>
+          <div class="panel-collapse collapse" id="changelogPanel" role="tabpanel" aria-labelledby="changelogHeading">
+            <div class="panel-body">
+              <p><a href="/help?context=changelog&key=<%= @dataset.key %>">Contact the Research Data Service</a> for help
+                interpreting this log.</p>
+              <%= render_datatable(@changetable) %>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    <% end %>
   <% end %>
+</div>
 
-  <% if can? :manage, @dataset && @dataset.publication_state != Databank::PublicationState::DRAFT %>
-    <div class="curator-only">
-      <p><a href="http://ezid.lib.purdue.edu/manage/display_xml/doi:<%= @dataset.identifier %>" target="_blank">DataCite
-        Metadata in XML format (via EZID)</a></p>
+<% if can? :manage, @dataset && @dataset.publication_state != Databank::PublicationState::DRAFT %>
+  <div class="curator-only">
+    <p><a href="http://ezid.lib.purdue.edu/manage/display_xml/doi:<%= @dataset.identifier %>" target="_blank">DataCite
+      Metadata in XML format (via EZID)</a></p>
 
-      <p>
-        <a href="http://ezid.lib.purdue.edu/id/doi:<%= @dataset.identifier %>" target="_blank">DataCite Metadata on EZID
-          page</a>
-      </p>
+    <p>
+      <a href="http://ezid.lib.purdue.edu/id/doi:<%= @dataset.identifier %>" target="_blank">DataCite Metadata on EZID
+        page</a>
+    </p>
 
-      <p>To see this dataset in Medusa, got to
-        <a href="<%= IDB_CONFIG['medusa']['file_group_url'] %>">IDB File Group</a> and filter by: <%= @dataset.key %>
-      </p>
-    </div>
-  <% end %>
+    <p>To see this dataset in Medusa, got to
+      <a href="<%= IDB_CONFIG['medusa']['file_group_url'] %>">IDB File Group</a> and filter by: <%= @dataset.key %>
+    </p>
+  </div>
+<% end %>
 
-  <% if (@dataset.title) && (@dataset.title.downcase.include? 'unicorn') && ((can? :edit, @dataset) && [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state)) %>
-    <div class="pull-right">
-      <%= image_tag('Rainbow_Unicorn.png') %>
-    </div>
-  <% end %>
+<% if (@dataset.title) && (@dataset.title.downcase.include? 'unicorn') && ((can? :edit, @dataset) && [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state)) %>
+  <div class="pull-right">
+    <%= image_tag('Rainbow_Unicorn.png') %>
+  </div>
+<% end %>
 
