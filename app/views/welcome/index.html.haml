@@ -1,3 +1,4 @@
-= render partial: 'welcome'
-- if current_user && current_user.role == 'admin'
-  = render partial: 'role_switch_form'
+.welcome-div
+  = render partial: 'welcome'
+  - if current_user && current_user.role == 'admin'
+    = render partial: 'role_switch_form'
