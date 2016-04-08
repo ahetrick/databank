@@ -43,6 +43,12 @@
             Click Confirm for final confirmation and to publish this dataset.
           -if @dataset.publication_state == Databank::PublicationState::Embargo::METADATA && @dataset.embargo != Databank::PublicationState::Embargo::METADATA
             Click Confirm for final confirmation and to publish changes to this dataset.
+          %br
+          %span(class="glyphicon glyphicon-info-sign")
+          Research Data Service team members are available to discuss this dataset in more depth.
+          %button(type="button" onclick='window.location= "/help?context=review&key=#{@dataset.key}"' class="btn btn-success")
+            %span(class="glyphicon glyphicon-question-sign")
+            Request Dataset Review
 
         .col-md-3
           -# confirm button conditional complex, so broken into two statements
@@ -54,12 +60,9 @@
             %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit")
               Confirm
               %span(class="glyphicon glyphicon-triangle-right" )
-          = link_to(edit_dataset_path(@dataset), :class => "btn idb btn-success btn-block") do
+          = link_to(edit_dataset_path(@dataset), :class => "btn idb btn-info btn-block") do
             %span(class="glyphicon glyphicon-edit")
             Edit
-          %button(type="button" onclick='window.location= "/help?context=review&key=#{@dataset.key}"' class="btn btn-info btn-block")
-            %span(class="glyphicon glyphicon-question-sign")
-            Request Dataset Review
           - if @dataset.publication_state == Databank::PublicationState::DRAFT
             = link_to(dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure? This removes all files and metadata.'}, class: "btn idb btn-danger btn-block") do
               %span(class="glyphicon glyphicon-trash" )

@@ -15,17 +15,17 @@ body{
 .repository-header {
   font-family: "Garamond", "Times New Roman", Times, Serif;
   font-size: 45px;
-  color: $color__text-light;
-  background-color: $color__burnt-orange;
+  color: $color__dark-navy;
+  background-color: $color__background-main-column;
   padding-left: 15px;
   margin: 0;
   width: 100%;
 }
 
 .repository-header > a:link, .repository-header > a:visited, .repository-header > a:hover, .repository-header > a:active {
-  color: $color__text-light;
+  color: $color__dark-navy;
   text-decoration: none;
-  background-color: $color__burnt-orange;
+  background-color: $color__light-grey;
 }
 
 .repository-footer-info {
@@ -72,10 +72,10 @@ a {
 
 /* begin Navbar styling */
 // $colDefault: $color__lightest-grey;
-$colDefault: $color__text-light;
-$bgDefault: $color__burnt-orange;
-$bgHighlight: $color__orange;
-$colHighlight: $color__lightest-grey;
+$colDefault: $color__dark-navy;
+$bgDefault: $color__background-main-column;
+$bgHighlight: $color__light-grey;
+$colHighlight: $color__dark-navy;
 $dropDown: false;
 
 .navbar-default {
@@ -86,7 +86,7 @@ $dropDown: false;
   padding-top: 10px;
   border-radius: 0;
   background-color: $bgDefault;
-  border-color: $bgDefault;
+  border-bottom: 3px solid $color_official_orange;
   .navbar-brand {
     padding-right: 50px;
     color: $colDefault;
@@ -340,15 +340,15 @@ fieldset[disabled] .btn-primary.active {
 }
 
 .btn-success {
-  background-color: #89982c;
-  border-color: #89982c;
+  background-color: #565f1c;
+  border-color: #565f1c;
 }
 .btn-success:hover,
 .btn-success:focus,
 .btn-success:active,
 .btn-success.active {
-  background-color: #778426;
-  border-color: #657021;
+  background-color: #444b16;
+  border-color: #323810;
 }
 .btn-success.disabled:hover,
 .btn-success.disabled:focus,
@@ -362,9 +362,10 @@ fieldset[disabled] .btn-success:hover,
 fieldset[disabled] .btn-success:focus,
 fieldset[disabled] .btn-success:active,
 fieldset[disabled] .btn-success.active {
-  background-color: #89982c;
-  border-color: #89982c;
+  background-color: #565f1c;
+  border-color: #565f1c;
 }
+
 
 
 .btn-info {
