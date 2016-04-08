@@ -202,7 +202,7 @@ $dropDown: false;
   border-color: $color__dark-navy;
   .minibar-brand {
     font-size: 24px;
-    color: $colDefault;
+    color: $color__text-light;
     font-family: "Garamond", "Times New Roman", Times, Serif;
     &:hover, &:focus {
       color: $colHighlight;
@@ -210,14 +210,14 @@ $dropDown: false;
   }
 
   .navbar-text {
-    color: $colDefault;
+    color: $color__text-light;
   }
   .navbar-nav {
     > li {
       > a {
-        color: $colDefault;
+        color: $color__text-light;
         &:hover, &:focus {
-          color: $colHighlight;
+          color: $color__text-light;
           background-color: $bgHighlight;
         }
       }
@@ -225,48 +225,48 @@ $dropDown: false;
         > .dropdown-menu {
           background-color: $color__dark-navy;
           > li > a {
-            color: $colDefault;
+            color: $color__text-light;
             &:hover, &:focus {
-              color: $colHighlight;
-              background-color: $bgHighlight;
+              color: $color__text-light;
+              background-color: $color__dark-navy;
             }
           }
           .divider {
-            background-color: $bgHighlight;
+            background-color: $color__dark-navy;
           }
         }
       }
     }
     > .active {
       > a, > a:hover, > a:focus {
-        color: $colHighlight;
-        background-color: $bgHighlight;
+        color: $color__text-light;
+        background-color: $color__dark-navy;
       }
     }
     > .open {
       > a, > a:hover, > a:focus {
-        color: $colHighlight;
-        background-color: $bgHighlight;
+        color: $color__text-light;
+        background-color: $color__dark-navy;
       }
     }
   }
   .navbar-toggle {
-    border-color: $bgHighlight;
+    border-color: $color__dark-navy;
     &:hover, &:focus {
-      background-color: $bgHighlight;
+      background-color: $color__dark-navy;
     }
     .icon-bar {
-      background-color: $colDefault;
+      background-color: $color__dark-navy;
     }
   }
   .navbar-collapse,
   .navbar-form {
-    border-color: $colDefault;
+    border-color: $color__dark-navy;
   }
   .navbar-link {
-    color: $colDefault;
+    color: $color__text-light;
     &:hover {
-      color: $colHighlight;
+      color: $color__text-light;
     }
   }
 }
