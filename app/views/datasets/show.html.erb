@@ -42,7 +42,7 @@
       (@dataset.publication_state != Databank::PublicationState::PermSuppress::METADATA))
   ) %>
     <!-- BEGIN metadata section-->
-    <div class="dataset-metadata">
+    <div class="panel-body">
 
       <h1><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></h1>
 
