@@ -43,8 +43,6 @@ class SessionsController < ApplicationController
     else
       unauthorized
     end
-
-
   end
 
   def destroy

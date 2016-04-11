@@ -24,8 +24,9 @@
           %span(class="metadata-label" ) Visibility:
           = @dataset.visibility
           %br
-          - if (@dataset.publication_state != Databank::PublicationState::RELEASED && (!can? :manage, @dataset))
-            (Private information is displayed because you are the depositor of this dataset.
+          -# if publication state is embargo or hold_state is one of the suppression states, display private info message
+          - if ( ([Databank::PublicationState::Embargo::METADATA, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state) || ([Databank::PublicationState::TempSuppress::FILE, Databank::PublicationState::TempSuppress::METADATA].include?(@dataset.hold_state))) && (!can? :manage, @dataset))
+            (Private information is displayed because you are the depositor of this dataset. Copy persistent link to clipboard below to use after you
             =link_to("Log out", :logout)
             to see the public view.)
             %br
