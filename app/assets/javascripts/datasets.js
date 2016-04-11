@@ -169,7 +169,7 @@ ready = function () {
 
     $('[data-toggle="tooltip"]').tooltip();
 
-    var clip = new ZeroClipboard($("#d_clip_button"))
+    var clip = new ZeroClipboard($(".copy-btn"));
 
     $("#login-prompt").modal('show');
     //alert("pre-validity check");
@@ -198,8 +198,6 @@ ready = function () {
                 //alert('num_bytes: ' + num_bytes);
                 alert("For files larger than 2GB, please import from box.");
             }
-
-
         },
         progress: function (e, data) {
             var progress;

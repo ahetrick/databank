@@ -27,7 +27,7 @@
           -# if publication state is embargo or hold_state is one of the suppression states, display private info message
           - if ( ([Databank::PublicationState::Embargo::METADATA, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state) ||  ( (@dataset.publication_state != Databank::PublicationState::DRAFT) && ([Databank::PublicationState::TempSuppress::FILE, Databank::PublicationState::TempSuppress::METADATA].include?(@dataset.hold_state)))) && (!can? :manage, @dataset))
             Private information is displayed because you are the depositor of this dataset. To see the public view,
-            %button(class='my_clip_button btn btn-sm btn-default' data-clipboard-target='fe_text' data-clipboard-text="https://doi.org/#{@dataset.identifier}" id='dashbaord_clip_button' title='Click me to copy persistent link to clipboard.')
+            %button(class='copy-btn btn btn-sm btn-default' data-clipboard-target='doi_link_text' data-clipboard-text="https://doi.org/#{@dataset.identifier}" title='Click me to copy persistent link to clipboard.')
               %span(class="glyphicon glyphicon-copy")
               %b copy link to clipboard
             to follow after you
