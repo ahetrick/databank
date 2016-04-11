@@ -90,10 +90,12 @@
 
         <% if @dataset.complete? %>
           <div class="row bg-muted">
-          <span id="citation-standards" class="col-md-9 text-muted small"><button class='my_clip_button btn btn-sm btn-default' data-clipboard-target='fe_text' data-clipboard-text="https://doi.org/<%= @dataset.identifier %>" id='d_clip_button' title='Click me to copy to clipboard.'>
-            <span class="glyphicon glyphicon-copy"></span>
-            <b>Copy persistent link to clipboard...</b>
-          </button> Persistent link for this item: <a href="https://doi.org/<%= @dataset.identifier %>">https://doi.org/<%= @dataset.identifier %></a></span>
+          <span id="citation-standards" class="col-md-9 text-muted small">
+            <button class='my_clip_button btn btn-sm btn-default' data-clipboard-target='fe_text' data-clipboard-text="https://doi.org/<%= @dataset.identifier %>" id='d_clip_button' title='Click me to copy to clipboard.'>
+              <span class="glyphicon glyphicon-copy"></span>
+              <b>Copy persistent link to clipboard...</b>
+            </button>
+            Persistent link for this item: <a href="https://doi.org/<%= @dataset.identifier %>">https://doi.org/<%= @dataset.identifier %></a></span>
             <input type="hidden" value="https://doi.org/<%= @dataset.identifier %>" name="fe_text" id="fe_text">
           </div>
         <% end %>
@@ -321,7 +323,8 @@
           </div>
           <div class="panel-collapse collapse" id="changelogPanel" role="tabpanel" aria-labelledby="changelogHeading">
             <div class="panel-body">
-              <p><a href="/help?context=changelog&key=<%= @dataset.key %>">Contact the Research Data Service</a> for help
+              <p><a href="/help?context=changelog&key=<%= @dataset.key %>">Contact the Research Data Service</a> for
+                help
                 interpreting this log.</p>
               <%= render_datatable(@changetable) %>
             </div>
