@@ -69,7 +69,7 @@
                     %a(href="#" data-toggle="modal" data-target="#embargoModal" tabindex="-1")
                       %span(class="fa fa-question-circle")
                       what's this?
-                    - if [Databank::PublicationState::DRAFT, Databank::PublicationState::Embargo::METADATA].include?(@dataset.publication_state)
+                    - if ((can? :manage, @dataset) || [Databank::PublicationState::DRAFT, Databank::PublicationState::Embargo::METADATA].include?(@dataset.publication_state))
                       = f.select :embargo, options_for_select([["File Publication Delay", Databank::PublicationState::Embargo::FILE],["File and Metadata Publication Delay", Databank::PublicationState::Embargo::METADATA]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
                     -else
                       = f.select :embargo, options_for_select([["File Publication Delay", Databank::PublicationState::Embargo::FILE]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}

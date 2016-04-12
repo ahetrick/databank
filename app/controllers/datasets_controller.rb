@@ -379,13 +379,13 @@ class DatasetsController < ApplicationController
   # publishing in IDB means interacting with DataCite and Medusa
   def publish
 
-    old_state = @dataset.publication_state
+    old_publication_state = @dataset.publication_state
 
     # only publish complete datsets
     if Dataset.completion_check(@dataset, current_user) == 'ok'
       @dataset.complete = true
       # set relase date
-      if [Databank::PublicationState::DRAFT, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA].include?(old_state)
+      if [Databank::PublicationState::DRAFT, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA].include?(old_publication_state)
         if (@dataset.release_date && @dataset.release_date <= Date.current()) || !@dataset.embargo || @dataset.embargo == ""
           @dataset.release_date = Date.current()
         end
@@ -431,7 +431,7 @@ class DatasetsController < ApplicationController
         medusa_ingest.send_medusa_ingest_message(staging_path)
         medusa_ingest.save
 
-        if old_state == Databank::PublicationState::DRAFT && !@dataset.is_test?
+        if old_publication_state == Databank::PublicationState::DRAFT && !@dataset.is_test?
 
           @dataset.datafiles.each do |datafile|
 
@@ -503,7 +503,7 @@ class DatasetsController < ApplicationController
         medusa_ingest.send_medusa_ingest_message(staging_path)
         medusa_ingest.save
 
-        if old_state == Databank::PublicationState::DRAFT
+        if old_publication_state == Databank::PublicationState::DRAFT
 
           if @dataset.save
 
@@ -522,7 +522,7 @@ class DatasetsController < ApplicationController
               confirmation.deliver_now
             end
 
-            format.html { redirect_to dataset_path(@dataset.key), notice: deposit_confirmation_notice(old_state, @dataset) }
+            format.html { redirect_to dataset_path(@dataset.key), notice: deposit_confirmation_notice(old_publication_state, @dataset) }
             format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
           else
             format.html { redirect_to dataset_path(@dataset.key), notice: 'Error in publishing dataset has been logged by the Research Data Service.' }

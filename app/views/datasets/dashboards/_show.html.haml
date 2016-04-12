@@ -40,15 +40,15 @@
             %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit")
               Confirm
               %span(class="glyphicon glyphicon-triangle-right" )
-          = link_to(edit_dataset_path(@dataset), :class => "btn idb btn-info btn-block") do
+          = link_to(edit_dataset_path(@dataset), :class => "btn idb btn-success btn-block") do
             %span(class="glyphicon glyphicon-edit")
             Edit
+          %button(type="button" class="btn btn-info btn-block" name="cancel" onclick='window.location = "/"' )
+            %span(class="glyphicon glyphicon-pushpin" )
+            Exit this Saved Dataset
           - if @dataset.publication_state == Databank::PublicationState::DRAFT
             = link_to(dataset_path(@dataset.key), method: :delete, data: {confirm: 'Are you sure? This removes all files and metadata.'}, class: "btn idb btn-danger btn-block") do
               %span(class="glyphicon glyphicon-trash" )
               Delete
-          - else
-            %button(type="button" class="btn btn-danger btn-block" name="cancel" onclick='window.location = "/"' )
-              %span(class="glyphicon glyphicon-ban-circle" )
-              Cancel
+
 
