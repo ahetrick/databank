@@ -574,10 +574,10 @@ class DatasetsController < ApplicationController
           return true
         end
       else
-        if material_attributes.has_key?(:link) && material_attributes[:link]!=''
+        if material_attributes[:link] != ''
           return true
         end
-        if material_attributes.has_key?(:citation) && material_attributes[:citation]!=''
+        if material_attributes[:citation] != ''
           return true
         end
       end
@@ -588,10 +588,8 @@ class DatasetsController < ApplicationController
         if creator_attributes[:_destroy] == true
           return true
         end
-      else
-        Rails.logger.warn "creator attributes"
-        Rails.logger.warn creator_attributes.to_yaml
-        # return true
+      elsif creator_attributes[:family_name] != ''
+        return true
       end
     end
 
