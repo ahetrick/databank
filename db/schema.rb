@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160331151557) do
+ActiveRecord::Schema.define(version: 20160412185459) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -101,6 +101,7 @@ ActiveRecord::Schema.define(version: 20160331151557) do
     t.string   "removed_private",             default: "no"
     t.string   "agree",                       default: "no"
     t.string   "hold_state",                  default: "none"
+    t.string   "medusa_dataset_dir"
   end
 
   add_index "datasets", ["key"], name: "index_datasets_on_key", unique: true, using: :btree
@@ -179,8 +180,9 @@ ActiveRecord::Schema.define(version: 20160331151557) do
     t.string   "medusa_uuid"
     t.datetime "response_time"
     t.string   "error_text"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+    t.string   "medusa_dataset_dir"
   end
 
   create_table "related_materials", force: :cascade do |t|

@@ -47,6 +47,7 @@ module MedusaAmqp
         ingest.request_status = response_hash['status'].to_s
         ingest.medusa_path = response_hash['medusa_path']
         ingest.medusa_uuid = response_hash['medusa_uuid']
+        ingest.medusa_dataset_dir = response_hash['item_root_dir']
         ingest.response_time = Time.now.utc.iso8601
         ingest.save!
 
@@ -54,6 +55,19 @@ module MedusaAmqp
 
           if ingest.idb_class == 'datafile'
             datafile = Datafile.find_by_web_id(ingest.idb_identifier)
+
+            dataset = Dataset.where(id: datafile.dataset_id).first
+
+            if !dataset
+              Rails.logger.warn "dataset not found for ingest #{ingest.to_yaml}"
+            end
+
+            if dataset && (!dataset.medusa_dataset_dir || dataset.medusa_dataset_dir == '')
+              dataset.medusa_dataset_dir = ingest.medusa_dataset_dir
+            else
+
+            end
+
             if datafile && datafile.binary
               datafile.medusa_path = ingest.medusa_path
               datafile.medusa_id = ingest.medusa_uuid
@@ -66,7 +80,7 @@ module MedusaAmqp
           # delete file or symlink from staging directory
           File.delete("#{IDB_CONFIG[:staging_root]}/#{response_hash['staging_path']}")
         else
-          Rails.logger.warn "did not delete file because Medusa version does not exist or is not verified for #{ingest.to_yaml}"
+          Rails.logger.warn "did not delete file because Medusa copy does not exist or is not verified for #{ingest.to_yaml}"
         end
 
       else
