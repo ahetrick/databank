@@ -333,7 +333,7 @@
       <a href="/datasets/<%= @dataset.key %>/review_deposit_agreement">Review Deposit Agreement</a>
     <% end %>
   <% end %>
-  
+
 </div>
 
 <% if can? :manage, @dataset && @dataset.publication_state != Databank::PublicationState::DRAFT %>
