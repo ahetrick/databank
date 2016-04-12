@@ -173,7 +173,7 @@
                             %span(class="col-md-2")
                               = number_to_human_size(datafile.bytestream_size)
                             %span(class="col-md-2")
-                              - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
+                              - if ( (@dataset.publication_state == Databank::PublicationState::DRAFT) && ((can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?))) )
                                 %a(data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" data-method="delete" href="/datafiles/#{datafile.web_id}")
                                   %span(class="glyphicon glyphicon-trash")
                     -else
@@ -200,7 +200,7 @@
                                 %button(class="cancel-upload-btn btn btn-danger btn-sm" onclick="cancelUpload('#{datafile.web_id}', '#{datafile.job_id}')") Cancel
 
             %div(id="datafiles_upload_progress")
-            - if ( (can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?)) )
+            - if ( (@dataset.publication_state == Databank::PublicationState::DRAFT) && ((can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?))) )
               = form_for Datafile.new do |df|
                 = df.hidden_field :dataset_id, value: @dataset.id
                 .container.text-center
