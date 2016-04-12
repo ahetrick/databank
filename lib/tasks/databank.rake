@@ -91,4 +91,12 @@ namespace :databank do
     end
   end
 
+  desc 'clear empty datasets older than 12 hours'
+  tasks :remove_empty_datasets => :environment do
+    Dataset.where(publication_state: Databank::PublicationState::DRAFT).each do |draft|
+      puts draft.to_yaml
+    end
+
+  end
+
 end
