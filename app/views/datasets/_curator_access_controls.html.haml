@@ -16,13 +16,13 @@
           .row
             .col-md-4
               - case @dataset.visibility
-                -when 'Public (Published)', 'Private (Delayed Publication)', 'Public description, Private files (Delayed Publication)'
+                -when 'Public (Published)', 'Private (Delayed Publication)', 'Public Description, Private Files (Delayed Publication)'
                   %button(id="tmpSuppressFilesBtn" type="button" class="btn btn-lg btn-warning btn-block" onclick="tmpSuppressFiles()")
                     Temporarily Suppress File(s) Only
                 -when 'Public description, Private files (Curator Hold)'
                   %button(id="tmpSuppressFilesBtn" type="button" class="btn btn-lg btn-warning btn-block" onclick="unsuppress()")
                     UNSUPPRESS File(s)
-                -when 'Private (Curator Hold)', 'Public Metadata, Withdrawn Files', 'Withdrawn'
+                -when 'Private (Curator Hold)', 'Public Description, Withdrawn Files', 'Withdrawn'
                   %button(disabled id="tmpSuppressFilesBtn" type="button" class="btn btn-lg btn-warning btn-block" onclick="tmpSuppressFiles()")
                     Temporarily Suppress File(s) Only
 
@@ -41,7 +41,7 @@
           .row
             .col-md-4
               - case @dataset.visibility
-                -when 'Public (Published)', 'Private (Delayed Publication)', 'Public description, Private files (Delayed Publication)', 'Public Metadata, Withdrawn Files', 'Public description, Private files (Curator Hold)'
+                -when 'Public (Published)', 'Private (Delayed Publication)', 'Public Description, Private Files (Delayed Publication)', 'Public Description, Withdrawn Files', 'Public description, Private files (Curator Hold)'
                   %button(id="tmpSuppressMetadataBtn" type="button" class="btn btn-lg btn-warning btn-block" onclick="tmpSuppressMetadata()")
                     Temporarily Suppress File(s) and Metadata
                 -when 'Private (Curator Hold)'

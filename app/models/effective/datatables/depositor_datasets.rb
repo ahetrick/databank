@@ -38,7 +38,7 @@ module Effective
             render inline: %Q[<%= link_to(%Q[#{dataset.plain_text_citation}], "#{request.base_url}#{dataset_path(dataset.key)}") %>]
           end
         end
-        array_column 'Visibility', visible: false, filter: {type: :select, values: ['Private (Saved Draft)', 'Private (Delayed Publication)', 'Public description, Private files (Delayed Publication)', 'Public (Published)', 'Public description, Private files (Curator Hold)', 'Private (Curator Hold)', 'Public Metadata, Withdrawn Files']} do |dataset|
+        array_column 'Visibility', visible: false, filter: {type: :select, values: ['Private (Saved Draft)', 'Private (Delayed Publication)', 'Public Description, Private Files (Delayed Publication)', 'Public (Published)', 'Public description, Private files (Curator Hold)', 'Private (Curator Hold)', 'Public Description, Withdrawn Files']} do |dataset|
 
           render text: "#{dataset.visibility}"
         end

@@ -516,6 +516,74 @@ class Dataset < ActiveRecord::Base
     doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
   end
 
+  # Should only be called for a previously released dataset transitioning to Metadata & File embargo
+  def metadata_embargo_metadata
+
+    if !self.release_date
+      raise "missing release date for file and metadata publication delay for dataset #{self.key}"
+    elsif self.release_date.to_date < Date.current
+      raise "invalid release date for file and metadata publication delay for dataset #{self.key}"
+    end
+
+    doc = Nokogiri::XML::Document.parse(%Q(<?xml version="1.0"?><resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd"></resource>))
+    resourceNode = doc.first_element_child
+
+    identifierNode = doc.create_element('identifier')
+    identifierNode['identifierType'] = "DOI"
+    # for imports and post-v1 versions, use specified identifier, otherwise assert v1
+    if self.identifier && self.identifier != ''
+      identifierNode.content = self.identifier
+    else
+      identifierNode.content = "#{IDB_CONFIG[:ezid_placeholder_identifier]}#{self.key}_v1"
+    end
+    identifierNode.parent = resourceNode
+
+    creatorsNode = doc.create_element('creators')
+    creatorsNode.parent = resourceNode
+
+    creatorNode = doc.create_element('creator')
+    creatorNode.parent = creatorsNode
+
+    creatorNameNode = doc.create_element('creatorName')
+
+    creatorNameNode.content = "[Embargoed]"
+    creatorNameNode.parent = creatorNode
+
+
+    titlesNode = doc.create_element('titles')
+    titlesNode.parent = resourceNode
+
+    titleNode = doc.create_element('title')
+    titleNode.content = "[This dataset will be available #{self.release_date.iso8601}. Contact us for more information. #{ IDB_CONFIG[:root_url_text] }/help]"
+    titleNode.parent = titlesNode
+
+    publisherNode = doc.create_element('publisher')
+    publisherNode.content = self.publisher || "University of Illinois at Urbana-Champaign"
+    publisherNode.parent = resourceNode
+
+    publicationYearNode = doc.create_element('publicationYear')
+    publicationYearNode.content = self.publication_year || Time.now.year
+    publicationYearNode.parent = resourceNode
+
+    descriptionsNode = doc.create_element('descriptions')
+    descriptionsNode.parent = resourceNode
+    descriptionNode = doc.create_element('description')
+    descriptionNode['descriptionType'] = "Other"
+    descriptionNode.content = "This dataset will be available #{self.release_date.iso8601}. Contact us for more information. #{ IDB_CONFIG[:root_url_text] }/help"
+    descriptionNode.parent = descriptionsNode
+
+    datesNode = doc.create_element('dates')
+    datesNode.parent = resourceNode
+
+    releasedateNode = doc.create_element('date')
+    releasedateNode["dateType"] = "Available"
+    releasedateNode.content = self.release_date.iso8601
+    releasedateNode.content = self.release_date.iso8601
+    releasedateNode.parent = datesNode
+
+    doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
+  end
+
 
   def set_datacite_change
     if is_datacite_changed?
@@ -562,11 +630,11 @@ class Dataset < ActiveRecord::Base
           when Databank::PublicationState::DRAFT
             return_string = "Private (Saved Draft)"
           when Databank::PublicationState::Embargo::FILE
-            return_string = "Public description, Private files (Delayed Publication)"
+            return_string = "Public Description, Private Files (Delayed Publication)"
           when Databank::PublicationState::Embargo::METADATA
             return_string = "Private (Delayed Publication)"
           when Databank::PublicationState::PermSuppress::FILE
-            return_string = "Public Metadata, Withdrawn Files"
+            return_string = "Public Description, Withdrawn Files"
           when Databank::PublicationState::PermSuppress::METADATA
             return_string = "Withdrawn"
           else
@@ -580,11 +648,11 @@ class Dataset < ActiveRecord::Base
           when Databank::PublicationState::RELEASED
             return_string = "Public (Published)"
           when Databank::PublicationState::Embargo::FILE
-            return_string = "Public description, Private files (Delayed Publication)"
+            return_string = "Public Description, Private Files (Delayed Publication)"
           when Databank::PublicationState::Embargo::METADATA
             return_string = "Private (Delayed Publication)"
           when Databank::PublicationState::PermSuppress::FILE
-            return_string = "Public Metadata, Withdrawn Files"
+            return_string = "Public Description, Withdrawn Files"
           when Databank::PublicationState::PermSuppress::METADATA
             return_string = "Withdrawn"
           else
