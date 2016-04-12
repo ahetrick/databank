@@ -323,8 +323,8 @@ class Dataset < ActiveRecord::Base
 
       metadata = {}
 
-      Rails.logger.warn self.publication_state
-      Rails.logger.warn self.hold_state
+      # Rails.logger.warn self.publication_state
+      # Rails.logger.warn self.hold_state
       if  ((self.publication_state == Databank::PublicationState::PermSuppress::METADATA) || (self.hold_state == Databank::PublicationState::TempSuppress::METADATA))
         metadata['_status'] = "unavailable | Removed by Illinois Data Bank curators. Contact us for more information. #{ IDB_CONFIG[:root_url_text] }/help"
       elsif [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED].include?(self.publication_state)
@@ -566,9 +566,9 @@ class Dataset < ActiveRecord::Base
           when Databank::PublicationState::Embargo::METADATA
             return_string = "Private (Delayed Publication)"
           when Databank::PublicationState::PermSuppress::FILE
-            return_string = "Public Metadata, Redacted Files"
+            return_string = "Public Metadata, Withdrawn Files"
           when Databank::PublicationState::PermSuppress::METADATA
-            return_string = "Redacted"
+            return_string = "Withdrawn"
           else
             return_string = "Public description, Private files (Curator Hold)"
         end
@@ -584,9 +584,9 @@ class Dataset < ActiveRecord::Base
           when Databank::PublicationState::Embargo::METADATA
             return_string = "Private (Delayed Publication)"
           when Databank::PublicationState::PermSuppress::FILE
-            return_string = "Public Metadata, Redacted Files"
+            return_string = "Public Metadata, Withdrawn Files"
           when Databank::PublicationState::PermSuppress::METADATA
-            return_string = "Redacted"
+            return_string = "Withdrawn"
           else
             #should never get here
             return_string = "Unknown, please contact the Research Data Service"

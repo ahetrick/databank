@@ -24,31 +24,6 @@
           %span(class="metadata-label" ) Visibility:
           = @dataset.visibility
           %br
-          -# if publication state is embargo or hold_state is one of the suppression states, display private info message
-          - if ( ([Databank::PublicationState::Embargo::METADATA, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state) ||  ( (@dataset.publication_state != Databank::PublicationState::DRAFT) && ([Databank::PublicationState::TempSuppress::FILE, Databank::PublicationState::TempSuppress::METADATA].include?(@dataset.hold_state)))) && (!can? :manage, @dataset))
-            Private information is displayed because you are the depositor of this dataset. To see the public view,
-            %button(class='copy-btn btn btn-sm btn-default' data-clipboard-target='doi_link_text' data-clipboard-text="https://doi.org/#{@dataset.identifier}" title='Click me to copy persistent link to clipboard.')
-              %span(class="glyphicon glyphicon-copy")
-              %b copy link to clipboard
-            and paste it in your address bar after you
-            %button(class="btn btn-sm btn-default" onclick='window.location = "/logout"' )
-              log out.
-            %br
-          %span(class="glyphicon glyphicon-triangle-right" )
-          %span(class="metadata-label" ) Progress:
-          View dataset page here.
-
-          - if @dataset.publication_state == Databank::PublicationState::DRAFT || (can? :manage, @dataset)
-            Edit to make changes.
-          - else
-            You can edit the description for the dataset to correct an error, but you would need to contact the
-            %a(href="/help#contact" )Research Data Service
-            if there is an error in the files that needs to be corrected.
-          -if @completion_check == 'ok' && (@dataset.publication_state == Databank::PublicationState::DRAFT || (@dataset.has_datacite_change && [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE].include?(@dataset.publication_state) ) )
-            Click Confirm for final confirmation and to publish this dataset.
-          -if @dataset.publication_state == Databank::PublicationState::Embargo::METADATA && @dataset.embargo != Databank::PublicationState::Embargo::METADATA
-            Click Confirm for final confirmation and to publish changes to this dataset.
-          %br
           %span(class="glyphicon glyphicon-info-sign")
           Research Data Service team members are available to discuss this dataset in more depth.
           %button(type="button" onclick='window.location= "/help?context=review&key=#{@dataset.key}"' class="btn btn-success")
