@@ -214,7 +214,7 @@
           <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
             <div class="panel-body">
 
-              <% if ((can? :edit, @dataset) || ((@dataset.publication_state == Databank::PublicationState::RELEASED) && (@dataset.hold_state != Databank::PublicationState::TempSuppress::FILE))) %>
+              <% if ((can? :manage, @dataset) || ((can? :edit, @dataset) && (@dataset.publication_state != Databank::PublicationState::PermSuppress::FILE) ) || ((@dataset.publication_state == Databank::PublicationState::RELEASED) && (@dataset.hold_state != Databank::PublicationState::TempSuppress::FILE))) %>
                 <form role="form">
                   <div class="form-group" id="select-files-form-group">
                     <table class="table table-striped">
@@ -309,30 +309,31 @@
     <!-- END file section -->
   <% end %>
 
-  <% if can? :edit, @dataset %>
-    <a href="/datasets/<%= @dataset.key %>/review_deposit_agreement">Review Deposit Agreement</a>
-    <% if @changetable && @dataset.publication_state != Databank::PublicationState::DRAFT %>
-      <div class="panel-group" id="changelog" role="tablist" aria-multiselectable="true">
-        <div class="panel panel-default">
-          <div class="panel-heading" role="tab" id="changelogHeading">
-            <h4 class="panel-title">
-              <a role="button" data-toggle="collapse" data-parent="#funder" href="#changelogPanel" aria-expanded="false" aria-controls="funderPanel" class="accordion-toggle collapsed">
-                <span class="metadata-label">Change Log</span>
-              </a>
-            </h4>
-          </div>
-          <div class="panel-collapse collapse" id="changelogPanel" role="tabpanel" aria-labelledby="changelogHeading">
-            <div class="panel-body">
-              <p><a href="/help?context=changelog&key=<%= @dataset.key %>">Contact the Research Data Service</a> for
-                help
-                interpreting this log.</p>
-              <%= render_datatable(@changetable) %>
-            </div>
+  <% if @changetable && [Databank::PublicationState::RELEASED, Databank::PublicationState::PermSuppress::FILE, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state) && @dataset.hold_state != Databank::PublicationState::TempSuppress::METADATA %>
+    <div class="panel-group" id="changelog" role="tablist" aria-multiselectable="true">
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="changelogHeading">
+          <h4 class="panel-title">
+            <a role="button" data-toggle="collapse" data-parent="#funder" href="#changelogPanel" aria-expanded="false" aria-controls="funderPanel" class="accordion-toggle collapsed">
+              <span class="metadata-label">Change Log</span>
+            </a>
+          </h4>
+        </div>
+        <div class="panel-collapse collapse" id="changelogPanel" role="tabpanel" aria-labelledby="changelogHeading">
+          <div class="panel-body">
+            <p><a href="/help?context=changelog&key=<%= @dataset.key %>">Contact the Research Data Service</a> for
+              help
+              interpreting this log.</p>
+            <%= render_datatable(@changetable) %>
           </div>
         </div>
       </div>
+    </div>
+    <% if can? :edit, @dataset %>
+      <a href="/datasets/<%= @dataset.key %>/review_deposit_agreement">Review Deposit Agreement</a>
     <% end %>
   <% end %>
+  
 </div>
 
 <% if can? :manage, @dataset && @dataset.publication_state != Databank::PublicationState::DRAFT %>

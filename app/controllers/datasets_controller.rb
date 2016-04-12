@@ -360,7 +360,7 @@ class DatasetsController < ApplicationController
 
         if @dataset.save
           if  @dataset.update_datacite_metadata(current_user)
-            format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and all files have permanently supressed.] }
+            format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and all files have been permanently supressed.] }
             format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
           else
             format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been permanently supressed in IDB, but DataCite has not been updated.] }
