@@ -20,6 +20,8 @@ module MedusaAmqp
 
     def on_medusa_message(response)
       response_hash = JSON.parse(response)
+      Rails.logger.warn "response_hash:"
+      Rails.logger.warn response_hash.to_yaml
 
       if response_hash.has_key? 'status'
         case response_hash['status']
