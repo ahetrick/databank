@@ -22,8 +22,8 @@ class DatabankMailer < ActionMailer::Base
   def contact_help(params)
     @params = params
 
-    if @params['help-topic'] == 'Dataset Review'
-      mail(from: @params['help-email'], to:['databank@library.illinois.edu'], subject:'[Illinois Data Bank] Dataset Review Request')
+    if @params['help-topic'] == 'Dataset Consultation'
+      mail(from: @params['help-email'], to:['databank@library.illinois.edu'], subject:'[Illinois Data Bank] Dataset Consultation Request')
     else
       mail(from: @params['help-email'], to:['databank@library.illinois.edu'], subject:'[Illinois Data Bank] Help Request')
     end
