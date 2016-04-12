@@ -20,9 +20,6 @@ module MedusaAmqp
 
     def on_medusa_message(response)
       response_hash = JSON.parse(response)
-      Rails.logger.warn "response_hash:"
-      Rails.logger.warn response_hash.to_yaml
-
       if response_hash.has_key? 'status'
         case response_hash['status']
           when 'ok'
@@ -91,10 +88,10 @@ module MedusaAmqp
     end
 
     def on_medusa_failed_message(response_hash)
+      Rails.logger.warn "medusa failed message:"
+      Rails.logger.warn response_hash.to_yaml
       ingest = MedusaIngest.where(staging_path: response_hash['staging_path'])
       if ingest
-        Rails.logger.warn "medusa failed message:"
-        Rails.logger.warn ingest.to_yaml
         ingest.request_status = response_hash['status']
         ingest.error_text = response_hash['error']
         ingest.response_time = Time.now.utc.iso8601
