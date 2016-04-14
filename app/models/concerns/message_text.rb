@@ -29,8 +29,14 @@ module MessageText
       effective_release_date = Date.current.iso8601
 
       if dataset.release_date && dataset.release_date >= Date.current()
-        effective_embargo = @dataset.embargo
-        effective_release_date = @dataset.release_date.iso8601
+        if dataset.embargo
+          effective_embargo = dataset.embargo
+          effective_release_date = dataset.release_date.iso8601
+        else
+          Rails.logger.warn "no embargo but release date in future"
+          Rails.logger.warn dataset.to_yaml
+        end
+
       end
 
       msg = "<div class='confirm-modal-text'>"

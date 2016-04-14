@@ -3,7 +3,7 @@ module Datacite
 
   class_methods do
 
-    def create_doi(dataset)
+    def create_doi(dataset, current_user)
 
       if dataset.is_import?
         raise "cannot create doi for imported dataset doi"
@@ -13,7 +13,7 @@ module Datacite
       uri = nil
 
       if dataset.is_test?
-        shoulder = 'doi:10.5072/FK2'
+        shoulder = '10.5072/FK2'
         user = 'apitest'
         password = 'apitest'
       else
@@ -22,22 +22,32 @@ module Datacite
         password = IDB_CONFIG[:ezid_password]
       end
 
-      target = "#{IDB_CONFIG[:root_url_text]}#{dataset_path(dataset.key)}"
+      # use specified DOI if provided
+      # this temporary identifier also helps to handle previous failed or partial publication
+      if !dataset.identifier || dataset.identifier = '' || dataset.identifier = 'f'
+        dataset.identifier = "#{shoulder}#{dataset.key}_v1"
+      end
+
+      existing_datacite_record = Dataset.datacite_record_hash(dataset)
+
+      if existing_datacite_record
+        # we might get here if there was a previous partial publish
+        Dataset.update_datacite_metadata(dataset, current_user)
+        return dataset.identifier
+      end
+
+      target = "#{IDB_CONFIG[:root_url_text]}/datasets/#{dataset.key}"
 
       metadata = {}
       metadata['_target'] = target
-      if @dataset.publication_state == Databank::PublicationState::Embargo::METADATA
+      if dataset.publication_state == Databank::PublicationState::Embargo::METADATA
         metadata['_status'] = 'reserved'
       else
         metadata['_status'] = 'public'
         metadata['datacite'] = dataset.to_datacite_xml
       end
 
-      if dataset.identifier && dataset.identifier != ''
-        uri = URI.parse("https://#{host}/id/doi:#{dataset.identifier}")
-      else
-        uri = URI.parse("https://#{host}/id/#{shoulder}#{dataset.key}_v1")
-      end
+      uri = URI.parse("https://#{host}/id/doi:#{dataset.identifier}")
 
       request = Net::HTTP::Put.new(uri.request_uri)
       request.basic_auth(user, password)
@@ -72,67 +82,6 @@ module Datacite
       end
     end
 
-
-    def mint_doi(dataset)
-
-      host = IDB_CONFIG[:ezid_host]
-
-      if @dataset.is_test?
-        shoulder = 'doi:10.5072/FK2'
-        user = 'apitest'
-        password = 'apitest'
-      end
-
-      shoulder = IDB_CONFIG[:ezid_shoulder]
-      user = IDB_CONFIG[:ezid_username]
-      password = IDB_CONFIG[:ezid_password]
-
-      target = "#{request.base_url}#{dataset_path(dataset.key)}"
-
-      metadata = {}
-      metadata['_target'] = target
-      if @dataset.publication_state == Databank::PublicationState::Embargo::METADATA
-        metadata['_status'] = 'reserved'
-      else
-        metadata['_status'] = 'public'
-        metadata['datacite'] = dataset.to_datacite_xml
-      end
-
-      uri = URI.parse("https://#{host}/shoulder/#{shoulder}")
-
-      request = Net::HTTP::Post.new(uri.request_uri)
-      request.basic_auth(user, password)
-      request.content_type = "text/plain"
-      request.body = Dataset.make_anvl(metadata)
-
-      sock = Net::HTTP.new(uri.host, uri.port)
-      # sock.set_debug_output $stderr
-
-      if uri.scheme == 'https'
-        sock.use_ssl = true
-      end
-
-      begin
-
-        response = sock.start { |http| http.request(request) }
-
-      rescue Net::HTTPBadResponse, Net::HTTPServerError => error
-        Rails.logger.warn error.message
-        Rails.logger.warn response.body
-      end
-
-      case response
-        when Net::HTTPSuccess, Net::HTTPRedirection
-          response_split = response.body.split(" ")
-          response_split2 = response_split[1].split(":")
-          doi = response_split2[1]
-
-        else
-          Rails.logger.warn response.to_yaml
-          raise "error minting DOI"
-      end
-    end
-    
     def update_datacite_metadata(dataset, current_user)
 
       if Dataset.completion_check(dataset, current_user) == 'ok'
@@ -172,6 +121,7 @@ module Datacite
         elsif [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED].include?(dataset.publication_state)
           metadata['_status'] = 'public'
         end
+        # For File-only Temporary or Permenant Suppression, make no change to _status
 
         metadata['_target'] = target
 

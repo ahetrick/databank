@@ -422,6 +422,34 @@ fieldset[disabled] .btn-warning.active {
   border-color: #F47F24;
 }
 
+.btn-faded-primary {
+  background-color: #7c96bd;
+  border-color: #7c96bd;
+}
+.btn-faded-primary:hover,
+.btn-faded-primary:focus,
+.btn-faded-primary:active,
+.btn-faded-primary.active {
+  background-color: #6b88b4;
+  border-color: #5a7bac;
+}
+.btn-faded-primary.disabled:hover,
+.btn-faded-primary.disabled:focus,
+.btn-faded-primary.disabled:active,
+.btn-faded-primary.disabled.active,
+.btn-faded-primary[disabled]:hover,
+.btn-faded-primary[disabled]:focus,
+.btn-faded-primary[disabled]:active,
+.btn-faded-primary[disabled].active,
+fieldset[disabled] .btn-faded-primary:hover,
+fieldset[disabled] .btn-faded-primary:focus,
+fieldset[disabled] .btn-faded-primary:active,
+fieldset[disabled] .btn-faded-primary.active {
+  background-color: #7c96bd;
+  border-color: #7c96bd;
+}
+
+
 /* end Button styling */
 
 /* begin Sticky footer styles

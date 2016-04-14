@@ -376,7 +376,7 @@ class DatasetsController < ApplicationController
 
     old_publication_state = @dataset.publication_state
 
-    # only publish complete datsets
+    # only publish complete datasets
     if Dataset.completion_check(@dataset, current_user) == 'ok'
       @dataset.complete = true
 
@@ -410,8 +410,8 @@ class DatasetsController < ApplicationController
 
         elsif old_publication_state == Databank::PublicationState::DRAFT && !@dataset.is_import
           # the create_doi method uses a given identifier if it has been specified
-          @dataset.identifier = Dataset.create_doi(@dataset)
-          AmqpConnector.instance.send_dataset_to_medusa(@dataset, old_publication_state)
+          @dataset.identifier = Dataset.create_doi(@dataset, current_user)
+          MedusaIngest.send_dataset_to_medusa(@dataset, old_publication_state)
           @dataset.has_datacite_change = false
           if @dataset.save
             format.html { redirect_to dataset_path(@dataset.key), notice: Dataset.deposit_confirmation_notice(old_publication_state, @dataset) }
@@ -429,7 +429,7 @@ class DatasetsController < ApplicationController
 
           if Dataset.update_datacite_metadata(@dataset, current_user)
 
-            AmqpConnector.instance.send_dataset_to_medusa(@dataset, old_publication_state)
+            MedusaIngest.send_dataset_to_medusa(@dataset, old_publication_state)
 
             @dataset.has_datacite_change = false
             if @dataset.save
