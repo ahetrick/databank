@@ -181,8 +181,9 @@ class MedusaIngest < ActiveRecord::Base
   def self.on_medusa_failed_message(response_hash)
     Rails.logger.warn "medusa failed message:"
     Rails.logger.warn response_hash.to_yaml
-    ingest = MedusaIngest.where(staging_path: response_hash['staging_path']).first
-    if ingest
+    ingestRelation = MedusaIngest.where(staging_path: response_hash['staging_path'])
+    if ingestRelation.count > 0
+      ingest = ingestRelation.first
       ingest.request_status = response_hash['status']
       ingest.error_text = response_hash['error']
       ingest.response_time = Time.now.utc.iso8601
