@@ -5,21 +5,28 @@
     .panel-body
       .row
         .col-md-9
-          -if @dataset.has_datacite_change &&  [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED, Databank::PublicationState::PermSuppress::FILE].include?(@dataset.publication_state)
-            .datacite-changes-warning
+          - if @completion_check == 'ok'
+            - if ((can? :manage, @dataset) && (@dataset.publication_state != Databank::PublicationState::DRAFT) && (@dataset.publication_state != Databank::PublicationState::Embargo::METADATA) && (@dataset.embargo == Databank::PublicationState::Embargo::METADATA))
               %span(class="glyphicon glyphicon-alert" )
-              Changes have been made to this dataset record that have not yet been published.  Confirm to complete changes.
-          -if @dataset.publication_state == Databank::PublicationState::Embargo::METADATA && (@dataset.embargo != Databank::PublicationState::Embargo::METADATA)
-            .datacite-changes-warning
-              %span(class="glyphicon glyphicon-alert" )
-              This dataset record has not yet been published.  Confirm to complete changes.
-
-          -if @completion_check != 'ok'
+              Embargo placeholders have not yet replaced DataCite metadata. Confirm to complete changes.
+              %br
+            -elsif @dataset.has_datacite_change &&  [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED, Databank::PublicationState::PermSuppress::FILE].include?(@dataset.publication_state)
+              .datacite-changes-warning
+                %span(class="glyphicon glyphicon-alert" )
+                Changes have been made to this dataset record that have not yet been published.  Confirm to complete changes.
+                %br
+            -elsif @dataset.publication_state == Databank::PublicationState::Embargo::METADATA && (@dataset.embargo != Databank::PublicationState::Embargo::METADATA)
+              .datacite-changes-warning
+                %span(class="glyphicon glyphicon-alert" )
+                This dataset record has not yet been published.  Confirm to complete changes.
+                %br
+          -else
             .completion-warning
               %span(class="glyphicon glyphicon-alert" )
               = @completion_check
               - if @dataset.publication_state == Databank::PublicationState::DRAFT || (can? :manage, @dataset)
                 Edit to complete dataset.
+                %br
           %span(class="glyphicon glyphicon-eye-open" )
           %span(class="metadata-label" ) Visibility:
           = @dataset.visibility
@@ -31,15 +38,20 @@
             Request Dataset Consultation
 
         .col-md-3
-          -# confirm button conditional complex, so broken into two statements
-          -if @completion_check == 'ok' && (@dataset.publication_state == Databank::PublicationState::DRAFT || (@dataset.has_datacite_change && [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE].include?(@dataset.publication_state) ) )
-            %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit")
-              Confirm
-              %span(class="glyphicon glyphicon-triangle-right" )
-          -if @dataset.publication_state == Databank::PublicationState::Embargo::METADATA && @dataset.embargo != Databank::PublicationState::Embargo::METADATA
-            %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit")
-              Confirm
-              %span(class="glyphicon glyphicon-triangle-right" )
+          - if @completion_check == 'ok'
+            -# confirm button conditional complex, so broken into three statements
+            -if ((can? :manage, @dataset) && (@dataset.publication_state != Databank::PublicationState::DRAFT) && (@dataset.publication_state != Databank::PublicationState::Embargo::METADATA) && (@dataset.embargo == Databank::PublicationState::Embargo::METADATA))
+              %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit")
+                Confirm
+                %span(class="glyphicon glyphicon-triangle-right" )
+            -elsif (@completion_check == 'ok') && (@dataset.publication_state == Databank::PublicationState::DRAFT || (@dataset.has_datacite_change && [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE].include?(@dataset.publication_state) ) )
+              %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit")
+                Confirm
+                %span(class="glyphicon glyphicon-triangle-right" )
+            -elsif @dataset.publication_state == Databank::PublicationState::Embargo::METADATA && @dataset.embargo != Databank::PublicationState::Embargo::METADATA
+              %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit")
+                Confirm
+                %span(class="glyphicon glyphicon-triangle-right" )
           = link_to(edit_dataset_path(@dataset), :class => "btn idb btn-success btn-block") do
             %span(class="glyphicon glyphicon-edit")
             Edit

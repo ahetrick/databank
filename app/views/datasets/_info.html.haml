@@ -56,4 +56,22 @@
 
 
 
+.panel-group(id="expert" role="tablist" aria-multiselectable="true")
+  .panel.panel-default
+    .panel-heading(role="tab" id="expertHeading")
+      %h4(class="panel-title")
+        %a( role="button" data-toggle="collapse" data-parent="#expert" href="#expertPanel" aria-expanded="false" aria-controls="expertPanel" class="accordion-toggle collapsed" )
+          %span( class="metadata-label" ) We're data publishing experts and we're here to help! (click to expand for more information)
+    .panel-collapse.collapse(id="expertPanel" role="tabpanel" aria-labelledby="expertHeading" )
+      .panel-body
+        %p
+          Guidance will continue to be available to you throughout this process.  To contact us, or to review any of this information, open the
+          %a(href="/help" )
+            %span(class="glyphicon glyphicon-question-sign")
+            Help
+          menu at the top of each page.  For context-specific help, look for
+          %a(href="#" )
+            %span(class="glyphicon glyphicon-question-sign" )
+            what's this?
+          links near form elements.
 

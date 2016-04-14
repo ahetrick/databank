@@ -5,6 +5,8 @@ require 'net/http'
 
 class Dataset < ActiveRecord::Base
   include ActiveModel::Serialization
+  include Datacite
+  include MessageText
 
   audited except: [:creator_text, :key, :complete, :has_datacite_change, :is_test, :is_import, :updated_at, :embargo], allow_mass_assignment: true
   has_associated_audits
@@ -302,82 +304,6 @@ class Dataset < ActiveRecord::Base
 
   end
 
-
-  def update_datacite_metadata(current_user)
-
-    if Dataset.completion_check(self, current_user) == 'ok'
-
-      user = nil
-      password = nil
-      host = IDB_CONFIG[:ezid_host]
-
-      if self.is_test?
-        user = 'apitest'
-        password = 'apitest'
-      else
-        user = IDB_CONFIG[:ezid_username]
-        password = IDB_CONFIG[:ezid_password]
-      end
-
-      target = "#{IDB_CONFIG[:root_url_text]}/datasets/#{self.key}"
-
-      metadata = {}
-
-      # Rails.logger.warn self.publication_state
-      # Rails.logger.warn self.hold_state
-      if  ((self.publication_state == Databank::PublicationState::PermSuppress::METADATA) || (self.hold_state == Databank::PublicationState::TempSuppress::METADATA))
-        metadata['_status'] = "unavailable | Removed by Illinois Data Bank curators. Contact us for more information. #{ IDB_CONFIG[:root_url_text] }/help"
-      elsif [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED].include?(self.publication_state)
-        metadata['_status'] = 'public'
-      end
-      Rails.logger.warn metadata.to_yaml
-
-      metadata['_target'] = target
-
-      if ((self.publication_state == Databank::PublicationState::PermSuppress::METADATA) || (self.hold_state == Databank::PublicationState::TempSuppress::METADATA))
-        metadata['datacite'] = self.placeholder_metadata
-      else
-        metadata['datacite'] = metadata['datacite'] = self.to_datacite_xml
-      end
-
-      uri = URI.parse("https://#{host}/id/doi:#{self.identifier}")
-
-      request = Net::HTTP::Post.new(uri.request_uri)
-      request.basic_auth(user, password)
-      request.content_type = "text/plain;charset=UTF-8"
-      request.body = Dataset.make_anvl(metadata)
-
-      sock = Net::HTTP.new(uri.host, uri.port)
-
-      if uri.scheme == 'https'
-        sock.use_ssl = true
-      end
-
-      begin
-
-        response = sock.start { |http| http.request(request) }
-        case response
-          when Net::HTTPSuccess, Net::HTTPRedirection
-            return true
-
-          else
-            Rails.logger.warn response.to_yaml
-            return false
-        end
-
-      rescue Net::HTTPBadResponse, Net::HTTPServerError => error
-        Rails.logger.warn error.message
-        Rails.logger.warn response.body
-      end
-
-
-    else
-      Rails.logger.warn "dataset not detected as complete - #{Dataset.completion_check(self, current_user)}"
-      return false
-    end
-
-  end
-
   # making completion_check a class method with passed-in dataset, so it can be used by controller before save
   def self.completion_check(dataset, current_user)
     response = 'ok'
@@ -450,6 +376,10 @@ class Dataset < ActiveRecord::Base
       end
     end
 
+    if dataset.is_import? && !dataset.identifier
+      validation_error_messages << "identifier to import"
+    end
+
     if validation_error_messages.length > 0
       validation_error_message << "Required elements for a complete dataset missing: "
       validation_error_messages.each_with_index do |m, i|
@@ -465,7 +395,7 @@ class Dataset < ActiveRecord::Base
     response
   end
 
-  def placeholder_metadata
+  def withdrawn_metadata
     doc = Nokogiri::XML::Document.parse(%Q(<?xml version="1.0"?><resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd"></resource>))
     resourceNode = doc.first_element_child
 
@@ -517,7 +447,7 @@ class Dataset < ActiveRecord::Base
   end
 
   # Should only be called for a previously released dataset transitioning to Metadata & File embargo
-  def metadata_embargo_metadata
+  def embargo_metadata
 
     if !self.release_date
       raise "missing release date for file and metadata publication delay for dataset #{self.key}"

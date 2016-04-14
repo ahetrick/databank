@@ -110,5 +110,101 @@ module MedusaAmqp
   def create_medusa_ingest_message(staging_path)
     {"operation":"ingest", "staging_path":"#{staging_path}"}
   end
+  
+  def send_dataset_to_medusa(dataset, old_publication_state)
+
+    # create or confirm dataset_staging directory for dataset
+    dataset_dirname = "DOI-#{(dataset.identifier).parameterize}"
+    staging_dir = "#{IDB_CONFIG[:staging_root]}/#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}"
+    FileUtils.mkdir_p "#{staging_dir}/dataset_files"
+    FileUtils.mkdir_p "#{staging_dir}/system"
+    FileUtils.chmod "u=wrx,go=rx", File.dirname(staging_dir)
+
+    file_time = Time.now.strftime('%Y-%m-%d_%H-%M')
+    description_xml = dataset.to_datacite_xml
+    File.open("#{staging_dir}/system/description.#{file_time}.xml", "w") do |description_file|
+      description_file.puts(description_xml)
+    end
+    FileUtils.chmod 0755, "#{staging_dir}/system/description.#{file_time}.xml"
+
+    medusa_ingest = MedusaIngest.new
+    staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/description.#{file_time}.xml"
+    medusa_ingest.staging_path = staging_path
+    medusa_ingest.idb_class = 'description'
+    medusa_ingest.idb_identifier = dataset.key
+    medusa_ingest.send_medusa_ingest_message(staging_path)
+    medusa_ingest.save
+
+    if old_publication_state == Databank::PublicationState::DRAFT && !dataset.is_test?
+
+      dataset.datafiles.each do |datafile|
+
+        datafile.binary_name = datafile.binary.file.filename
+        datafile.binary_size = datafile.binary.size
+        medusa_ingest = MedusaIngest.new
+        full_path = datafile.binary.path
+        full_path_arr = full_path.split("/")
+        full_staging_path = "#{staging_dir}/dataset_files/#{full_path_arr[7]}"
+        # make symlink
+        FileUtils.symlink(full_path, full_staging_path)
+        FileUtils.chmod "u=wrx,go=rx", full_staging_path
+        # point to symlink for path
+        # staging_path = "#{full_path_arr[5]}/#{full_path_arr[6]}/#{full_path_arr[7]}"
+        staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/dataset_files/#{full_path_arr[7]}"
+        medusa_ingest.staging_path = staging_path
+        medusa_ingest.idb_class = 'datafile'
+        medusa_ingest.idb_identifier = datafile.web_id
+        medusa_ingest.send_medusa_ingest_message(staging_path)
+        medusa_ingest.save
+      end
+      if File.exist?("#{IDB_CONFIG[:agreements_root_path]}/#{dataset.key}/deposit_agreement.txt")
+        medusa_ingest = MedusaIngest.new
+        full_path = "#{IDB_CONFIG[:agreements_root_path]}/#{dataset.key}/deposit_agreement.txt"
+        full_staging_path = "#{staging_dir}/system/deposit_agreement.txt"
+        # make symlink
+        FileUtils.symlink(full_path, full_staging_path)
+        FileUtils.chmod "u=wrx,go=rx", full_staging_path
+        # point to symlink for path
+        #staging_path = "#{full_path_arr[5]}/#{full_path_arr[6]}/#{full_path_arr[7]}"
+        staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/deposit_agreement.txt"
+        medusa_ingest.staging_path = staging_path
+        medusa_ingest.idb_class = 'agreement'
+        medusa_ingest.idb_identifier = dataset.key
+        medusa_ingest.send_medusa_ingest_message(staging_path)
+        medusa_ingest.save
+      else
+        raise "deposit agreement file not found for #{dataset.key}"
+      end
+
+    end
+
+    serialization_json = (dataset.recovery_serialization).to_json
+    File.open("#{staging_dir}/system/serialization.#{file_time}.json", "w") do |serialization_file|
+      serialization_file.puts(serialization_json)
+    end
+    FileUtils.chmod 0755, "#{staging_dir}/system/serialization.#{file_time}.json"
+
+    medusa_ingest = MedusaIngest.new
+    staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/serialization.#{file_time}.json"
+    medusa_ingest.staging_path = staging_path
+    medusa_ingest.idb_class = 'serialization'
+    medusa_ingest.idb_identifier = dataset.key
+    medusa_ingest.send_medusa_ingest_message(staging_path)
+    medusa_ingest.save
+
+
+    changelog_json = (dataset.full_changelog).to_json
+    File.open("#{staging_dir}/system/changelog.#{file_time}.json", "w") do |changelog_file|
+      changelog_file.write(changelog_json)
+    end
+    FileUtils.chmod 0755, "#{staging_dir}/system/changelog.#{file_time}.json"
+    medusa_ingest = MedusaIngest.new
+    staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/changelog.#{file_time}.json"
+    medusa_ingest.staging_path = staging_path
+    medusa_ingest.idb_class = 'changelog'
+    medusa_ingest.idb_identifier = dataset.key
+    medusa_ingest.send_medusa_ingest_message(staging_path)
+    medusa_ingest.save
+  end
 
 end

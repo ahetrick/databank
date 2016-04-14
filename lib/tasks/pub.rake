@@ -16,7 +16,7 @@ namespace :pub do
         dataset.embargo = ''
         dataset.save
         if dataset.has_datacite_change
-          dataset.update_datacite_metadata(@current_user)
+          Dataset.update_datacite_metadata(dataset, @current_user)
         end
       end
     end

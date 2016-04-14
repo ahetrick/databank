@@ -5,8 +5,6 @@ require 'zipruby'
 require 'json'
 
 class DatasetsController < ApplicationController
-  include Datasets::PublicationStateMethods
-
   protect_from_forgery except: :cancel_box_upload
 
   load_resource :find_by => :key
@@ -105,13 +103,10 @@ class DatasetsController < ApplicationController
       @changetable = Effective::Datatables::DatasetChanges.new(dataset_id: @dataset.id)
     end
 
-    @publish_modal_msg = publish_modal_msg(@dataset)
+    @publish_modal_msg = Dataset.publish_modal_msg(@dataset)
 
     set_license(@dataset)
 
-  end
-
-  def idb_datacite_xml
   end
 
   def cancel_box_upload
@@ -268,7 +263,7 @@ class DatasetsController < ApplicationController
 
       if @dataset.save
 
-        if @dataset.update_datacite_metadata(current_user)
+        if Dataset.update_datacite_metadata(@dataset, current_user)
           @dataset.has_datacite_change = false
           @dataset.save
           format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been temporarily suppressed.] }
@@ -293,7 +288,7 @@ class DatasetsController < ApplicationController
 
       if @dataset.save
 
-        if @dataset.update_datacite_metadata(current_user)
+        if Dataset.update_datacite_metadata(@dataset, current_user)
           @dataset.has_datacite_change = false
           @dataset.save
           format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset has been unsuppressed.] }
@@ -340,7 +335,7 @@ class DatasetsController < ApplicationController
       respond_to do |format|
 
         if @dataset.save
-          if delete_datacite_id
+          if delete_datacite_id(@dataset, current_user)
             @dataset.has_datacite_change = false
             @dataset.save
             format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Reserved DOI has been deleted and all files have been permanently supressed.] }
@@ -359,7 +354,7 @@ class DatasetsController < ApplicationController
       respond_to do |format|
 
         if @dataset.save
-          if  @dataset.update_datacite_metadata(current_user)
+          if  Dataset.update_datacite_metadata(@dataset, current_user)
             format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and all files have been permanently supressed.] }
             format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
           else
@@ -384,7 +379,15 @@ class DatasetsController < ApplicationController
     # only publish complete datsets
     if Dataset.completion_check(@dataset, current_user) == 'ok'
       @dataset.complete = true
-      # set relase date
+
+      # set publication_state
+      if @dataset.embargo && @dataset.embargo != ""
+        @dataset.publication_state = @dataset.embargo
+      else
+        @dataset.publication_state = Databank::PublicationState::RELEASED
+      end
+
+      # set release date
       if [Databank::PublicationState::DRAFT, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA].include?(old_publication_state)
         if (@dataset.release_date && @dataset.release_date <= Date.current()) || !@dataset.embargo || @dataset.embargo == ""
           @dataset.release_date = Date.current()
@@ -393,6 +396,7 @@ class DatasetsController < ApplicationController
       if !@dataset.release_date
         @dataset.release_date = Date.current()
       end
+
     else
       @dataset.complete = false
     end
@@ -400,154 +404,48 @@ class DatasetsController < ApplicationController
     respond_to do |format|
       if @dataset.complete?
 
-        # register with DataCite for new datasets, update for imports and changes to other previously published datasets
-        if !@dataset.identifier || @dataset.identifier.empty? || (@dataset.publication_state == Databank::PublicationState::DRAFT && !@dataset.is_import?)
-          @dataset.identifier = create_doi(@dataset)
-        end
+      # ensure identifier, update publication_state, interact with DataCite and Medusa
+        if ((old_publication_state != Databank::PublicationState::DRAFT) && (!@dataset.identifier || @dataset.identifier == ''))
+          raise "Missing identifier for dataset that is not a draft. Dataset: #{@dataset.key}"
 
-        if @dataset.is_import?
-          @dataset.update_datacite_metadata(current_user)
-        end
-
-        # create or confirm dataset_staging directory for dataset
-        dataset_dirname = "DOI-#{(@dataset.identifier).parameterize}"
-        staging_dir = "#{IDB_CONFIG[:staging_root]}/#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}"
-        FileUtils.mkdir_p "#{staging_dir}/dataset_files"
-        FileUtils.mkdir_p "#{staging_dir}/system"
-        FileUtils.chmod "u=wrx,go=rx", File.dirname(staging_dir)
-
-        file_time = Time.now.strftime('%Y-%m-%d_%H-%M')
-        description_xml = @dataset.to_datacite_xml
-        File.open("#{staging_dir}/system/description.#{file_time}.xml", "w") do |description_file|
-          description_file.puts(description_xml)
-        end
-        FileUtils.chmod 0755, "#{staging_dir}/system/description.#{file_time}.xml"
-
-        medusa_ingest = MedusaIngest.new
-        staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/description.#{file_time}.xml"
-        medusa_ingest.staging_path = staging_path
-        medusa_ingest.idb_class = 'description'
-        medusa_ingest.idb_identifier = @dataset.key
-        medusa_ingest.send_medusa_ingest_message(staging_path)
-        medusa_ingest.save
-
-        if old_publication_state == Databank::PublicationState::DRAFT && !@dataset.is_test?
-
-          @dataset.datafiles.each do |datafile|
-
-            datafile.binary_name = datafile.binary.file.filename
-            datafile.binary_size = datafile.binary.size
-            medusa_ingest = MedusaIngest.new
-            full_path = datafile.binary.path
-            full_path_arr = full_path.split("/")
-            full_staging_path = "#{staging_dir}/dataset_files/#{full_path_arr[7]}"
-            # make symlink
-            FileUtils.symlink(full_path, full_staging_path)
-            FileUtils.chmod "u=wrx,go=rx", full_staging_path
-            # point to symlink for path
-            # staging_path = "#{full_path_arr[5]}/#{full_path_arr[6]}/#{full_path_arr[7]}"
-            staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/dataset_files/#{full_path_arr[7]}"
-            medusa_ingest.staging_path = staging_path
-            medusa_ingest.idb_class = 'datafile'
-            medusa_ingest.idb_identifier = datafile.web_id
-            medusa_ingest.send_medusa_ingest_message(staging_path)
-            medusa_ingest.save
-          end
-          if File.exist?("#{IDB_CONFIG[:agreements_root_path]}/#{@dataset.key}/deposit_agreement.txt")
-            medusa_ingest = MedusaIngest.new
-            full_path = "#{IDB_CONFIG[:agreements_root_path]}/#{@dataset.key}/deposit_agreement.txt"
-            full_staging_path = "#{staging_dir}/system/deposit_agreement.txt"
-            # make symlink
-            FileUtils.symlink(full_path, full_staging_path)
-            FileUtils.chmod "u=wrx,go=rx", full_staging_path
-            # point to symlink for path
-            #staging_path = "#{full_path_arr[5]}/#{full_path_arr[6]}/#{full_path_arr[7]}"
-            staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/deposit_agreement.txt"
-            medusa_ingest.staging_path = staging_path
-            medusa_ingest.idb_class = 'agreement'
-            medusa_ingest.idb_identifier = @dataset.key
-            medusa_ingest.send_medusa_ingest_message(staging_path)
-            medusa_ingest.save
-          else
-            raise "deposit agreement file not found for #{@dataset.key}"
-          end
-
-        end
-
-        @dataset.has_datacite_change = false
-        serialization_json = (@dataset.recovery_serialization).to_json
-        File.open("#{staging_dir}/system/serialization.#{file_time}.json", "w") do |serialization_file|
-          serialization_file.puts(serialization_json)
-        end
-        FileUtils.chmod 0755, "#{staging_dir}/system/serialization.#{file_time}.json"
-
-        medusa_ingest = MedusaIngest.new
-        staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/serialization.#{file_time}.json"
-        medusa_ingest.staging_path = staging_path
-        medusa_ingest.idb_class = 'serialization'
-        medusa_ingest.idb_identifier = @dataset.key
-        medusa_ingest.send_medusa_ingest_message(staging_path)
-        medusa_ingest.save
-
-
-        changelog_json = (@dataset.full_changelog).to_json
-        File.open("#{staging_dir}/system/changelog.#{file_time}.json", "w") do |changelog_file|
-          changelog_file.write(changelog_json)
-        end
-        FileUtils.chmod 0755, "#{staging_dir}/system/changelog.#{file_time}.json"
-        medusa_ingest = MedusaIngest.new
-        staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/changelog.#{file_time}.json"
-        medusa_ingest.staging_path = staging_path
-        medusa_ingest.idb_class = 'changelog'
-        medusa_ingest.idb_identifier = @dataset.key
-        medusa_ingest.send_medusa_ingest_message(staging_path)
-        medusa_ingest.save
-
-        if old_publication_state == Databank::PublicationState::DRAFT
-
+        elsif old_publication_state == Databank::PublicationState::DRAFT && !@dataset.is_import
+          # the create_doi method uses a given identifier if it has been specified
+          @dataset.identifier = Dataset.create_doi(@dataset)
+          AmqpConnector.instance.send_dataset_to_medusa(@dataset, old_publication_state)
+          @dataset.has_datacite_change = false
           if @dataset.save
-
-            if (@dataset.release_date && @dataset.release_date <= Date.current()) || !@dataset.embargo || @dataset.embargo == ""
-              @dataset.publication_state = Databank::PublicationState::RELEASED
-            else
-              @dataset.publication_state = @dataset.embargo
-            end
-            @dataset.has_datacite_change = false
-            @dataset.save
-
-            if IDB_CONFIG.has_key?(:local_mode) && IDB_CONFIG[:local_mode]
-              Rails.logger.warn "deposit OK for #{@dataset.key}"
-            else
-              confirmation = DatabankMailer.confirm_deposit(@dataset.key)
-              confirmation.deliver_now
-            end
-
-            format.html { redirect_to dataset_path(@dataset.key), notice: deposit_confirmation_notice(old_publication_state, @dataset) }
+            format.html { redirect_to dataset_path(@dataset.key), notice: Dataset.deposit_confirmation_notice(old_publication_state, @dataset) }
             format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
           else
-            format.html { redirect_to dataset_path(@dataset.key), notice: 'Error in publishing dataset has been logged by the Research Data Service.' }
+            Rails.logger.warn "Error in saving dataset: #{@dataset.key}:"
+            Rails.logger.warn "Identifier created, but not saved: #{@dataset.identifier}. Messages sent to Medusa."
+            Rails.logger.warn @dataset.errors
+            format.html { redirect_to dataset_path(@dataset.key), notice: 'Error in saving dataset has been logged by the Research Data Service.' }
             format.json { render json: @dataset.errors, status: :unprocessable_entity }
           end
-        else
-          if @dataset.save && @dataset.update_datacite_metadata(current_user)
-            if (@dataset.release_date && @dataset.release_date <= Date.current()) || !@dataset.embargo || @dataset.embargo == ""
-              @dataset.publication_state = Databank::PublicationState::RELEASED
-            else
-              @dataset.publication_state = @dataset.embargo
-            end
-            @dataset.has_datacite_change = false
-            @dataset.save
 
-            if IDB_CONFIG.has_key?(:local_mode) && IDB_CONFIG[:local_mode]
-              Rails.logger.warn "deposit update OK for #{@dataset.key}"
+        # at this point, we are dealing with a published or imported dataset
+        else
+
+          if Dataset.update_datacite_metadata(@dataset, current_user)
+
+            AmqpConnector.instance.send_dataset_to_medusa(@dataset, old_publication_state)
+
+            @dataset.has_datacite_change = false
+            if @dataset.save
+              format.html { redirect_to dataset_path(@dataset.key), notice: Dataset.deposit_confirmation_notice(old_publication_state, @dataset) }
+              format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
             else
-              confirmation = DatabankMailer.confirm_deposit_update(@dataset.key)
-              confirmation.deliver_now
+              Rails.logger.warn "Error in saving dataset: #{@dataset.key}:"
+              Rails.logger.warn "DataCite record updated, but change in publication state not saved in IDB"
+              Rails.logger.warn @dataset.errors
+              format.html { redirect_to dataset_path(@dataset.key), notice: 'Error in saving dataset has been logged by the Research Data Service.' }
+              format.json { render json: @dataset.errors, status: :unprocessable_entity }
             end
-            format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Changes have been successfully published.] }
-            format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+
           else
-            format.html { redirect_to dataset_path(@dataset.key), notice: 'Error in publishing changes has been logged by the Research Data Service.' }
+            Rails.logger.warn "Error in publishing import dataset: #{@dataset.key}:"
+            format.html { redirect_to dataset_path(@dataset.key), notice: 'Error in publishing dataset has been logged by the Research Data Service.' }
             format.json { render json: @dataset.errors, status: :unprocessable_entity }
           end
         end
@@ -816,46 +714,6 @@ class DatasetsController < ApplicationController
 
   end
 
-  def datacite_record_hash
-
-    return {"status" => "dataset not published"} if @dataset.publication_state == Databank::PublicationState::DRAFT
-    return {"status" => "DOI Reserved Only"} if @dataset.publication_state == Databank::PublicationState::Embargo::FILE
-
-
-    response_hash = Hash.new
-
-    begin
-
-      response = ezid_metadata_response
-      response_body_hash = Hash.new
-      response_lines = response.body.to_s.split("\n")
-      response_lines.each do |line|
-        split_line = line.split(": ")
-        response_body_hash["#{split_line[0]}"] = "#{split_line[1]}"
-      end
-
-      clean_metadata_xml_string = (response_body_hash["datacite"]).gsub("%0A", '')
-      metadata_doc = Nokogiri::XML(clean_metadata_xml_string)
-
-      response_hash["target"] = response_body_hash["_target"]
-      response_hash["created"]= (Time.at(Integer(response_body_hash["_created"])).to_datetime).strftime("%Y-%m-%d at %I:%M%p")
-      response_hash["updated"]= (Time.at(Integer(response_body_hash["_updated"])).to_datetime).strftime("%Y-%m-%d at %I:%M%p")
-      response_hash["owner"] = response_body_hash["_owner"]
-      response_hash["status"] = response_body_hash["_status"]
-      response_hash["datacenter"] = response_body_hash["_datacenter"]
-      response_hash["metadata"] = metadata_doc
-
-      return response_hash
-
-
-    rescue StandardError => error
-
-      return {"error" => error.message}
-
-    end
-
-  end
-
   def citation_text
     render json: {"citation" => @dataset.plain_text_citation}
   end
@@ -905,75 +763,8 @@ class DatasetsController < ApplicationController
     params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, :is_test, :is_import, :audit_id, :removed_private, :have_permission, :agree, :web_ids, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update, :audit_id], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update, :audit_id], related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id])
   end
 
-  def ezid_metadata_response
 
-    if @dataset.complete?
 
-      host = IDB_CONFIG[:ezid_host]
-
-      uri = URI.parse("http://#{host}/id/doi:#{@dataset.identifier}")
-      response = Net::HTTP.get_response(uri)
-
-      case response
-        when Net::HTTPSuccess, Net::HTTPRedirection
-          return response
-
-        else
-          raise "error getting DataCite metadata record from EZID"
-      end
-
-    else
-
-      raise "incomplete dataset"
-
-    end
-  end
-
-  def delete_datacite_id
-    user = nil
-    password = nil
-    host = IDB_CONFIG[:ezid_host]
-
-    if @dataset.is_test?
-      user = 'apitest'
-      password = 'apitest'
-    else
-      user = IDB_CONFIG[:ezid_username]
-      password = IDB_CONFIG[:ezid_password]
-    end
-
-    uri = URI.parse("https://#{host}/id/doi:#{@dataset.identifier}")
-
-    request = Net::HTTP::Delete.new(uri.request_uri)
-    request.basic_auth(user, password)
-    request.content_type = "text/plain"
-
-    sock = Net::HTTP.new(uri.host, uri.port)
-    # sock.set_debug_output $stderr
-
-    if uri.scheme == 'https'
-      sock.use_ssl = true
-    end
-
-    begin
-
-      response = sock.start { |http| http.request(request) }
-
-    rescue Net::HTTPBadResponse, Net::HTTPServerError => error
-      Rails.logger.warn error.message
-      Rails.logger.warn response.body
-    end
-
-    case response
-      when Net::HTTPSuccess, Net::HTTPRedirection
-        return true
-
-      else
-        Rails.logger.warn response.to_yaml
-        return false
-    end
-
-  end
 
 
 end
