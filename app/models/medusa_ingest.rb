@@ -141,7 +141,7 @@ class MedusaIngest < ActiveRecord::Base
       ingest.response_time = Time.now.utc.iso8601
       ingest.save!
 
-      if File.exists?("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{response_hash['medusa_path']}") &&  FileUtils.identical?("#{IDB_CONFIG[:staging_root]}/#{response_hash['staging_path']}", "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{response_hash['medusa_path']}")
+      if File.exists?("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{response_hash['medusa_path']}") && FileUtils.identical?("#{IDB_CONFIG[:staging_root]}/#{response_hash['staging_path']}", "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{response_hash['medusa_path']}")
 
         if ingest.idb_class == 'datafile'
           datafile = Datafile.find_by_web_id(ingest.idb_identifier)
@@ -197,7 +197,7 @@ class MedusaIngest < ActiveRecord::Base
   end
 
   def create_medusa_ingest_message(staging_path)
-    {"operation":"ingest", "staging_path":"#{staging_path}"}
+    {"operation" => "ingest", "staging_path" => "#{staging_path}"}
   end
 
 end

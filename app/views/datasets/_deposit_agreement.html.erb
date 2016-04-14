@@ -1,7 +1,9 @@
 <div class="modal-content">
   <div class="modal-header">
     <% if @dataset && !@dataset.depositor_email %>
-      <stong>Before you get started on your deposit, please review the deposit agreement and answer the following questions:</stong>
+      <stong>Before you get started on your deposit, please review the deposit agreement and answer the following
+        questions:
+      </stong>
     <% end %>
   </div>
   <div class="modal-body">
@@ -9,14 +11,18 @@
     <div class="panel panel-default">
       <div class="panel-heading">
         <h4 class="panel-title">
-          <a class="accordion-toggle collapsed" data-toggle="collapse" href="#collapseOne ">Illinois Data Bank Deposit Agreement (click to expand)</a>
+          <a class="accordion-toggle collapsed" data-toggle="collapse" href="#collapseOne ">Illinois Data Bank Deposit
+            Agreement (click to expand)</a>
         </h4>
       </div>
-      <div id="collapseOne" class="panel-collapse collapse <% if @dataset && @dataset.depositor_email %>in<% end %> ">
+      <div id="collapseOne" class="panel-collapse collapse
+        <% if @dataset && @dataset.depositor_email %>in
+        <% end %> ">
         <div class="panel-body">
           <p class="ds-paragraph heading">
             Illinois Data Bank Deposit Agreement: Non-Exclusive Distribution and Preservation License
           </p>
+
           <p class="ds-paragraph">To properly administer the Illinois Data Bank and preserve the contents for future
             use,
             the Board of Trustees of the University of Illinois on behalf of its Urbana-Champaign campus (the
@@ -122,32 +128,36 @@
 
         <div class="form-group">
           <span class="metadata-label">Are you a creator of this dataset or have you been granted permission by the creator to deposit this dataset?</span>
-          <a href="#" data-toggle="tooltip" title = "Deposit into the Illinois Data Bank requires that the depositor be the creator of the dataset or have permission." tabindex="-1")>
+          <a href="#" data-toggle="tooltip" title="Deposit into the Illinois Data Bank requires that the depositor be the creator of the dataset or have permission." tabindex="-1" )>
             <span class="glyphicon glyphicon-info-sign"></span></a>
+
           <div class="checkbox">
             <label><input type="checkbox" class="agree" id="owner-yes" onclick="handleOwnerYes()">Yes</label>
           </div>
         </div>
         <div class="form-group">
           <span class="metadata-label">Have you removed any private, confidential, or other legally protected information from the dataset?</span>
-          <a href="#" data-toggle="tooltip" title = "Deposit into Illinois Data Bank requires removal of any private, confidential or legally protected information that is in the dataset. A selection of Not applicable indicates that either the dataset never included any such information, while a selection of yes indicates that such informaiton has been removed." tabindex="-1")>
+          <a href="#" data-toggle="tooltip" title="Deposit into Illinois Data Bank requires removal of any private, confidential or legally protected information that is in the dataset. A selection of Not applicable indicates that either the dataset never included any such information, while a selection of yes indicates that such informaiton has been removed." tabindex="-1" )>
             <span class="glyphicon glyphicon-info-sign"></span></a>
+
           <div class="checkbox">
-            <label><input type="checkbox" class="private-checkbox agree" id="private-yes" onclick="handlePrivateYes()" >Yes</label>
+            <label><input type="checkbox" class="private-checkbox agree" id="private-yes" onclick="handlePrivateYes()">Yes</label>
           </div>
           <div class="checkbox">
-            <label><input type="checkbox" class="private-checkbox agree" id="private-no" onclick="handlePrivateNo()" >No</label>
+            <label><input type="checkbox" class="private-checkbox agree" id="private-no" onclick="handlePrivateNo()">No</label>
           </div>
           <div class="checkbox">
-            <label><input type="checkbox" class="private-checkbox agree" id="private-na" onclick="handlePrivateNA()">Not applicable</label>
+            <label><input type="checkbox" class="private-checkbox agree" id="private-na" onclick="handlePrivateNA()">Not
+              applicable</label>
           </div>
         </div>
         <div class="form-group">
           <span class="metadata-label">Do you agree to the Illinois Data Bank Deposit Agreement in its entirety?</span>
-          <a href="#" data-toggle="tooltip" title = "Deposit into Illinois Data Bank requires agreement to the Deposit Agreement. Click on the Deposit Agreement heading above to view the full agreement." tabindex="-1")>
+          <a href="#" data-toggle="tooltip" title="Deposit into Illinois Data Bank requires agreement to the Deposit Agreement. Click on the Deposit Agreement heading above to view the full agreement." tabindex="-1" )>
             <span class="glyphicon glyphicon-info-sign"></span></a>
+
           <div class="checkbox">
-            <label><input type="checkbox" class="agree" id="agree-yes" onclick="handleAgreeYes()" >Yes</label>
+            <label><input type="checkbox" class="agree" id="agree-yes" onclick="handleAgreeYes()">Yes</label>
           </div>
         </div>
 
@@ -157,11 +167,15 @@
   <% if @dataset %>
     <div class="modal-footer container-fluid">
       <div class="pull-right">
-          <button onclick="handleAgreeModal('<%= current_user.email %>', '<%= current_user.name %>')", type="button" class="btn btn-primary" data-dismiss="modal" id="agree-button">
-            <span class="glyphicon glyphicon-check"></span> Submit</button>
-          <button onclick='window.open("/help")', type="button" class="btn btn-success" >
-            <span class="glyphicon glyphicon-question-sign"></span> Get Help </button>
-          <button title="do not agree" type="button" class="btn btn-danger" data-dismiss="modal" id="cancel-button"><span class="glyphicon glyphicon-ban-circle"></span> Cancel</button>
+        <button onclick="handleAgreeModal('<%= current_user.email %>', '<%= current_user.name %>')" , type="button" class="btn btn-primary" data-dismiss="modal" id="agree-button">
+          <span class="glyphicon glyphicon-check"></span> Submit
+        </button>
+        <button onclick='window.open("/help")' , type="button" class="btn btn-success">
+          <span class="glyphicon glyphicon-question-sign"></span> Get Help
+        </button>
+        <button title="do not agree" type="button" class="btn btn-danger" data-dismiss="modal" id="cancel-button">
+          <span class="glyphicon glyphicon-ban-circle"></span> Cancel
+        </button>
       </div>
     </div>
   <% end %>

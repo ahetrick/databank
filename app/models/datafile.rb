@@ -18,7 +18,7 @@ class Datafile < ActiveRecord::Base
   end
 
   def as_json(options={})
-    super(:only => [:web_id,:binary_name,:binary_size,:medusa_id,:created_at,:updated_at] )
+    super(:only => [:web_id, :binary_name, :binary_size, :medusa_id, :created_at, :updated_at])
   end
 
   def bytestream_name
@@ -65,15 +65,15 @@ class Datafile < ActiveRecord::Base
   end
 
   def job_status
-      if self.job
-        if job.locked_by
-          return :processing
-        else
-          return :pending
-        end
+    if self.job
+      if job.locked_by
+        return :processing
       else
-        return :complete
+        return :pending
       end
+    else
+      return :complete
+    end
   end
 
   def destroy_job

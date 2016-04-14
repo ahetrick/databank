@@ -18,7 +18,7 @@ class DefinitionsControllerTest < ActionController::TestCase
 
   test "should create definition" do
     assert_difference('Definition.count') do
-      post :create, definition: { meaning: @definition.meaning, term: @definition.term }
+      post :create, definition: {meaning: @definition.meaning, term: @definition.term}
     end
 
     assert_redirected_to definition_path(assigns(:definition))
@@ -35,7 +35,7 @@ class DefinitionsControllerTest < ActionController::TestCase
   end
 
   test "should update definition" do
-    patch :update, id: @definition, definition: { meaning: @definition.meaning, term: @definition.term }
+    patch :update, id: @definition, definition: {meaning: @definition.meaning, term: @definition.term}
     assert_redirected_to definition_path(assigns(:definition))
   end
 

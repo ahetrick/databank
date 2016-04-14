@@ -24,8 +24,8 @@ namespace :medusa do
     conn.start
 
     ch = conn.create_channel
-    q  = ch.queue("medusa_to_idb", :durable => true)
-    x  = ch.default_exchange
+    q = ch.queue("medusa_to_idb", :durable => true)
+    x = ch.default_exchange
 
     # q.subscribe do |delivery_info, metadata, payload|
     #   puts "Received #{payload}"
@@ -58,8 +58,8 @@ namespace :medusa do
     conn.start
 
     ch = conn.create_channel
-    q  = ch.queue("medusa_to_idb", :durable => true)
-    x  = ch.default_exchange
+    q = ch.queue("medusa_to_idb", :durable => true)
+    x = ch.default_exchange
 
     # q.subscribe do |delivery_info, metadata, payload|
     #   puts "Received #{payload}"
@@ -91,8 +91,8 @@ namespace :medusa do
     conn.start
 
     ch = conn.create_channel
-    q  = ch.queue("medusa_to_idb", :durable => true)
-    x  = ch.default_exchange
+    q = ch.queue("medusa_to_idb", :durable => true)
+    x = ch.default_exchange
 
     has_payload = true
 
@@ -112,7 +112,7 @@ namespace :medusa do
   task :update_paths => :environment do
     datafiles = Datafile.all
     datafiles.each do |df|
-      if !df.binary  && !df.medusa_path
+      if !df.binary && !df.medusa_path
         puts "no binary or no medusa_path"
         ingest = MedusaIngest.find_by_idb_identifier(df.web_id)
         if ingest
@@ -125,7 +125,7 @@ namespace :medusa do
       end
     end
     datafiles.each do |df|
-      if df.binary  && !df.medusa_path
+      if df.binary && !df.medusa_path
         puts "binary but no medusa path"
         ingest = MedusaIngest.find_by_idb_identifier(df.web_id)
         if ingest

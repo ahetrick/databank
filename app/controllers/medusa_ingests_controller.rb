@@ -62,13 +62,13 @@ class MedusaIngestsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_medusa_ingest
-      @medusa_ingest = MedusaIngest.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_medusa_ingest
+    @medusa_ingest = MedusaIngest.find(params[:id])
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def medusa_ingest_params
-      params.require(:medusa_ingest).permit(:idb_class, :idb_identifier, :staging_path, :request_status, :medusa_path, :medusa_uuid, :response_time, :error_text)
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def medusa_ingest_params
+    params.require(:medusa_ingest).permit(:idb_class, :idb_identifier, :staging_path, :request_status, :medusa_path, :medusa_uuid, :response_time, :error_text)
+  end
 end

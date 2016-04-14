@@ -46,7 +46,7 @@ namespace :databank do
     num_accounts = 10
 
     (1..num_accounts).each do |i|
-      identity =   Identity.find_or_create_by(email: "demo#{i}@example.edu" )
+      identity = Identity.find_or_create_by(email: "demo#{i}@example.edu")
       identity.name = "Demo#{i} Depositor"
       identity.password_digest = encrypted_password
       identity.save!

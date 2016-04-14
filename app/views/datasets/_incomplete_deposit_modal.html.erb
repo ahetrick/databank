@@ -14,15 +14,15 @@
 
       <div class="modal-footer container-fluid">
 
-        <button onclick='window.location = "/datasets/<%=@dataset.key%>/edit"', type="button" class="btn btn-primary" data-dismiss="modal" id="edit-button">
+        <button onclick='window.location = "/datasets/<%=@dataset.key%>/edit"' , type="button" class="btn btn-primary" data-dismiss="modal" id="edit-button">
           <span class="glyphicon glyphicon-edit"></span> Edit
         </button>
 
-        <button onclick='window.open("/help")', type="button" class="btn btn-success" data-dismiss="modal" id="help-button">
+        <button onclick='window.open("/help")' , type="button" class="btn btn-success" data-dismiss="modal" id="help-button">
           <span class="glyphicon glyphicon-question-sign"></span> Get Help
         </button>
 
-        <button onclick='window.location = "/datasets/<%=@dataset.key%>"', type="button" class="btn btn-info" data-dismiss="modal" id="cancel-button">
+        <button onclick='window.location = "/datasets/<%=@dataset.key%>"' , type="button" class="btn btn-info" data-dismiss="modal" id="cancel-button">
           <span class="glyphicon glyphicon-remove"></span> Close
         </button>
       </div>

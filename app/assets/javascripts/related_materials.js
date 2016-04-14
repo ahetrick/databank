@@ -185,7 +185,7 @@ function handle_relationship_box(material_index) {
     console.log(material_index);
     var checked_values = "";
     var i = 0;
-    $(".material_checkbox_" + material_index +":checked").each(function () {
+    $(".material_checkbox_" + material_index + ":checked").each(function () {
         if (i > 0) {
             checked_values = checked_values + ','
         }

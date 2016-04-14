@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
         !request.xhr?) # don't store ajax calls
       session[:previous_url] = request.fullpath
     end
-    if (request.path == '/welcome/deposit_login_modal' )
+    if (request.path == '/welcome/deposit_login_modal')
       session[:previous_url] = '/datasets/new'
     end
   end

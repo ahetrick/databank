@@ -75,6 +75,7 @@ module Datacite
           response_split = response.body.split(" ")
           response_split2 = response_split[1].split(":")
           doi = response_split2[1]
+          return doi
 
         else
           Rails.logger.warn response.to_yaml
@@ -88,9 +89,15 @@ module Datacite
 
         existing_datacite_record = datacite_record_hash(dataset)
 
+        Rails.logger.warn "datacite_record_hash: #{datacite_record_hash(dataset)}"
+
         if !existing_datacite_record
-          Rails.logger.warn "No Datacite record found when attempting to update DataCite record for dataset #{dataset.key}."
-          return nil
+          if dataset.identifier.include? "10.5072/FK2"
+            create_doi(dataset, current_user)
+          else
+            Rails.logger.warn "No Datacite record found when attempting to update DataCite record for dataset #{dataset.key}."
+            return nil
+          end
         end
 
         user = nil
@@ -114,9 +121,9 @@ module Datacite
           return true
         end
 
-        if  ((dataset.publication_state == Databank::PublicationState::PermSuppress::METADATA) || (dataset.hold_state == Databank::PublicationState::TempSuppress::METADATA))
+        if ((dataset.publication_state == Databank::PublicationState::PermSuppress::METADATA) || (dataset.hold_state == Databank::PublicationState::TempSuppress::METADATA))
           metadata['_status'] = "unavailable | Removed by Illinois Data Bank curators. Contact us for more information. #{ IDB_CONFIG[:root_url_text] }/help"
-        elsif existing_datacite_record[:status]!= 'reserved'  && dataset.publication_state == Databank::PublicationState::Embargo::METADATA
+        elsif existing_datacite_record[:status]!= 'reserved' && dataset.publication_state == Databank::PublicationState::Embargo::METADATA
           metadata['_status'] = "unavailable | Embargoed. This dataset will be available #{dataset.release_date.iso8601}."
         elsif [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED].include?(dataset.publication_state)
           metadata['_status'] = 'public'
@@ -127,7 +134,7 @@ module Datacite
 
         if ((dataset.publication_state == Databank::PublicationState::PermSuppress::METADATA) || (dataset.hold_state == Databank::PublicationState::TempSuppress::METADATA))
           metadata['datacite'] = dataset.withdrawn_metadata
-        elsif existing_datacite_record[:status]!= 'reserved'  && dataset.publication_state == Databank::PublicationState::Embargo::METADATA
+        elsif existing_datacite_record[:status]!= 'reserved' && dataset.publication_state == Databank::PublicationState::Embargo::METADATA
           metadata['datacite'] = dataset.embargo_metadata
         else
           metadata['datacite'] = metadata['datacite'] = dataset.to_datacite_xml
@@ -159,6 +166,7 @@ module Datacite
           end
 
         rescue Net::HTTPBadResponse, Net::HTTPServerError => error
+          Rails.logger.warn "bad response when trying to update DataCite metadata for dataset #{dataset.key}"
           Rails.logger.warn error.message
           Rails.logger.warn response.body
         end
@@ -186,16 +194,21 @@ module Datacite
         response_body_hash["#{split_line[0]}"] = "#{split_line[1]}"
       end
 
-      clean_metadata_xml_string = (response_body_hash["datacite"]).gsub("%0A", '')
-      metadata_doc = Nokogiri::XML(clean_metadata_xml_string)
-
       response_hash["target"] = response_body_hash["_target"]
       response_hash["created"]= (Time.at(Integer(response_body_hash["_created"])).to_datetime).strftime("%Y-%m-%d at %I:%M%p")
       response_hash["updated"]= (Time.at(Integer(response_body_hash["_updated"])).to_datetime).strftime("%Y-%m-%d at %I:%M%p")
       response_hash["owner"] = response_body_hash["_owner"]
       response_hash["status"] = response_body_hash["_status"]
       response_hash["datacenter"] = response_body_hash["_datacenter"]
-      response_hash["metadata"] = metadata_doc
+
+      #reserved DOIs won't have datacite element
+      if response_body_hash["datacite"]
+
+        clean_metadata_xml_string = (response_body_hash["datacite"]).gsub("%0A", '')
+        metadata_doc = Nokogiri::XML(clean_metadata_xml_string)
+        response_hash["metadata"] = metadata_doc
+
+      end
 
       return response_hash
 
@@ -215,6 +228,7 @@ module Datacite
             return response
 
           else
+            Rails.logger.warn response.to_yaml
             return nil
         end
 

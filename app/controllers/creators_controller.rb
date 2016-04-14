@@ -74,18 +74,18 @@ class CreatorsController < ApplicationController
   def create_for_form
     @dataset = Dataset.find_by_key(params[:dataset_key])
     @creator = Creator.new(dataset_id: @dataset.id, is_contact: false)
-    render(json: {"creator_id": @creator.id}, content_type: request.format, :layout => false )
+    render(json: {"creator_id" : @creator.id}, content_type: request.format, :layout => false)
   end
 
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_creator
-      @creator = Creator.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_creator
+    @creator = Creator.find(params[:id])
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def creator_params
-      params.require(:creator).permit(:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :email, :type_of, :is_contact, :row_position, :creator_id )
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def creator_params
+    params.require(:creator).permit(:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :email, :type_of, :is_contact, :row_position, :creator_id)
+  end
 end

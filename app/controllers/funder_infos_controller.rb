@@ -62,13 +62,13 @@ class FunderInfosController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_funder_info
-      @funder_info = FunderInfo.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_funder_info
+    @funder_info = FunderInfo.find(params[:id])
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def funder_info_params
-      params.require(:funder_info).permit(:code, :name, :identifier, :display_position, :identifier_scheme)
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def funder_info_params
+    params.require(:funder_info).permit(:code, :name, :identifier, :display_position, :identifier_scheme)
+  end
 end

@@ -18,7 +18,7 @@ class MedusaIngestsControllerTest < ActionController::TestCase
 
   test "should create medusa_ingest" do
     assert_difference('MedusaIngest.count') do
-      post :create, medusa_ingest: { error_text: @medusa_ingest.error_text, idb_class: @medusa_ingest.idb_class, idb_identifier: @medusa_ingest.idb_identifier, medusa_path: @medusa_ingest.medusa_path, medusa_uuid: @medusa_ingest.medusa_uuid, request_status: @medusa_ingest.request_status, response_time: @medusa_ingest.response_time, staging_path: @medusa_ingest.staging_path }
+      post :create, medusa_ingest: {error_text: @medusa_ingest.error_text, idb_class: @medusa_ingest.idb_class, idb_identifier: @medusa_ingest.idb_identifier, medusa_path: @medusa_ingest.medusa_path, medusa_uuid: @medusa_ingest.medusa_uuid, request_status: @medusa_ingest.request_status, response_time: @medusa_ingest.response_time, staging_path: @medusa_ingest.staging_path}
     end
 
     assert_redirected_to medusa_ingest_path(assigns(:medusa_ingest))
@@ -35,7 +35,7 @@ class MedusaIngestsControllerTest < ActionController::TestCase
   end
 
   test "should update medusa_ingest" do
-    patch :update, id: @medusa_ingest, medusa_ingest: { error_text: @medusa_ingest.error_text, idb_class: @medusa_ingest.idb_class, idb_identifier: @medusa_ingest.idb_identifier, medusa_path: @medusa_ingest.medusa_path, medusa_uuid: @medusa_ingest.medusa_uuid, request_status: @medusa_ingest.request_status, response_time: @medusa_ingest.response_time, staging_path: @medusa_ingest.staging_path }
+    patch :update, id: @medusa_ingest, medusa_ingest: {error_text: @medusa_ingest.error_text, idb_class: @medusa_ingest.idb_class, idb_identifier: @medusa_ingest.idb_identifier, medusa_path: @medusa_ingest.medusa_path, medusa_uuid: @medusa_ingest.medusa_uuid, request_status: @medusa_ingest.request_status, response_time: @medusa_ingest.response_time, staging_path: @medusa_ingest.staging_path}
     assert_redirected_to medusa_ingest_path(assigns(:medusa_ingest))
   end
 

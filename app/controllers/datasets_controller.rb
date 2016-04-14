@@ -354,7 +354,7 @@ class DatasetsController < ApplicationController
       respond_to do |format|
 
         if @dataset.save
-          if  Dataset.update_datacite_metadata(@dataset, current_user)
+          if Dataset.update_datacite_metadata(@dataset, current_user)
             format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and all files have been permanently supressed.] }
             format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
           else
@@ -404,7 +404,7 @@ class DatasetsController < ApplicationController
     respond_to do |format|
       if @dataset.complete?
 
-      # ensure identifier, update publication_state, interact with DataCite and Medusa
+        # ensure identifier, update publication_state, interact with DataCite and Medusa
         if ((old_publication_state != Databank::PublicationState::DRAFT) && (!@dataset.identifier || @dataset.identifier == ''))
           raise "Missing identifier for dataset that is not a draft. Dataset: #{@dataset.key}"
 
@@ -427,7 +427,7 @@ class DatasetsController < ApplicationController
             format.json { render json: @dataset.errors, status: :unprocessable_entity }
           end
 
-        # at this point, we are dealing with a published or imported dataset
+          # at this point, we are dealing with a published or imported dataset
         else
 
           if Dataset.update_datacite_metadata(@dataset, current_user)
@@ -767,9 +767,6 @@ class DatasetsController < ApplicationController
   def dataset_params
     params.require(:dataset).permit(:title, :identifier, :publisher, :publication_year, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :version, :release_date, :is_test, :is_import, :audit_id, :removed_private, :have_permission, :agree, :web_ids, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destory, :_update, :audit_id], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update, :audit_id], related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id])
   end
-
-
-
 
 
 end

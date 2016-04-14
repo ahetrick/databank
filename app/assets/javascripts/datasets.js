@@ -22,7 +22,7 @@ ready = function () {
     $('.bytestream_name').css("visibility", "hidden");
 
     if (!Modernizr.inputtypes.date) {
-        $("#dataset_release_date").prop({type:"text"});
+        $("#dataset_release_date").prop({type: "text"});
         $("#dataset_release_date").prop({placeholder: "MM/DD/YYYY"});
         $("#dataset_release_date").prop({"data-mask": "99/99/9999"});
 

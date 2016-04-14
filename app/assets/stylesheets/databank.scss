@@ -6,6 +6,7 @@ $minibar-height: 50px;
 .idb-help ul {
   list-style-type: none;
 }
+
 .idb-help p {
   font-size: large;
   line-height: 1.5;
@@ -15,7 +16,8 @@ $minibar-height: 50px;
 .idb-help-section-head {
   border: 1px $color__medium-grey;
 }
-.idb-help{
+
+.idb-help {
   padding-top: 10px;
 }
 
@@ -32,16 +34,18 @@ li.current {
   margin: 20px;
 }
 
-.bg-subtle  {
+.bg-subtle {
   background-color: $color__lightest-grey;
 }
+
 .navbar-user {
   padding-top: 15px;
   padding-bottom: 15px;
   position: relative;
   display: block;
 }
-.panel, .panel-group{
+
+.panel, .panel-group {
   margin-top: 5px;
   margin-bottom: 5px;
 }
@@ -50,22 +54,25 @@ li.current {
   line-height: 30px;
   font-size: 16px;
 }
+
 .fileinput-button {
   height: 40px;
 }
 
-.idb-alert{
+.idb-alert {
   padding: 15px;
   background-color: $color__light-blue;
   position: relative;
   z-index: 2100;
 }
+
 .idb-callout {
   background: $color__yellow;
   padding: 5px;
   border: 1px solid $color__light-orange;
 }
-.completion-warning{
+
+.completion-warning {
   background: $color__yellow;
   padding-top: 5px;
   padding-bottom: 5px;
@@ -136,7 +143,7 @@ div {
   text-align: center;
 }
 
-.flame-icon{
+.flame-icon {
   color: $color__red;
 }
 
@@ -160,11 +167,11 @@ a.idb:active {
   color: $color__text-light !important;
 }
 
-
-.idb-info-body{
+.idb-info-body {
   margin-left: 25px;
 }
-.idb-info-header{
+
+.idb-info-header {
   padding-left: 10px;
   background-color: $color__light-grey;
 }
@@ -173,13 +180,15 @@ a.idb:active {
 //  background-color: $color__lightest_blue;
 //}
 
-table.dataTable.no-footer{
+table.dataTable.no-footer {
   border-color: $color__darker-grey;
 }
-table{
+
+table {
   border-color: $color__darker-grey;
 }
-.switch-box{
+
+.switch-box {
   padding-left: 15px;
   padding-right: 15px;
   padding-bottom: 15px;

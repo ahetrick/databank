@@ -18,8 +18,8 @@ namespace :test do
     conn.start
 
     ch = conn.create_channel
-    q  = ch.queue("idb_to_medusa", :durable => true)
-    x  = ch.default_exchange
+    q = ch.queue("idb_to_medusa", :durable => true)
+    x = ch.default_exchange
 
     # q.subscribe do |delivery_info, metadata, payload|
     #   puts "Received #{payload}"
@@ -45,8 +45,8 @@ namespace :test do
     conn.start
 
     ch = conn.create_channel
-    q  = ch.queue("medusa_to_idb", :durable => true)
-    x  = ch.default_exchange
+    q = ch.queue("medusa_to_idb", :durable => true)
+    x = ch.default_exchange
 
     delivery_info, properties, payload = q.pop
     if payload.nil?
@@ -73,8 +73,8 @@ namespace :test do
     conn.start
 
     ch = conn.create_channel
-    q  = ch.queue("medusa_to_idb", :durable => true)
-    x  = ch.default_exchange
+    q = ch.queue("medusa_to_idb", :durable => true)
+    x = ch.default_exchange
 
     # q.subscribe do |delivery_info, metadata, payload|
     #   puts "Received #{payload}"
@@ -107,8 +107,8 @@ namespace :test do
     conn.start
 
     ch = conn.create_channel
-    q  = ch.queue("medusa_to_idb", :durable => true)
-    x  = ch.default_exchange
+    q = ch.queue("medusa_to_idb", :durable => true)
+    x = ch.default_exchange
 
     # q.subscribe do |delivery_info, metadata, payload|
     #   puts "Received #{payload}"
@@ -146,5 +146,5 @@ namespace :test do
     puts medusa_ingest.to_yaml
 
   end
-  
+
 end

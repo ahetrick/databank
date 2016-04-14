@@ -5,8 +5,10 @@ class HelpController < ApplicationController
     end
     # Rails.logger.warn @dataset.to_yaml
   end
+
   def sensitive
   end
+
   def help_mail
     if params.has_key?("nobots")
       # ignore the spam

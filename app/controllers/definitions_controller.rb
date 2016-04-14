@@ -62,13 +62,13 @@ class DefinitionsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_definition
-      @definition = Definition.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_definition
+    @definition = Definition.find(params[:id])
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def definition_params
-      params.require(:definition).permit(:term, :meaning)
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def definition_params
+    params.require(:definition).permit(:term, :meaning)
+  end
 end

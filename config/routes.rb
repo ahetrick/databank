@@ -79,7 +79,7 @@ Rails.application.routes.draw do
   post "/datafiles/create_from_box", to: 'datafiles#create_from_box'
 
   # cancel box upload
-  get "/datasets/:id/datafiles/:web_id/cancel_box_upload", to: 'datasets#cancel_box_upload', defaults: { format: 'js' }
+  get "/datasets/:id/datafiles/:web_id/cancel_box_upload", to: 'datasets#cancel_box_upload', defaults: {format: 'js'}
 
   # get citation text
   get "datasets/:id/citation_text", to: 'datasets#citation_text', defaults: {format: 'json'}

@@ -39,7 +39,7 @@ module MessageText
         when Databank::PublicationState::Embargo::METADATA
           case new_state
             when Databank::PublicationState::RELEASED
-              return %Q[Dataset was successfully published and the DataCite DOI is #{dataset.identifier}.<br/>The persistent link to this dataset is now <a href = "https://doi.org/#{dataset.identifier}">https://doi.org/#{dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.]
+              return %Q[Dataset was successfully published and the DataCite DOI is #{dataset.identifier}.<br/>The persistent link to this dataset is <a href = "https://doi.org/#{dataset.identifier}">https://doi.org/#{dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.]
 
             when Databank::PublicationState::Embargo::METADATA
               return %Q[No changes have been published.<br/>The persistent link to this dataset will be <a href = "https://doi.org/#{dataset.identifier}">https://doi.org/#{dataset.identifier}</a> starting #{dataset.release_date}.]
@@ -86,8 +86,6 @@ module MessageText
       end
 
 
-
-
     end
 
 
@@ -131,9 +129,13 @@ module MessageText
             msg << "<ul>"
             msg << "<li>The DOI link will fail until #{effective_release_date}.</li>"
             msg << "<li>The record for your dataset is not visible, nor are your data files available until #{effective_release_date}.</li>"
+          elsif [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED].include?(dataset.publication_state)
+            msg << "<h3>This action will remove your dataset from public availability.</h3>"
+            msg << "<ul>"
+            msg << "<li>The DOI link will resolve to an EZID tombestone page until #{effective_release_date}.</li>"
+            msg << "<li>The record for your dataset is not visible, nor are your data files available until #{effective_release_date}.</li>"
           else
-            # Should never get here, DataCite record changes are not relevant to Embargo::METADATA
-            msg << "<h3>This action will not do anything.  The record for your dataset is not visible, and the DOI is already reserved.</h3>"
+            msg << "<h4>Unexpected Error: Please contact the <a href='/help'>Research Data Service Team</a>.</h4><hr/>"
             msg << "<ul>"
           end
 

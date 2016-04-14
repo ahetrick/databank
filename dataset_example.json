@@ -86,8 +86,12 @@
         }
       ]
     },
-    "sizes": { "size": "3KB" },
-    "formats": { "format": "application/xml" },
+    "sizes": {
+      "size": "3KB"
+    },
+    "formats": {
+      "format": "application/xml"
+    },
     "version": "3.1",
     "rightsList": {
       "rights": {
@@ -100,7 +104,18 @@
         "-xml:lang": "en-us",
         "-descriptionType": "Abstract",
         "#text": "
-        XML example of all DataCite Metadata Schema v3.1 properties.
+        XML
+        example
+        of
+        all
+        DataCite
+        Metadata
+        Schema
+        v3
+        .
+        1
+        properties
+        .
         "
       }
     },

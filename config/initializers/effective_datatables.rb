@@ -50,10 +50,10 @@ EffectiveDatatables.setup do |config|
   # For performance reasons, we only check the class once, not every individual resource.
   # You can override this default by calling `actions_column show: false, edit: true, destroy: :authorize`
   config.actions_column = {
-    show: true,
-    edit: false,
-    destroy: false,
-    unarchive: false
+      show: true,
+      edit: false,
+      destroy: false,
+      unarchive: false
   }
 
 end

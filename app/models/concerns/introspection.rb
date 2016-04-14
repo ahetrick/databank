@@ -7,7 +7,7 @@ module Introspection
   module ClassMethods
     def max_length(property)
       self.validators_on(property.to_sym).
-          select{ |v| v.kind_of?(ActiveModel::Validations::LengthValidator) }.
+          select { |v| v.kind_of?(ActiveModel::Validations::LengthValidator) }.
           first.options[:maximum]
     end
   end

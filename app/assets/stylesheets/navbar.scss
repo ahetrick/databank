@@ -4,15 +4,16 @@
   background-color: $color__darker-blue;
   border-radius: 0;
 }
+
 #ui-lib-mobile-utilities {
   background-color: $color__dark-navy;
   border-bottom: 1px solid $color__text-light;
-  margin-left:-15px;
+  margin-left: -15px;
   padding-left: 15px;
   padding-right: 15px;
   padding-top: 10px;
   a {
-  color: $color__text-light;
+    color: $color__text-light;
   }
   > div {
     padding-bottom: 10px;
@@ -39,10 +40,10 @@
     font-size: 13px;
     white-space: normal;
     line-height: 16px;
-    padding-top:3px;
+    padding-top: 3px;
   }
-  float: right;  
-  .dropdown-menu > .active > a{
+  float: right;
+  .dropdown-menu > .active > a {
     background-color: $color__burnt-orange;
   }
   // .current-menu-ancestor
@@ -51,7 +52,7 @@
   //   background-color: $color__burnt-orange;
   // }
   a {
-    outline:none;
+    outline: none;
     color: $color__text-light;
     font-size: 16px;
     padding-top: 5px;
@@ -70,8 +71,8 @@
     background-color: $color__burnt-orange;
   }
   ul li:last-of-type ul {
-   //@extend .pull-right;
-    float:right;
+    //@extend .pull-right;
+    float: right;
     right: 0;
     left: auto;
   }
@@ -80,12 +81,12 @@
     border: none;
     border-radius: 0;
     padding: 0px;
-    a:hover,a:focus {
+    a:hover, a:focus {
       color: $color__dark-navy;
       background-color: $color__background-main-column;
     }
     > li:last-of-type {
-    border-top: 1px solid $color__text-light;
+      border-top: 1px solid $color__text-light;
       a {
         text-align: right;
         font-weight: 700;
@@ -96,13 +97,13 @@
         content: ' \f0a9';
       }
     }
-    > li:last-of-type:hover,> li:last-of-type:focus {
+    > li:last-of-type:hover, > li:last-of-type:focus {
       border: 1px solid $color__burnt-orange;
       color: $color__dark-navy;
       background-color: $color__background-main-column;
     }
     li {
-      margin:0px;
+      margin: 0px;
       border: 1px solid $color__burnt-orange;
       a {
         padding-top: 10px;
@@ -110,17 +111,19 @@
     }
   }
 }
+
 #ui-lib-site-mobile-title {
   background-color: $color__lightest-grey;
   font-weight: 700;
   margin-left: -15px;
   padding-left: 15px;
-  padding-top: 5px; 
+  padding-top: 5px;
 }
+
 #ui-lib-mobile-site-menu {
   background-color: $color__lightest-grey;
-  height:100%;
-  margin-left:-15px;
+  height: 100%;
+  margin-left: -15px;
   padding-left: 15px;
   padding-right: 15px;
   a {
@@ -128,10 +131,10 @@
     font-size: 15px;
     padding-top: 5px;
     padding-bottom: 5px;
-  }  
+  }
   li {
-    margin:0px;
-  } 
+    margin: 0px;
+  }
   ul {
     margin-top: 0px;
     margin-bottom: 0px;
@@ -142,31 +145,29 @@
   @include border-rad();
 }
 
-
-
 /*off-canvas navbar*/
 /*http://www.smashingmagazine.com/2013/01/15/off-canvas-navigation-for-responsive-website/ */
-@media (max-width:767px) {
+@media (max-width: 767px) {
   #ui-lib-global-nav {
     right: -85%;
     width: 85%;
     height: 100%;
     position: absolute;
     top: 0;
-    margin-right:0;
-    margin-left:0;
-    padding-left:15px;
+    margin-right: 0;
+    margin-left: 0;
+    padding-left: 15px;
     div {
       float: none;
     }
     ul li:last-of-type ul {
-      float:none;
+      float: none;
       right: 0;
       left: auto;
     }
   }
   #ui-lib-global-menu {
-    margin-left:-15px; 
+    margin-left: -15px;
     > ul {
       margin: 0px;
     }
@@ -194,8 +195,8 @@
     width: 100%;
   }
   #inner-wrap.off-canvas {
-    right:85%;
-    right:0;
+    right: 85%;
+    right: 0;
     transform: translateX(-85%);
   }
   #inner-wrap {
@@ -204,7 +205,7 @@
   .mobile-overlay.off-canvas {
     height: 100%;
     width: 100%;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     z-index: 2;
     position: absolute;
     top: 0px;
@@ -221,46 +222,46 @@
   }
 }
 
-@media (max-width:550px) {
-  #mobile-canvas-button>i {
-    font-size:2em;    
+@media (max-width: 550px) {
+  #mobile-canvas-button > i {
+    font-size: 2em;
   }
   .off-canvas #mobile-canvas-button:before {
-    font-size:2em; 
+    font-size: 2em;
     font-family: FontAwesome;
     content: '\f00d';
     z-index: 3;
-    position:relative;
+    position: relative;
   }
   #mobile-canvas-button:before {
-    font-size:2em; 
+    font-size: 2em;
     font-family: FontAwesome;
     content: '\f0c9';
     z-index: 3;
-    position:relative;
+    position: relative;
   }
   #mobile-canvas-button {
     text-decoration: none;
-    >textarea{
+    > textarea {
       line-height: 0;
     }
   }
 }
 
-@media (min-width:551px) {
+@media (min-width: 551px) {
   .off-canvas #mobile-canvas-button:before {
-    font-size:3em; 
+    font-size: 3em;
     font-family: FontAwesome;
     content: '\f00d';
     z-index: 3;
-    position:relative;
+    position: relative;
   }
   #mobile-canvas-button:before {
-    font-size:3em; 
+    font-size: 3em;
     font-family: FontAwesome;
     content: '\f0c9';
     z-index: 3;
-    position:relative;
+    position: relative;
   }
   #mobile-canvas-button {
     text-decoration: none;

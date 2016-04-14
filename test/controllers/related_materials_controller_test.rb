@@ -18,7 +18,7 @@ class RelatedMaterialsControllerTest < ActionController::TestCase
 
   test "should create related_material" do
     assert_difference('RelatedMaterial.count') do
-      post :create, related_material: { availability: @related_material.availability, citation: @related_material.citation, dataset_id: @related_material.dataset_id, link: @related_material.link, materialType: @related_material.materialType, uri: @related_material.uri, uri_type: @related_material.uri_type }
+      post :create, related_material: {availability: @related_material.availability, citation: @related_material.citation, dataset_id: @related_material.dataset_id, link: @related_material.link, materialType: @related_material.materialType, uri: @related_material.uri, uri_type: @related_material.uri_type}
     end
 
     assert_redirected_to related_material_path(assigns(:related_material))
@@ -35,7 +35,7 @@ class RelatedMaterialsControllerTest < ActionController::TestCase
   end
 
   test "should update related_material" do
-    patch :update, id: @related_material, related_material: { availability: @related_material.availability, citation: @related_material.citation, dataset_id: @related_material.dataset_id, link: @related_material.link, materialType: @related_material.materialType, uri: @related_material.uri, uri_type: @related_material.uri_type }
+    patch :update, id: @related_material, related_material: {availability: @related_material.availability, citation: @related_material.citation, dataset_id: @related_material.dataset_id, link: @related_material.link, materialType: @related_material.materialType, uri: @related_material.uri, uri_type: @related_material.uri_type}
     assert_redirected_to related_material_path(assigns(:related_material))
   end
 

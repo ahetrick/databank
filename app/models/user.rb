@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   include ActiveModel::Serialization
 
   ROLES = %w[admin depositor guest no_deposit]
-  
+
   validates_uniqueness_of :uid, allow_blank: false
   validates :email, allow_blank: false, email: true
 
@@ -51,13 +51,13 @@ class User < ActiveRecord::Base
   def update_with_omniauth(auth)
     authname = auth["info"]["name"]
 
-    if ( (auth["provider"] == "shibboleth") &&  (auth["extra"]["raw_info"]["nickname"]) && ( (auth["extra"]["raw_info"]["nickname"]) != "") )
+    if ((auth["provider"] == "shibboleth") && (auth["extra"]["raw_info"]["nickname"]) && ((auth["extra"]["raw_info"]["nickname"]) != ""))
       authname = "#{auth["extra"]["raw_info"]["nickname"]} #{auth["extra"]["raw_info"]["sn"]}"
     end
 
     self.provider = auth["provider"]
     self.uid = auth["uid"]
-    self.name =  authname
+    self.name = authname
     self.email = auth["info"]["email"]
     self.username = email.split('@').first
 
@@ -75,7 +75,7 @@ class User < ActiveRecord::Base
     create! do |user|
       user.provider = "system"
       user.uid = IDB_CONFIG[:system_user_email]
-      user.name =  IDB_CONFIG[:system_user_name]
+      user.name = IDB_CONFIG[:system_user_name]
       user.email = IDB_CONFIG[:system_user_email]
       user.username = IDB_CONFIG[:system_user_name]
       user.role = "admin"
@@ -86,14 +86,14 @@ class User < ActiveRecord::Base
 
     authname = auth["info"]["name"]
 
-    if ( (auth["provider"] == "shibboleth") &&  (auth["extra"]["raw_info"]["nickname"]) && ( (auth["extra"]["raw_info"]["nickname"]) != "") )
+    if ((auth["provider"] == "shibboleth") && (auth["extra"]["raw_info"]["nickname"]) && ((auth["extra"]["raw_info"]["nickname"]) != ""))
       authname = "#{auth["extra"]["raw_info"]["nickname"]} #{auth["extra"]["raw_info"]["sn"]}"
     end
 
     create! do |user|
       user.provider = auth["provider"]
       user.uid = auth["uid"]
-      user.name =  authname
+      user.name = authname
       user.email = auth["info"]["email"]
       user.username = user.email.split('@').first
 

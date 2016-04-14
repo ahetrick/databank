@@ -31,7 +31,7 @@ module Effective
       end
 
       def collection
-        changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', attributes[:dataset_id],attributes[:dataset_id])
+        changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', attributes[:dataset_id], attributes[:dataset_id])
         medusaChangesArr = Array.new
         publication = nil
         changes.each do |change|

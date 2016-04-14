@@ -7,11 +7,11 @@ class DownloaderClient
   include ActiveModel::Naming
 
   #precondition: all targets are in Medusa
-  
+
   def self.get_download_hash(web_ids, zipname)
     download_hash = Hash.new
     total_size = 0
-    
+
     #web_ids is expected to be an array
     num_files = 0
     if web_ids.respond_to?(:count)
@@ -104,7 +104,7 @@ class DownloaderClient
 
 
   end
-  
+
   def self.get_download_link(web_ids, zipname)
     #web_ids is expected to be an array
     num_files = 0

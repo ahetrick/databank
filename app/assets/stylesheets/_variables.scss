@@ -87,8 +87,8 @@ $color__orange-header: #c96128;
 //colors not in wp scss
 $color__light-orange-hover: #DD6C2A;
 $color__med-orange: #C95F17;
-$panel-border: 1px solid  #bbb;
+$panel-border: 1px solid #bbb;
 
-@mixin border-rad(){
+@mixin border-rad() {
   border-radius: 0;
 }

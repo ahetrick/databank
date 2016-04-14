@@ -18,7 +18,7 @@ class FunderInfosControllerTest < ActionController::TestCase
 
   test "should create funder_info" do
     assert_difference('FunderInfo.count') do
-      post :create, funder_info: { code: @funder_info.code, display_position: @funder_info.display_position, identifier: @funder_info.identifier, identifier_scheme: @funder_info.identifier_scheme, name: @funder_info.name }
+      post :create, funder_info: {code: @funder_info.code, display_position: @funder_info.display_position, identifier: @funder_info.identifier, identifier_scheme: @funder_info.identifier_scheme, name: @funder_info.name}
     end
 
     assert_redirected_to funder_info_path(assigns(:funder_info))
@@ -35,7 +35,7 @@ class FunderInfosControllerTest < ActionController::TestCase
   end
 
   test "should update funder_info" do
-    patch :update, id: @funder_info, funder_info: { code: @funder_info.code, display_position: @funder_info.display_position, identifier: @funder_info.identifier, identifier_scheme: @funder_info.identifier_scheme, name: @funder_info.name }
+    patch :update, id: @funder_info, funder_info: {code: @funder_info.code, display_position: @funder_info.display_position, identifier: @funder_info.identifier, identifier_scheme: @funder_info.identifier_scheme, name: @funder_info.name}
     assert_redirected_to funder_info_path(assigns(:funder_info))
   end
 
