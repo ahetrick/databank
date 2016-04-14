@@ -541,7 +541,7 @@ class Dataset < ActiveRecord::Base
       end
     end
 
-    if self.title_changed? || self.license_changed? || self.description_changed? || self.version_changed? || self.keywords_changed? || self.identifier_changed? || self.publication_year_changed? || self.release_date_changed? || self.embargo_changed?
+    if self.title_changed? || self.license_changed? || self.description_changed? || self.version_changed? || self.keywords_changed? || self.publication_year_changed? || self.release_date_changed? || self.embargo_changed?
       return true
     end
 

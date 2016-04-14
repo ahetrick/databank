@@ -412,8 +412,11 @@ class DatasetsController < ApplicationController
           # the create_doi method uses a given identifier if it has been specified
           @dataset.identifier = Dataset.create_doi(@dataset, current_user)
           MedusaIngest.send_dataset_to_medusa(@dataset, old_publication_state)
-          @dataset.has_datacite_change = false
+          # strange is double-save because publication changes the dataset, but should not trigger change flag
+          # there is probably a better way to do this, and alternatives would be welcome
           if @dataset.save
+            @dataset.has_datacite_change = false
+            @dataset.save
             format.html { redirect_to dataset_path(@dataset.key), notice: Dataset.deposit_confirmation_notice(old_publication_state, @dataset) }
             format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
           else
@@ -430,9 +433,11 @@ class DatasetsController < ApplicationController
           if Dataset.update_datacite_metadata(@dataset, current_user)
 
             MedusaIngest.send_dataset_to_medusa(@dataset, old_publication_state)
-
-            @dataset.has_datacite_change = false
+            # strange double-save is because publication changes the dataset, but should not trigger change flag
+            # there is probably a better way to do this, and alternatives would be welcome
             if @dataset.save
+              @dataset.has_datacite_change = false
+              @dataset.save
               format.html { redirect_to dataset_path(@dataset.key), notice: Dataset.deposit_confirmation_notice(old_publication_state, @dataset) }
               format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
             else
