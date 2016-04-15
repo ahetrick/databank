@@ -91,4 +91,15 @@ namespace :databank do
     end
   end
 
+  desc 'remove empty datasets more than 12 hours old'
+  task :remove_datasets_empty_12h => :environment do
+    drafts = Dataset.where(publication_state: Databank::PublicationState::DRAFT)
+    drafts.each do |draft|
+      unless ((draft.title && draft.title != '')||(draft.creators.count > 0)||(draft.datafiles.count > 0)||(draft.funders.count > 0) || (draft.related_materials.count > 0) || (draft.description && draft.description != '') || (draft.keywords && draft.keywords != '') )
+        if draft.created_at < (12.hours.ago)
+          draft.destroy
+        end
+      end
+    end
+  end
 end

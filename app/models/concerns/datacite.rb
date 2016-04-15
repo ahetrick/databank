@@ -89,7 +89,7 @@ module Datacite
 
         existing_datacite_record = datacite_record_hash(dataset)
 
-        Rails.logger.warn "datacite_record_hash: #{datacite_record_hash(dataset)}"
+        # emacsRails.logger.warn "datacite_record_hash: #{datacite_record_hash(dataset)}"
 
         if !existing_datacite_record
           if dataset.identifier.include? "10.5072/FK2"

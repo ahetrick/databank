@@ -141,4 +141,10 @@ namespace :medusa do
     end
   end
 
+  desc 'resend failed medusa messages'
+  task :retry_failed => :environment do
+    puts "not yet implemented"
+  end
+
+
 end
