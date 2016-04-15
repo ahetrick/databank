@@ -150,7 +150,7 @@ module MessageText
           msg << "<li>Your data files will be publicly available.</li>"
       end
 
-      msg << "<li>You will be able to edit the description for the dataset to correct an error, but would need to contact the <a href='/help'>Research Data Service</a> if there is an error in the files that needs to be corrected.</li> "
+      msg << "<li>You will be able to edit the description for the dataset, but would need to contact the <a href='/help'>Research Data Service</a> if you need to change, update, or add files for any reason.</li> "
 
       msg << "</ul></div>"
 
