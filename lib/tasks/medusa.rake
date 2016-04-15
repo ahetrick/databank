@@ -159,10 +159,12 @@ namespace :medusa do
           Rails.logger.warn "dataset not found for ingest #{ingest.to_yaml}"
         end
 
-        medusa_dataset_dir_json = JSON.parse(ingest.medusa_dataset_dir)
+        medusa_dataset_dir_json = JSON.parse((ingest.medusa_dataset_dir).gsub("'",'"').gsub('=>',':'))
 
-        dataset.medusa_dataset_dir = ingest.medusa_dataset_dir_json['url_path']
-        dataset.save
+        if dataset && (!dataset.medusa_dataset_dir || dataset.medusa_dataset_dir == '')
+          dataset.medusa_dataset_dir = medusa_dataset_dir_json['url_path']
+          dataset.save
+        end
 
 
       end

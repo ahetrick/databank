@@ -351,7 +351,7 @@
     <p>To see this dataset in Medusa, go to
       <% if @dataset.medusa_dataset_dir && @dataset.medusa_dataset_dir != '' %>
 
-        <a href="<%= IDB_CONFIG['medusa']['datasets_url_base'] %><%= @dataset.medusa_dataset_dir %>"><%= IDB_CONFIG['medusa']['datasets_url_base'] %><%= @dataset.medusa_dataset_dir %></a>
+        <a href="<%= IDB_CONFIG['medusa']['datasets_url_base'] %><%= @dataset.medusa_dataset_dir %>" target="_blank"><%= IDB_CONFIG['medusa']['datasets_url_base'] %><%= @dataset.medusa_dataset_dir %></a>
       <% else %>
         <a href="<%= IDB_CONFIG['medusa']['file_group_url'] %>">IDB File Group</a> and filter by: <%= @dataset.key %>
       <% end %>
