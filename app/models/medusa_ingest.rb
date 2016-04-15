@@ -128,6 +128,8 @@ class MedusaIngest < ActiveRecord::Base
 
   def self.on_medusa_succeeded_message(response_hash)
     staging_path_arr = (response_hash['staging_path']).split('/')
+    Rails.logger.warn response_hash['staging_path']
+    Rails.logger.warn "item_root_dir: #{response_hash['item_root_dir']}"
 
     ingest_relation = MedusaIngest.where("staging_path = ?", response_hash['staging_path'])
 
@@ -148,14 +150,13 @@ class MedusaIngest < ActiveRecord::Base
 
           dataset = Dataset.where(id: datafile.dataset_id).first
 
-          if !dataset
+          unless dataset
             Rails.logger.warn "dataset not found for ingest #{ingest.to_yaml}"
           end
 
           if dataset && (!dataset.medusa_dataset_dir || dataset.medusa_dataset_dir == '')
-            dataset.medusa_dataset_dir = ingest.medusa_dataset_dir
-          else
-
+            dataset.medusa_dataset_dir = ingest.medusa_dataset_dir['url_path']
+            dataset.save
           end
 
           if datafile && datafile.binary

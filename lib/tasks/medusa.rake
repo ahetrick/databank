@@ -146,5 +146,27 @@ namespace :medusa do
     puts "not yet implemented"
   end
 
+  desc 'retroactively set medusa_dataset_dir in dataset if it exist in ingest'
+  task :retry_set_dir => :environment do
+    ingests = MedusaIngest.where.not(medusa_dataset_dir: nil)
+    ingests.each do |ingest|
+      if ingest.idb_class == 'datafile'
+        datafile = Datafile.find_by_web_id(ingest.idb_identifier)
+
+        dataset = Dataset.where(id: datafile.dataset_id).first
+
+        unless dataset
+          Rails.logger.warn "dataset not found for ingest #{ingest.to_yaml}"
+        end
+
+        if dataset && (!dataset.medusa_dataset_dir || dataset.medusa_dataset_dir == '')
+          dataset.medusa_dataset_dir = ingest.medusa_dataset_dir['url_path']
+          dataset.save
+        end
+
+      end
+    end
+  end
+
 
 end
