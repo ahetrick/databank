@@ -94,6 +94,7 @@ module Datacite
         if !existing_datacite_record
           if dataset.identifier.include? "10.5072/FK2"
             create_doi(dataset, current_user)
+            return true
           else
             Rails.logger.warn "No Datacite record found when attempting to update DataCite record for dataset #{dataset.key}."
             return nil
