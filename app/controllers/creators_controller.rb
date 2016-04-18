@@ -74,7 +74,7 @@ class CreatorsController < ApplicationController
   def create_for_form
     @dataset = Dataset.find_by_key(params[:dataset_key])
     @creator = Creator.new(dataset_id: @dataset.id, is_contact: false)
-    render(json: {"creator_id" : @creator.id}, content_type: request.format, :layout => false)
+    render(json: {"creator_id" => @creator.id}, content_type: request.format, :layout => false)
   end
 
 
