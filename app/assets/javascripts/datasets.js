@@ -21,18 +21,20 @@ ready = function () {
 
     $('.bytestream_name').css("visibility", "hidden");
 
+    // handle non-chrome datepicker:
     if (!Modernizr.inputtypes.date) {
         $("#dataset_release_date").prop({type: "text"});
-        $("#dataset_release_date").prop({placeholder: "MM/DD/YYYY"});
-        $("#dataset_release_date").prop({"data-mask": "99/99/9999"});
+        $("#dataset_release_date").prop({placeholder: "YYYY-MM-DD"});
+        $("#dataset_release_date").prop({"data-mask": "9999-99-99"});
+        console.log( $("#dataset_release_date").val());
 
         $("#dataset_release_date").datepicker({
             inline: true,
             showOtherMonths: true,
             minDate: 0,
             maxDate: "+1Y",
-            defaultDate: (new Date())
-
+            dateFormat: "yy-mm-dd",
+            defaultDate: (Date.now())
         });
     }
 
