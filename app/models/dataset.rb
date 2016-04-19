@@ -738,6 +738,9 @@ class Dataset < ActiveRecord::Base
     changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', self.id, self.id)
     changesArr = Array.new
     changes.each do |change|
+
+      change.delete["remote_address"]
+      change.delete["request_uuid"]
       agent = nil
       user = nil
       if change.user_id && change.user_id != ''
