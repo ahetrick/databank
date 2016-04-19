@@ -63,7 +63,7 @@ function add_material_row() {
         var material_row = '<tr class="item row" id="material_index_' + newId + '">' +
             '<td>' +
             '<select class="form-control dataset" onchange="handleMaterialChange(' + newId + ')" name="dataset[related_materials_attributes][' + newId + '][selected_type]" id="dataset_related_materials_attributes_' + newId + '_selected_type">' +
-            '<option value="">Please select</option>' +
+            '<option value="">Select...</option>' +
             '<option value="Article">Article</option>' +
             '<option value="Code">Code</option>' +
             '<option value="Dataset">Dataset</option>' +
@@ -73,12 +73,6 @@ function add_material_row() {
             '</td>' +
             '<td>' +
             '<input class="form-control dataset material-text" type="text" name="dataset[related_materials_attributes][' + newId + '][material_type]" id="dataset_related_materials_attributes_' + newId + '_material_type" style="visibility: hidden;" />' +
-            '</td>' +
-            '<td>' +
-            '<select class="form-control dataset" name="dataset[related_materials_attributes][' + newId + '][availability]" id="dataset_related_materials_attributes_' + newId + '_availability">' +
-            '<option value="">Please select</option>' +
-            '<option value="Forthcoming">Forthcoming</option>' +
-            '<option value="Available">Available</option></select>' +
             '</td>' +
             '<td>' +
             '<input class="form-control dataset" type="text" placeholder="[ URL to resource, e.g:   http://hdl.handle.net/2142/46427 ]"  name="dataset[related_materials_attributes][' + newId + '][link]" id="dataset_related_materials_attributes_' + newId + '_link" />' +
@@ -147,16 +141,10 @@ function add_material_row() {
             '<input class="form-control dataset material-text" type="text" name="dataset[related_materials_attributes][' + newId + '][material_type]" id="dataset_related_materials_attributes_' + newId + '_material_type" style="visibility: hidden;" />' +
             '</td>' +
             '<td>' +
-            '<select class="form-control dataset" name="dataset[related_materials_attributes][' + newId + '][availability]" id="dataset_related_materials_attributes_' + newId + '_availability">' +
-            '<option value="">Select...</option>' +
-            '<option value="Forthcoming">Forthcoming</option>' +
-            '<option value="Available">Available</option></select>' +
+            '<input class="form-control dataset" type="text" placeholder="[ URL to resource, e.g:   http://hdl.handle.net/2142/46427 ]" name="dataset[related_materials_attributes][' + newId + '][link]" id="dataset_related_materials_attributes_' + newId + '_link" />' +
             '</td>' +
             '<td>' +
-            '<input class="form-control dataset" type="text" name="dataset[related_materials_attributes][' + newId + '][link]" id="dataset_related_materials_attributes_' + newId + '_link" />' +
-            '</td>' +
-            '<td>' +
-            '<textarea rows="2" class="form-control dataset" name="dataset[related_materials_attributes][' + newId + '][citation]" id="dataset_related_materials_attributes_' + newId + '_citation">' +
+            '<textarea rows="2" class="form-control dataset" placeholder="[ related resource citation, e.g.:  Author(s). &quot;Title of Article.&quot; Title of Periodical Date: pages. Medium of publication.  identifier ]" name="dataset[related_materials_attributes][' + newId + '][citation]" id="dataset_related_materials_attributes_' + newId + '_citation">' +
             '</textarea>' +
             '</td>' +
             '<td></td>' +
