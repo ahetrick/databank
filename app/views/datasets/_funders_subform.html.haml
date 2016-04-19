@@ -13,6 +13,7 @@
         = f.fields_for :funders, funder do |ff|
           %tr(class="item row" id="funder_index_#{i}" )
             %td
+              =ff.hidden_field :_destroy, value: false
               =ff.hidden_field :identifier
               =ff.hidden_field :identifier_scheme
               =ff.collection_select :code, FunderInfo.order('display_position ASC'), :code, :name, {prompt: true}, {class: "form-control dataset", onchange: "handleFunderChange(#{i})"}

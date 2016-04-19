@@ -24,6 +24,7 @@
         = f.fields_for :related_materials, material do |ff|
           %tr(class="item row" id="material_index_#{i}" )
             %td
+              =ff.hidden_field :_destroy, value: false
               =ff.select :selected_type, options_for_select([Databank::MaterialType::ARTICLE, Databank::MaterialType::CODE, Databank::MaterialType::DATASET, Databank::MaterialType::PRESENTATION, Databank::MaterialType::THESIS, ["Other:",Databank::MaterialType::OTHER]], material.selected_type), {prompt: "Select..."}, {class: "form-control dataset", onchange: "handleMaterialChange(#{i})"}
             %td
               =ff.text_field :material_type, {class: "form-control dataset material-text"}
