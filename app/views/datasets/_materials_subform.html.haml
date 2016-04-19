@@ -1,15 +1,12 @@
-%p Provide information about materials related to this dataset, such as articles, code repositories, and/or other datasets, including identifiers (e.g., DOI, Handle, ARK, URL) where possible. The information entered here will be displayed on the dataset’s IDB data download page and may be reviewed by IDB curators so that others can find materials related to the dataset.
+%p Does this dataset support any articles, presentations, or thesis (current or forthcoming)?  Was any code used in processing this dataset, or is this dataset designed to be processable by specific code?  Are there other datasets produced by the same project? To support discovery of relationships between this dataset and other resources (published in Illinois Data Bank or elsewhere), provide links to and/or citations for related resources.   Include identifiers (e.g., DOI, Handle, ARK, URL) where possible.
 
 %input(type="hidden" name="material_index_max" id="material_index_max" value="#{@dataset.related_materials.count.to_i}" )
   %table(id="material_table" class="table table-striped")
     %thead
       %tr(class="row" )
-        %th(class="col-md-1")
-          Type of Material
-        %th(class="col-md-1" )
-        %th(class="col-md-1" )
-          Status
-        %th(class="col-md-2")
+        %th(colspan="2" class="col-md-2")
+          Related Resource Type
+        %th(class="col-md-3")
           Link
         - if (can? :manage, @dataset)
           %th(class="col-md-2" )
@@ -31,11 +28,9 @@
             %td
               =ff.text_field :material_type, {class: "form-control dataset material-text"}
             %td
-              =ff.select :availability, options_for_select(["Forthcoming", "Available"], material.availability), {prompt: "Select..."}, {class: "form-control dataset"}
+              =ff.text_field :link, {class: "form-control dataset", placeholder: "[ URL to resource, e.g:   http://hdl.handle.net/2142/46427 ]"}
             %td
-              =ff.text_field :link, {class: "form-control dataset"}
-            %td
-              =ff.text_area :citation, {rows: 2, class: "form-control dataset"}
+              =ff.text_area :citation, {rows: 2, class: "form-control dataset", placeholder: %Q[[ related resource citation, e.g.:  Author(s). "Title of Article." Title of Periodical Date: pages. Medium of publication.  identifier ]]}
             - if (can? :manage, @dataset)
 
               %td
