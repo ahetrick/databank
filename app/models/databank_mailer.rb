@@ -56,4 +56,9 @@ class DatabankMailer < ActionMailer::Base
     end
   end
 
+  def error(error_text)
+    @error_text = error_text
+    mail(to: "#{IDB_CONFIG[:tech_error_mail_list]}", subject: '[Illinois Data Bank] System Error')
+  end
+
 end

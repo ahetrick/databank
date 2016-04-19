@@ -1,5 +1,6 @@
 development:
   :admin_list: admin
+  :tech_error_mail_list: "idb-admin@illinois.edu"
   :local_mode: true
   :ezid_host: ezid.lib.purdue.edu
   :ezid_username: apitest

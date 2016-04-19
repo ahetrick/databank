@@ -36,7 +36,7 @@ class ApplicationController < ActionController::Base
 
       if exception.subject.class == Dataset && exception.action == :new
         if current_user && current_user.role == 'no_deposit'
-          redirect_to redirect_path, notice: "ACCOUNT NOT ELIGABLE TO DEPOSIT DATA.<br/>Faculty, staff, and graduate students are eligable to deposit data in Illinois Data Bank.<br/>Please <a href='/help'>contact the Research Data Service</a> if this determination is in error, or if you have any questions."
+          redirect_to redirect_path, alert: "ACCOUNT NOT ELIGIBLE TO DEPOSIT DATA.<br/>Faculty, staff, and graduate students are eligible to deposit data in Illinois Data Bank.<br/>Please <a href='/help'>contact the Research Data Service</a> if this determination is in error, or if you have any questions."
         else
 
           redirect_to '/welcome/deposit_login_modal'
@@ -50,17 +50,21 @@ class ApplicationController < ActionController::Base
 
       # raise exception
 
-      Rails.logger.error "\n***---***"
-      Rails.logger.error exception.class
-      Rails.logger.error exception.message
+      exception_string = "*** Standard Error caught in application_controller.rb on #{IDB_CONFIG[:root_url_text]} ***\nclass: #{exception.class}\nmessage: #{exception.message}\n"
+
       max_lines_to_log = 5
       line_number = 1
+      exception_string << "stack:\n"
       exception.backtrace.each do |line|
-        Rails.logger.error line
+        exception_string << line
+        exception_string << "\n"
         line_number = line_number + 1
         break if line_number > max_lines_to_log
       end
-      #
+
+      Rails.logger.warn(exception_string)
+      notification = DatabankMailer.error(exception_string)
+      notification.deliver_now
       redirect_to ('/500.html')
 
     end

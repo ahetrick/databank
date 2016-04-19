@@ -7,8 +7,7 @@
       %span(class="metadata-label" ) Visibility:
       = @dataset.visibility
       %br
-      %span(class="glyphicon glyphicon-triangle-right" )
-      %span(class="metadata-label" ) Progress:
+      %span(class="glyphicon glyphicon-info-sign")
       - if @dataset.publication_state == Databank::PublicationState::DRAFT || (can? :manage, @dataset)
         Edit the dataset description and file set as needed, then save to review before publishing.  You will be able to come back here to edit.
       - else

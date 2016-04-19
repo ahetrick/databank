@@ -59,7 +59,14 @@ li.current {
   height: 40px;
 }
 
-.idb-alert {
+div.alert.alert-alert {
+  padding: 15px;
+  background-color: $color__yellow;
+  position: relative;
+  z-index: 2100;
+  margin-bottom: 0;
+}
+div.alert.alert-notice {
   padding: 15px;
   background-color: $color__light-blue;
   position: relative;

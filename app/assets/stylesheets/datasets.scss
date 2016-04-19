@@ -146,10 +146,6 @@ legend.metadata-border {
   background-color: $color__highlight-orange;
 }
 
-.panel-body {
-  background-color: $color__light-blue;
-}
-
 #creator_table {
   border: 1px solid $color__medium-grey;
 }
@@ -311,4 +307,9 @@ ul.help-info {
   font-size: 2em;
   margin-start: 0;
   margin-end: 0;
+}
+
+.table-striped>tbody>tr:nth-child(odd)>td,
+.table-striped>tbody>tr:nth-child(odd)>th {
+  background-color: $color__light-blue-background;
 }

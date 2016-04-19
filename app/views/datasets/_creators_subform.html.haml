@@ -2,8 +2,9 @@
 %label(class="control-label required")
   Author List
   (One primary long term contact required.
-  %span(id="email_required_span") Email Required for primary contact.
-  )
+  =succeed ')' do
+    %span(id="email_required_span") Email Required for primary contact.
+
 %br
 %input(type="hidden" name="creator_index_max" id="creator_index_max" value="#{@dataset.creators.count.to_i}" )
 = f.hidden_field :publication_state

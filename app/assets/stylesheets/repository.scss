@@ -341,18 +341,16 @@ fieldset[disabled] .btn-primary.active {
 }
 
 .btn-success {
-  background-color: #565f1c;
-  border-color: #565f1c;
+  background-color: #488222;
+  border-color: #488222;
 }
-
 .btn-success:hover,
 .btn-success:focus,
 .btn-success:active,
 .btn-success.active {
-  background-color: #444b16;
-  border-color: #323810;
+  background-color: #3d6e1d;
+  border-color: #325a17;
 }
-
 .btn-success.disabled:hover,
 .btn-success.disabled:focus,
 .btn-success.disabled:active,
@@ -365,9 +363,10 @@ fieldset[disabled] .btn-success:hover,
 fieldset[disabled] .btn-success:focus,
 fieldset[disabled] .btn-success:active,
 fieldset[disabled] .btn-success.active {
-  background-color: #565f1c;
-  border-color: #565f1c;
+  background-color: #488222;
+  border-color: #488222;
 }
+
 
 .btn-info {
   background-color: #c86128;
@@ -441,7 +440,7 @@ html {
 
 body {
  /* /!* Margin bottom by footer height *!/*/
-  margin-bottom: 175px;
+  margin-bottom: 150px;
 }
 
 .library-footer {
@@ -450,7 +449,7 @@ body {
   bottom: 0;
   width: 100%;
   /*/!* Set the fixed height of the footer here *!/*/
-  height: 175px;
+  height: 150px;
   background-color: #f5f5f5;
 }
 
