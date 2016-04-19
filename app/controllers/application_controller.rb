@@ -53,7 +53,13 @@ class ApplicationController < ActionController::Base
       Rails.logger.error "\n***---***"
       Rails.logger.error exception.class
       Rails.logger.error exception.message
-      exception.backtrace.each { |line| Rails.logger.error line }
+      max_lines_to_log = 5
+      line_number = 1
+      exception.backtrace.each do |line|
+        Rails.logger.error line
+        line_number = line_number + 1
+        break if line_number > max_lines_to_log
+      end
       #
       redirect_to ('/500.html')
 

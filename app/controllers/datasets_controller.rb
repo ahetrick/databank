@@ -212,6 +212,9 @@ class DatasetsController < ApplicationController
   # PATCH/PUT /datasets/1.json
   def update
 
+    Rails.logger.warn "params to yaml in dataset update controller"
+    Rails.logger.warn params.to_yaml
+
     if has_nested_param_change?
       @dataset.has_datacite_change = true
     end
