@@ -16,6 +16,7 @@ function handleMaterialChange(materialIndex) {
         case 'Article':
         case 'Code':
         case 'Presentation':
+        case 'Thesis':
         case 'Dataset':
             $('#dataset_related_materials_attributes_' + materialIndex + '_material_type').val(materialSelectVal);
             $('#dataset_related_materials_attributes_' + materialIndex + '_material_type').css("visibility", "hidden");
