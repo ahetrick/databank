@@ -740,8 +740,8 @@ class Dataset < ActiveRecord::Base
     changes.each do |change|
       change_hash = change.serializable_hash
 
-      change_hash.delete["remote_address"]
-      change_hash.delete["request_uuid"]
+      change_hash.delete("remote_address")
+      change_hash.delete("request_uuid")
       agent = nil
       user = nil
       if change.user_id && change.user_id != ''
