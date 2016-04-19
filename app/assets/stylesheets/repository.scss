@@ -429,6 +429,8 @@ fieldset[disabled] .btn-warning.active {
 
 /* end Button styling */
 
+
+
 /* begin Sticky footer styles
 -------------------------------------------------- */
 
@@ -438,19 +440,20 @@ html {
 }
 
 body {
-  /* Margin bottom by footer height */
+ /* /!* Margin bottom by footer height *!/*/
   margin-bottom: 175px;
 }
 
 .library-footer {
-  z-index: 2000;
+  z-index: 501;
   position: absolute;
   bottom: 0;
   width: 100%;
-  /* Set the fixed height of the footer here */
+  /*/!* Set the fixed height of the footer here *!/*/
   height: 175px;
   background-color: #f5f5f5;
 }
+
 
 /* end Sticky footer styles
 -------------------------------------------------- */
