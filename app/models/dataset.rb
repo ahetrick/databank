@@ -738,9 +738,10 @@ class Dataset < ActiveRecord::Base
     changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', self.id, self.id)
     changesArr = Array.new
     changes.each do |change|
+      change_hash = change.serializable_hash
 
-      change.delete["remote_address"]
-      change.delete["request_uuid"]
+      change_hash.delete["remote_address"]
+      change_hash.delete["request_uuid"]
       agent = nil
       user = nil
       if change.user_id && change.user_id != ''
@@ -751,7 +752,7 @@ class Dataset < ActiveRecord::Base
       else
         agent = {"user_id" => change.user_id}
       end
-      changesArr << {"change" => change, "agent" => agent}
+      changesArr << {"change" => change_hash, "agent" => agent}
     end
     changesHash = {"changes" => changesArr, "model" => "#{IDB_CONFIG[:model]}"}
     changesHash
