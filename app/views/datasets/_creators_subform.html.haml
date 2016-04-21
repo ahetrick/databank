@@ -1,34 +1,37 @@
-= render partial: 'orcid_help_modal'
+= render partial: 'datasets/help/orcid_help_modal'
+= render partial: 'datasets/help/primary_contact_help_modal'
 %label(class="control-label required")
   Author List
-  (One primary long term contact required.
-  =succeed ')' do
-    %span(id="email_required_span") Email Required for primary contact.
-
+  %span(id="email_required_span")
+    (One primary long-term contact and their email address is required.)
 %br
 %input(type="hidden" name="creator_index_max" id="creator_index_max" value="#{@dataset.creators.count.to_i}" )
 = f.hidden_field :publication_state
-%table(id="creator_table" class="table table-striped" )
+%table(id="creator_table" class="table" )
   %thead
     %tr(class="row" )
       %th
       %th(class="col-md-2")
         .form-heading-required
-          Family Name
+          Family Name(s)
       %th(class="col-md-2")
         .form-heading-required
-          Given Name
+          Given Name(s)
       %th(class="col-md-2")
         ORCiD®
         %a(href="#" data-toggle="modal" data-target="#orcidHelpModal" tabindex="-1")
           =image_tag 'iD_icon_16x16.png'
-          what's this?
+          %span(class="idb-help-prompt" )
+            what's this?
       %th(class="col-md-1" )
       %th(class="col-md-2")
         Email
       %th(class="col-md-2" )
-        .form-heading-required
-          Select Primary Contact
+        Primary Contact
+        %a(href="#" data-toggle="modal" data-target="#primaryContactModal" tabindex="-1")
+          %span(class="fa fa-question-circle")
+          %span(class="idb-help-prompt" )
+            what's this?
       %th(class="col-md-1")
 
   %tbody
@@ -44,9 +47,9 @@
           = cf.hidden_field :row_position # value set via AJAX
           = cf.hidden_field :type_of, value: Creator::PERSON
 
-          = cf.text_field :family_name, class: "form-control dataset creator", placeholder: "[Family Name, e.g.: Smith]", onchange: "generate_creator_preview()"
+          = cf.text_field :family_name, class: "form-control dataset creator", placeholder: "[e.g.: Smith]", onchange: "generate_creator_preview()"
         %td(class="col-md-2")
-          = cf.text_field :given_name, class: "form-control dataset creator", placeholder: "[Given Name, e.g.: John W., Jr. ]", onchange: "generate_creator_preview()"
+          = cf.text_field :given_name, class: "form-control dataset creator", placeholder: "[e.g.: John W., Jr. ]", onchange: "generate_creator_preview()"
         %td(class="col-md-2")
           = cf.text_field :identifier, class: "form-control dataset", "data-mask" => "9999-9999-9999-999*", placeholder: "[xxxx-xxxx-xxxx-xxxx]"
           = cf.hidden_field :identifier_scheme, value: "ORCID"
@@ -57,7 +60,7 @@
             Look Up &nbsp;
             =image_tag 'iD_icon_16x16.png'
         %td(class="col-md-2")
-          = cf.email_field :email, class: "form-control dataset creator-email", placeholder: "[Email, e.g.: netid@illinois.edu]", onchange: "handle_creator_email_change(this)"
+          = cf.email_field :email, class: "form-control dataset creator-email", placeholder: "[e.g.: netid@illinois.edu]", onchange: "handle_creator_email_change(this)"
         %td(class="col-md-1" align="center" )
           = cf.hidden_field :is_contact
           -#%input(name="dataset[creators_attributes][#{i}][is_contact]" type="hidden" value="#{creator.is_contact?}")

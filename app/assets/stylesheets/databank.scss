@@ -55,10 +55,6 @@ li.current {
   font-size: 16px;
 }
 
-.fileinput-button {
-  height: 40px;
-}
-
 div.alert.alert-alert {
   padding: 15px;
   background-color: $color__yellow;
@@ -71,6 +67,7 @@ div.alert.alert-notice {
   background-color: $color__light-blue;
   position: relative;
   z-index: 2100;
+  margin-bottom: 0;
 }
 
 .idb-callout {
@@ -81,8 +78,8 @@ div.alert.alert-notice {
 
 .completion-warning {
   background: $color__yellow;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding: 5px;
+  margin-left: -5px;
 }
 
 pre {
@@ -202,3 +199,40 @@ table {
   margin-top: 15px;
 }
 
+.idb-help-prompt{
+  font-weight: normal;
+}
+
+/*
+Firefox and fieldsets
+Firefox has some awkward fieldset styling involving width that interferes with the responsive table. This cannot be overridden without a Firefox-specific hack that we don’t provide in Bootstrap:
+*/
+@-moz-document url-prefix() {
+  fieldset { display: table-cell; }
+}
+
+tr.row.idb-infographic-header > th{
+  vertical-align: top;
+}
+
+td {
+  vertical-align: top;
+}
+
+div#box-select{
+  display: inline-block;
+  position: relative;
+  top: 15px;
+}
+
+.file-btn-group{
+  vertical-align: middle;
+}
+
+.file-drop-instruction{
+
+  background-color: $color__lightest-grey;
+  display: inline-block;
+  border: 1px dashed $color__light-blue;
+  padding: 15px;
+}

@@ -1,22 +1,25 @@
-%p Does this dataset support any articles, presentations, or thesis (current or forthcoming)?  Was any code used in processing this dataset, or is this dataset designed to be processable by specific code?  Are there other datasets produced by the same project? To support discovery of relationships between this dataset and other resources (published in Illinois Data Bank or elsewhere), provide links to and/or citations for related resources.   Include identifiers (e.g., DOI, Handle, ARK, URL) where possible.
+%p Does this dataset support any articles, presentations, or theses (current or forthcoming)?  Was any code used in processing this dataset, or is this dataset designed to be processable by specific code?  Are there other datasets produced by the same project? To support discovery of relationships between this dataset and other resources (published in Illinois Data Bank or elsewhere), provide links (e.g., DOI, Handle, ARK, URL) to and/or citations for related resources.
 
 %input(type="hidden" name="material_index_max" id="material_index_max" value="#{@dataset.related_materials.count.to_i}" )
   %table(id="material_table" class="table table-striped")
     %thead
       %tr(class="row" )
-        %th(colspan="2" class="col-md-2")
-          Related Resource Type
-        %th(class="col-md-3")
-          Link
         - if (can? :manage, @dataset)
-          %th(class="col-md-2" )
-            Citation
           %th(class="col-md-2")
-            URI & Type
+            Related Resource Type
+          %th
+          %th(class="col-md-3")
+          Link
+          %th(class="col-md-3" )
+            Citation
           %th(class="col-md-2")
             DataCite
         - else
-          %th(class="col-md-6" )
+          %th(colspan="2" class="col-md-4")
+            Related Resource Type
+          %th(class="col-md-3")
+            Link
+          %th(class="col-md-4" )
             Citation
         %th(class="col-md-1")
     %tbody
@@ -41,7 +44,6 @@
                 .form-group.curator-only
                   =ff.select :uri_type, options_for_select(["ARK","arXiv","bibcode","DOI","EAN13","EISSN","Handle","ISBN","ISSN","ISTC","LISSN","LSID","PMID","PURL","UPC","URL","URN"], material.uri_type), {prompt: "Select Type"}, {class: "form-control dataset"}
 
-              %td
                 .form-group.curator-only
                   =ff.hidden_field :datacite_list
                   - dataciteArr = nil

@@ -16,7 +16,7 @@
             Research Data Copyright and Licensing
           %br
           Your dataset license options in Illinois Data Bank are:
-        =render partial: 'license_infographic'
+        =render partial: 'help/license_infographic'
         %p
           %a(href="https://creativecommons.org/about/cc0" target="_blank" ) Find out more about CCO
           %br
@@ -32,9 +32,7 @@
           %span( class="metadata-label" ) You will need to select a long-term primary contact for your dataset. (click to expand for more information)
     .panel-collapse.collapse(id="contactPanel" role="tabpanel" aria-labelledby="contactHeading" )
       .panel-body
-        %p Select one of the authors from the author list to be the long-term primary contact. This person generally carries ultimate responsibility for the validity of dataset and is most often a faculty member or Principal Investigator (“PI”) of the project under which the dataset originated. If there is only one author, select that author.
-        %br
-        =image_tag('select_contact.png', height: 150)
+        =render partial: "select_contact_info"
 
 .panel-group(id="embargo" role="tablist" aria-multiselectable="true")
   .panel.panel-default
@@ -51,7 +49,7 @@
           %a(href="/help#embargo") Delaying Publication of/embargoing your dataset
         %p
           By default, there is no publication delay.  Your other options are:
-          =render partial: 'embargo_infographic'
+          =render partial: 'help/embargo_infographic'
 
 
 .panel-group(id="expert" role="tablist" aria-multiselectable="true")

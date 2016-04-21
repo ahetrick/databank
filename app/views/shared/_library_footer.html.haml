@@ -6,9 +6,13 @@
       %a(href="http://researchdataservice.illinois.edu/")
         Research Data Service
       at the University Library.
-      %a(href="/help")
+      =succeed "." do
+        %a(href="/policies" target="_blank" )
+          See our Access and Use Policy
+      %a(href="/help" target="_blank" )
         Contact us
       for questions and to provide feedback.
+
   .row.lg-copyright-footer
     .col-md-12.copyright-footer(aria-label="university library copyright info")
       %p

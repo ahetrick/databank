@@ -7,43 +7,14 @@
     %li
       %p The primary purpose of the Illinois Data Bank is to provide University of Illinois researchers a space to make their research data openly available immediately to anyone in the world. We do recognize that there are sometimes cases where, due to publisher or other requirements, researchers may need to deposit their dataset but make it temporarily unavailable for download. To meet this need, we provide the following two options for temporarily delaying publication of datasets in the Illinois Data Bank:
     %li
-      .row
-        .col-md-6
-          .embargo-info-column-header.embargo-info-header
-            %h4 File Publication Delay
-          .embargo-info-column-middle-section
-            %h4 You recieve an active DOI.
-            %ul
-              %li You will recieve a DOI, and the link will forward to the Illinois Data Bank page for your dataset.
-          .embargo-info-column-middle-section
-            %h4 Your dataset record is discoverable.
-            %ul
-              %li Information for your dataset in the Illinois Data Bank will be publicly visible through several search engines and other sources.
-          .embargo-info-column-bottom-section
-            %h4 Dataset files cannot be accessed or seen.
-            %ul
-              %li Although the record for your dataset is publicly visible, your data files will not be made available until the release date you selected.
-        .col-md-6
-          .embargo-info-column-header.embargo-info-header
-            %h4 Metadata and File Publication Delay
-          .embargo-info-column-middle-section
-            %h4 Your DOI is saved, but the link will fail.
-            %ul
-              %li You will receive a DOI link to place in your publication, but the link will fail until the release date you selected.
-          .embargo-info-column-middle-section
-            %h4 Your dataset record is not discoverable.
-            %ul
-              %li Your dataset will be stored in the Illinois Data Bank, but is not discoverable or visible until the release date you selected.
-          .embargo-info-column-bottom-section
-            %h4 Dataset files cannot be accessed or seen.
-            %ul
-              %li The record for your dataset is not visible, nor are your data files available until the release date you selected.
+      =render partial: "help/embargo_infographic"
     %li
       %h2(class="idb-callout" )
         The
         %strong maximum
-        amount of time that data can be delayed for publication is is
-        %strong 1 year.
+        amount of time that data can be delayed for publication is
+        =succeed "." do
+          %strong 1 year
     %li
       %p
         Not sure if you should delay publication of your data, what your release date should be, or have any other questions?

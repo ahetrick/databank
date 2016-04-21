@@ -105,6 +105,10 @@ legend.metadata-border {
   max-width: 900px;
 }
 
+.modal-xl{
+  max-width: 1200px;
+}
+
 @media (min-width: 768px) {
   .modal-dialog {
     margin: 30px auto;
@@ -309,7 +313,11 @@ ul.help-info {
   margin-end: 0;
 }
 
-.table-striped>tbody>tr:nth-child(odd)>td,
-.table-striped>tbody>tr:nth-child(odd)>th {
+#creator_table > thead {
   background-color: $color__light-blue-background;
+}
+
+.idb-infographic-header{
+  background-color: $color__dark-moderate-blue;
+  color: $color__text-light;
 }

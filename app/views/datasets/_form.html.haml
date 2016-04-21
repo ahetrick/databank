@@ -52,15 +52,14 @@
             .form-group
               = f.label :description, "Dataset Description", :class => "control-label"
               %br
-              = f.text_area :description, :rows => 3,  :class => "form-control dataset", :placeholder => "[Description of this dataset, including an overview of content, structure, and format.]"
+              = f.text_area :description, :rows => 3,  :class => "form-control dataset", :placeholder => "[Provide a brief description of the dataset you are publishing. This will be publicly displayed for visitors to your dataset’s page. This information should inform another researcher how your dataset may be useful or what conclusions it may support. You may choose to repeat a portion of your main documentation file here as well.]"
 
             .row
               .col-md-6
                 .form-group
-                  = f.label :keywords, "Keywords (Semi-colon delimited list)", :class => "control-label"
+                  = f.label :keywords, "Keywords", :class => "control-label"
                   %br
                   = f.text_field :keywords, :class => "form-control dataset", :placeholder => "[Semi-colon separated list of keywords or phrases, e.g.: (institutional repositories; file formats)]"
-                  %span(class="help-block") Use a semi-colon (;) to separate keywords or phrases (e.g.: repositories; file formats).
 
               -if ( params[:action]=='new' || (can? :manage, @dataset) || ((can? :edit, @dataset) && ([Databank::PublicationState::Embargo::METADATA, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::DRAFT].include?(@dataset.publication_state))))
                 .col-md-4
@@ -70,12 +69,12 @@
                       %span(class="fa fa-question-circle")
                       what's this?
                     - if ((can? :manage, @dataset) || [Databank::PublicationState::DRAFT, Databank::PublicationState::Embargo::METADATA].include?(@dataset.publication_state))
-                      = f.select :embargo, options_for_select([["File Publication Delay", Databank::PublicationState::Embargo::FILE],["File and Metadata Publication Delay", Databank::PublicationState::Embargo::METADATA]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
+                      = f.select :embargo, options_for_select([["File Only Publication Delay", Databank::PublicationState::Embargo::FILE],["File and Metadata Publication Delay", Databank::PublicationState::Embargo::METADATA]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
                     -else
-                      = f.select :embargo, options_for_select([["File Publication Delay", Databank::PublicationState::Embargo::FILE]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
+                      = f.select :embargo, options_for_select([["File Only Publication Delay", Databank::PublicationState::Embargo::FILE]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
                 .col-md-2
                   %div(id="release-date-picker")
-                    =f.label :release_date, "Release Date",  :class => "control-label"
+                    =f.label :release_date, "Release Date (max 1 year)",  :class => "control-label"
                     - if (can? :manage, @dataset)
                       =f.date_field :release_date, min: Date.current, max: (Date.current + 1.years), class: "form-control dataset"
                     -else
@@ -203,22 +202,19 @@
             - if ( (@dataset.publication_state == Databank::PublicationState::DRAFT) && ((can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?))) )
               = form_for Datafile.new do |df|
                 = df.hidden_field :dataset_id, value: @dataset.id
-                .container.text-center
-                  .row
-                    .col-md-7
-                      %span(class="fa fa-cloud-upload fa-2x" )
-                      %span(class="metadata-label" )Drop files anywhere on this page
-                      %span(class="metadata-label")or
-                      &nbsp;
-                      .btn.btn-success.fileinput-button
-                        %span(class="fa fa-laptop fa-lg" )
-                        Select from your computer
-                        /# The file input field used as target for the file upload widget
-                        = df.file_field :binary, name: "datafile[binary]", multiple: true
-                      &nbsp
-                      %span(class="metadata-label")or
-                    .col-md-4
-                      %div(id="box-select" data-link-type="direct" data-multiselect="true" data-client-id="r5tgofc05460skm84yjepz1ck16ptotr")
+                .text-center
+                  .file-drop-instruction
+                    %span(class="fa fa-cloud-upload fa-2x" )
+                    %span(class="metadata-label" )Drop files anywhere on this page
+                  %span(class="metadata-label")or
+                  &nbsp;
+                  .btn.btn-success.fileinput-button
+                    %span(class="fa fa-laptop fa-lg" )
+                    Select from your computer
+                    /# The file input field used as target for the file upload widget
+                    = df.file_field :binary, name: "datafile[binary]", multiple: true
+                  %span(class="metadata-label")or
+                  %div(id="box-select" data-link-type="direct" data-multiselect="true" data-client-id="r5tgofc05460skm84yjepz1ck16ptotr")
   .review-deposit-agreement.container-fluid
     - if (params[:action] == 'new')
       %div(id="review_link")
@@ -227,8 +223,8 @@
       %a(href="/datasets/#{@dataset.key}/review_deposit_agreement?" target="_blank" ) Review Deposit Agreement
 
 = render partial: 'orcid_search'
-= render partial: 'license_help_modal'
-= render partial: 'embargo_help_modal'
+= render partial: 'datasets/help/license_help_modal'
+= render partial: 'datasets/help/embargo_help_modal'
 
 %script(id="template-upload" type="text/x-tmpl")
   .upload
