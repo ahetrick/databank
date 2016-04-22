@@ -64,8 +64,8 @@ class ApplicationController < ActionController::Base
 
       Rails.logger.warn(exception_string)
 
-      if @current_user
-        exception_string << "\nCurrent User: #{@current_user.to_yaml}"
+      if current_user
+        exception_string << "\nCurrent User: #{current_user.to_yaml}"
       end
 
       notification = DatabankMailer.error(exception_string)

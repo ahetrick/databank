@@ -1,12 +1,12 @@
 - if params.has_key?('depositor') && current_user && current_user.role != 'admin'
   %h2 My Datasets
-  %button(type="button" class="btn btn-primary btn-block" onclick='window.location = "/datasets"')
+  %button(type="button" class="btn btn-primary btn-block dataset-index-btn" onclick='window.location = "/datasets"')
     Click this bar to list
     %strong ALL
     Datasets
 - elsif current_user && current_user.role != 'admin'
   %h2 All Datasets
-  %button(type="button" class="btn btn-primary btn-block" onclick='window.location = "/datasets?depositor=#{current_user.name}"')
+  %button(type="button" class="btn btn-primary btn-block dataset-index-btn" onclick='window.location = "/datasets?depositor=#{current_user.name}"')
     Click this bar to list just
     %strong MY
     Datasets

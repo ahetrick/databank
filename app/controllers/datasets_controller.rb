@@ -232,9 +232,15 @@ class DatasetsController < ApplicationController
   # DELETE /datasets/1
   # DELETE /datasets/1.json
   def destroy
+
     @dataset.destroy
     respond_to do |format|
-      format.html { redirect_to datasets_url, notice: 'Dataset was successfully destroyed.' }
+      if current_user
+        format.html { redirect_to "/datasets?depositor=#{current_user.name}", notice: 'Dataset was successfully destroyed.' }
+      else
+        format.html { redirect_to datasets_url, notice: 'Dataset was successfully destroyed.' }
+      end
+
       format.json { head :no_content }
     end
   end

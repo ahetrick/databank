@@ -44,15 +44,19 @@
   ) %>
     <!-- BEGIN metadata section-->
     <div class="splash-metadata">
-      
+
       <span class="dataset-title"><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></span>
 
       <div class="container-fluid" id="citation-block">
 
-        <div class="row bg-citation">
-          <div id="citation" class="col-md-9" onclick="if (event.target) { selectText(event.target); } else{ selectText(this); }"><%= @dataset.plain_text_citation %></div>
-          <div class="col-md-3 text-right" id="citation-download">
-            <div class="dropdown">
+
+        <div id="citation">
+          <h4><%= @dataset.plain_text_citation %></h4>
+        </div>
+
+        <div id="citation-suggestion">
+          <span id="citation-download">
+            <span class="dropdown">
               <button type="button" id="downloadCitation" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                 <span class="glyphicon glyphicon-list"></span> Citation <span class="caret"></span>
               </button>
@@ -78,26 +82,24 @@
                   </a>
                 </li>
               </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="row bg-muted">
-          <span id="citation-standards" class="col-md-9 text-muted small">If you use these data, please add this citation to your scholarly resources. </span>
-          <span class="col-md-3 pull-right text-right">
-            <!--<span class="label label-primary">Downloads <span class="badge">42</span></span>-->
+            </span>
+          </span>
+          <span id="citation-standards">
+            If you use these data, please add this citation to your scholarly resources.
           </span>
         </div>
 
-        <% if @dataset.complete? %>
-          <div class="row bg-muted">
-            <span id="citation-standards" class="col-md-9 text-muted small">
-              <button class='copy-btn btn btn-sm btn-default' data-clipboard-target='doi_link_text' data-clipboard-text="https://doi.org/<%= @dataset.identifier %>" title='Click me to copy to clipboard.'>
-                <span class="glyphicon glyphicon-copy"></span>
-                <b>Copy persistent link to clipboard...</b>
-              </button>
-              Persistent link for this item: <a href="https://doi.org/<%= @dataset.identifier %>">https://doi.org/<%= @dataset.identifier %></a></span>
+        <% if @dataset.publication_state != Databank::PublicationState::DRAFT %>
+          <div id="copy-persistent-link">
+
+            <button class='copy-btn btn btn-default' data-clipboard-target='doi_link_text' data-clipboard-text="https://doi.org/<%= @dataset.identifier %>" title='Click me to copy to clipboard.'>
+              <span class="glyphicon glyphicon-copy"></span>
+              Copy persistent link to clipboard...
+            </button>
+            &nbsp;&nbsp;Persistent link for this item:
+            <a href="https://doi.org/<%= @dataset.identifier %>">https://doi.org/<%= @dataset.identifier %></a>
             <input type="hidden" value="https://doi.org/<%= @dataset.identifier %>" name="doi_link_text" id="doi_link_text">
+
           </div>
         <% end %>
       </div>
@@ -106,8 +108,7 @@
         <% if @dataset.related_materials.count > 0 %>
           <% @dataset.related_materials.each do |material| %>
             <div class="container-fluid">
-                <span class="metadata-label">Related <%= (material.material_type && material.material_type != "") ? material.material_type : "Material" %><%= (material.availability && material.availability != '') ? " (#{material.availability})" : "" %>
-                  : </span>
+                <span class="metadata-label">Related <%= (material.material_type && material.material_type != "") ? material.material_type : "Material" %>: </span>
               <% if material.link && material.link != '' %>
                 <a href="<%= material.link %>">
                   <% if material.citation && material.citation != '' %>

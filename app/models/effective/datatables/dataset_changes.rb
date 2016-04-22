@@ -25,7 +25,7 @@ module Effective
 
         # table_column :audited_changes
 
-        table_column :created_at, label: "Timestamp"
+        table_column :created_at, label: "Timestamp", proc: Proc.new{|change| (change.created_at).iso8601}
         default_order :created_at, :desc
 
       end

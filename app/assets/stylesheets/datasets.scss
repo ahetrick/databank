@@ -26,11 +26,13 @@
 div#citation-block {
   background-color: $color__lightest-grey;
   border: 1px solid $color__light-grey;
+  padding-bottom: 5px;
 }
 
 .metadata-block {
   background-color: $color__background-main-column;
   border: 1px solid $color__light-grey;
+  padding-left: 25px;
 }
 
 #citation, #citation-download, #citation-standards {
