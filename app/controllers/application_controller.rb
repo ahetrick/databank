@@ -63,6 +63,11 @@ class ApplicationController < ActionController::Base
       end
 
       Rails.logger.warn(exception_string)
+
+      if @current_user
+        exception_string << "\nCurrent User: #{@current_user.to_yaml}"
+      end
+
       notification = DatabankMailer.error(exception_string)
       notification.deliver_now
       redirect_to ('/500.html')
