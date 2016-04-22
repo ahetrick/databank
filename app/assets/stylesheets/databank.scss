@@ -205,7 +205,7 @@ table {
 
 /*
 Firefox and fieldsets
-Firefox has some awkward fieldset styling involving width that interferes with the responsive table. This cannot be overridden without a Firefox-specific hack that we don’t provide in Bootstrap:
+Firefox has some awkward fieldset styling involving width that interferes with the responsive table. This cannot be overridden without a Firefox-specific hack that we don't provide in Bootstrap:
 */
 @-moz-document url-prefix() {
   fieldset { display: table-cell; }
@@ -243,4 +243,36 @@ div#box-select{
 }
 .dataset-index-btn{
   margin-bottom: 3px;
+}
+div.row.checkbox {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+#my_datasets-table th:nth-of-type(1) {
+   width: 75%;
+}
+#curator_datasets-table th:nth-of-type(2) {
+  width: 60%;
+}
+
+.idb-callout-lg{
+  width: 100%;
+  padding: 20px;
+  text-align: center;
+}
+
+.fileinput-button{
+  height: 40px;
+  position: relative;
+  top: -2px;
+}
+.fileinput-button-content{
+  position: relative;
+  top: 3px;
+}
+.inline_formatted_text{
+  display:inline-block;
+  vertical-align: text-top;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }

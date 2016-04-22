@@ -123,7 +123,7 @@ module Datacite
         end
 
         if ((dataset.publication_state == Databank::PublicationState::PermSuppress::METADATA) || (dataset.hold_state == Databank::PublicationState::TempSuppress::METADATA))
-          metadata['_status'] = "unavailable | Removed by Illinois Data Bank curators. Contact us for more information. #{ IDB_CONFIG[:root_url_text] }/help"
+          metadata['_status'] = "unavailable | Removed by Illinois Data Bank curators. Contact us for more information. #{ IDB_CONFIG[:root_url_text] }/help#contact"
         elsif existing_datacite_record[:status]!= 'reserved' && dataset.publication_state == Databank::PublicationState::Embargo::METADATA
           metadata['_status'] = "unavailable | Embargoed. This dataset will be available #{dataset.release_date.iso8601}."
         elsif [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED].include?(dataset.publication_state)

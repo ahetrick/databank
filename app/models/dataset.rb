@@ -440,7 +440,7 @@ class Dataset < ActiveRecord::Base
     descriptionsNode.parent = resourceNode
     descriptionNode = doc.create_element('description')
     descriptionNode['descriptionType'] = "Other"
-    descriptionNode.content = "Removed by Illinois Data Bank curators. Contact us for more information. #{ IDB_CONFIG[:root_url_text] }/help"
+    descriptionNode.content = "Removed by Illinois Data Bank curators. Contact us for more information. #{ IDB_CONFIG[:root_url_text] }/help#contact"
     descriptionNode.parent = descriptionsNode
 
     doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
@@ -484,7 +484,7 @@ class Dataset < ActiveRecord::Base
     titlesNode.parent = resourceNode
 
     titleNode = doc.create_element('title')
-    titleNode.content = "[This dataset will be available #{self.release_date.iso8601}. Contact us for more information. #{ IDB_CONFIG[:root_url_text] }/help]"
+    titleNode.content = "[This dataset will be available #{self.release_date.iso8601}. Contact us for more information. #{ IDB_CONFIG[:root_url_text] }/help#contact]"
     titleNode.parent = titlesNode
 
     publisherNode = doc.create_element('publisher')
@@ -499,7 +499,7 @@ class Dataset < ActiveRecord::Base
     descriptionsNode.parent = resourceNode
     descriptionNode = doc.create_element('description')
     descriptionNode['descriptionType'] = "Other"
-    descriptionNode.content = "This dataset will be available #{self.release_date.iso8601}. Contact us for more information. #{ IDB_CONFIG[:root_url_text] }/help"
+    descriptionNode.content = "This dataset will be available #{self.release_date.iso8601}. Contact us for more information. #{ IDB_CONFIG[:root_url_text] }/help#contact"
     descriptionNode.parent = descriptionsNode
 
     datesNode = doc.create_element('dates')

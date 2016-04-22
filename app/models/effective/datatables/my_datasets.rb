@@ -4,7 +4,7 @@ module Effective
 
       datatable do
         current_email = attributes[:current_email]
-        array_column :search, filter: {fuzzy: true} do |dataset|
+        array_column :search, sortable: false, filter: {fuzzy: true} do |dataset|
           table_description = nil
           if dataset.description && !dataset.description.empty?
             table_description = dataset.description.first(230)
@@ -29,7 +29,7 @@ module Effective
           end
         end
 
-        array_column 'Visibility', filter: {type: :select, values: ['Private (Saved Draft)', 'Private (Delayed Publication)', 'Public Description, Private Files (Delayed Publication)', 'Public (Published)', 'Public description, Private files (Curator Hold)', 'Private (Curator Hold)', 'Public Description, Withdrawn Files']} do |dataset|
+        array_column 'Visibility', sortable: false, filter: {type: :select, values: ['Private (Saved Draft)', 'Private (Delayed Publication)', 'Public Description, Private Files (Delayed Publication)', 'Public (Published)', 'Public description, Private files (Curator Hold)', 'Private (Curator Hold)', 'Public Description, Withdrawn Files']} do |dataset|
           render text: "#{dataset.visibility}"
         end
 

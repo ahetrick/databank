@@ -103,100 +103,133 @@
           </div>
         <% end %>
       </div>
-      <div class="metadata-block">
-
+      <tr class="metadata-block">
+        <table class="table">
         <% if @dataset.related_materials.count > 0 %>
           <% @dataset.related_materials.each do |material| %>
-            <div class="container-fluid">
+            <tr class="row">
+              <td class="col-md-3">
                 <span class="metadata-label">Related <%= (material.material_type && material.material_type != "") ? material.material_type : "Material" %>: </span>
-              <% if material.link && material.link != '' %>
-                <a href="<%= material.link %>">
-                  <% if material.citation && material.citation != '' %>
-                    <%= material.citation %>
-                  <% else %>
-                    <%= material.link %>
-                  <% end %>
-                </a>
+              </td>
+              <td class="col-md-9">
+                <% if material.link && material.link != '' %>
+                  <a href="<%= material.link %>">
+                    <% if material.citation && material.citation != '' %>
+                      <%= material.citation %>
+                    <% else %>
+                      <%= material.link %>
+                    <% end %>
+                  </a>
 
-              <% elsif material.citation && material.citation != '' %>
-                <%= material.citation %>
-              <% else %>
-                [Details not provided.]
-              <% end %>
-            </div>
+                <% elsif material.citation && material.citation != '' %>
+                  <%= material.citation %>
+                <% else %>
+                  [Details not provided.]
+                <% end %>
+              </td>
+            </tr>
           <% end %>
         <% end %>
 
         <% if @dataset.description && @dataset.description != '' %>
-          <div class="container-fluid">
-            <span class="metadata-label">Dataset Description: </span>
-            <%= @dataset.description %>
-          </div>
+          <tr class="row">
+            <td>
+              <span class="metadata-label">Dataset Description: </span>
+            </td>
+            <td>
+              <%= simple_format(@dataset.description) %>
+            </td>
+          </tr>
         <% end %>
 
         <% if @dataset.keywords && !@dataset.keywords.empty? %>
-          <div class="container-fluid">
-            <span class="metadata-label">Keywords: </span>
-            <%= @dataset.keywords %>
-          </div>
+          <tr class="row">
+            <td>
+              <span class="metadata-label">Keywords: </span>
+            </td>
+            <td>
+              <%= @dataset.keywords %>
+            </td>
+          </tr>
         <% end %>
-        <div class="container-fluid">
-          <div class="row">
-              <span class="col-md-6">
-                <span class="metadata-label">License:</span>
-                <% if @license_link == "" %>
-                  <%= (@dataset.license && @dataset.license != "") ? @dataset.license : "[License not selected]" %>
-                <% else %>
-                  <a href="<%= @license_link %>"><%= @license.name %></a>
-                <% end %>
-              </span>
-          </div>
-        </div>
+        <tr class="row">
+          <td>
+            <span class="metadata-label">License:</span>
+          </td>
+          <td>
+            <% if @license_link == "" %>
+              <%= (@dataset.license && @dataset.license != "") ? @dataset.license : "[License not selected]" %>
+            <% else %>
+              <a href="<%= @license_link %>"><%= @license.name %></a>
+            <% end %>
+          </td>
+        </tr>
 
         <% if [Databank::PublicationState::Embargo::METADATA, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state) || (@dataset.publication_state == Databank::PublicationState::DRAFT && @dataset.release_date && @dataset.release_date > Date.current()) %>
-          <div class="container-fluid">
-            <span class="metadata-label">Release Date:</span>
-            <%= @dataset.release_date %>
-          </div>
+          <tr class="row">
+            <td>
+              <span class="metadata-label">Release Date:</span>
+            </td>
+            <td>
+              <%= @dataset.release_date %>
+            </td>
+          </tr>
         <% end %>
 
         <% @dataset.funders.each do |funder| %>
-          <div class="container-fluid">
-            <span class="metadata-label">Funder:</span>
+          <tr class="row">
+            <td>
+              <span class="metadata-label">Funder:</span>
+            </td>
+            <td>
             <%= funder.name %>
             <% if funder.grant && funder.grant != "" %>
               , <span class="metadata-label">Grant:</span>
               <%= funder.grant %>
             <% end %>
-          </div>
+            </td>
+          </tr>
         <% end %>
 
-        <div class="container-fluid">
-          <div class="row">
-            <span class="col-md-6">
-              <span class="metadata-label">Corresponding Creator: </span>
-              <%= (!@dataset.corresponding_creator_name || @dataset.corresponding_creator_name.empty?) ? "[corresponding creator name not provided]" : @dataset.corresponding_creator_name %>
-            </span>
+        <tr class="row">
+          <td>
+            <span class="metadata-label">Corresponding Creator: </span>
+          </td>
+          <td>
+            <%= (!@dataset.corresponding_creator_name || @dataset.corresponding_creator_name.empty?) ? "[corresponding creator name not provided]" : @dataset.corresponding_creator_name %>
+          </td>
+         </tr>
             <% if can? :manage, @dataset %>
-              <span class="col-md-6 curator-only">
-                <span class="metadata-label">Depositor:</span>
-                <%= @dataset.depositor_name %>
-              </span>
+              <tr class="row">
+                <td>
+                  <span class="metadata-label">Depositor:</span>
+                </td>
+                <td>
+                  <%= @dataset.depositor_name %>
+                </td>
+              </tr>
             <% end %>
-          </div>
+
           <% if can? :manage, @dataset %>
-            <div class="row">
-              <span class="col-md-6 curator-only">
+            <tr class="row">
+              <td>
                 <span class="metadata-label">Corresponding Creator Email: </span>
+              </td>
+              <td>
                 <%= (!@dataset.corresponding_creator_email || @dataset.corresponding_creator_email.empty?) ? "[corresponding creator email not provided]" : @dataset.corresponding_creator_email %>
-              </span>
-              <span class="col-md-6 curator-only">
+              </td>
+            </tr>
+            <tr class="row">
+              <td>
                 <span class="metadata-label">Depositor Email:</span>
+              </td>
+              <td>
                 <%= @dataset.depositor_email %>
-                </span>
-            </div>
+              </td>
+            </tr>
           <% end %>
-        </div>
+
+        </table>
       </div>
 
     </div>
@@ -219,10 +252,10 @@
               <% if ((can? :manage, @dataset) || ((can? :edit, @dataset) && (@dataset.publication_state != Databank::PublicationState::PermSuppress::FILE)) || ((@dataset.publication_state == Databank::PublicationState::RELEASED) && (@dataset.hold_state != Databank::PublicationState::TempSuppress::FILE))) %>
                 <form role="form">
                   <div class="form-group" id="select-files-form-group">
-                    <table class="table table-striped">
+                    <table id="show-files-table" class="table table-striped">
                       <tbody>
                       <% if @all_in_medusa || @total_files_size < @local_zip_max_size %>
-                        <tr>
+                        <tr class="row">
                           <td>
                             <div class="row">
                               <span class="col-md-4">
@@ -250,7 +283,7 @@
                         </tr>
                       <% end %>
                       <% @dataset.datafiles.each do |datafile| %>
-                        <tr>
+                        <tr class="row">
                           <td>
                             <% if datafile.job_status == :complete %>
 

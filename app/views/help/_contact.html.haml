@@ -1,11 +1,6 @@
 .bs-callout.bs-callout-info.idb-help(id="contact")
   %br
   %hr
-  %h1(class="help-head" )
-    Contact the
-    %a(href="http://researchdataservice.illinois.edu/about/" target="_blank" )Research Data Service Team
-  %hr
-
   - case params['context']
     - when 'sensitive'
       %p(class="idb-callout" )
@@ -13,7 +8,7 @@
         %strong you must remove any private, confidential, or other legally protected information
         from the dataset. Please get in touch with the IDB curation staff using this form so we can assist you with your dataset.
     - else
-      %h3 We're data publishing experts and we're here to help!
+      %h3 The Research Data Service has data publishing experts and we're here to help!
 
   .container-fluid
     = form_tag(help_mail_path, class: "form-horizontal", role: "form") do
@@ -21,24 +16,24 @@
       %input(type="text" name="help-nobots" id="help-nobots" style="display:none;" )
 
       .form-group
-        %label(for="help-name" class="control-label col-sm-2" ) Name
-        .col-sm-8
+        %label(for="help-name" class="control-label col-md-2" ) Name
+        .col-md-8
           -if current_user
             %input(type="text" name="help-name" id="help-name" class="form-control help" value="#{current_user.name}" )
           -else
             %input(type="text" name="help-name" id="help-name" class="form-control help" placeholder="[Your Name]")
 
       .form-group.required
-        %label(for="name" class="control-label col-sm-2" ) Email
-        .col-sm-8
+        %label(for="name" class="control-label col-md-2" ) Email
+        .col-md-8
           -if current_user
             %input(type="email" name="help-email" id="help-email" class="form-control help" value="#{current_user.email}" required )
           -else
             %input(type="text" name="help-email" id="help-email" class="form-control help" placeholder="[Your Email Address]" required )
 
       .form-group
-        %label(for="help-topic" class="control-label col-sm-2" ) Topic
-        .col-sm-8
+        %label(for="help-topic" class="control-label col-md-2" ) Topic
+        .col-md-8
           %select(name="help-topic" id="help-topic" class="form-control help" )
             %option{value: "No Selection Made" } Please Select ...
             %option{value: "Depositing Data"} Depositing Data
@@ -57,17 +52,18 @@
             %option{value: "Other"} Other
       -if dataset
         .form-group
-          %label(for='help-dataset' class="control-label col-sm-2" )
+          %label(for='help-dataset' class="control-label col-md-2" )
             Dataset
           .col-md-8
             %input(type="text" name="help-dataset" id="help-dataset" class="form-control help" value="#{request.base_url}#{dataset_path(@dataset.key)}" readonly=true)
 
       .form-group
-        %label(for="help-message" class="control-label col-sm-2" ) Message
-        .col-sm-8
+        %label(for="help-message" class="control-label col-md-2" ) Message
+        .col-md-8
           %textarea(rows="6" name="help-message" id="help-message" class="form-control help")
+
       .row
-        .col-sm-2.col-sm-offset-8
-          %button(type="button" class="btn btn-danger btn-block" onclick="clear_help_form" ) Cancel
-        .col-sm-2
+        .col-md-6.col-md-offset-2
+          %em A copy of this email will be sent to you automatically.
+        .col-md-2
           %button(type="submit" class="btn btn btn-success btn-block") Send

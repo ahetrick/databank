@@ -21,62 +21,80 @@ function handleFunderChange(funderIndex) {
             $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('');
             $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('');
             break;
-        case "IDOE":
-            $('#dataset_funders_attributes_' + funderIndex + '_name').val('DOE');
-            $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('10.13039/100000015');
-            $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
-            break;
+
         case "IDCEO":
             $('#dataset_funders_attributes_' + funderIndex + '_name').val('IL Department of Commerce & Economic Opportunity (DCEO)');
             $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('10.13039/100004885');
             $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
             break;
+
         case "IDHS":
             $('#dataset_funders_attributes_' + funderIndex + '_name').val('IL Department of Human Services (DHS)');
             $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('10.13039/100004886');
             $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
             break;
+
         case "IDNR":
             $('#dataset_funders_attributes_' + funderIndex + '_name').val('IL Department of Natural Resources (IDNR)');
             $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('10.13039/100004887');
             $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
             break;
+
         case "IDOT":
-            $('#dataset_funders_attributes_' + funderIndex + '_name').val('USGS');
-            $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('10.13039/100000203');
-            $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
+            $('#dataset_funders_attributes_' + funderIndex + '_name').val('Illinois Department of Transportation (IDOT)');
+            $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('');
+            $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('');
             break;
-        case "NASA":
-            $('#dataset_funders_attributes_' + funderIndex + '_name').val('NASA');
-            $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('10.13039/100000104');
-            $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
-            break;
-        case "NIH":
-            $('#dataset_funders_attributes_' + funderIndex + '_name').val('NIH');
-            $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('10.13039/100000002');
-            $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
-            break;
-        case "NSF":
-            $('#dataset_funders_attributes_' + funderIndex + '_name').val('NSF');
-            $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('10.13039/100000001');
-            $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
-            break;
+
         case "USARMY":
-            $('#dataset_funders_attributes_' + funderIndex + '_name').val('US Army');
+            $('#dataset_funders_attributes_' + funderIndex + '_name').val('U.S. Army');
             $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('10.13039/100006751');
             $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
             break;
-        case "USDARO":
-            $('#dataset_funders_attributes_' + funderIndex + '_name').val('USDA');
+
+        case "USDA":
+            $('#dataset_funders_attributes_' + funderIndex + '_name').val('U.S. Department of Agriculture (USDA)');
             $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('10.13039/100000199');
             $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
             break;
+
+        case "DOE":
+            $('#dataset_funders_attributes_' + funderIndex + '_name').val('U.S. Department of Energy (DOE)');
+            $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('10.13039/100000015');
+            $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
+            break;
+
+        case "USGS":
+            $('#dataset_funders_attributes_' + funderIndex + '_name').val('U.S. Geological Survey (USGS)');
+            $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('10.13039/100000203');
+            $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
+            break;
+
+        case "NASA":
+            $('#dataset_funders_attributes_' + funderIndex + '_name').val('U.S. National Aeronautics and Space Administration (NASA)');
+            $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('10.13039/100000104');
+            $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
+            break;
+
+        case "NIH":
+            $('#dataset_funders_attributes_' + funderIndex + '_name').val('U.S. National Institutes of Health (NIH)');
+            $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('10.13039/100000002');
+            $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
+            break;
+
+        case "NSF":
+            $('#dataset_funders_attributes_' + funderIndex + '_name').val('U.S. National Science Foundation (NSF)');
+            $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('10.13039/100000001');
+            $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
+            break;
+
         case "other":
             $('#dataset_funders_attributes_' + funderIndex + '_name').css("visibility", "visible");
             $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('');
             $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('');
             $('#dataset_funders_attributes_' + funderIndex + '_name').focus();
             break;
+
         // should not get to default
         default:
             console.log("funder: " + funderSelectVal)
@@ -115,16 +133,17 @@ function add_funder_row() {
         '<input type="hidden" name="dataset[funders_attributes][' + newId + '][identifier]" id="dataset_funders_attributes_' + newId + '_identifier" />' +
         '<input type="hidden" name="dataset[funders_attributes][' + newId + '][identifier_scheme]" id="dataset_funders_attributes_' + newId + '_identifier_scheme" />' +
         '<select class="form-control dataset" onchange="handleFunderChange(' + newId + ')" name="dataset[funders_attributes][' + newId + '][code]" id="dataset_funders_attributes_' + newId + '_code"><option value="">Please select</option>' +
-        '<option value="IDOE">DOE</option>' +
         '<option value="IDCEO">IL Department of Commerce &amp; Economic Opportunity (DCEO)</option>' +
         '<option value="IDHS">IL Department of Human Services (DHS)</option>' +
         '<option value="IDNR">IL Department of Natural Resources (IDNR)</option>' +
-        '<option value="USGS">USGS</option>' +
-        '<option value="NASA">NASA</option>' +
-        '<option value="NIH">NIH</option>' +
-        '<option value="NSF">NSF</option>' +
-        '<option value="USARMY">US Army</option>' +
-        '<option value="USDA">USDA</option>' +
+        '<option value="IDOT">Illinois Department of Transportation (IDOT)</option>' +
+        '<option value="USARMY">U.S. Army</option>' +
+        '<option value="USDA">U.S. Department of Agriculture (USDA)</option>' +
+        '<option value="DOE">U.S. Department of Energy (DOE)</option>' +
+        '<option value="USGS">U.S. Geological Survey (USGS)</option>' +
+        '<option value="NASA">U.S. National Aeronautics and Space Administration (NASA)</option>' +
+        '<option value="NIH">U.S. National Institutes of Health (NIH)</option>' +
+        '<option value="NSF">U.S. National Science Foundation (NSF)</option>' +
         '<option value="other">Other -- Please provide name:</option></select>' +
         '</td>' +
         '<td>' +
