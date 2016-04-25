@@ -1,5 +1,5 @@
 class ErrorsController < ApplicationController
   def routing
-    redirect_to ('/404.html')
+    render ('/errors/404'), status: 404
   end
 end
