@@ -276,6 +276,6 @@ div.row.checkbox {
   margin-bottom: 0;
   padding-bottom: 0;
 }
-.borderless > tbody > .row > td, .borderless > thead > th {
+.borderless > tbody > tr > td, .borderless > thead > tr > th {
   border: none !important;
 }
