@@ -23,19 +23,19 @@ function handleFunderChange(funderIndex) {
             break;
 
         case "IDCEO":
-            $('#dataset_funders_attributes_' + funderIndex + '_name').val('IL Department of Commerce & Economic Opportunity (DCEO)');
+            $('#dataset_funders_attributes_' + funderIndex + '_name').val('Illinois Department of Commerce & Economic Opportunity (DCEO)');
             $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('10.13039/100004885');
             $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
             break;
 
         case "IDHS":
-            $('#dataset_funders_attributes_' + funderIndex + '_name').val('IL Department of Human Services (DHS)');
+            $('#dataset_funders_attributes_' + funderIndex + '_name').val('Illinois Department of Human Services (DHS)');
             $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('10.13039/100004886');
             $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
             break;
 
         case "IDNR":
-            $('#dataset_funders_attributes_' + funderIndex + '_name').val('IL Department of Natural Resources (IDNR)');
+            $('#dataset_funders_attributes_' + funderIndex + '_name').val('Illinois Department of Natural Resources (IDNR)');
             $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('10.13039/100004887');
             $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
             break;
@@ -133,9 +133,9 @@ function add_funder_row() {
         '<input type="hidden" name="dataset[funders_attributes][' + newId + '][identifier]" id="dataset_funders_attributes_' + newId + '_identifier" />' +
         '<input type="hidden" name="dataset[funders_attributes][' + newId + '][identifier_scheme]" id="dataset_funders_attributes_' + newId + '_identifier_scheme" />' +
         '<select class="form-control dataset" onchange="handleFunderChange(' + newId + ')" name="dataset[funders_attributes][' + newId + '][code]" id="dataset_funders_attributes_' + newId + '_code"><option value="">Please select</option>' +
-        '<option value="IDCEO">IL Department of Commerce &amp; Economic Opportunity (DCEO)</option>' +
-        '<option value="IDHS">IL Department of Human Services (DHS)</option>' +
-        '<option value="IDNR">IL Department of Natural Resources (IDNR)</option>' +
+        '<option value="IDCEO">Illinois Department of Commerce &amp; Economic Opportunity (DCEO)</option>' +
+        '<option value="IDHS">Illinois Department of Human Services (DHS)</option>' +
+        '<option value="IDNR">Illinois Department of Natural Resources (IDNR)</option>' +
         '<option value="IDOT">Illinois Department of Transportation (IDOT)</option>' +
         '<option value="USARMY">U.S. Army</option>' +
         '<option value="USDA">U.S. Department of Agriculture (USDA)</option>' +
