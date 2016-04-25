@@ -95,6 +95,11 @@ Rails.application.routes.draw do
 
   get "/datasets/:id/serialization", to: 'datasets#serialization', defaults: {format: 'json'}
 
+  #changelog routes
+
+  get "/datasets/:id/changelog", to: 'changelogs#edit'
+
+
   match '*a', to: 'errors#routing', via:[:get, :post]
 
 end
