@@ -276,3 +276,6 @@ div.row.checkbox {
   margin-bottom: 0;
   padding-bottom: 0;
 }
+.borderless > tbody > .row > td, .borderless > thead > th {
+  border: none !important;
+}
