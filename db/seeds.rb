@@ -27,21 +27,21 @@ license_custom.save!
 # FUNDER INFO
 
 funder_idceo = FunderInfo.find_or_initialize_by(code: "IDCEO")
-funder_idceo.name = "IL Department of Commerce & Economic Opportunity (DCEO)"
+funder_idceo.name = "Illinois Department of Commerce & Economic Opportunity (DCEO)"
 funder_idceo.identifier = "10.13039/100004885"
 funder_idceo.display_position = 10
 funder_idceo.identifier_scheme = "DOI"
 funder_idceo.save!
 
 funder_idhs = FunderInfo.find_or_initialize_by(code: "IDHS")
-funder_idhs.name = "IL Department of Human Services (DHS)"
+funder_idhs.name = "Illinois Department of Human Services (DHS)"
 funder_idhs.identifier = "10.13039/100004886"
 funder_idhs.display_position = 20
 funder_idhs.identifier_scheme = "DOI"
 funder_idhs.save!
 
 funder_idnr = FunderInfo.find_or_initialize_by(code: "IDNR")
-funder_idnr.name = "IL Department of Natural Resources (IDNR)"
+funder_idnr.name = "Illinois Department of Natural Resources (IDNR)"
 funder_idnr.identifier = "10.13039/100004887"
 funder_idnr.display_position = 30
 funder_idnr.identifier_scheme = "DOI"
