@@ -35,7 +35,7 @@ module Effective
         medusaChangesArr = Array.new
         publication = nil
         changes.each do |change|
-          if change.audited_changes.has_key?('medusa_path')
+          if (change.audited_changes.has_key?('medusa_path')) || (change.audited_changes.has_key?('binary_name')) || (change.audited_changes.has_key?('medusa_dataset_dir'))
             medusaChangesArr << change.id
           end
           if ((change.audited_changes.keys.first == 'publication_state') && ((change.audited_changes)[change.audited_changes.keys.first][0] == 'draft'))
