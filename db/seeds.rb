@@ -21,7 +21,7 @@ license_cc0BY4.full_text_url = "#{Rails.root}/public/CCBY4.txt"
 license_cc0BY4.save!
 
 license_custom = LicenseInfo.find_or_initialize_by(code: "license.txt")
-license_custom.name = "See license.txt file in dataset"
+license_custom.name = "Other License (license.txt must be uploaded as part of dataset)"
 license_custom.save!
 
 # FUNDER INFO

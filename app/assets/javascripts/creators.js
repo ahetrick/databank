@@ -53,11 +53,11 @@ function add_creator_row() {
         '<td class="col-md-2">' +
         '<input type="hidden" value="' + $('#creator_table tr').length + '" name="dataset[creators_attributes][' + newId + '][row_position]" id="dataset_creators_attributes_' + newId + '_row_position" />' +
         '<input value="0" type="hidden" name="dataset[creators_attributes][' + newId + '][type_of]" id="dataset_creators_attributes_' + newId + '_type_of" />' +
-        '<input onchange="generate_creator_preview()" class="form-control dataset creator" placeholder="[Family Name, e.g.: Smith]" type="text" name="dataset[creators_attributes][' + newId + '][family_name]" id="dataset_creators_attributes_' + newId + '_family_name" />' +
+        '<input onchange="generate_creator_preview()" class="form-control dataset creator" placeholder="[e.g.: Smith]" type="text" name="dataset[creators_attributes][' + newId + '][family_name]" id="dataset_creators_attributes_' + newId + '_family_name" />' +
         '</td>' +
 
         '<td class="col-md-2">' +
-        '<input onchange="generate_creator_preview()" class="form-control dataset creator" placeholder="[Given Name, e.g.: John W., Jr. ]" type="text" name="dataset[creators_attributes][' + newId + '][given_name]" id="dataset_creators_attributes_' + newId + '_given_name" />' +
+        '<input onchange="generate_creator_preview()" class="form-control dataset creator" placeholder="[e.g.: John W., Jr. ]" type="text" name="dataset[creators_attributes][' + newId + '][given_name]" id="dataset_creators_attributes_' + newId + '_given_name" />' +
         '</td>' +
 
         '<td class="col-md-2">' +
@@ -69,7 +69,7 @@ function add_creator_row() {
         '<button type="button" class="btn btn-primary btn-block orcid-search-btn" data-id="' + newId + '" onclick="showOrcidSearchModal(' + newId + ')"><span class="glyphicon glyphicon-search"></span>&nbsp;Look Up&nbsp;<img src="/iD_icon_16x16.png">' +
         '</td>' +
         '<td class="col-md-2">' +
-        '<input onchange="handle_creator_email_change(this)" class="form-control dataset creator-email" placeholder="[Email, e.g.: netid@illinois.edu]" type="email" name="dataset[creators_attributes][' + newId + '][email]" id="dataset_creators_attributes_' + newId + '_email" />' +
+        '<input onchange="handle_creator_email_change(this)" class="form-control dataset creator-email" placeholder="[e.g.: netid@illinois.edu]" type="email" name="dataset[creators_attributes][' + newId + '][email]" id="dataset_creators_attributes_' + newId + '_email" />' +
         '</td>' +
         '<td class="col-md-2" align="center"><input name="dataset[creators_attributes][' + newId + '][is_contact]" type="hidden" value="false" id="dataset_creators_attributes_' + newId + '_is_contact"><input class="dataset contact_radio" name="primary_contact" onchange="handle_contact_change()" type="radio" value="false"></td>' +
         '<td class="col-md-1"></td>' +

@@ -39,7 +39,9 @@
           %h4
             %strong May create reuse difficulties
           %ul
-            %li Can result in unwieldy accumulation of citations and authors, known as "attribution stacking".
+            %li Can result in unwieldy accumulation of citations and authors, known as
+            =surround(%Q["], %Q[".]) do
+              %a(href="http://wir.okfn.org/2012/01/27/attribution-stacking-as-a-barrier-to-reuse/" )attribution stacking
         %td
           %h4
             %strong Custom licensing considerations

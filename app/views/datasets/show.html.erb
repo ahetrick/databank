@@ -168,7 +168,13 @@
                 <% if @license_link == "" %>
                   <%= (@dataset.license && @dataset.license != "") ? @dataset.license : "[License not selected]" %>
                 <% else %>
-                  <a href="<%= @license_link %>"><%= @license.name %></a>
+                  <a href="<%= @license_link %>">
+                    <% if @license.code == 'license.txt' %>
+                      See license.txt in dataset.
+                    <% else %>
+                      <%= @license.name %>
+                    <% end %>
+                  </a>
                 <% end %>
               </td>
             </tr>
