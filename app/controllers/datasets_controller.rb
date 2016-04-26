@@ -75,6 +75,10 @@ class DatasetsController < ApplicationController
           permanently_suppress_metadata
         when "unsuppress"
           unsuppress
+        when "suppress_changelog"
+          suppress_changelog
+        when "unsuppress_changelog"
+          unsuppress_changelog
       end
     end
 
@@ -242,6 +246,32 @@ class DatasetsController < ApplicationController
       end
 
       format.json { head :no_content }
+    end
+  end
+
+  def suppress_changelog
+    @dataset.suppress_changelog = true
+    respond_to do |format|
+      if @dataset.save
+        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset changelog has suppressed.] }
+        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+      else
+        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
+        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+      end
+    end
+  end
+
+  def unsuppress_changelog
+    @dataset.suppress_changelog = false
+    respond_to do |format|
+      if @dataset.save
+        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset changelog has been unsuppressed.] }
+        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+      else
+        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
+        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+      end
     end
   end
 

@@ -26,14 +26,12 @@ module Datacite
       # this temporary identifier also helps to handle previous failed or partial publication
 
       if !dataset.identifier || dataset.identifier == ''
-        Rails.logger.warn "No identifier found, creating new DOI."
         dataset.identifier = "#{shoulder}#{dataset.key}_V1"
       end
 
       existing_datacite_record = Dataset.datacite_record_hash(dataset)
 
       if existing_datacite_record
-        Rails.logger.warn "existing record found: #{existing_datacite_record.to_yaml}"
         # we might get here if there was a previous partial publish
         Dataset.update_datacite_metadata(dataset, current_user)
         return dataset.identifier

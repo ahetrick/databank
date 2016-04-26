@@ -14,6 +14,22 @@
             Review the Illinois Data Bank Preservation Review, Revision, Retention, and Withdrawal Procedures document (link TBD)
           %hr
           .row
+
+            .col-md-4
+              -if @dataset.suppress_changelog?
+                %button(id="suppressChangelogBtn" type="btn" class="btn btn-lg btn-success btn-block" onclick="unsuppressChangelog()" )
+                  UNSUPPRESS Changelog
+              -else
+                %button(id="suppressChangelogBtn" type="btn" class="btn btn-lg btn-success btn-block" onclick="suppressChangelog()" )
+                  Suppress Changelog
+            .col-md-8
+              %ul
+                %li
+                  Example Issue:
+                  %br
+                  Sensitive data was in metadata.  It has been changed, but the changelog contains sensitive data.
+          %hr
+          .row
             .col-md-4
               - case @dataset.visibility
                 -when 'Public (Published)', 'Private (Delayed Publication)', 'Public Description, Private Files (Delayed Publication)'

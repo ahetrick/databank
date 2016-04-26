@@ -549,6 +549,20 @@ function offerDownloadLink() {
     }
 }
 
+function suppressChangelog(){
+    if (window.confirm("Are you sure?")) {
+        $('#suppression_action').val("suppress_changelog");
+        $('#suppression_form').submit();
+    }
+}
+
+function unsuppressChangelog(){
+    if (window.confirm("Are you sure?")) {
+        $('#suppression_action').val("unsuppress_changelog");
+        $('#suppression_form').submit();
+    }
+}
+
 function tmpSuppressFiles() {
 
     if (window.confirm("Are you sure?")) {
