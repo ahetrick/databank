@@ -79,7 +79,7 @@ legend.metadata-border {
   background-color: $color__text-light;
 }
 
-.deposit-agreement-warning {
+.deposit-agreement-warning, .deposit-agreement-modal-warning {
   color: $color__red;
   font-weight: bold;
   font-style: italic;

@@ -20,13 +20,15 @@ var ready;
 ready = function () {
 
     $('.bytestream_name').css("visibility", "hidden");
+    $('.deposit-agreement-modal-warning').hide();
+    $('#agree-button').prop("disabled", true);
 
     // handle non-chrome datepicker:
     if (!Modernizr.inputtypes.date) {
         $("#dataset_release_date").prop({type: "text"});
         $("#dataset_release_date").prop({placeholder: "YYYY-MM-DD"});
         $("#dataset_release_date").prop({"data-mask": "9999-99-99"});
-        console.log( $("#dataset_release_date").val());
+        console.log($("#dataset_release_date").val());
 
         $("#dataset_release_date").datepicker({
             inline: true,
@@ -356,7 +358,14 @@ function handlePrivateYes() {
         $('#review_link').html('<a href="/review_deposit_agreement?removed=yes" target="_blank">Review Deposit Agreement</a>');
         $('#private-na').attr('checked', false);
         $('#private-no').attr('checked', false);
+        if (agree_answers_all_yes()) {
+            allow_agree_submit();
+        }
+        if (agree_answers_none_no()) {
+            $('.deposit-agreement-modal-warning').hide();
+        }
     } else {
+        $('#agree-button').prop("disabled", true);
         $('#dataset_removed_private').val('no');
     }
 }
@@ -368,7 +377,14 @@ function handlePrivateNA() {
         $('#dataset_removed_private').val('na');
         $('#private-yes').attr('checked', false);
         $('#private-no').attr('checked', false);
+        if (agree_answers_all_yes()) {
+            allow_agree_submit();
+        }
+        if (agree_answers_none_no()) {
+            $('.deposit-agreement-modal-warning').hide();
+        }
     } else {
+        $('#agree-button').prop("disabled", true);
         $('#dataset_removed_private').val('no');
     }
 }
@@ -378,22 +394,85 @@ function handlePrivateNo() {
         $('#dataset_removed_private').val('no');
         $('#private-na').attr('checked', false);
         $('#private-yes').attr('checked', false);
-        window.location = "/help?context=sensitive";
+        $('#agree-button').prop("disabled", true);
+        $('.deposit-agreement-modal-warning').show();
+    } else {
+        if (agree_answers_none_no()) {
+            $('.deposit-agreement-modal-warning').hide();
+        }
     }
 }
+
 function handleOwnerYes() {
     if ($('#owner-yes').is(':checked')) {
         $('#dataset_have_permission').val('yes');
+        $('#owner-no').attr('checked', false);
+        if (agree_answers_all_yes()) {
+            allow_agree_submit();
+        }
+        if (agree_answers_none_no()) {
+            $('.deposit-agreement-modal-warning').hide();
+        }
     } else {
+        $('#agree-button').prop("disabled", true);
         $('#dataset_have_permission').val('no');
     }
 }
+
+function handleOwnerNo() {
+    if ($('#owner-no').is(':checked')) {
+        $('#dataset_have_permission').val('no');
+        $('#owner-yes').attr('checked', false);
+        $('#agree-button').prop("disabled", true);
+        $('.deposit-agreement-modal-warning').show();
+    } else {
+        if (agree_answers_none_no()) {
+            $('.deposit-agreement-modal-warning').hide();
+        }
+    }
+}
+
 function handleAgreeYes() {
     if ($('#agree-yes').is(':checked')) {
+        $('#agree-no').attr('checked', false);
         $('#dataset_agree').val('yes');
+        if (agree_answers_all_yes()) {
+            allow_agree_submit();
+        }
+        if (agree_answers_none_no()) {
+            $('.deposit-agreement-modal-warning').hide();
+        }
+
     } else {
+        $('#agree-button').prop("disabled", true);
         $('#dataset_agree').val('no');
     }
+}
+
+function handleAgreeNo() {
+    if ($('#agree-no').is(':checked')) {
+        $('#dataset_agree').val('no');
+        $('#agree-yes').attr('checked', false);
+        $('#agree-button').prop("disabled", true);
+        $('.deposit-agreement-modal-warning').show();
+    } else {
+        if (agree_answers_none_no()) {
+            $('.deposit-agreement-modal-warning').hide();
+        }
+    }
+}
+
+function agree_answers_all_yes() {
+    return (($('#owner-yes').is(':checked')) && ( ($('#private-yes').is(':checked')) || ($('#private-na').is(':checked')) ) && ($('#agree-yes').is(':checked')))
+}
+
+function agree_answers_none_no() {
+    return !(($('#owner-no').is(':checked')) || ($('#private-no').is(':checked')) || ($('#agree-no').is(':checked')))
+}
+
+function allow_agree_submit() {
+    $('#agree-button').prop("disabled", false);
+    $('.deposit-agreement-modal-warning').hide();
 }
 
 function clear_help_form() {

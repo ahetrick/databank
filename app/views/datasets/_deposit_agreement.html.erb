@@ -5,7 +5,9 @@
     </button>
   </div>
   <div class="modal-body">
-    <stong>To start your data deposit, please review the following deposit agreement and answer the following questions:</stong>
+    <stong>To start your data deposit, please review the following deposit agreement and answer the following
+      questions:
+    </stong>
     <hr/>
     <div class="panel panel-default">
       <div class="panel-heading">
@@ -132,6 +134,8 @@
 
           <div class="checkbox">
             <label><input type="checkbox" class="agree" id="owner-yes" onclick="handleOwnerYes()">Yes</label>
+            <br/>
+            <label><input type="checkbox" class="agree" id="owner-no" onclick="handleOwnerNo()">No</label>
           </div>
         </div>
         <div class="form-group">
@@ -157,6 +161,8 @@
 
           <div class="checkbox">
             <label><input type="checkbox" class="agree" id="agree-yes" onclick="handleAgreeYes()">Yes</label>
+            <br/>
+            <label><input type="checkbox" class="agree" id="agree-no" onclick="handleAgreeNo()">No</label>
           </div>
         </div>
 
@@ -165,16 +171,23 @@
   </div>
   <% if @dataset %>
     <div class="modal-footer container-fluid">
-      <div class="pull-right">
-        <button onclick="handleAgreeModal('<%= current_user.email %>', '<%= current_user.name %>')" , type="button" class="btn btn-primary" data-dismiss="modal" id="agree-button">
-          <span class="glyphicon glyphicon-check"></span> Submit
-        </button>
-        <button onclick='window.open("/help")' , type="button" class="btn btn-success">
-          <span class="glyphicon glyphicon-question-sign"></span> Get Help
-        </button>
-        <button title="do not agree" type="button" class="btn btn-danger" data-dismiss="modal" id="cancel-button">
-          <span class="glyphicon glyphicon-remove"></span> Cancel
-        </button>
+      <div class="row">
+        <div class="col-md-10">
+          <p class="text-left deposit-agreement-modal-warning"><span class="glyphicon glyphicon-alert"></span> The selections you have made indicate that you are not ready to deposit your dataset.
+            <br/>
+            Illinois Data bank curators are available to discuss your dataset with you. Please contact us!</p>
+        </div>
+        <div class="col-md-2">
+          <button onclick="handleAgreeModal('<%= current_user.email %>', '<%= current_user.name %>')" , type="button" class="btn btn-block btn-primary" data-dismiss="modal" id="agree-button">
+            <span class="glyphicon glyphicon-check"></span> Submit
+          </button>
+          <button onclick='window.open("/help")' , type="button" class="btn btn-block btn-success">
+            <span class="glyphicon glyphicon-question-sign"></span> Get Help
+          </button>
+          <button title="do not agree" type="button" class="btn btn-block btn-danger" data-dismiss="modal" id="cancel-button">
+            <span class="glyphicon glyphicon-remove"></span> Cancel
+          </button>
+        </div>
       </div>
     </div>
   <% end %>
