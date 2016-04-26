@@ -28,7 +28,6 @@ class Dataset < ActiveRecord::Base
   before_create 'set_key'
   after_create 'store_agreement'
   before_save 'set_primary_contact'
-  before_save 'set_version'
   after_save 'remove_invalid_datafiles'
   after_update 'set_datacite_change'
 
@@ -204,6 +203,10 @@ class Dataset < ActiveRecord::Base
       # languageNode = doc.create_element('language')
       # languageNode.content = "en-us"
       # languageNode.parent = resourceNode
+
+      versionNode = doc.create_element('version')
+      versionNode.content = self.dataset_version || "1"
+      versionNode.parent = resourceNode
 
       if self.license && !self.license.blank?
         rightsListNode = doc.create_element('rightsList')
@@ -541,7 +544,7 @@ class Dataset < ActiveRecord::Base
       end
     end
 
-    if self.title_changed? || self.license_changed? || self.description_changed? || self.version_changed? || self.keywords_changed? || self.publication_year_changed? || self.release_date_changed? || self.embargo_changed?
+    if self.title_changed? || self.license_changed? || self.description_changed? || self.dataset_version_changed? || self.keywords_changed? || self.publication_year_changed? || self.release_date_changed? || self.embargo_changed? || self.identifier_changed?
       return true
     end
 
@@ -670,13 +673,6 @@ class Dataset < ActiveRecord::Base
       end
     end
   end
-
-  def set_version
-    if !self.version
-      self.version = "1"
-    end
-  end
-
 
   def remove_invalid_datafiles
     self.datafiles.each do |datafile|

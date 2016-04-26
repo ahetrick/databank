@@ -25,8 +25,8 @@ namespace :demo do
       if demoset['publication_state'] && demoset['publication_state'] != ''
         dataset.publication_state = demoset['publication_state']
       end
-      if demoset['version'] && demoset['version'] != ''
-        dataset.version = demoset['version']
+      if demoset['dataset_version'] && demoset['dataset_version'] != ''
+        dataset.dataset_version = demoset['dataset_version']
       else
         dataset.version = "1"
       end

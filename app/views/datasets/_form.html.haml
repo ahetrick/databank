@@ -117,9 +117,9 @@
                     = f.number_field :publication_year, :value => @dataset.publication_year || "#{Time.now.year}", :class => "form-control dataset", :min => "1800", :max => "#{Time.now.year + 1}", :maxlength => 4
                 %span(class="col-md-1" )
                   .form-group.curator-only
-                    =f.label :version, "Version", :class => "control-label"
+                    =f.label :dataset_version, "Version", class: "control-label"
                     %br
-                    =f.text_field :version, :class => "form-control dataset"
+                    =f.text_field :dataset_version, class: "form-control dataset"
             - else
               = f.hidden_field :publication_year, :value => @dataset.publication_year || "#{Time.now.year}"
 
