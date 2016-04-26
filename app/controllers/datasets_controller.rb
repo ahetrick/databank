@@ -424,8 +424,13 @@ class DatasetsController < ApplicationController
           # strange is double-save because publication changes the dataset, but should not trigger change flag
           # there is probably a better way to do this, and alternatives would be welcome
           if @dataset.save
-            notification = DatabankMailer.confirm_deposit(@dataset.key)
-            notification.deliver_now
+
+            if IDB_CONFIG[:local_mode] && IDB_CONFIG[:local_mode] == true
+              Rails.logger.warn "Dataset #{@dataset.key} succesfully deposited."
+            else
+              notification = DatabankMailer.confirm_deposit(@dataset.key)
+              notification.deliver_now
+            end
             @dataset.has_datacite_change = false
             @dataset.save
             format.html { redirect_to dataset_path(@dataset.key), notice: Dataset.deposit_confirmation_notice(old_publication_state, @dataset) }
@@ -447,8 +452,12 @@ class DatasetsController < ApplicationController
             # strange double-save is because publication changes the dataset, but should not trigger change flag
             # there is probably a better way to do this, and alternatives would be welcome
             if @dataset.save
-              notification = DatabankMailer.confirm_deposit_update(@dataset.key)
-              notification.deliver_now
+              if IDB_CONFIG[:local_mode] && IDB_CONFIG[:local_mode] == true
+                Rails.logger.warn "Dataset #{@dataset.key} succesfully deposited."
+              else
+                notification = DatabankMailer.confirm_deposit_update(@dataset.key)
+                notification.deliver_now
+              end
               @dataset.has_datacite_change = false
               @dataset.save
               format.html { redirect_to dataset_path(@dataset.key), notice: Dataset.deposit_confirmation_notice(old_publication_state, @dataset) }
