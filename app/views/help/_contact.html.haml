@@ -48,7 +48,10 @@
               %option{value: "Dataset Consultation"} Dataset Consultation
             %option{value: "Delaying Publication (Embargo)"} Delaying Publication (Embargo)
             %option{value: "Finding Data"} Finding Data
-            %option{value: "Feeback"} Feedback
+            -if params['context']=='feedback'
+              %option{value: "Feeback", selected:true} Feedback
+            -else
+              %option{value: "Feeback"} Feedback
             %option{value: "Other"} Other
       -if dataset
         .form-group

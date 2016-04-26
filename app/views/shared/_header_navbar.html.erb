@@ -27,7 +27,15 @@
 
 
       <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="/help#contact?context=feedback" target="_blank" id="feedback-header-link">feedback</a>&nbsp;&nbsp;</li>
+        <li>
+          <button type="button" class="btn btn-info btn-lg" onclick="window.open('/help#contact?context=feedback')">
+            <strong>BETA</strong></button>
+        </li>
+
         <% if current_user %>
+
           <li><a href="/datasets?depositor=<%= current_user.name %>"> <%= current_user.name %></a></li>
           <li><%= link_to "Log out", :logout %></li>
         <% else %>

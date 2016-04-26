@@ -279,3 +279,14 @@ div.row.checkbox {
 .borderless > tbody > tr > td, .borderless > thead > tr > th {
   border: none !important;
 }
+#feedback-header-link{
+  text-decoration: underline;
+  color: $color__dark-link;
+  &:visited {
+    color: $color__dark-link
+  }
+  &:hover {
+    color: $color__text-light;
+    background-color: $color__dark-navy;
+  }
+}
