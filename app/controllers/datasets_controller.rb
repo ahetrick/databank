@@ -32,8 +32,8 @@ class DatasetsController < ApplicationController
   # GET /datasets.json
   def index
 
-    @datasets = Dataset.where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE]).order(updated_at: :desc)
-    @datatable = Effective::Datatables::GuestDatasets.new
+    @datasets = nil #used for json response
+    @datatable = nil
 
     if current_user && current_user.role
       case current_user.role
@@ -50,6 +50,9 @@ class DatasetsController < ApplicationController
           end
 
       end
+    else
+      @datasets = Dataset.where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE]).order(updated_at: :desc)
+      @datatable = Effective::Datatables::GuestDatasets.new
 
     end
 
@@ -274,7 +277,6 @@ class DatasetsController < ApplicationController
       end
     end
   end
-
 
 
   def temporarily_suppress_files

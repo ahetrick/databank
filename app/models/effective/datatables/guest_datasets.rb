@@ -2,7 +2,7 @@ module Effective
   module Datatables
     class GuestDatasets < Effective::Datatable
       datatable do
-        array_column :search, filter: {fuzzy: true} do |dataset|
+        array_column  :search, type: :string, filter: {fuzzy: true} do |dataset|
           table_description = nil
           if dataset.description && !dataset.description.empty?
             table_description = dataset.description.first(230)
@@ -26,10 +26,7 @@ module Effective
             render inline: %Q[<%= link_to(%Q[#{dataset.plain_text_citation}], "#{request.base_url}#{dataset_path(dataset.key)}") %>]
           end
         end
-        # table_column :description
-        # table_column :keywords
-        table_column :updated_at, visible: false
-        default_order :updated_at, :desc
+
       end
 
 

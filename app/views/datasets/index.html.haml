@@ -12,4 +12,5 @@
     Datasets
 - else
   %h1 Datasets
-= render_datatable(@datatable)
+-if @datatable
+  = render_datatable(@datatable)

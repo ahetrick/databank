@@ -24,7 +24,7 @@ EffectiveDatatables.setup do |config|
   # Date & DateTime Format
   # By default, format Date and DateTime values with the following
   config.date_format = '%Y-%m-%d'
-  config.datetime_format = '%Y-%m-%d %H:%M'
+  config.datetime_format = '%Y-%m-%dT%H:%MZ'
 
   # Boolean format
   # If :yes_no, display as yes_no instead of true/false
