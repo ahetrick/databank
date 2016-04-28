@@ -127,16 +127,16 @@ div {
   }
 }
 
-//a.btn {
-//  color: $color__text-light;
-//&:visited {
-//    color: $color__text-light;
-//  }
-//  &:hover {
-//    color: $color__text-light;
-//    background-color: $color__dark-navy;
-//  }
-//}
+a.btn {
+  color: $color__text-light;
+&:visited {
+    color: $color__text-light;
+  }
+  //&:hover {
+  //  color: $color__text-light;
+  //  background-color: $color__dark-navy;
+  //}
+}
 
 .bs-callout-info {
   padding-bottom: 10px;
