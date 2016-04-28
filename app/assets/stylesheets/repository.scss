@@ -434,24 +434,27 @@ fieldset[disabled] .btn-warning.active {
 /* begin Sticky footer styles
 -------------------------------------------------- */
 
-html {
-  position: relative;
-  min-height: 100%;
-}
+@media (min-width: 767px) {
 
-body {
- /* /!* Margin bottom by footer height *!/*/
-  margin-bottom: 150px;
-}
+  html {
+    position: relative;
+    min-height: 100%;
+  }
 
-.library-footer {
-  z-index: 501;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  /*/!* Set the fixed height of the footer here *!/*/
-  height: 150px;
-  background-color: #f5f5f5;
+  body {
+   /* /!* Margin bottom by footer height *!/*/
+    margin-bottom: 150px;
+  }
+
+  .library-footer {
+    z-index: 501;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /*/!* Set the fixed height of the footer here *!/*/
+    height: 150px;
+    background-color: #f5f5f5;
+  }
 }
 
 
