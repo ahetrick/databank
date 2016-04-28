@@ -226,7 +226,11 @@ class DatasetsController < ApplicationController
     respond_to do |format|
 
       if @dataset.update(dataset_params)
-        format.html { redirect_to dataset_path(@dataset.key) }
+        if current_user && (params.has_key?(:next)) && (params[:next] == 'my_datasets')
+          format.html { redirect_to "/datasets?depositor=#{current_user.name}" }
+        else
+          format.html { redirect_to dataset_path(@dataset.key) }
+        end
         format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
       else
         format.html { render :edit }
@@ -234,6 +238,7 @@ class DatasetsController < ApplicationController
       end
 
     end
+
   end
 
   # DELETE /datasets/1

@@ -59,7 +59,7 @@
           = link_to(edit_dataset_path(@dataset), :class => "btn idb btn-success btn-block") do
             %span(class="glyphicon glyphicon-edit")
             Edit
-          %button(type="button" class="btn btn-info btn-block" name="cancel" onclick='window.location = "/"' )
+          %button(type="button" class="btn btn-info btn-block" name="cancel" onclick='window.location = "/datasets?depositor=#{current_user.name}"' )
             %span(class="glyphicon glyphicon-pushpin" )
             Exit this Saved Dataset
           - if @dataset.publication_state == Databank::PublicationState::DRAFT
