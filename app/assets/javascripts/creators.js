@@ -57,7 +57,7 @@ function add_creator_row() {
         '</td>' +
 
         '<td class="col-md-2">' +
-        '<input onchange="generate_creator_preview()" class="form-control dataset creator" placeholder="[e.g.: Jean W., Jr. ]" type="text" name="dataset[creators_attributes][' + newId + '][given_name]" id="dataset_creators_attributes_' + newId + '_given_name" />' +
+        '<input onchange="generate_creator_preview()" class="form-control dataset creator" placeholder="[e.g.: Jean W.]" type="text" name="dataset[creators_attributes][' + newId + '][given_name]" id="dataset_creators_attributes_' + newId + '_given_name" />' +
         '</td>' +
 
         '<td class="col-md-2">' +
