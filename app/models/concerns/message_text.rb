@@ -143,7 +143,7 @@ module MessageText
           if dataset.publication_state == Databank::PublicationState::DRAFT
             msg << "<h4>This action will make your dataset <strong>public</strong> and create a DOI.</h4><hr/>"
           else
-            msg << "<h4>This action will make your updates to your dataset record <strong>public</strong>.</h4>"
+            msg << "<h4>This action will make your updates to your dataset record <strong>public</strong>.</h4><hr/>"
           end
           msg << "<ul>"
           msg << "<li>Your Illinois Data Bank dataset record will be <strong>publicly</strong> visible through search engines.</li>"

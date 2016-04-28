@@ -8,7 +8,7 @@
   <%= render partial: 'curator_access_controls' %>
 <% end %>
 
-<div class="container-fluid" id="main-show-div">
+<div id="main-show-div">
 
   <% if ((!can? :manage, @dataset) && (@dataset.publication_state == Databank::PublicationState::PermSuppress::METADATA)) %>
     <br/>
@@ -43,18 +43,19 @@
       (@dataset.publication_state != Databank::PublicationState::PermSuppress::METADATA))
   ) %>
     <!-- BEGIN metadata section-->
-    <div class="splash-metadata">
+    <div class="panel panel-default">
+      <div class="splash-metadata panel-body">
 
-      <span class="dataset-title"><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></span>
+        <span class="dataset-title"><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></span>
 
-      <div class="container-fluid" id="citation-block">
+        <div id="citation-block">
 
 
-        <div id="citation">
-          <h4><%= @dataset.plain_text_citation %></h4>
-        </div>
+          <div id="citation">
+            <h4><%= @dataset.plain_text_citation %></h4>
+          </div>
 
-        <div id="citation-suggestion">
+          <div id="citation-suggestion">
           <span id="citation-download">
             <span class="dropdown">
               <button type="button" id="downloadCitation" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
@@ -87,164 +88,163 @@
           <span id="citation-standards">
             &nbsp;&nbsp;If you use this dataset, please cite it.
           </span>
-        </div>
-
-        <% if @dataset.publication_state != Databank::PublicationState::DRAFT %>
-          <div id="copy-persistent-link">
-
-            <button class='copy-btn btn btn-default' data-clipboard-target='doi_link_text' data-clipboard-text="https://doi.org/<%= @dataset.identifier %>" title='Click me to copy to clipboard.'>
-              <span class="glyphicon glyphicon-copy"></span>
-              Copy persistent link to clipboard...
-            </button>
-            &nbsp;&nbsp;Persistent link for this item:
-            <a href="https://doi.org/<%= @dataset.identifier %>">https://doi.org/<%= @dataset.identifier %></a>
-            <input type="hidden" value="https://doi.org/<%= @dataset.identifier %>" name="doi_link_text" id="doi_link_text">
-
           </div>
-        <% end %>
-      </div>
-      <tr class="metadata-block">
-        <table class="table borderless">
-          <thead>
-          <tr class="row">
-            <th class="col-lg-2 col-md-3 col-sm-4"></th>
-            <th class="col-lg-10 col-md-9 col-sm-8"></th>
-          </tr>
-          </thead>
-          <tbody>
-          <% if @dataset.related_materials.count > 0 %>
-            <% @dataset.related_materials.each do |material| %>
+
+          <% if @dataset.publication_state != Databank::PublicationState::DRAFT %>
+            <div id="copy-persistent-link">
+
+              <button class='copy-btn btn btn-default' data-clipboard-target='doi_link_text' data-clipboard-text="https://doi.org/<%= @dataset.identifier %>" title='Click me to copy to clipboard.'>
+                <span class="glyphicon glyphicon-copy"></span>
+                Copy persistent link to clipboard...
+              </button>
+              &nbsp;&nbsp;Persistent link for this item:
+              <a href="https://doi.org/<%= @dataset.identifier %>">https://doi.org/<%= @dataset.identifier %></a>
+              <input type="hidden" value="https://doi.org/<%= @dataset.identifier %>" name="doi_link_text" id="doi_link_text">
+
+            </div>
+          <% end %>
+        </div>
+        <tr class="metadata-block">
+          <table class="table borderless">
+            <thead>
+            <tr class="row">
+              <th class="col-lg-2 col-md-3 col-sm-4"></th>
+              <th class="col-lg-10 col-md-9 col-sm-8"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <% if @dataset.related_materials.count > 0 %>
+              <% @dataset.related_materials.each do |material| %>
+                <tr class="row">
+                  <td>
+                    <span class="metadata-label">Related <%= (material.material_type && material.material_type != "") ? material.material_type : "Material" %>: </span>
+                  </td>
+                  <td>
+                    <% if material.link && material.link != '' %>
+                      <a href="<%= material.link %>">
+                        <% if material.citation && material.citation != '' %>
+                          <%= material.citation %>
+                        <% else %>
+                          <%= material.link %>
+                        <% end %>
+                      </a>
+
+                    <% elsif material.citation && material.citation != '' %>
+                      <%= material.citation %>
+                    <% else %>
+                      [Details not provided.]
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            <% end %>
+
+            <% if @dataset.description && @dataset.description != '' %>
               <tr class="row">
                 <td>
-                    <span class="metadata-label">Related <%= (material.material_type && material.material_type != "") ? material.material_type : "Material" %>
-                      : </span>
+                  <span class="metadata-label">Dataset Description: </span>
                 </td>
                 <td>
-                  <% if material.link && material.link != '' %>
-                    <a href="<%= material.link %>">
-                      <% if material.citation && material.citation != '' %>
-                        <%= material.citation %>
-                      <% else %>
-                        <%= material.link %>
-                      <% end %>
-                    </a>
+                  <%= simple_format(@dataset.description) %>
+                </td>
+              </tr>
+            <% end %>
 
-                  <% elsif material.citation && material.citation != '' %>
-                    <%= material.citation %>
-                  <% else %>
-                    [Details not provided.]
+            <% if @dataset.keywords && !@dataset.keywords.empty? %>
+              <tr class="row">
+                <td>
+                  <span class="metadata-label">Keywords: </span>
+                </td>
+                <td>
+                  <%= @dataset.keywords %>
+                </td>
+              </tr>
+            <% end %>
+            <tr class="row">
+              <td>
+                <span class="metadata-label">License:</span>
+              </td>
+              <td>
+                <% if @license_link == "" %>
+                  <%= (@dataset.license && @dataset.license != "") ? @dataset.license : "[License not selected]" %>
+                <% else %>
+                  <a href="<%= @license_link %>">
+                    <% if @license.code == 'license.txt' %>
+                      See license.txt in dataset.
+                    <% else %>
+                      <%= @license.name %>
+                    <% end %>
+                  </a>
+                <% end %>
+              </td>
+            </tr>
+
+            <% if [Databank::PublicationState::Embargo::METADATA, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state) || (@dataset.publication_state == Databank::PublicationState::DRAFT && @dataset.release_date && @dataset.release_date > Date.current()) %>
+              <tr class="row">
+                <td>
+                  <span class="metadata-label">Release Date:</span>
+                </td>
+                <td>
+                  <%= @dataset.release_date %>
+                </td>
+              </tr>
+            <% end %>
+
+            <% @dataset.funders.each do |funder| %>
+              <tr class="row">
+                <td>
+                  <span class="metadata-label">Funder:</span>
+                </td>
+                <td>
+                  <%= funder.name %>
+                  <% if funder.grant && funder.grant != "" %>
+                    , <span class="metadata-label">Grant:</span>
+                    <%= funder.grant %>
                   <% end %>
                 </td>
               </tr>
             <% end %>
-          <% end %>
 
-          <% if @dataset.description && @dataset.description != '' %>
             <tr class="row">
               <td>
-                <span class="metadata-label">Dataset Description: </span>
+                <span class="metadata-label">Corresponding Creator: </span>
               </td>
               <td>
-                <%= simple_format(@dataset.description) %>
+                <%= (!@dataset.corresponding_creator_name || @dataset.corresponding_creator_name.empty?) ? "[corresponding creator name not provided]" : @dataset.corresponding_creator_name %>
               </td>
             </tr>
-          <% end %>
+            <% if can? :manage, @dataset %>
+              <tr class="row">
+                <td>
+                  <span class="metadata-label">Depositor:</span>
+                </td>
+                <td>
+                  <%= @dataset.depositor_name %>
+                </td>
+              </tr>
+            <% end %>
 
-          <% if @dataset.keywords && !@dataset.keywords.empty? %>
-            <tr class="row">
-              <td>
-                <span class="metadata-label">Keywords: </span>
-              </td>
-              <td>
-                <%= @dataset.keywords %>
-              </td>
-            </tr>
-          <% end %>
-          <tr class="row">
-            <td>
-              <span class="metadata-label">License:</span>
-            </td>
-            <td>
-              <% if @license_link == "" %>
-                <%= (@dataset.license && @dataset.license != "") ? @dataset.license : "[License not selected]" %>
-              <% else %>
-                <a href="<%= @license_link %>">
-                  <% if @license.code == 'license.txt' %>
-                    See license.txt in dataset.
-                  <% else %>
-                    <%= @license.name %>
-                  <% end %>
-                </a>
-              <% end %>
-            </td>
-          </tr>
-
-          <% if [Databank::PublicationState::Embargo::METADATA, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state) || (@dataset.publication_state == Databank::PublicationState::DRAFT && @dataset.release_date && @dataset.release_date > Date.current()) %>
-            <tr class="row">
-              <td>
-                <span class="metadata-label">Release Date:</span>
-              </td>
-              <td>
-                <%= @dataset.release_date %>
-              </td>
-            </tr>
-          <% end %>
-
-          <% @dataset.funders.each do |funder| %>
-            <tr class="row">
-              <td>
-                <span class="metadata-label">Funder:</span>
-              </td>
-              <td>
-                <%= funder.name %>
-                <% if funder.grant && funder.grant != "" %>
-                  , <span class="metadata-label">Grant:</span>
-                  <%= funder.grant %>
-                <% end %>
-              </td>
-            </tr>
-          <% end %>
-
-          <tr class="row">
-            <td>
-              <span class="metadata-label">Corresponding Creator: </span>
-            </td>
-            <td>
-              <%= (!@dataset.corresponding_creator_name || @dataset.corresponding_creator_name.empty?) ? "[corresponding creator name not provided]" : @dataset.corresponding_creator_name %>
-            </td>
-          </tr>
-          <% if can? :manage, @dataset %>
-            <tr class="row">
-              <td>
-                <span class="metadata-label">Depositor:</span>
-              </td>
-              <td>
-                <%= @dataset.depositor_name %>
-              </td>
-            </tr>
-          <% end %>
-
-          <% if can? :manage, @dataset %>
-            <tr class="row">
-              <td>
-                <span class="metadata-label">Corresponding Creator Email: </span>
-              </td>
-              <td>
-                <%= (!@dataset.corresponding_creator_email || @dataset.corresponding_creator_email.empty?) ? "[corresponding creator email not provided]" : @dataset.corresponding_creator_email %>
-              </td>
-            </tr>
-            <tr class="row">
-              <td>
-                <span class="metadata-label">Depositor Email:</span>
-              </td>
-              <td>
-                <%= @dataset.depositor_email %>
-              </td>
-            </tr>
-          <% end %>
-          </tbody>
-        </table>
-    </div>
+            <% if can? :manage, @dataset %>
+              <tr class="row">
+                <td>
+                  <span class="metadata-label">Corresponding Creator Email: </span>
+                </td>
+                <td>
+                  <%= (!@dataset.corresponding_creator_email || @dataset.corresponding_creator_email.empty?) ? "[corresponding creator email not provided]" : @dataset.corresponding_creator_email %>
+                </td>
+              </tr>
+              <tr class="row">
+                <td>
+                  <span class="metadata-label">Depositor Email:</span>
+                </td>
+                <td>
+                  <%= @dataset.depositor_email %>
+                </td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+      </div>
 
     </div>
     <!-- END metadata section-->
@@ -383,36 +383,36 @@
     <% end %>
   <% end %>
 
+</div>
+
+<% if can? :manage, @dataset && @dataset.publication_state != Databank::PublicationState::DRAFT %>
+  <div class="container-fluid">
+    <div class="curator-only">
+      <p><a href="http://ezid.lib.purdue.edu/manage/display_xml/doi:<%= @dataset.identifier %>" target="_blank">DataCite
+        Metadata in XML format (via EZID)</a></p>
+
+      <p>
+        <a href="http://ezid.lib.purdue.edu/id/doi:<%= @dataset.identifier %>" target="_blank">DataCite Metadata on
+          EZID
+          page</a>
+      </p>
+
+      <p>To see this dataset in Medusa, go to
+        <% if @dataset.medusa_dataset_dir && @dataset.medusa_dataset_dir != '' %>
+
+          <a href="<%= IDB_CONFIG['medusa']['datasets_url_base'] %><%= @dataset.medusa_dataset_dir %>" target="_blank"><%= IDB_CONFIG['medusa']['datasets_url_base'] %><%= @dataset.medusa_dataset_dir %></a>
+        <% else %>
+          <a href="<%= IDB_CONFIG['medusa']['file_group_url'] %>" target="_blank">IDB File Group</a> and filter
+          by: <%= @dataset.key %>
+        <% end %>
+      </p>
+    </div>
   </div>
+<% end %>
 
-  <% if can? :manage, @dataset && @dataset.publication_state != Databank::PublicationState::DRAFT %>
-    <div class="container-fluid">
-      <div class="curator-only">
-        <p><a href="http://ezid.lib.purdue.edu/manage/display_xml/doi:<%= @dataset.identifier %>" target="_blank">DataCite
-          Metadata in XML format (via EZID)</a></p>
-
-        <p>
-          <a href="http://ezid.lib.purdue.edu/id/doi:<%= @dataset.identifier %>" target="_blank">DataCite Metadata on
-            EZID
-            page</a>
-        </p>
-
-        <p>To see this dataset in Medusa, go to
-          <% if @dataset.medusa_dataset_dir && @dataset.medusa_dataset_dir != '' %>
-
-            <a href="<%= IDB_CONFIG['medusa']['datasets_url_base'] %><%= @dataset.medusa_dataset_dir %>" target="_blank"><%= IDB_CONFIG['medusa']['datasets_url_base'] %><%= @dataset.medusa_dataset_dir %></a>
-          <% else %>
-            <a href="<%= IDB_CONFIG['medusa']['file_group_url'] %>" target="_blank">IDB File Group</a> and filter
-            by: <%= @dataset.key %>
-          <% end %>
-        </p>
-      </div>
-    </div>
-  <% end %>
-
-  <% if (@dataset.title) && (@dataset.title.downcase.include? 'unicorn') && ((can? :edit, @dataset) && [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state)) %>
-    <div class="pull-right">
-      <%= image_tag('Rainbow_Unicorn.png') %>
-    </div>
-  <% end %>
+<% if (@dataset.title) && (@dataset.title.downcase.include? 'unicorn') && ((can? :edit, @dataset) && [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state)) %>
+  <div class="pull-right">
+    <%= image_tag('Rainbow_Unicorn.png') %>
+  </div>
+<% end %>
 

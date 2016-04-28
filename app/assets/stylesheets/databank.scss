@@ -232,14 +232,13 @@ div#box-select{
 .file-drop-instruction{
   background-color: $color__lightest-grey;
   display: inline-block;
-  border: 1px dashed $color__light-blue;
+  border: 2px dashed $color__light-blue;
   padding: 15px;
 }
 
 #copy-persistent-link{
   padding-top: 10px;
   padding-bottom: 5px;
-  //padding-left: 7px;
 }
 .dataset-index-btn{
   margin-bottom: 3px;

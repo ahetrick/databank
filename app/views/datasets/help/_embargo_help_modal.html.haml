@@ -4,8 +4,12 @@
       .modal-header
         %button(class="close" data-dismiss="modal")
           &times;
+        %h2 Publication Delay (Embargo)
       .modal-body
-        %p Publishers and funders may have varying requirements for your dataset publication. For example, they may require that you delay the publication of your files only or your entire dataset, which includes files and metadata. Check with your publisher and feel free to contact us.
+        %p
+          Publishers and funders may have varying requirements for your dataset publication. For example, they may require that you delay the publication of your files only or your entire dataset, which includes files and metadata. Check with your publisher and feel free to
+          =succeed "." do
+            %a(href="/help#contact") contact us
         =render partial: 'help/embargo_infographic'
 
         .container-fluid
