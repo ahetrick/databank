@@ -107,7 +107,7 @@ ready = function () {
     $('#save-exit-button').click(function () {
 
         if ($(".invalid-input").length == 0) {
-            alert("Your draft has been saved!  When you're ready to continue, click your name to access your saved draft and click 'Edit' to pick up where you left off.  We'll save your draft for at least six months.");
+            alert("Your dataset has been saved!  When you're ready to continue, click your name to access your saved dataset and click 'Edit' to pick up where you left off.  We'll save a draft dataset for at least six months.");
             window.onbeforeunload = null;
             $('<input />').attr('type', 'hidden')
                 .attr('name', "next")

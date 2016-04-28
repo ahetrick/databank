@@ -32,13 +32,13 @@
           .row
             .col-md-4
               - case @dataset.visibility
-                -when 'Public (Published)', 'Private (Delayed Publication)', 'Public Description, Private Files (Delayed Publication)'
+                -when 'Metadata and Files Published', 'Metadata and Files Publication Delayed (Embargoed)', 'Metadata Published, Files Publication Delayed (Embargoed)'
                   %button(id="tmpSuppressFilesBtn" type="button" class="btn btn-lg btn-warning btn-block" onclick="tmpSuppressFiles()")
                     Temporarily Suppress File(s) Only
-                -when 'Public description, Private files (Curator Hold)'
+                -when 'Metadata Published, Files Temporarily Suppressed'
                   %button(id="tmpSuppressFilesBtn" type="button" class="btn btn-lg btn-warning btn-block" onclick="unsuppress()")
                     UNSUPPRESS File(s)
-                -when 'Private (Curator Hold)', 'Public Description, Withdrawn Files', 'Withdrawn'
+                -when 'Metadata and Files Temporarily Suppressed', 'Metadata Published, Files Withdrawn', 'Withdrawn'
                   %button(disabled id="tmpSuppressFilesBtn" type="button" class="btn btn-lg btn-warning btn-block" onclick="tmpSuppressFiles()")
                     Temporarily Suppress File(s) Only
 
@@ -57,10 +57,10 @@
           .row
             .col-md-4
               - case @dataset.visibility
-                -when 'Public (Published)', 'Private (Delayed Publication)', 'Public Description, Private Files (Delayed Publication)', 'Public Description, Withdrawn Files', 'Public description, Private files (Curator Hold)'
+                -when 'Metadata and Files Published', 'Metadata and Files Publication Delayed (Embargoed)', 'Metadata Published, Files Publication Delayed (Embargoed)', 'Metadata Published, Files Withdrawn', 'Metadata Published, Files Temporarily Suppressed'
                   %button(id="tmpSuppressMetadataBtn" type="button" class="btn btn-lg btn-warning btn-block" onclick="tmpSuppressMetadata()")
                     Temporarily Suppress File(s) and Metadata
-                -when 'Private (Curator Hold)'
+                -when 'Metadata and Files Temporarily Suppressed'
                   %button(id="tmpSuppressMetadataBtn" type="button" class="btn btn-lg btn-warning btn-block" onclick="unsuppress()")
                     UNSUPPRESS File(s) and Metadata
                 -when 'Withdrawn'

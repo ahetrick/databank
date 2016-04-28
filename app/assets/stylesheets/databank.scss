@@ -76,7 +76,7 @@ div.alert.alert-notice {
   border: 1px solid $color__light-orange;
 }
 
-.completion-warning {
+.completion-warning, .datacite-changes-warning {
   background: $color__yellow;
   padding: 5px;
   margin-left: -5px;

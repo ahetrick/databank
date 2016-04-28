@@ -557,37 +557,37 @@ class Dataset < ActiveRecord::Base
     return_string = ""
     case self.hold_state
       when Databank::PublicationState::TempSuppress::METADATA
-        return_string = "Private (Curator Hold)"
+        return_string = "Metadata and Files Temporarily Suppressed"
       when Databank::PublicationState::TempSuppress::FILE
         case self.publication_state
           when Databank::PublicationState::DRAFT
-            return_string = "Private (Saved Draft)"
+            return_string = "Draft"
           when Databank::PublicationState::Embargo::FILE
-            return_string = "Public Description, Private Files (Delayed Publication)"
+            return_string = "Metadata Published, Files Publication Delayed (Embargoed)"
           when Databank::PublicationState::Embargo::METADATA
-            return_string = "Private (Delayed Publication)"
+            return_string = "Metadata and Files Publication Delayed (Embargoed)"
           when Databank::PublicationState::PermSuppress::FILE
-            return_string = "Public Description, Withdrawn Files"
+            return_string = "Metadata Published, Files Withdrawn"
           when Databank::PublicationState::PermSuppress::METADATA
-            return_string = "Withdrawn"
+            return_string = "Metadata and Files Withdrawn"
           else
-            return_string = "Public description, Private files (Curator Hold)"
+            return_string = "Metadata Published, Files Temporarily Suppressed"
         end
 
       else
         case self.publication_state
           when Databank::PublicationState::DRAFT
-            return_string = "Private (Saved Draft)"
+            return_string = "Draft"
           when Databank::PublicationState::RELEASED
-            return_string = "Public (Published)"
+            return_string = "Metadata and Files Published"
           when Databank::PublicationState::Embargo::FILE
-            return_string = "Public Description, Private Files (Delayed Publication)"
+            return_string = "Metadata Published, Files Publication Delayed (Embargoed)"
           when Databank::PublicationState::Embargo::METADATA
-            return_string = "Private (Delayed Publication)"
+            return_string = "Metadata and Files Publication Delayed (Embargoed)"
           when Databank::PublicationState::PermSuppress::FILE
-            return_string = "Public Description, Withdrawn Files"
+            return_string = "Metadata Published, Files Withdrawn"
           when Databank::PublicationState::PermSuppress::METADATA
-            return_string = "Withdrawn"
+            return_string = "Metadata and Files Withdrawn"
           else
             #should never get here
             return_string = "Unknown, please contact the Research Data Service"
@@ -595,7 +595,7 @@ class Dataset < ActiveRecord::Base
     end
 
     if self.new_record?
-      return_string = "Private (Not Yet Saved)"
+      return_string = "Unsaved Draft"
     end
 
     return_string
