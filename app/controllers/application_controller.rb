@@ -57,14 +57,10 @@ class ApplicationController < ActionController::Base
 
       exception_string = "*** Standard Error caught in application_controller.rb on #{IDB_CONFIG[:root_url_text]} ***\nclass: #{exception.class}\nmessage: #{exception.message}\n"
 
-      max_lines_to_log = 5
-      line_number = 1
       exception_string << "stack:\n"
       exception.backtrace.each do |line|
         exception_string << line
         exception_string << "\n"
-        line_number = line_number + 1
-        break if line_number > max_lines_to_log
       end
 
       Rails.logger.warn(exception_string)
