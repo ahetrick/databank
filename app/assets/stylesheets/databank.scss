@@ -290,6 +290,8 @@ div.row.checkbox {
   }
 }
 .beta-block{
+  position: relative;
+  top: -4px;
   text-align: center;
   color: $color__text-light;
   background-color: $color__burnt-orange;
