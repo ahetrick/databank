@@ -12,4 +12,4 @@ SitemapGenerator::Sitemap.create do
   add '/help', :changefreq => 'monthly', :priority => 0.1
   add '/policy', :changefreq => 'monthly', :priority => 0.1
 end
-SitemapGenerator::Sitemap.ping_search_engines # Not needed if you use the rake tasks
+#SitemapGenerator::Sitemap.ping_search_engines # Not needed if you use the rake tasks
