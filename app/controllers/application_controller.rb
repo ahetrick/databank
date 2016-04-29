@@ -75,7 +75,10 @@ class ApplicationController < ActionController::Base
 
       notification = DatabankMailer.error(exception_string)
       notification.deliver_now
-      redirect_to ('/500.html')
+      respond_to do |format|
+        format.html { render ('errors/error500'), status: 500}
+        format.all { render nothing: true, status: 500 }
+      end
 
     end
 
