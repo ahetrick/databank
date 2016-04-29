@@ -49,7 +49,11 @@ class MedusaIngest < ActiveRecord::Base
     medusa_ingest.send_medusa_ingest_message(staging_path)
     medusa_ingest.save
 
-    if old_publication_state == Databank::PublicationState::DRAFT && !dataset.is_test?
+    #if old_publication_state == Databank::PublicationState::DRAFT && !dataset.is_test?
+
+    # put test datasets in Medusa -- may reconsider later.
+
+    if old_publication_state == Databank::PublicationState::DRAFT
 
       dataset.datafiles.each do |datafile|
 
