@@ -86,7 +86,7 @@ class DownloaderClient
         download_hash['total_size']=total_size
         return download_hash
       else
-        Rails.logger.warn "invalid download response: #{medusa_request_json}"
+        Rails.logger.warn "*** invalid download response: #{client.body_str} to request: #{medusa_request_json}"
         download_hash['status']='error'
         download_hash['error']='invalid response from downloader service '
         return download_hash
