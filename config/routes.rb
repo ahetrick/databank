@@ -21,7 +21,7 @@ Rails.application.routes.draw do
   root 'welcome#index'
 
   get '/faqs', to: 'welcome#faqs', :as => :faq
-  get '/policies', to: 'welcome#policies', :as => :policies
+  get '/policies', to: 'policies#index', :as => :policies
   get '/help', to: 'help#index', :as => :help
   get '/welcome/deposit_login_modal', to: 'welcome#deposit_login_modal'
   get '/datasets/:id/download_endNote_XML', to: 'datasets#download_endNote_XML'
@@ -95,8 +95,6 @@ Rails.application.routes.draw do
   get "/datasets/:id/download_link", to: 'datasets#download_link', defaults: {format: 'json'}
 
   get "/datasets/:id/serialization", to: 'datasets#serialization', defaults: {format: 'json'}
-
-
 
   get "/datasets/:id/changelog", to: 'changelogs#edit'
 

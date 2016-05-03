@@ -1,0 +1,13 @@
+%div(id="wrapper")
+  %div(id="sidebar-wrapper")
+    %ul(class="sidebar-nav" )
+      %li(class="sidebar-brand" )
+        %a(href="/policies") Select a Policy
+      %li
+        %a(href="#example" ) Example
+
+  %div(id="page-content-wrapper")
+    .row
+      .col-lg-12
+        %h1(class="text-center" ) Policies
+        =yield
