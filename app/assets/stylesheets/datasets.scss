@@ -76,7 +76,7 @@ legend.metadata-border {
   background-color: $color__text-light;
 }
 
-.deposit-agreement-warning, .deposit-agreement-modal-warning {
+.deposit-agreement-warning, .deposit-agreement-selection-warning {
   color: $color__red;
   font-weight: bold;
   font-style: italic;
@@ -311,7 +311,7 @@ ul.help-info {
 }
 
 #creator_table > thead {
-  background-color: $color__light-blue-background;
+  background-color: $color__lightest-grey;
 }
 
 .idb-infographic-header{

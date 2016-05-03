@@ -24,8 +24,11 @@ config/medusa_downloader.yml
 mock_medusa
 /scripts
 
-prod_start.sh
-prod_restart.sh
+idb_stop.sh
+idb_start.sh
+idb_restart.sh
+dj_start.sh
+dj_stop.sh
 
 /uploads
 /public/agreements

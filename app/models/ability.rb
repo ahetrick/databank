@@ -32,6 +32,7 @@ class Ability
       can :download_RIS, Dataset
       can :show, Dataset
       can :review_deposit_agreement, Dataset
+      can :pre_deposit, Dataset
     else
       can :read, :all
       can :download_link, Dataset
@@ -43,6 +44,7 @@ class Ability
       can :download_RIS, Dataset
       can :show, Dataset
       can :splash_url, Dataset
+      can :pre_deposit, Dataset
 
     end
     #

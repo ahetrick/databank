@@ -18,6 +18,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :review_deposit_agreement
   skip_load_and_authorize_resource :only => :datacite_record
   skip_load_and_authorize_resource :only => :download_link
+  skip_load_and_authorize_resource :only => :pre_deposit
 
   before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :cancel_box_upload, :citation_text, :changelog, :serialization]
 
@@ -255,6 +256,10 @@ class DatasetsController < ApplicationController
 
       format.json { head :no_content }
     end
+  end
+
+  def pre_deposit
+    @dataset = Dataset.new
   end
 
   def suppress_changelog
@@ -796,6 +801,7 @@ class DatasetsController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_dataset
     @dataset = Dataset.find_by_key(params[:id])
+    Rails.logger.warn "inside set_dataset"
     raise ActiveRecord::RecordNotFound unless @dataset
   end
 

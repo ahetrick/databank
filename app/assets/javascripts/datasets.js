@@ -20,7 +20,8 @@ var ready;
 ready = function () {
 
     $('.bytestream_name').css("visibility", "hidden");
-    $('.deposit-agreement-modal-warning').hide();
+    $('.deposit-agreement-warning').hide();
+    $('.deposit-agreement-selection-warning').hide();
     $('#agree-button').prop("disabled", true);
 
     // handle non-chrome datepicker:
@@ -66,12 +67,6 @@ ready = function () {
         else if (window.event) {
             window.event.cancelBubble = true;
         }
-    });
-
-    $('#new-save-button').click(function () {
-        window.onbeforeunload = null;
-        $('#new_dataset').submit();
-
     });
 
     $('#new-exit-button').click(function () {
@@ -302,23 +297,6 @@ function cancelUpload(datafile, job) {
     return false;
 }
 
-function handleNotAgreed() {
-
-    $('.save').hide();
-    $('.dataset').attr("disabled", true);
-    //$('.file-field').attr("disabled", true);
-    $('.add-attachment-subform-button').hide();
-    //$('#show-agreement-modal-link').show();
-    $('.new-dataset-progress').hide();
-    $('.deposit-agreement-warning').show();
-    $('.search').removeAttr("disabled");
-    $('.help').removeAttr("disabled");
-    $('#show-agreement-modal-link').show();
-    $('.review-deposit-agreement').hide();
-    //$('.deposit-agreement-btn').removeAttr("disabled");
-    $('.new-save').hide();
-    window.scrollTo(0, 0);
-}
 
 function setDepositor(email, name) {
 
@@ -330,9 +308,7 @@ function setDepositor(email, name) {
     $('.file-field').removeAttr("disabled");
     $('.add-attachment-subform-button').show();
     $('.deposit-agreement-warning').hide();
-    $('#show-agreement-modal-link').hide();
-    $('.new-save').show();
-    $('.review-deposit-agreement').show();
+
     //$('#show-agreement-modal-link').hide();
 }
 
@@ -340,8 +316,10 @@ function handleAgreeModal(email, name) {
 
     if ($('#owner-yes').is(":checked") && $('#agree-yes').is(":checked") && ($('#private-yes').is(":checked") || $('#private-na').is(":checked") )) {
         setDepositor(email, name);
+        $('#new_dataset').submit();
     } else {
-        handleNotAgreed();
+        // should not get here
+        $('#agree-button').prop("disabled", true);
     }
 }
 
@@ -366,7 +344,7 @@ function handlePrivateYes() {
             allow_agree_submit();
         }
         if (agree_answers_none_no()) {
-            $('.deposit-agreement-modal-warning').hide();
+            $('.deposit-agreement-selection-warning').hide();
         }
     } else {
         $('#agree-button').prop("disabled", true);
@@ -385,7 +363,7 @@ function handlePrivateNA() {
             allow_agree_submit();
         }
         if (agree_answers_none_no()) {
-            $('.deposit-agreement-modal-warning').hide();
+            $('.deposit-agreement-selection-warning').hide();
         }
     } else {
         $('#agree-button').prop("disabled", true);
@@ -399,10 +377,10 @@ function handlePrivateNo() {
         $('#private-na').attr('checked', false);
         $('#private-yes').attr('checked', false);
         $('#agree-button').prop("disabled", true);
-        $('.deposit-agreement-modal-warning').show();
+        $('.deposit-agreement-selection-warning').show();
     } else {
         if (agree_answers_none_no()) {
-            $('.deposit-agreement-modal-warning').hide();
+            $('.deposit-agreement-selection-warning').hide();
         }
     }
 }
@@ -415,7 +393,7 @@ function handleOwnerYes() {
             allow_agree_submit();
         }
         if (agree_answers_none_no()) {
-            $('.deposit-agreement-modal-warning').hide();
+            $('.deposit-agreement-selection-warning').hide();
         }
     } else {
         $('#agree-button').prop("disabled", true);
@@ -428,10 +406,10 @@ function handleOwnerNo() {
         $('#dataset_have_permission').val('no');
         $('#owner-yes').attr('checked', false);
         $('#agree-button').prop("disabled", true);
-        $('.deposit-agreement-modal-warning').show();
+        $('.deposit-agreement-selection-warning').show();
     } else {
         if (agree_answers_none_no()) {
-            $('.deposit-agreement-modal-warning').hide();
+            $('.deposit-agreement-selection-warning').hide();
         }
     }
 }
@@ -444,7 +422,7 @@ function handleAgreeYes() {
             allow_agree_submit();
         }
         if (agree_answers_none_no()) {
-            $('.deposit-agreement-modal-warning').hide();
+            $('.deposit-agreement-selection-warning').hide();
         }
 
     } else {
@@ -458,10 +436,10 @@ function handleAgreeNo() {
         $('#dataset_agree').val('no');
         $('#agree-yes').attr('checked', false);
         $('#agree-button').prop("disabled", true);
-        $('.deposit-agreement-modal-warning').show();
+        $('.deposit-agreement-selection-warning').show();
     } else {
         if (agree_answers_none_no()) {
-            $('.deposit-agreement-modal-warning').hide();
+            $('.deposit-agreement-selection-warning').hide();
         }
     }
 }
@@ -476,7 +454,7 @@ function agree_answers_none_no() {
 
 function allow_agree_submit() {
     $('#agree-button').prop("disabled", false);
-    $('.deposit-agreement-modal-warning').hide();
+    $('.deposit-agreement-selection-warning').hide();
 }
 
 function clear_help_form() {
