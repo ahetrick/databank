@@ -4,7 +4,15 @@ class DatabankMailer < ActionMailer::Base
   def confirm_deposit(dataset_key)
     @dataset = Dataset.where(key: dataset_key).first
     if @dataset
-      mail(to: [@dataset.depositor_email, @dataset.corresponding_creator_email], cc: 'databank@library.illinois.edu', subject: '[Illinois Data Bank] Dataset successfully deposited')
+      to_array = Array.new
+
+      to_array << @dataset.depositor_email
+
+      @dataset.creators.each do |creator|
+        to_array << creator.email
+      end
+
+      mail(to: to_array , cc: 'databank@library.illinois.edu', subject: '[Illinois Data Bank] Dataset successfully deposited')
     else
       Rails.logger.warn "Confirmation email not sent because dataset not found for key: #{dataset_key}."
     end

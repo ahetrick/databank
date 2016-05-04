@@ -334,25 +334,21 @@ class Dataset < ActiveRecord::Base
 
     dataset.creators.each do |creator|
       if !creator.email || creator.email == ''
-        if creator.family_name
-          validation_error_messages << "an email address for #{creator.given_name} #{creator.family_name}"
-        else
-          validation_error_messages << "an email address for each author"
-          break
-        end
-      end
-    end
-
-    dataset.creators.each do |creator|
-      if !creator.given_name || creator.given_name == ''
-        validation_error_messages << "at least one given name for each author"
+        validation_error_messages << "an email address for author(s)"
         break
       end
     end
 
     dataset.creators.each do |creator|
       if !creator.given_name || creator.given_name == ''
-        validation_error_messages << "a family name for each author"
+        validation_error_messages << "at least one given name for author(s)"
+        break
+      end
+    end
+
+    dataset.creators.each do |creator|
+      if !creator.given_name || creator.given_name == ''
+        validation_error_messages << "a family name for author(s)"
         break
       end
     end
