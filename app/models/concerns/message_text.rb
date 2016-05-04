@@ -117,7 +117,6 @@ module MessageText
             msg << "<ul>"
             msg << "<li>Your Illinois Data Bank dataset record will be <strong>publicly</strong> visible through search engines.</li>"
             msg << "<li>Although the record for your dataset will be <strong>publicly</strong> visible, your data files will not be made available until #{effective_release_date}.</li>"
-
           else
             msg << "<h4>This action will make your updates to your dataset record <strong>public</strong>.</h4><hr/>"
             msg << "<ul>"
@@ -150,7 +149,13 @@ module MessageText
           msg << "<li>Your data files will be <strong>publicly</strong> available.</li>"
       end
 
+      if dataset.publication_state == Databank::PublicationState::DRAFT
+        msg << "<li>You and all authors will receive a confirmation email with your DOI and other information about your dataset.</li>"
+      end
+
       msg << "<li>You will be able to edit the description for the dataset, but would need to contact the <a href='/help'>Research Data Service</a> if you need to change, update, or add files for any reason.</li> "
+
+
 
       msg << "</ul></div>"
 
