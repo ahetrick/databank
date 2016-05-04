@@ -1,9 +1,7 @@
 = render partial: 'datasets/help/orcid_help_modal'
 = render partial: 'datasets/help/primary_contact_help_modal'
 %label(class="control-label required")
-  Author List
-  %span(id="email_required_span")
-    (One primary long-term contact and their email address is required.)
+  Author List (One primary long-term contact must be selected from this list.)
 %br
 %input(type="hidden" name="creator_index_max" id="creator_index_max" value="#{@dataset.creators.count.to_i}" )
 = f.hidden_field :publication_state
@@ -23,9 +21,10 @@
           =image_tag 'iD_icon_16x16.png'
           %span(class="idb-help-prompt" )
             what's this?
-      %th(class="col-md-1" )
+      %th(class="col-md-1")
       %th(class="col-md-2")
-        Email
+        .form-heading-required
+          Email
       %th(class="col-md-2" )
         Primary Contact
         %a(href="#" data-toggle="modal" data-target="#primaryContactModal" tabindex="-1")

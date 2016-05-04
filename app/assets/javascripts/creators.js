@@ -133,7 +133,6 @@ function handleCreatorTable() {
 function handle_creator_email_change(input) {
     if (isEmail($(input).val())) {
         $(input).closest('td').removeClass('input-field-required');
-        $("#email_required_span").removeClass('highlight');
         $(input).removeClass("invalid-input");
     } else if ($(input).val() != "") {
         $(input).addClass("invalid-input");
@@ -178,7 +177,6 @@ function generate_creator_preview() {
 function handle_contact_change() {
     // set is_contact value to match selection staus and highlight required email input field if blank
     var selectedVal = $("input[type='radio'][name='primary_contact']:checked").val();
-    $("#email_required_span").removeClass('highlight');
 
     $('#creator_table tr').each(function (i) {
         if (i > 0) {
@@ -191,11 +189,6 @@ function handle_contact_change() {
 
     $("input[name='dataset[creators_attributes][" + selectedVal + "][is_contact]']").val('true');
 
-    if ($("input[name='dataset[creators_attributes][" + selectedVal + "][email]']").val() == "") {
-        $("#email_required_span").addClass('highlight');
-        $("input[name='dataset[creators_attributes][" + selectedVal + "][email]']").closest('td').addClass('input-field-required');
-        $("input[name='dataset[creators_attributes][" + selectedVal + "][email]']").focus();
-    }
 }
 
 // *** ORCID stuff

@@ -21,7 +21,7 @@ class Dataset < ActiveRecord::Base
   has_many :funders, dependent: :destroy
   has_many :related_materials, dependent: :destroy
   accepts_nested_attributes_for :datafiles, reject_if: :all_blank, allow_destroy: true
-  accepts_nested_attributes_for :creators, reject_if: proc { |attributes| (attributes['family_name'].blank? && attributes['institution_name'].blank?) }, allow_destroy: true
+  accepts_nested_attributes_for :creators, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :funders, reject_if: proc { |attributes| (attributes['name'].blank?) }, allow_destroy: true
   accepts_nested_attributes_for :related_materials, reject_if: proc { |attributes| ((attributes['link'].blank?) && (attributes['citation'].blank?)) }, allow_destroy: true
 
@@ -332,12 +332,33 @@ class Dataset < ActiveRecord::Base
       end
     end
 
-    unless contact
-      validation_error_messages << "select primary contact from author list"
+    dataset.creators.each do |creator|
+      if !creator.email || creator.email == ''
+        if creator.family_name
+          validation_error_messages << "an email address for #{creator.given_name} #{creator.family_name}"
+        else
+          validation_error_messages << "an email address for each author"
+          break
+        end
+      end
     end
 
-    if contact.nil? || !contact.email || contact.email == ""
-      validation_error_messages << "email address for primary long term contact"
+    dataset.creators.each do |creator|
+      if !creator.given_name || creator.given_name == ''
+        validation_error_messages << "at least one given name for each author"
+        break
+      end
+    end
+
+    dataset.creators.each do |creator|
+      if !creator.given_name || creator.given_name == ''
+        validation_error_messages << "a family name for each author"
+        break
+      end
+    end
+
+    unless contact
+      validation_error_messages << "select primary contact from author list"
     end
 
     if current_user
