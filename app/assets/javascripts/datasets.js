@@ -70,13 +70,9 @@ ready = function () {
     });
 
     $('#new-exit-button').click(function () {
-
-        alert("Your draft has been saved!  When you're ready to continue, click your name to access your saved draft and click 'Edit' to pick up where you left off.  We'll save your draft for at least six months.");
         $('#new_dataset').append("<input type='hidden' name='exit' value='true' />");
-
         window.onbeforeunload = null;
         $('#new_dataset').submit();
-
     });
 
     $('.new-save').hide();
@@ -102,12 +98,8 @@ ready = function () {
     $('#save-exit-button').click(function () {
 
         if ($(".invalid-input").length == 0) {
-            alert("Your dataset has been saved!  When you're ready to continue, click your name to access your saved dataset and click 'Edit' to pick up where you left off.  We'll save a draft dataset for at least six months.");
+            $("[id^=edit_dataset]").append("<input type='hidden' name='exit' value='true' />");
             window.onbeforeunload = null;
-            $('<input />').attr('type', 'hidden')
-                .attr('name', "next")
-                .attr('value', "my_datasets")
-                .appendTo($("[id^=edit_dataset]"));
             $("[id^=edit_dataset]").submit();
         } else {
             alert("Email address must be in a valid format. Only the long-term primary contact email address is required.");
@@ -491,6 +483,10 @@ function filename_isdup(proposed_name) {
 
 }
 
+function dataset_exit_save(){
+
+}
+
 function offerDownloadLink() {
     var selected_files = $('input[name="selected_files[]"]:checked');
     var web_id_string = "";
@@ -529,6 +525,10 @@ function offerDownloadLink() {
             console.log("done");
         });
     }
+}
+
+function license_change_warning() {
+    $("#licenseChangeModal").modal();
 }
 
 function suppressChangelog(){

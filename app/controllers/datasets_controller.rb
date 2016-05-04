@@ -200,15 +200,8 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       if @dataset.save
-
-        if params.has_key?('exit')
-          format.html { redirect_to dataset_path(@dataset.key) }
-          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
-        else
-          format.html { redirect_to edit_dataset_path(@dataset.key) }
-          format.json { render :edit, status: :created, location: edit_dataset_path(@dataset.key) }
-        end
-
+        format.html { redirect_to edit_dataset_path(@dataset.key) }
+        format.json { render :edit, status: :created, location: edit_dataset_path(@dataset.key) }
       else
         format.html { render :new }
         format.json { render json: @dataset.errors, status: :unprocessable_entity }
@@ -227,8 +220,13 @@ class DatasetsController < ApplicationController
     respond_to do |format|
 
       if @dataset.update(dataset_params)
-        if current_user && (params.has_key?(:next)) && (params[:next] == 'my_datasets')
-          format.html { redirect_to "/datasets?depositor=#{current_user.name}" }
+        if params.has_key?('exit')
+          if @dataset.publication_state == Databank::PublicationState::DRAFT
+            format.html { redirect_to "/datasets?depositor=#{current_user.name}&context=exit_draft" }
+          else
+            format.html { redirect_to "/datasets?depositor=#{current_user.name}&context=exit_doi" }
+          end
+          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
         else
           format.html { redirect_to dataset_path(@dataset.key) }
         end
@@ -801,7 +799,6 @@ class DatasetsController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_dataset
     @dataset = Dataset.find_by_key(params[:id])
-    Rails.logger.warn "inside set_dataset"
     raise ActiveRecord::RecordNotFound unless @dataset
   end
 

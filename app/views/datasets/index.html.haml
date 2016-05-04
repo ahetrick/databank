@@ -1,3 +1,9 @@
+-if params.has_key?('context')
+  .alert.alert-alert
+    -if params['context'] == 'exit_draft'
+      Your draft is saved. We'll save a draft dataset for at least six months.  When you're ready to continue, select your dataset and click 'Edit' to pick up where you left off.
+    -elsif params['context'] == 'exit_doi'
+      Your dataset is saved, but if there were any changes to the metadata record, those changes have not been published. When you're ready to continue, select your dataset and click 'Edit' to pick up where you left off, or 'Confirm' if you're ready to publish changes.
 - if params.has_key?('depositor') && current_user && current_user.role != 'admin'
   %h2 My Datasets
   %button(type="button" class="btn btn-primary btn-block dataset-index-btn" onclick='window.location = "/datasets"')
