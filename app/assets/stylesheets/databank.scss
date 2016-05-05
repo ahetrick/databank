@@ -7,10 +7,15 @@ $minibar-height: 50px;
   list-style-type: none;
 }
 
-.idb-help p {
+.idb-help p, .idb_help li {
   font-size: large;
-  line-height: 1.5;
+  line-height: 1.25;
   padding-bottom: 5px;
+}
+
+.idb-help p, .idb_help li {
+  font-size: large;
+  line-height: 1.25;
 }
 
 .idb-help-section-head {
@@ -304,4 +309,8 @@ div.panel-heading{
 }
 table.deposit-agreement-selection-warning > tbody > tr > td {
   padding-left: 5px;
+}
+
+.nudge-left{
+  margin-left: -10px;
 }
