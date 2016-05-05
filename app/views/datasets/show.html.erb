@@ -115,27 +115,33 @@
             <tbody>
             <% if @dataset.related_materials.count > 0 %>
               <% @dataset.related_materials.each do |material| %>
-                <tr class="row">
-                  <td>
-                    <span class="metadata-label">Related <%= (material.material_type && material.material_type != "") ? material.material_type : "Material" %>: </span>
-                  </td>
-                  <td>
-                    <% if material.link && material.link != '' %>
-                      <a href="<%= material.link %>">
-                        <% if material.citation && material.citation != '' %>
-                          <%= material.citation %>
-                        <% else %>
-                          <%= material.link %>
-                        <% end %>
-                      </a>
+                <% if material.uri && material.uri != '' %>
+                  [Curator work detected]
+                <% else %>
+                  <tr class="row">
+                    <td>
+                      <span class="metadata-label">Related
+                        <%= (material.material_type && material.material_type != "") ? material.material_type : "Material" %>:
+                      </span>
+                    </td>
+                    <td>
+                      <% if material.link && material.link != '' %>
+                        <a href="<%= material.link %>">
+                          <% if material.citation && material.citation != '' %>
+                            <%= material.citation %>
+                          <% else %>
+                            <%= material.link %>
+                          <% end %>
+                        </a>
 
-                    <% elsif material.citation && material.citation != '' %>
-                      <%= material.citation %>
-                    <% else %>
-                      [Details not provided.]
-                    <% end %>
-                  </td>
-                </tr>
+                      <% elsif material.citation && material.citation != '' %>
+                        <%= material.citation %>
+                      <% else %>
+                        [Details not provided.]
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
               <% end %>
             <% end %>
 

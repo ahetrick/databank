@@ -112,11 +112,11 @@ function add_material_row() {
             '<div class="form-group curator-only">' +
             '<input type="hidden" name="dataset[related_materials_attributes][' + newId + '][datacite_list]" id="dataset_related_materials_attributes_' + newId + '_datacite_list" />' +
             '<input name="datacite_relation" type="checkbox" value="IsSupplementTo" class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsSupplementTo </input>' +
-            '<br>' +
+            '<br/>' +
             '<input name="datacite_relation" type="checkbox" value="IsCitedBy" class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsCitedBy </input>' +
-            '<br>' +
+            '<br/>' +
             '<input name="datacite_relation" type="checkbox" value="IsPreviousVersionOf" class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsPreviousVersionOf </input>' +
-            '<br>' +
+            '<br/>' +
             '<input name="datacite_relation" type="checkbox" value="IsNewVersionOf" class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsNewVersionOf </input>' +
             '</div>' +
             '</td>' +

@@ -2,12 +2,24 @@
   %div(id="sidebar-wrapper")
     %ul(class="sidebar-nav" )
       %li(class="sidebar-brand" )
-        %a(href="/policies") Select a Policy
+        %a(href="/policies" ) Policy Framework and Definitions
       %li
-        %a(href="#example" ) Example
+        %a(href="#access_and_use") Access and Use Policy
+      %li
+        %a(href="#accession_policy") Accession Policy
+      %li
+        %a(href="#deposit_agreement") Deposit Agreement
+      %li
+        %a(href="#preservation_policy") Preservation Policy
+      %li
+        %a(href="#preservation_review") Preservation Review
+      -#%li
+      -#  %a(href="#withdrawal_guidelines") Withdrawal Guidelines
+      -#%li
+      -#  %a(href="#preservation_guidelines") Preservation Review Guidelines
 
   %div(id="page-content-wrapper")
     .row
       .col-lg-12
-        %h1(class="text-center" ) Policies
+        %h1 Policy Framework and Definitions
         =yield
