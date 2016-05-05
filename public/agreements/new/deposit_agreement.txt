@@ -16,16 +16,27 @@ If you cannot make all of the following representations, then you must contact R
 In order to submit this Dataset, you represent that:
 
 * You have the right to grant the rights contained in this License.
+
 * Nothing in this Dataset, to the best of your knowledge, infringes on anyone's copyright or other intellectual property rights.
+
 * If this Dataset does contain material for which you do not hold copyright and that exceeds fair use, you have obtained the unrestricted permission of the copyright owner to grant the University the rights required by this License and that such third-party owned material is clearly identified and acknowledged within the content of the Dataset.
+
 * Nothing in this Dataset violates any contract terms (e.g., Nondisclosure Agreement, Material Transfer Agreement, Terms of Use, etc.)
+
 * Nothing in this Dataset contains any private information, confidential information, proprietary information of others, export controlled information, or otherwise protected data or information that should not be publicly shared.
-* You honor any publication delays required by other parties, such as a journal publisher, by selecting the appropriate release date for public distribution of all content in this Dataset. 
-* To the best of your knowledge, all content provided within and about this Dataset is accurate. 
+
+* You honor any publication delays required by other parties, such as a journal publisher, by selecting the appropriate release date for public distribution of all content in this Dataset.
+
+* To the best of your knowledge, all content provided within and about this Dataset is accurate.
+
 * Nothing in this Dataset contains any software viruses or computer codes, files, or programs capable of allowing unauthorized access or disrupting, damaging, limiting or interfering with the proper functioning of the Illinois Data Bank or other users' software, hardware, or telecommunications equipment.
-* This Dataset is in a final state and is not subject to revisions or updates. 
+
+* This Dataset is in a final state and is not subject to revisions or updates.
+
 * You understand that if copyright terms for, or ownership of, this Dataset submission change, it is your responsibility to notify the University of these changes.
+
 * If this Dataset is based upon work that has been sponsored or supported by an agency or organization other than the University, you must fulfill any right of review or other obligations required by the contract or agreement with such an agency or organization before depositing into the Illinois Data Bank.
+
 * You agree that this submission of this Dataset and your related actions are subject to all applicable state and federal laws as well as University and campus policies.
 
 By agreeing to this Deposit Agreement, you acknowledge that you have read and accept the terms of this License and all related Illinois Data Bank and University policies.
