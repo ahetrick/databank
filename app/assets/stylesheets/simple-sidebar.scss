@@ -24,12 +24,12 @@ $sidebar-offset: -300px;
 
 #sidebar-wrapper {
   margin-top: -225px;
-  margin-bottom: 150px;
+  padding-bottom: 400px;
   z-index: 499;
   position: fixed;
   left: $sidebar-width;
   width: 0;
-  height: 120%;
+  height: 150%;
   margin-left: $sidebar-offset;
   overflow-y: auto;
   background: $color__dark-navy;
@@ -121,6 +121,7 @@ $sidebar-offset: -300px;
   #page-content-wrapper {
     padding: 20px;
     position: relative;
+    min-height: 800px;
   }
 
   #wrapper.toggled #page-content-wrapper {
