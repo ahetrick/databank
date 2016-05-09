@@ -17,7 +17,7 @@
 
       .form-group
         %label(for="help-name" class="control-label col-md-2" ) Name
-        .col-md-8
+        .col-md-10
           -if current_user
             %input(type="text" name="help-name" id="help-name" class="form-control help" value="#{current_user.name}" )
           -else
@@ -25,7 +25,7 @@
 
       .form-group.required
         %label(for="name" class="control-label col-md-2" ) Email
-        .col-md-8
+        .col-md-10
           -if current_user
             %input(type="email" name="help-email" id="help-email" class="form-control help" value="#{current_user.email}" required )
           -else
@@ -33,7 +33,7 @@
 
       .form-group
         %label(for="help-topic" class="control-label col-md-2" ) Topic
-        .col-md-8
+        .col-md-10
           %select(name="help-topic" id="help-topic" class="form-control help" )
             %option{value: "No Selection Made" } Please Select ...
             %option{value: "Depositing Data"} Depositing Data
@@ -57,16 +57,16 @@
         .form-group
           %label(for='help-dataset' class="control-label col-md-2" )
             Dataset
-          .col-md-8
+          .col-md-10
             %input(type="text" name="help-dataset" id="help-dataset" class="form-control help" value="#{request.base_url}#{dataset_path(@dataset.key)}" readonly=true)
 
       .form-group
         %label(for="help-message" class="control-label col-md-2" ) Message
-        .col-md-8
+        .col-md-10
           %textarea(rows="6" name="help-message" id="help-message" class="form-control help")
 
       .row
-        .col-md-6.col-md-offset-2
+        .col-md-8.col-md-offset-2
           %em A copy of this email will be sent to you automatically.
         .col-md-2
           %button(type="submit" class="btn btn btn-success btn-block") Send
