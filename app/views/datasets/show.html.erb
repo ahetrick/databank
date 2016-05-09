@@ -115,8 +115,27 @@
             <tbody>
             <% if @dataset.related_materials.count > 0 %>
               <% @dataset.related_materials.each do |material| %>
-                <% if material.uri && material.uri != '' %>
-                  [Curator work detected]
+
+                <% if material.relationship_arr.include?(Databank::Relationship::PREVIOUS_VERSION_OF)  && material.uri %>
+                  <tr class="row">
+                    <td>
+                      <span class="metadata-label">Version:</span>
+                    </td>
+                    <td>
+                      This is an old version of <a href="<%= material.link %>" target="_blank" > <%= material.uri_type %>:<%= material.uri %></a>.
+                    </td>
+                  </tr>
+
+                <% elsif material.relationship_arr.include?(Databank::Relationship::NEW_VERSION_OF) && material.uri %>
+                  <tr class="row">
+                    <td>
+                      <span class="metadata-label">Version:</span>
+                    </td>
+                    <td>
+                      This is an updated version of <a href="<%= material.link %>" target="_blank" > <%= material.uri_type %>:<%= material.uri %></a>.
+                    </td>
+                  </tr>
+
                 <% else %>
                   <tr class="row">
                     <td>
