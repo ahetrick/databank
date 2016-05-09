@@ -119,7 +119,7 @@
                 <% if material.relationship_arr.include?(Databank::Relationship::PREVIOUS_VERSION_OF)  && material.uri %>
                   <tr class="row">
                     <td>
-                      <span class="metadata-label">Version:</span>
+                      <span class="metadata-label">Related Dataset:</span>
                     </td>
                     <td>
                       This is an old version of <a href="<%= material.link %>" target="_blank" > <%= material.uri_type %>:<%= material.uri %></a>.
@@ -129,7 +129,7 @@
                 <% elsif material.relationship_arr.include?(Databank::Relationship::NEW_VERSION_OF) && material.uri %>
                   <tr class="row">
                     <td>
-                      <span class="metadata-label">Version:</span>
+                      <span class="metadata-label">Related Dataset:</span>
                     </td>
                     <td>
                       This is an updated version of <a href="<%= material.link %>" target="_blank" > <%= material.uri_type %>:<%= material.uri %></a>.
