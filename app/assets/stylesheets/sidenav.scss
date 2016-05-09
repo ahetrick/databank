@@ -1,5 +1,5 @@
 #sidebar.affix {
-  top: 20px;
+  top: 60px;
 }
 /* sidebar */
 .bs-docs-sidebar {
@@ -57,4 +57,9 @@
 }
 nav.bs-docs-sidebar{
   border-right: 1px solid $color__light-grey;
+}
+@media screen and (max-width: 500px){
+  .bs-docs-sidebar {
+    display:none
+  }
 }
