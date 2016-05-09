@@ -1,18 +1,39 @@
-= render layout: 'left_nav' do
-  -#= flash.each do |key, value|
-  -#  .alert.alert-info
-  -#    = sanitize(value)
-  = render partial: 'contact', locals: {dataset: @dataset}
-  = render partial: 'start'
-  %a(href="#top" class="pull-right" ) Go to Top
-  = render partial: 'doi'
-  %a(href="#top" class="pull-right" ) Go to Top
-  = render partial: 'when_to_publish'
-  %a(href="#top" class="pull-right" ) Go to Top
-  = render partial: 'embargo'
-  %a(href="#top" class="pull-right" ) Go to Top
-  = render partial: 'license'
-  %a(href="#top" class="pull-right" ) Go to Top
-  = render partial: 'fix'
-  %a(href="#top" class="pull-right" ) Go to Top
-  = render partial: 'accessibility'
+.row
+  %nav(class="col-xs-3 bs-docs-sidebar")
+    %ul(id="sidebar" class="nav nav-stacked" )
+      %li
+        %a(href="#top")
+          %strong Select a Help Topic
+      %li
+        %a(href="#contact" ) Contact Us
+      %li
+        %a(href="#start" ) Getting Started
+      %li
+        %a(href="#doi" ) What is a DOI?
+      %li
+        %a(href="#when_to_publish" ) When to Publish
+      %li
+        %a(href="#embargo") Delaying Publication (Embargoing)
+      %li
+        %a(href="#license") Licensing
+      %li
+        %a(href="#versioning") Changing, Updating, or Adding Files
+      %li
+        %a(href="#accessibility") Accessibility
+  .col-xs-9
+    %h1(class="text-center" ) How can we help you?
+
+    = render partial: 'contact', locals: {dataset: @dataset}
+    = render partial: 'start'
+    %a(href="#top" class="pull-right" ) Go to Top
+    = render partial: 'doi'
+    %a(href="#top" class="pull-right" ) Go to Top
+    = render partial: 'when_to_publish'
+    %a(href="#top" class="pull-right" ) Go to Top
+    = render partial: 'embargo'
+    %a(href="#top" class="pull-right" ) Go to Top
+    = render partial: 'license'
+    %a(href="#top" class="pull-right" ) Go to Top
+    = render partial: 'versioning'
+    %a(href="#top" class="pull-right" ) Go to Top
+    = render partial: 'accessibility'
