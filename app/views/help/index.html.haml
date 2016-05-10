@@ -19,11 +19,12 @@
       %li
         %a(href="#license") Licensing
       %li
+        %a(href="#curation_procedures" ) Curation Procedures
+      %li
         %a(href="#versioning") Changing, Updating, or Adding Files
       %li
         %a(href="#accessibility") Accessibility
-      %li
-        %a(href="#curation_procedures" ) Curation Procedures
+
 
 
   .col-xs-9
@@ -31,9 +32,9 @@
     = render partial: 'contact', locals: {dataset: @dataset}
     = render partial: 'start'
     %a(href="#top" class="pull-right" ) Go to Top
-    = render partial: 'dataset_documentation'
-    %a(href="#top" class="pull-right" ) Go to Top
     = render partial: 'doi'
+    %a(href="#top" class="pull-right" ) Go to Top
+    = render partial: 'dataset_documentation'
     %a(href="#top" class="pull-right" ) Go to Top
     = render partial: 'when_to_publish'
     %a(href="#top" class="pull-right" ) Go to Top
