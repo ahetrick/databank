@@ -38,6 +38,12 @@
               %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit")
                 Confirm
                 %span(class="glyphicon glyphicon-triangle-right" )
+
+            -elsif (@completion_check == 'ok') && (@dataset.publication_state == Databank::PublicationState::DRAFT)
+              %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit")
+                Confirm
+                %span(class="glyphicon glyphicon-triangle-right" )
+
             -elsif @dataset.publication_state == Databank::PublicationState::Embargo::METADATA && @dataset.embargo != Databank::PublicationState::Embargo::METADATA
               %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit")
                 Confirm

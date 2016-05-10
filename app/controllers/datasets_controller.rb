@@ -230,8 +230,11 @@ class DatasetsController < ApplicationController
 
         elsif params.has_key?('context') && params['context'] == 'publish'
 
-          if [Databank::PublicationState::DRAFT, Databank::PublicationState::Embargo::METADATA, Databank::PublicationState::PermSuppress::METADATA, Databank::PublicationState::TempSuppress::METADATA].include?(@dataset.publication_state)
+          if Databank::PublicationState::DRAFT == @dataset.publication_state
             raise "invalid publication state for update-and-publish"
+
+          elsif [Databank::PublicationState::Embargo::METADATA, Databank::PublicationState::PermSuppress::METADATA, Databank::PublicationState::TempSuppress::METADATA].include?(@dataset.publication_state)
+            format.html { redirect_to dataset_path(@dataset.key) }
           else
             format.html { publish }
           end
