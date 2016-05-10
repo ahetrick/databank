@@ -302,12 +302,13 @@ div.row.checkbox {
 }
 .beta-block{
   position: relative;
-  top: -4px;
+  top: -10px;
   text-align: center;
   color: $color__text-light;
-  background-color: $color__burnt-orange;
-  padding: 5px;
+  background-color: $color__burnt-orange !important;
   border-radius: 5px;
+  margin-bottom: -8px;
+  padding-bottom: 0;
 }
 
 div.panel-heading{
