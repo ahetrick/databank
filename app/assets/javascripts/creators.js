@@ -40,6 +40,8 @@ creators_ready = function () {
 
 function add_creator_row() {
 
+    $('#update-confirm').prop('disabled', false);
+
     var maxId = Number($('#creator_index_max').val());
     var newId = 1;
 
@@ -82,6 +84,7 @@ function add_creator_row() {
 
 function remove_creator_row(creator_index) {
 
+
     // do not allow removal of primary contact for published dataset
 
     if (($("input[name='dataset[publication_state]']").val() != 'draft') && ($("#dataset_creators_attributes_" + creator_index + "_is_contact").val() == 'true')) {
@@ -100,6 +103,7 @@ function remove_creator_row(creator_index) {
         if ($("#creator_table tr").length < 2) {
             add_creator_row();
         }
+        $('#update-confirm').prop('disabled', false);
         handleCreatorTable();
         generate_creator_preview();
     }

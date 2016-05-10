@@ -8,6 +8,7 @@ funders_ready = function () {
 }
 
 function handleFunderChange(funderIndex) {
+    $('#update-confirm').prop('disabled', false);
     funderSelectVal = $("#dataset_funders_attributes_" + funderIndex + "_code").val();
     console.log(funderSelectVal);
 
@@ -120,6 +121,8 @@ function handleFunderTable() {
 
 function add_funder_row() {
 
+    $('#update-confirm').prop('disabled', false);
+
     var maxId = Number($('#funder_index_max').val());
     var newId = 0;
 
@@ -170,6 +173,7 @@ function remove_funder_row(funder_index) {
     if ($("#funder_table tr").length < 2) {
         add_funder_row();
     }
+    $('#update-confirm').prop('disabled', false);
     handleFunderTable();
 }
 

@@ -10,6 +10,7 @@ related_materials_ready = function () {
 }
 
 function handleMaterialChange(materialIndex) {
+    $('#update-confirm').prop('disabled', false);
     materialSelectVal = $("#dataset_related_materials_attributes_" + materialIndex + "_selected_type").val();
 
     switch (materialSelectVal) {
@@ -50,6 +51,8 @@ function handleMaterialTable() {
 }
 
 function add_material_row() {
+
+    $('#update-confirm').prop('disabled', false);
 
     var maxId = Number($('#material_index_max').val());
     var newId = 0;
@@ -168,6 +171,7 @@ function remove_material_row(material_index) {
     if ($("#material_table tr").length < 2) {
         add_material_row();
     }
+    $('#update-confirm').prop('disabled', false);
     handleFunderTable();
 }
 
