@@ -126,16 +126,28 @@ div {
   }
 }
 
-a.btn {
-  color: $color__text-light;
-&:visited {
-    color: $color__text-light;
-  }
-  //&:hover {
-  //  color: $color__text-light;
-  //  background-color: $color__dark-navy;
-  //}
-}
+//a.btn {
+//  color: $color__text-light;
+//&:visited {
+//    color: $color__text-light;
+//  }
+//  &:hover {
+//    color: $color__text-light;
+//    background-color: $color__dark-navy;
+//  }
+//}
+
+//a.btn {
+//  color: red;
+//  &:visited {
+//    color: purple;
+//  }
+//  &:hover {
+//    color: orange;
+//    background-color: yellow;
+//  }
+//}
+
 
 .bs-callout-info {
   padding-bottom: 10px;
@@ -323,4 +335,7 @@ table.deposit-agreement-selection-warning > tbody > tr > td {
 }
 .test-border{
   border: 1px solid red;
+}
+.help-bottom-spacer{
+  height: 800px;
 }
