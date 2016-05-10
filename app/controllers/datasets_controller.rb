@@ -190,6 +190,7 @@ class DatasetsController < ApplicationController
     @dataset.related_materials.build unless @dataset.related_materials.count > 0
     @completion_check = Dataset.completion_check(@dataset, current_user)
     set_license(@dataset)
+    @publish_modal_msg = Dataset.publish_modal_msg(@dataset)
   end
 
   # POST /datasets
@@ -213,24 +214,33 @@ class DatasetsController < ApplicationController
   # PATCH/PUT /datasets/1.json
   def update
 
-    if has_nested_param_change?
-      @dataset.has_datacite_change = true
-    end
 
     respond_to do |format|
 
       if @dataset.update(dataset_params)
-        if params.has_key?('exit')
+
+        if params.has_key?('context') && params['context'] == 'exit'
+
           if @dataset.publication_state == Databank::PublicationState::DRAFT
             format.html { redirect_to "/datasets?depositor=#{current_user.name}&context=exit_draft" }
           else
             format.html { redirect_to "/datasets?depositor=#{current_user.name}&context=exit_doi" }
           end
-          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+
+
+        elsif params.has_key?('context') && params['context'] == 'publish'
+
+          if [Databank::PublicationState::DRAFT, Databank::PublicationState::Embargo::METADATA, Databank::PublicationState::PermSuppress::METADATA, Databank::PublicationState::TempSuppress::METADATA].include?(@dataset.publication_state)
+            raise "invalid publication state for update-and-publish"
+          else
+            format.html { publish }
+          end
         else
           format.html { redirect_to dataset_path(@dataset.key) }
         end
+
         format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+
       else
         format.html { render :edit }
         format.json { render json: @dataset.errors, status: :unprocessable_entity }
@@ -312,7 +322,6 @@ class DatasetsController < ApplicationController
       if @dataset.save
 
         if Dataset.update_datacite_metadata(@dataset, current_user)
-          @dataset.has_datacite_change = false
           @dataset.save
           format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been temporarily suppressed.] }
           format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
@@ -337,7 +346,6 @@ class DatasetsController < ApplicationController
       if @dataset.save
 
         if Dataset.update_datacite_metadata(@dataset, current_user)
-          @dataset.has_datacite_change = false
           @dataset.save
           format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset has been unsuppressed.] }
           format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
@@ -384,7 +392,6 @@ class DatasetsController < ApplicationController
 
         if @dataset.save
           if delete_datacite_id(@dataset, current_user)
-            @dataset.has_datacite_change = false
             @dataset.save
             format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Reserved DOI has been deleted and all files have been permanently supressed.] }
             format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
@@ -471,7 +478,6 @@ class DatasetsController < ApplicationController
               notification = DatabankMailer.confirm_deposit(@dataset.key)
               notification.deliver_now
             end
-            @dataset.has_datacite_change = false
             @dataset.save
             format.html { redirect_to dataset_path(@dataset.key), notice: Dataset.deposit_confirmation_notice(old_publication_state, @dataset) }
             format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
@@ -498,7 +504,6 @@ class DatasetsController < ApplicationController
                 notification = DatabankMailer.confirm_deposit_update(@dataset.key)
                 notification.deliver_now
               end
-              @dataset.has_datacite_change = false
               @dataset.save
               format.html { redirect_to dataset_path(@dataset.key), notice: Dataset.deposit_confirmation_notice(old_publication_state, @dataset) }
               format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
@@ -529,47 +534,6 @@ class DatasetsController < ApplicationController
     if params.has_key?(:id)
       set_dataset
     end
-  end
-
-  def has_nested_param_change?
-
-    params[:dataset][:related_materials_attributes].each do |key, material_attributes|
-      if material_attributes.has_key?(:_destroy)
-        if material_attributes[:_destroy] == true
-          return true
-        end
-      else
-        if material_attributes[:link] != ''
-          return true
-        end
-        if material_attributes[:citation] != ''
-          return true
-        end
-      end
-    end
-
-    params[:dataset][:creators_attributes].each do |key, creator_attributes|
-      if creator_attributes.has_key?(:_destroy)
-        if creator_attributes[:_destroy] == true
-          return true
-        end
-      elsif creator_attributes[:family_name] != ''
-        return true
-      end
-    end
-
-    params[:dataset][:funders_attributes].each do |key, funder_attributes|
-      if funder_attributes.has_key?(:_destroy)
-        if funder_attributes[:_destroy] == true
-          return true
-        end
-      elsif funder_attributes[:name] != ''
-        return true
-      end
-    end
-
-    # if we get here, no change has been detected
-    return false
   end
 
   def zip_and_download_selected

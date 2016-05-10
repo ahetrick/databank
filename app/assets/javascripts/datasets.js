@@ -70,7 +70,7 @@ ready = function () {
     });
 
     $('#new-exit-button').click(function () {
-        $('#new_dataset').append("<input type='hidden' name='exit' value='true' />");
+        $('#new_dataset').append("<input type='hidden' name='context' value='exit' />");
         window.onbeforeunload = null;
         $('#new_dataset').submit();
     });
@@ -89,20 +89,30 @@ ready = function () {
             window.onbeforeunload = null;
             $("[id^=edit_dataset]").submit();
         } else {
-            alert("Email address must be in a valid format. Only the long-term primary contact email address is required.");
+            alert("Email address must be in a valid format.");
             $(".invalid-input").first().focus();
         }
 
     });
 
+    $('#update-confirm').prop('disabled', true);
+
+    $("[id^=edit_dataset] :input").keyup(function() {
+        $('#update-confirm').prop('disabled', false);
+    });
+
+    $("[id^=edit_dataset] :input").change(function() {
+        $('#update-confirm').prop('disabled', false);
+    });
+
     $('#save-exit-button').click(function () {
 
         if ($(".invalid-input").length == 0) {
-            $("[id^=edit_dataset]").append("<input type='hidden' name='exit' value='true' />");
+            $("[id^=edit_dataset]").append("<input type='hidden' name='context' value='exit' />");
             window.onbeforeunload = null;
             $("[id^=edit_dataset]").submit();
         } else {
-            alert("Email address must be in a valid format. Only the long-term primary contact email address is required.");
+            alert("Email address must be in a valid format.");
             $(".invalid-input").first().focus();
         }
 
@@ -483,10 +493,6 @@ function filename_isdup(proposed_name) {
 
 }
 
-function dataset_exit_save(){
-
-}
-
 function offerDownloadLink() {
     var selected_files = $('input[name="selected_files[]"]:checked');
     var web_id_string = "";
@@ -578,6 +584,21 @@ function permSuppressMetadata() {
     if (window.confirm("Are you sure?")) {
         $('#suppression_action').val("permanently_suppress_metadata");
         $('#suppression_form').submit();
+    }
+}
+
+function update_and_publish() {
+    $("[id^=edit_dataset]").append("<input type='hidden' name='context' value='publish' />");
+    window.onbeforeunload = null;
+    $("[id^=edit_dataset]").submit();
+}
+
+function confirm_update(){
+    if ($(".invalid-input").length == 0) {
+        $('#deposit').modal('show');
+    } else {
+        alert("Email address must be in a valid format.");
+        $(".invalid-input").first().focus();
     }
 }
 

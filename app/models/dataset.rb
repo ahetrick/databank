@@ -8,7 +8,7 @@ class Dataset < ActiveRecord::Base
   include Datacite
   include MessageText
 
-  audited except: [:creator_text, :key, :complete, :has_datacite_change, :is_test, :is_import, :updated_at, :embargo], allow_mass_assignment: true
+  audited except: [:creator_text, :key, :complete, :is_test, :is_import, :updated_at, :embargo], allow_mass_assignment: true
   has_associated_audits
 
   MIN_FILES = 1
@@ -29,7 +29,6 @@ class Dataset < ActiveRecord::Base
   after_create 'store_agreement'
   before_save 'set_primary_contact'
   after_save 'remove_invalid_datafiles'
-  after_update 'set_datacite_change'
 
   def to_param
     self.key
@@ -532,42 +531,6 @@ class Dataset < ActiveRecord::Base
     releasedateNode.parent = datesNode
 
     doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
-  end
-
-
-  def set_datacite_change
-    if is_datacite_changed?
-      update_column("has_datacite_change", "true")
-    end
-  end
-
-  def is_datacite_changed?
-
-    self.related_materials.each do |material|
-      if material.uri && material.uri != '' && material.changed?
-        return true
-      end
-    end
-
-    self.creators.each do |creator|
-      if creator.changed?
-        return true
-      end
-    end
-
-    self.funders.each do |funder|
-      if funder.name_changed? || funder.identifier_changed?
-        return true
-      end
-    end
-
-    if self.title_changed? || self.license_changed? || self.description_changed? || self.dataset_version_changed? || self.keywords_changed? || self.publication_year_changed? || self.release_date_changed? || self.embargo_changed? || self.identifier_changed?
-      return true
-    end
-
-    # if we get here, no DataCite-relevant changes have been detected
-    return false
-
   end
 
   def visibility

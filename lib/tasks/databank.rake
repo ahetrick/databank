@@ -67,14 +67,6 @@ namespace :databank do
     end
   end
 
-  desc 'Retroactively set datacite change status'
-  task :update_datacite_flag => :environment do
-    Dataset.all.each do |dataset|
-      dataset.has_datacite_change = false
-      dataset.save!
-    end
-  end
-
   desc 'fix name and size display for files ingested into Medusa'
   task :update_filename => :environment do
     MedusaIngest.all.each do |ingest|

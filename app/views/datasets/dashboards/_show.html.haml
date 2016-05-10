@@ -10,11 +10,6 @@
               %span(class="glyphicon glyphicon-alert" )
               Embargo placeholders have not yet replaced DataCite metadata. Confirm to complete changes.
               %br
-            -elsif @dataset.has_datacite_change &&  [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED, Databank::PublicationState::PermSuppress::FILE].include?(@dataset.publication_state)
-              .datacite-changes-warning
-                %span(class="glyphicon glyphicon-alert" )
-                Changes have been made to this dataset record that have not yet been published.  Confirm to complete changes.
-                %br
             -elsif @dataset.publication_state == Databank::PublicationState::Embargo::METADATA && (@dataset.embargo != Databank::PublicationState::Embargo::METADATA)
               .datacite-changes-warning
                 %span(class="glyphicon glyphicon-alert" )
@@ -40,10 +35,6 @@
           - if @completion_check == 'ok'
             -# confirm button conditional complex, so broken into three statements
             -if ((can? :manage, @dataset) && (@dataset.publication_state != Databank::PublicationState::DRAFT) && (@dataset.publication_state != Databank::PublicationState::Embargo::METADATA) && (@dataset.embargo == Databank::PublicationState::Embargo::METADATA))
-              %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit")
-                Confirm
-                %span(class="glyphicon glyphicon-triangle-right" )
-            -elsif (@completion_check == 'ok') && (@dataset.publication_state == Databank::PublicationState::DRAFT || (@dataset.has_datacite_change && [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE].include?(@dataset.publication_state) ) )
               %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit")
                 Confirm
                 %span(class="glyphicon glyphicon-triangle-right" )

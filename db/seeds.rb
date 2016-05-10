@@ -116,8 +116,3 @@ funder_other.display_position = 1000
 funder_other.identifier_scheme = ""
 funder_other.save!
 
-#set datacite change indicator to false where it is nil
-Dataset.where(has_datacite_change: nil).each do |dataset|
-  dataset.has_datacite_change = false;
-  dataset.save!
-end

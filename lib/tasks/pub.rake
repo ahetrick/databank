@@ -15,9 +15,7 @@ namespace :pub do
         dataset.publication_state = Databank::PublicationState::RELEASED
         dataset.embargo = ''
         dataset.save
-        if dataset.has_datacite_change
-          Dataset.update_datacite_metadata(dataset, @current_user)
-        end
+        Dataset.update_datacite_metadata(dataset, @current_user)
       end
     end
   end

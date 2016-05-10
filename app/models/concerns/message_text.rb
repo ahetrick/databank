@@ -128,6 +128,12 @@ module MessageText
             msg << "<ul>"
             msg << "<li>The DOI link will fail until #{effective_release_date}.</li>"
             msg << "<li>As of #{effective_release_date}, the record and files for your dataset will be publicly visible.</li>"
+          elsif dataset.publication_state == Databank::PublicationState::Embargo::METADATA
+            msg << "<h4>This action will save your metadata changes.</h4><hr/>"
+            msg << "<ul>"
+            msg << "<li>The DOI link will continue to fail until #{effective_release_date}.</li>"
+            msg << "<li>As of #{effective_release_date}, the record and files for your dataset will be publicly visible.</li>"
+
           elsif [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED].include?(dataset.publication_state)
             msg << "<h3>This action will remove your dataset from <strong>public</strong> availability.</h3>"
             msg << "<ul>"
