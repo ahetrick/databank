@@ -236,7 +236,7 @@ class DatasetsController < ApplicationController
           elsif [Databank::PublicationState::Embargo::METADATA, Databank::PublicationState::PermSuppress::METADATA, Databank::PublicationState::TempSuppress::METADATA].include?(@dataset.publication_state)
             format.html { redirect_to dataset_path(@dataset.key) }
           else
-            format.html { publish }
+            format.html { Dataset.update_datacite_metadata(@dataset, current_user) }
           end
         else
           format.html { redirect_to dataset_path(@dataset.key) }
