@@ -9,6 +9,8 @@
       %li
         %a(href="#start" ) Getting Started
       %li
+        %a(href="#dataset_documentation" ) Dataset Documentation
+      %li
         %a(href="#doi" ) What is a DOI?
       %li
         %a(href="#when_to_publish" ) When to Publish
@@ -24,6 +26,8 @@
     %h1 How can we help you?
     = render partial: 'contact', locals: {dataset: @dataset}
     = render partial: 'start'
+    %a(href="#top" class="pull-right" ) Go to Top
+    = render partial: 'dataset_documentation'
     %a(href="#top" class="pull-right" ) Go to Top
     = render partial: 'doi'
     %a(href="#top" class="pull-right" ) Go to Top
