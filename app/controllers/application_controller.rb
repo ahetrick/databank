@@ -56,8 +56,9 @@ class ApplicationController < ActionController::Base
       # raise exception
 
       exception_string = "*** Standard Error caught in application_controller.rb on #{IDB_CONFIG[:root_url_text]} ***\nclass: #{exception.class}\nmessage: #{exception.message}\n"
+      exception_string << Time.now.utc.iso8601
 
-      exception_string << "stack:\n"
+      exception_string << "\nstack:\n"
       exception.backtrace.each do |line|
         exception_string << line
         exception_string << "\n"
