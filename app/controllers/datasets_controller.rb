@@ -49,7 +49,9 @@ class DatasetsController < ApplicationController
             @datasets = Dataset.where.not(publication_state: Databank::PublicationState::PermSuppress::METADATA).where("publication_state = ? OR publication_state = ? OR depositor_email = ?", Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED, current_user.email).order(updated_at: :desc)
             @datatable = Effective::Datatables::DepositorDatasets.new(current_email: current_user.email, current_name: current_user.name)
           end
-
+        else
+          @datasets = Dataset.where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE]).order(updated_at: :desc)
+          @datatable = Effective::Datatables::GuestDatasets.new
       end
     else
       @datasets = Dataset.where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE]).order(updated_at: :desc)
