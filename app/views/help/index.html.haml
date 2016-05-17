@@ -1,6 +1,6 @@
 .row(id="help-layout")
   %nav(class="col-xs-3 bs-docs-sidebar")
-    %ul(id="sidebar" class="nav nav-stacked" )
+    %ul(class="nav nav-stacked fixed" id="sidebar")
       %li
         %a(href="#top")
           %strong Select a Help Topic
@@ -8,6 +8,17 @@
         %a(href="#contact" ) Contact Us
       %li
         %a(href="#start" ) Getting Started
+        %ul(class="nav nav-stacked")
+          %li
+            %a(href="#login" ) Log In
+          %li
+            %a(href="#describe" ) Describe
+          %li
+            %a(href="#upload" ) Upload
+          %li
+            %a(href="#review" ) Review
+          %li
+            %a(href="#publish" ) Publish
       %li
         %a(href="#curation_procedures" ) Curation Procedures
       %li

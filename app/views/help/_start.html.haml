@@ -1,4 +1,4 @@
-.nav-group(id="start_group"  class="group" )
+%section(id="start_group"  class="group" )
   .bs-callout.bs-callout-info.idb-help(id="start")
     %br
     %hr
@@ -8,87 +8,88 @@
       Welcome to the Illinois Data Bank!  This guide will cover the essential steps for publishing your data.  You can
       %a(href="/help#contact") contact us
       at any time to get additional help.
-    %span(id="login")
     %hr
-    %ul
-      %li(id="login")
-        %h2 Log in with NetID
-        %p
-          The first step to depositing data within the Illinois Data Bank is logging in with your Illinois NetID and Active Directory password. The Illinois Data Bank will check your NetID and confirm that you belong to a group eligible for self-deposit. Illinois faculty, graduate students, and most staff are eligible for self-deposit, but others (including undergraduates) will see a restriction notice after logging in.
-          %a(href="/help#contact" ) Contact the Research Data Service staff
-          if you run into trouble or need to request authorization for self-deposit.
-      %li(id="describe")
-        %h2 Describe
-        %p The information you provide here will be attached to your dataset as metadata associated with your DOI.  Providing detailed descriptive information is important because it will be transmitted to search engines such as Google Scholar and other aggregators that look at data.  In short, the better you can describe your data the easier it will be for others to find and make use of it!
-        %p In a hurry to deposit?  You can always edit and expand your metadata after publication.  IDB curators also regularly review the metadata and add information to increase the visibility of your dataset.
-        %p
-          %em There are three sections to add information about your dataset:
-        %ol
-          %li
-            %p Description
-          %li
-            %p Funder
-          %li
-            %p Related Materials
-        %p
-          The description area allows you to indicate the authorship information, title, basic information about the contents of your dataset, and an optional release date.  The funder information section allows you to provide grant or other information about financial support of your dataset.  The related materials area is where you can provide information about scholarly works that use or have contributed to your dataset.  IDB curators review this section and create links between these works and your dataset record.  This allows publishers and
-          %a(href="http://altmetrics.org/tools/" target="_blank" ) altmetrics tools
-          to make connections to your published data.
-      %li(id="upload")
-        %h2 Upload
-        %p This is when you provide us with a copy of the files you'd like to be published and saved within the Illinois Data Bank.  You may either upload directly from your computer or import files you already have stored inside of Box.  Importing files from Box is recommended for larger files.  We do not currently support the direct upload for individual files larger than 2GB but our Box import feature can handle up to 15GB.  We can work with you to upload your data in another way if you have data larger than 15GB or have trouble during the upload process.
+    .subgroup(id="login")
+      %h2 Log in with NetID
+      %p
+        The first step to depositing data within the Illinois Data Bank is logging in with your Illinois NetID and Active Directory password. The Illinois Data Bank will check your NetID and confirm that you belong to a group eligible for self-deposit. Illinois faculty, graduate students, and most staff are eligible for self-deposit, but others (including undergraduates) will see a restriction notice after logging in.
+        %a(href="/help#contact" ) Contact the Research Data Service staff
+        if you run into trouble or need to request authorization for self-deposit.
+    .subgroup(id="describe")
+      %h2 Describe
+      %p The information you provide here will be attached to your dataset as metadata associated with your DOI.  Providing detailed descriptive information is important because it will be transmitted to search engines such as Google Scholar and other aggregators that look at data.  In short, the better you can describe your data the easier it will be for others to find and make use of it!
+      %p In a hurry to deposit?  You can always edit and expand your metadata after publication.  IDB curators also regularly review the metadata and add information to increase the visibility of your dataset.
+      %p
+        %em There are three sections to add information about your dataset:
+      %ol
+        %li
+          %p Description
+        %li
+          %p Funder
+        %li
+          %p Related Materials
+      %p
+        The description area allows you to indicate the authorship information, title, basic information about the contents of your dataset, and an optional release date.  The funder information section allows you to provide grant or other information about financial support of your dataset.  The related materials area is where you can provide information about scholarly works that use or have contributed to your dataset.  IDB curators review this section and create links between these works and your dataset record.  This allows publishers and
+        %a(href="http://altmetrics.org/tools/" target="_blank" ) altmetrics tools
+        to make connections to your published data.
+    .subgroup(id="upload")
+      %h2 Upload
+      %p This is when you provide us with a copy of the files you'd like to be published and saved within the Illinois Data Bank.  You may either upload directly from your computer or import files you already have stored inside of Box.  Importing files from Box is recommended for larger files.  We do not currently support the direct upload for individual files larger than 2GB but our Box import feature can handle up to 15GB.  We can work with you to upload your data in another way if you have data larger than 15GB or have trouble during the upload process.
 
-        %p
-          Unlike the metadata, you will not be allowed to edit or change your data files after publication without curator assistance.  We are happy to accommodate updates and changes when necessary, but you will need to
-          %a(href="/help#contact") contact us
-          if you need to make a change.
+      %p
+        Unlike the metadata, you will not be allowed to edit or change your data files after publication without curator assistance.  We are happy to accommodate updates and changes when necessary, but you will need to
+        %a(href="/help#contact") contact us
+        if you need to make a change.
 
-        %p Need a bit more time to prepare your data files?  No worries.  You may save and exit your draft at any time.  Let us know if we can help you get your data prepared and documented.
+      %p Need a bit more time to prepare your data files?  No worries.  You may save and exit your draft at any time.  Let us know if we can help you get your data prepared and documented.
 
-        %p
-          %em Things you are required to do before depositing and publishing:
-        %ul
-          %li
-            %p
-              %span(class="nudge-left-12" ) &bull;
-              Make sure you have permission from the creator of the dataset to deposit it if you are depositing on behalf of someone else.
-          %li
-            %p
-              %span(class="nudge-left-12" ) &bull;
-              Remove any sensitive data.
+      %p
+        %em Things you are required to do before depositing and publishing:
+      %ul
+        %li
+          %p
+            %span(class="nudge-left-12" ) &bull;
+            Make sure you have permission from the creator of the dataset to deposit it if you are depositing on behalf of someone else.
+        %li
+          %p
+            %span(class="nudge-left-12" ) &bull;
+            Remove any sensitive data.
 
-        %p
-          %em Good data behaviors:
-        %ul
-          %li
-            %p
-              %span(class="nudge-left-12" ) &bull;
-              Include a readme file, data dictionary, and/or codebook as appropriate.
-          %li
-            %p
-              %span(class="nudge-left-12" ) &bull;
-              Include versions in open formats for long-term preservation.
+      %p
+        %em Good data behaviors:
+      %ul
+        %li
+          %p
+            %span(class="nudge-left-12" ) &bull;
+            Include a readme file, data dictionary, and/or codebook as appropriate.
+        %li
+          %p
+            %span(class="nudge-left-12" ) &bull;
+            Include versions in open formats for long-term preservation.
 
-        %p
-          Unsure how to handle any of these requirements and suggestions?
-          %a(href="/help#contact") Contact us
-          and an IDB curator will help guide you through it.
+      %p
+        Unsure how to handle any of these requirements and suggestions?
+        %a(href="/help#contact") Contact us
+        and an IDB curator will help guide you through it.
 
-        %p
-          Research Data Service staff regularly review the contents of dataset deposits. You can read more about what to expect as a depositor in our
-          %a(href="/help#curation_procedures") Curation Procedures help section.
-      %li(id="review")
-        %h2 Review
-        %p This phase of publication gives you a chance to look over all the information you've provided and confirm that everything is ready go to.  You have the option of saving your work and exiting from the publication process if you need more time to gather information, confer with your colleagues, ask the IDB curators a question, etc.
+      %p
 
-        %p
-          Remember that you will not be able to edit your files after publication, so review your file section with some extra care!  IDB curators can assist with changes, but you will need to
-          %a(href="/help#contact") contact us
-          to get help.
+        Research Data Service staff regularly review the contents of dataset deposits. You can read more about what to expect as a depositor in our
+        %a(href="/help#curation_procedures") Curation Procedures help section.
+    .subgroup(id="review")
+      %h2 Review
+      %p This phase of publication gives you a chance to look over all the information you've provided and confirm that everything is ready go to.  You have the option of saving your work and exiting from the publication process if you need more time to gather information, confer with your colleagues, ask the IDB curators a question, etc.
 
-        %p Just realized you need some help?  Save your draft and let us know that you'd like a dataset consultation.  An IDB curator will look at your draft deposit and offer suggestions.
-      %li(id="publish")
-        %h2 Publish
-        %p Everything ready?
+      %p
+        Remember that you will not be able to edit your files after publication, so review your file section with some extra care!  IDB curators can assist with changes, but you will need to
+        %a(href="/help#contact") contact us
+        to get help.
 
-        %p Click on the "confirm" button at the top of the review button to begin the publication process.  Once you have published your dataset the metadata will be public and the files immediately available for download if you have not selected a release date for your metadata or files.  You may update your metadata after publication but you may not change your data files without the help of an IDB curator.  You and all authors will receive a confirmation email with your DOI and other information about your dataset.
+      %p
+
+        Just realized you need some help?  Save your draft and let us know that you'd like a dataset consultation.  An IDB curator will look at your draft deposit and offer suggestions.
+    .subgroup(id="publish")
+      %h2 Publish
+      %p Everything ready?
+
+      %p Click on the "confirm" button at the top of the review button to begin the publication process.  Once you have published your dataset the metadata will be public and the files immediately available for download if you have not selected a release date for your metadata or files.  You may update your metadata after publication but you may not change your data files without the help of an IDB curator.  You and all authors will receive a confirmation email with your DOI and other information about your dataset.
