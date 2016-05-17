@@ -222,9 +222,10 @@
                 </td>
                 <td>
                   <%= funder.name %>
-                  <% if funder.grant && funder.grant != "" %>
-                    , <span class="metadata-label">Grant:</span>
-                    <%= funder.grant %>
+                    <% if funder.grant && funder.grant != "" %>
+                      -
+                      <span class="metadata-label">Grant:</span>
+                      <%= funder.grant %>
                   <% end %>
                 </td>
               </tr>
