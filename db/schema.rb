@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160510145643) do
+ActiveRecord::Schema.define(version: 20160519192233) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,6 +71,15 @@ ActiveRecord::Schema.define(version: 20160510145643) do
     t.integer  "binary_size",          limit: 8
   end
 
+  create_table "dataset_download_tallies", force: :cascade do |t|
+    t.string   "dataset_key"
+    t.string   "doi"
+    t.date     "download_date"
+    t.integer  "tally"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
   create_table "datasets", force: :cascade do |t|
     t.string   "key",                                           null: false
     t.string   "title"
@@ -106,6 +115,17 @@ ActiveRecord::Schema.define(version: 20160510145643) do
 
   add_index "datasets", ["key"], name: "index_datasets_on_key", unique: true, using: :btree
 
+  create_table "day_file_downloads", force: :cascade do |t|
+    t.string   "ip_address"
+    t.string   "file_web_id"
+    t.string   "filename"
+    t.string   "dataset_key"
+    t.string   "doi"
+    t.date     "download_date"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
   create_table "definitions", force: :cascade do |t|
     t.string   "term"
     t.string   "meaning"
@@ -131,6 +151,17 @@ ActiveRecord::Schema.define(version: 20160510145643) do
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
+
+  create_table "file_download_tallies", force: :cascade do |t|
+    t.string   "file_web_id"
+    t.string   "filename"
+    t.string   "dataset_key"
+    t.string   "doi"
+    t.date     "download_date"
+    t.integer  "tally"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
 
   create_table "funder_infos", force: :cascade do |t|
     t.string   "code"

@@ -25,7 +25,7 @@ Rails.application.configure do
 
   # Disable serving static files from the `/public` folder by default since
   # Apache or NGINX already handles this.
-  config.serve_static_files = ENV['RAILS_SERVE_STATIC_FILES'].present?
+  config.serve_static_files = true
 
   # Compress JavaScripts and CSS.
   config.assets.js_compressor = :uglifier
@@ -89,5 +89,8 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = true
   config.action_mailer.logger = Rails.logger
   config.action_mailer.default_url_options = {host: "databank.illinois.edu"}
+
+  # Specifies the header that your server uses for sending files
+  config.action_dispatch.x_sendfile_header = "X-Sendfile"
 
 end

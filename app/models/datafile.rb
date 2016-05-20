@@ -51,6 +51,61 @@ class Datafile < ActiveRecord::Base
     end
   end
 
+  def ip_downloaded_file_today(request_ip)
+    DayFileDownload.where(["ip_address = ? and file_web_id = ? and download_date = ?", request_ip, self.web_id, Date.current]).count > 0
+  end
+
+  def record_download(request_ip)
+
+    unless dataset.ip_downloaded_dataset_today(request_ip)
+
+      today_dataset_download = DatasetDownloadTally.find_or_create_by(download_date: Date.current)
+      
+      if today_dataset_download.tally
+        today_dataset_download.tally = today_dataset_download.tally + 1
+        today_dataset.download.save
+      else
+        today_dataset_download.tally = 1
+        today_dataset_download.dataset_key = dataset.key
+        today_dataset_download.doi = dataset.identifier
+        today_dataset_download.save
+      end
+
+
+    end
+
+    unless ip_downloaded_file_today(request_ip)
+
+
+      dataset = Dataset.find(self.dataset_id)
+
+      if dataset && dataset.identifier # ignore draft datasets
+        DayFileDownload.create(ip_address: request_ip,
+                               download_date: Date.current,
+                               file_web_id: self.web_id,
+                               filename: self.bytestream_name,
+                               dataset_key: dataset.key,
+                               doi: dataset.identifier)
+
+        today_file_download = FileDownloadTally.find_or_create_by(download_date: Date.current)
+
+        if today_file_download.tally
+          today_file_download.tally = today_file_download.tally + 1
+          today_file_download.save
+        else
+          today_file_download.tally = 1
+          today_file_download.dataset_key = dataset.key
+          today_file_download.doi = dataset.identifier
+          today_file_download.file_web_id = self.web_id
+          today_file_download.filename = self.bytestream_name
+          today_file_download.save
+        end
+
+      end
+
+    end
+  end
+
   def remove_directory
     dir = "#{IDB_CONFIG[:datafile_store_dir]}/#{self.web_id}"
     if Dir.exists? dir

@@ -2,7 +2,7 @@ include ActionView::Helpers::NumberHelper # to pass a display value to a javascr
 
 class DatafilesController < ApplicationController
 
-  before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download]
+  before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download, :record_download]
   # GET /datafiles
   # GET /datafiles.json
   def index
@@ -69,8 +69,9 @@ class DatafilesController < ApplicationController
   end
 
   def download
+    @datafile.record_download(request.remote_ip)
     path = @datafile.bytestream_path
-    send_file path, :x_sendfile => true
+    send_file path
   end
 
   def to_fileupload
@@ -95,8 +96,11 @@ class DatafilesController < ApplicationController
     raise ActiveRecord::RecordNotFound unless @datafile
   end
 
+
+
   # Never trust parameters from the scary internet, only allow the white list through.
   def datafile_params
     params.require(:datafile).permit(:description, :binary, :web_id, :dataset_id)
   end
+
 end

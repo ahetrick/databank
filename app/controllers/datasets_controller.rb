@@ -552,6 +552,10 @@ class DatasetsController < ApplicationController
   def zip_and_download_selected
 
     if @dataset.identifier && !@dataset.identifier.empty?
+      @dataset.datafiles.each do |datafile|
+        datafile.record_download
+      end
+
       file_name = "DOI-#{@dataset.identifier}".parameterize + ".zip"
     else
       file_name = "datafiles.zip"

@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  dataset_key: MyString
+  doi: MyString
+  download_date: 2016-05-19
+  tally: 1
+
+two:
+  dataset_key: MyString
+  doi: MyString
+  download_date: 2016-05-19
+  tally: 1

@@ -340,3 +340,24 @@ table.deposit-agreement-selection-warning > tbody > tr > td {
 .help-bottom-spacer{
   height: 800px;
 }
+
+.label-as-badge-info {
+  color: $color__text-main;
+  background-color: $color__background-main-column;
+  border-radius: 2em;
+  padding: 3px;
+}
+
+.full-width{
+  width: 100%;
+  display: block;
+}
+#citation-example{
+  color: $color__text-main;
+  background-color: $color__background-main-column;
+  padding: 20px;
+  margin-bottom: .8em;
+}
+#citation{
+  padding: 2px;
+}

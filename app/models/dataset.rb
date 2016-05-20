@@ -279,6 +279,18 @@ class Dataset < ActiveRecord::Base
 
   end
 
+  def today_downloads
+    DayFileDownload.where(dataset_key: self.key).uniq.pluck(:ip_address).count
+  end
+
+  def total_downloads
+    DatasetDownloadTally.where(dataset_key: self.key).sum :tally
+  end
+
+  def ip_downloaded_dataset_today(request_ip)
+    DayFileDownload.where(["ip_address = ? and dataset_key = ? and download_date = ?", request_ip, self.key, Date.current]).count > 0
+  end
+
   def to_datacite_raw_xml
     Nokogiri::XML::Document.parse(to_datacite_xml).to_xml
   end

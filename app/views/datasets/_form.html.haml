@@ -93,7 +93,7 @@
 
             - if can? :manage, @dataset
               .row
-                %span(class="col-md-1" )
+                %span(class="col-md-2" )
                   .form-group.curator-only
                     =f.label :is_import, "imported DOI", :class => "control-label"
                     %br
@@ -112,7 +112,7 @@
                     = f.label :identifier, "DOI", :class => "control-label"
                     %br
                     = f.text_field :identifier, :class => "form-control dataset", :placeholder => "[Leave blank if requesting a DOI.]"
-                %span(class="col-md-1" )
+                %span(class="col-md-2" )
                   .form-group.curator-only
                     = f.label :publication_year, "Pub Year", :class => "control-label"
                     %br

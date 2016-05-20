@@ -50,16 +50,18 @@
 
         <div id="citation-block">
 
-
           <div id="citation">
-            <h4><%= @dataset.plain_text_citation %></h4>
+            <span class="metadata-label">Citation: </span><br/>
+            <div id="citation-example">
+              <%= @dataset.plain_text_citation %>
+            </div>
           </div>
 
           <div id="citation-suggestion">
           <span id="citation-download">
             <span class="dropdown">
               <button type="button" id="downloadCitation" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                <span class="glyphicon glyphicon-list"></span> Citation <span class="caret"></span>
+                <span class="glyphicon glyphicon-list"></span> Export Citation <span class="caret"></span>
               </button>
               <ul class="dropdown-menu pull-right text-left" role="menu">
                 <li>
@@ -265,6 +267,16 @@
                 </td>
                 <td>
                   <%= @dataset.depositor_email %>
+                </td>
+              </tr>
+            <% end %>
+            <% if @dataset.total_downloads > 0 %>
+              <tr class="row">
+                <td>
+                  <span class="metadata-label">Downloaded:</span>
+                </td>
+                <td>
+                  <%= pluralize(@dataset.total_downloads, 'time') %>
                 </td>
               </tr>
             <% end %>
