@@ -60,10 +60,10 @@ class Datafile < ActiveRecord::Base
     unless dataset.ip_downloaded_dataset_today(request_ip)
 
       today_dataset_download = DatasetDownloadTally.find_or_create_by(download_date: Date.current)
-      
+
       if today_dataset_download.tally
         today_dataset_download.tally = today_dataset_download.tally + 1
-        today_dataset.download.save
+        today_dataset_download.save
       else
         today_dataset_download.tally = 1
         today_dataset_download.dataset_key = dataset.key
