@@ -92,8 +92,13 @@ class DatasetsController < ApplicationController
     @all_in_medusa = true
     @total_files_size = 0
     @local_zip_max_size = 750000000
+    @single_download_ok = true
 
     @dataset.datafiles.each do |df|
+
+      if df.bytestream_size > 500000000
+        @single_download_ok = false
+      end
 
       @total_files_size = @total_files_size + df.bytestream_size
       if !df.medusa_path || df.medusa_path == ""
@@ -102,6 +107,8 @@ class DatasetsController < ApplicationController
       end
 
     end
+
+
 
     @completion_check = Dataset.completion_check(@dataset, current_user)
 
