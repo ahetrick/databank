@@ -57,53 +57,51 @@ class Datafile < ActiveRecord::Base
 
   def record_download(request_ip)
 
-    unless dataset.ip_downloaded_dataset_today(request_ip)
+    dataset = Dataset.find(self.dataset_id)
 
-      today_dataset_download = DatasetDownloadTally.find_or_create_by(download_date: Date.current)
+    if dataset && dataset.identifier # ignore draft datasets
 
-      if today_dataset_download.tally
-        today_dataset_download.tally = today_dataset_download.tally + 1
-        today_dataset_download.save
-      else
-        today_dataset_download.tally = 1
-        today_dataset_download.dataset_key = dataset.key
-        today_dataset_download.doi = dataset.identifier
-        today_dataset_download.save
-      end
+      Rails.logger.warn "dataset.ip_downloaded_dataset_today(request_ip): #{dataset.ip_downloaded_dataset_today(request_ip)}"
 
+      unless dataset.ip_downloaded_dataset_today(request_ip)
 
-    end
+        today_dataset_download_relation = DatasetDownloadTally.where(["dataset_key= ? and download_date = ?", dataset.key, Date.current])
 
-    unless ip_downloaded_file_today(request_ip)
+        if today_dataset_download_relation.count > 0
 
-
-      dataset = Dataset.find(self.dataset_id)
-
-      if dataset && dataset.identifier # ignore draft datasets
-        DayFileDownload.create(ip_address: request_ip,
-                               download_date: Date.current,
-                               file_web_id: self.web_id,
-                               filename: self.bytestream_name,
-                               dataset_key: dataset.key,
-                               doi: dataset.identifier)
-
-        today_file_download = FileDownloadTally.find_or_create_by(download_date: Date.current)
-
-        if today_file_download.tally
-          today_file_download.tally = today_file_download.tally + 1
-          today_file_download.save
+          today_dataset_download = today_dataset_download_relation.first
+          today_dataset_download.tally = today_dataset_download.tally + 1
+          today_dataset_download.save
         else
-          today_file_download.tally = 1
-          today_file_download.dataset_key = dataset.key
-          today_file_download.doi = dataset.identifier
-          today_file_download.file_web_id = self.web_id
-          today_file_download.filename = self.bytestream_name
-          today_file_download.save
+          DatasetDownloadTally.create(tally: 1, dataset_key: dataset.key, doi: dataset.identifier)
         end
 
       end
 
+      unless ip_downloaded_file_today(request_ip)
+
+
+          DayFileDownload.create(ip_address: request_ip,
+                                 download_date: Date.current,
+                                 file_web_id: self.web_id,
+                                 filename: self.bytestream_name,
+                                 dataset_key: dataset.key,
+                                 doi: dataset.identifier)
+
+          today_datatafile_download_relation = FileDownloadTally.where(["file_web_id = ? and download_date = ?", self.web_id, Date.current])
+
+          if today_datatafile_download_relation.count > 0
+            today_file_download = today_dataset_download_relation.first
+            today_file_download.tally = today_file_download.tally + 1
+            today_file_download.save
+          else
+            FileDownloadTally.create(tally: 1, dataset_key: dataset.key, doi: dataset.identifier, file_web_id: self.web_id, filename: self.bytestream_name)
+          end
+
+      end
+
     end
+
   end
 
   def remove_directory

@@ -4,16 +4,28 @@ namespace :databank do
 
   desc 'delete all datasets'
   task :delete_all => :environment do
-    Dataset.all.each do |dataset|
-      dataset.destroy
+
+    if IDB_CONFIG[:local_mode] == true
+      Dataset.all.each do |dataset|
+        dataset.destroy
+      end
+    else
+      puts "Not local!"
     end
+
   end
 
   desc 'delete all datafiles'
   task :delete_files => :environment do
-    Datafile.all.each do |datafile|
-      datafile.destroy
+
+    if IDB_CONFIG[:local_mode] == true
+      Datafile.all.each do |datafile|
+        datafile.destroy
+      end
+    else
+      puts "Not local!"
     end
+
   end
 
   desc 'delete all creators'
