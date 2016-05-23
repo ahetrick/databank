@@ -60,9 +60,7 @@ class Datafile < ActiveRecord::Base
     dataset = Dataset.find(self.dataset_id)
 
     if dataset && dataset.identifier # ignore draft datasets
-
-      Rails.logger.warn "dataset.ip_downloaded_dataset_today(request_ip): #{dataset.ip_downloaded_dataset_today(request_ip)}"
-
+      
       unless dataset.ip_downloaded_dataset_today(request_ip)
 
         today_dataset_download_relation = DatasetDownloadTally.where(["dataset_key= ? and download_date = ?", dataset.key, Date.current])
