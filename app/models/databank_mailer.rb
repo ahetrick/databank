@@ -62,7 +62,7 @@ class DatabankMailer < ActionMailer::Base
 
   def embargo_approaching_1m(dataset_key)
 
-    subject = prepend_system_code('Illinois Data Bank] Dataset release date approaching deposit')
+    subject = prepend_system_code('Illinois Data Bank] Dataset release date approaching')
 
     @dataset = Dataset.where(key: dataset_key).first
     if @dataset
