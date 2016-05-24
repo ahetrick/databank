@@ -66,8 +66,6 @@ module Databank
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
 
-    config.action_dispatch.x_sendfile_header
-
     config.autoload_paths << File.join(Rails.root, 'helpers/admin')
     config.autoload_paths << File.join(Rails.root, 'jobs')
     config.autoload_paths << File.join(Rails.root, 'lib')

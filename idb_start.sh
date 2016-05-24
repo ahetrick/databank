@@ -5,5 +5,5 @@ do
   echo "Removing temporary file $f ..."
   rm -f "$f"
 done
-echo "Starting unicorn rails server..."
-unicorn -c config/unicorn.rb -D
+
+bundle exec passenger start -d -e development

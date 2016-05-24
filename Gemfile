@@ -76,8 +76,8 @@ gem 'equivalent-xml'
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
 
-# Use Unicorn as the app server
-gem 'unicorn'
+# Use Passenger standalone
+gem "passenger", ">= 5.0.25", require: "phusion_passenger/rack_handler"
 
 # Use email validator for model
 gem 'valid_email'
@@ -142,7 +142,7 @@ group :development, :test do
   gem 'capistrano-rails'
   gem 'capistrano-bundler'
   gem 'capistrano-rvm'
-  gem 'capistrano3-unicorn'
+  gem 'capistrano-passenger'
 
 end
 
