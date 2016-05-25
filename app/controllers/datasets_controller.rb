@@ -513,6 +513,9 @@ class DatasetsController < ApplicationController
             if @dataset.save
               if IDB_CONFIG[:local_mode] && IDB_CONFIG[:local_mode] == true
                 Rails.logger.warn "Dataset #{@dataset.key} succesfully deposited."
+              elsif old_publication_state == Databank::PublicationState::DRAFT && @dataset.is_import
+                notification = DatabankMailer.confirm_deposit(@dataset.key)
+                notification.deliver_now
               else
                 notification = DatabankMailer.confirm_deposit_update(@dataset.key)
                 notification.deliver_now
