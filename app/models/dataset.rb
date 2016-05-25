@@ -229,8 +229,7 @@ class Dataset < ActiveRecord::Base
 
           when "license.txt"
 
-            rightsNode["rightsURI"] = "https://creativecommons.org/publicdomain/zero/1.0/"
-            rightsNode.content = "CC0 1.0 Universal Public Domain Dedication (CC0 1.0)"
+            rightsNode.content = "See license.txt in dataset"
             rightsNode.parent = rightsListNode
             rightsListNode.parent = resourceNode
 
