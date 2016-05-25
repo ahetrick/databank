@@ -209,11 +209,36 @@ class Dataset < ActiveRecord::Base
 
       if self.license && !self.license.blank?
         rightsListNode = doc.create_element('rightsList')
-        rightsListNode.parent = resourceNode
-
         rightsNode = doc.create_element('rights')
-        rightsNode.content = self.license
-        rightsNode.parent = rightsListNode
+
+        case self.license
+
+          when "CC01"
+
+            rightsNode["rightsURI"] = "https://creativecommons.org/publicdomain/zero/1.0/"
+            rightsNode.content = "CC0 1.0 Universal Public Domain Dedication (CC0 1.0)"
+            rightsNode.parent = rightsListNode
+            rightsListNode.parent = resourceNode
+
+          when "CCBY4"
+
+            rightsNode["rightsURI"] = "http://creativecommons.org/licenses/by/4.0/"
+            rightsNode.content = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+            rightsNode.parent = rightsListNode
+            rightsListNode.parent = resourceNode
+
+          when "license.txt"
+
+            rightsNode["rightsURI"] = "https://creativecommons.org/publicdomain/zero/1.0/"
+            rightsNode.content = "CC0 1.0 Universal Public Domain Dedication (CC0 1.0)"
+            rightsNode.parent = rightsListNode
+            rightsListNode.parent = resourceNode
+
+          else
+            Rails.logger.warn "Unexpected license value #{self.license} for dataset #{self.key}"
+        end
+
+
       end
 
       if self.description && !self.description.blank?
