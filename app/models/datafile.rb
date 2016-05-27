@@ -21,6 +21,14 @@ class Datafile < ActiveRecord::Base
     super(:only => [:web_id, :binary_name, :binary_size, :medusa_id, :created_at, :updated_at])
   end
 
+  def file_download_tallies
+    FileDownloadTally.where(file_web_id: self.web_id)
+  end
+
+  def total_downloads
+    FileDownloadTally.where(file_web_id: self.web_id).sum :tally
+  end
+
   def bytestream_name
     return_name = ""
     if self.binary_name && self.binary_name != ""
@@ -65,13 +73,15 @@ class Datafile < ActiveRecord::Base
 
         today_dataset_download_relation = DatasetDownloadTally.where(["dataset_key= ? and download_date = ?", dataset.key, Date.current])
 
-        if today_dataset_download_relation.count > 0
+        if today_dataset_download_relation.count == 1
 
           today_dataset_download = today_dataset_download_relation.first
           today_dataset_download.tally = today_dataset_download.tally + 1
           today_dataset_download.save
+        elsif today_dataset_download_relation.count == 0
+          DatasetDownloadTally.create(tally: 1, download_date: Date.current, dataset_key: dataset.key, doi: dataset.identifier)
         else
-          DatasetDownloadTally.create(tally: 1, dataset_key: dataset.key, doi: dataset.identifier)
+          Rails.logger.warn "unexpected number of dataset tally records for download of #{self.web_id} on #{Date.current} from #{request_ip}"
         end
 
       end
@@ -88,12 +98,14 @@ class Datafile < ActiveRecord::Base
 
           today_datatafile_download_relation = FileDownloadTally.where(["file_web_id = ? and download_date = ?", self.web_id, Date.current])
 
-          if today_datatafile_download_relation.count > 0
+          if today_datatafile_download_relation.count == 1
             today_file_download = today_dataset_download_relation.first
             today_file_download.tally = today_file_download.tally + 1
             today_file_download.save
+          elsif today_datatafile_download_relation.count == 0
+            FileDownloadTally.create(tally: 1, download_date: Date.current, dataset_key: dataset.key, doi: dataset.identifier, file_web_id: self.web_id, filename: self.bytestream_name)
           else
-            FileDownloadTally.create(tally: 1, dataset_key: dataset.key, doi: dataset.identifier, file_web_id: self.web_id, filename: self.bytestream_name)
+            Rails.logger.warn "unexpected number of file tally records for download of #{self.web_id} on #{Date.current} from #{request_ip}"
           end
 
       end

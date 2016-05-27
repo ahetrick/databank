@@ -311,6 +311,10 @@ class Dataset < ActiveRecord::Base
     DatasetDownloadTally.where(dataset_key: self.key).sum :tally
   end
 
+  def dataset_download_tallies
+    DatasetDownloadTally.where(dataset_key: self.key)
+  end
+
   def ip_downloaded_dataset_today(request_ip)
     #Rails.logger.warn 'DayFileDownload.where(["ip_address = ? and dataset_key = ? and download_date = ?", request_ip, self.key, Date.current])'
     #Rails.logger.warn DayFileDownload.where(["ip_address = ? and dataset_key = ? and download_date = ?", request_ip, self.key, Date.current]).to_yaml
