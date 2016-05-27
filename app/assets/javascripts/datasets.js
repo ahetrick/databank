@@ -87,6 +87,9 @@ ready = function () {
 
         if ($(".invalid-input").length == 0) {
             window.onbeforeunload = null;
+
+            //console.log($("[id^=edit_dataset]").serialize());
+
             $("[id^=edit_dataset]").submit();
         } else {
             alert("Email address must be in a valid format.");
@@ -212,13 +215,22 @@ ready = function () {
             }
         },
         downloadTemplate: function (o) {
+
+            var maxId = Number($('#datafile_index_max').val());
+            var newId = 1;
+
+            if (maxId != NaN) {
+                newId = maxId + 1;
+            }
+            $('#datafile_index_max').val(newId);
+            
             var file = o.files[0];
 
-            var row = '<tr><td><div class = "row"><span class="col-md-8">' + file.name + '<input class="bytestream_name" value="' + file.name + '" style="visibility: hidden;"></input></span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
+            var row = '<tr id="datafile_index_' + newId + '"><td><div class = "row"><span class="col-md-8">' + file.name + '<input class="bytestream_name" value="' + file.name + '" style="visibility: hidden;"/></span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
             if (file.error) {
                 row = row + '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-warning-sign"></span>';
             } else {
-                row = row + '<a data-confirm="Are you sure?" class="btn btn-danger btn-sm" rel="nofollow" data-method="delete" href="/datafiles/' + file.web_id + '"><span class="glyphicon glyphicon-trash"></span></a></span>';
+                row = row + '<button type="button" class="btn btn-danger btn-sm" onclick="remove_file_row(' + newId + ')"><span class="glyphicon glyphicon-trash"></span></button></span>';
             }
 
             row = row + '</span></div></td></tr>';
@@ -325,16 +337,7 @@ function handleAgreeModal(email, name) {
     }
 }
 
-function download_selected() {
-    var file_ids = $("input[name='selected_files[]']:checked").map(function (index, domElement) {
-        return $(domElement).val();
-    });
 
-    $.each(file_ids, function (i, file_id) {
-        fileURL = "<iframe class='hidden' src='/datasets/" + dataset_key + "/stream_file/" + file_id + "'></iframe>";
-        $('#frames').append(fileURL);
-    });
-}
 
 function handlePrivateYes() {
     if ($('#private-yes').is(':checked')) {
