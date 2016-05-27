@@ -79,7 +79,8 @@ class DatafilesController < ApplicationController
         files:
             [
                 {
-                    web_id: @datafile.web_id,
+                    datafileId: @datafile.id,
+                    webId: @datafile.web_id,
                     url: "dafafiles/#{@datafile.web_id}",
                     name: "#{@datafile.binary.file.filename}",
                     size: "#{number_to_human_size(@datafile.binary.size)}"

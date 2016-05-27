@@ -226,7 +226,15 @@ ready = function () {
             
             var file = o.files[0];
 
-            var row = '<tr id="datafile_index_' + newId + '"><td><div class = "row"><span class="col-md-8">' + file.name + '<input class="bytestream_name" value="' + file.name + '" style="visibility: hidden;"/></span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
+            console.log(file);
+
+            var row =
+            '<tr id="datafile_index_' + newId + '"><td><div class = "row">' +
+
+            '<input value="false" type="hidden" name="dataset[datafiles_attributes][' + newId + '][_destroy]" id="dataset_datafiles_attributes_' + newId + '__destroy" />' +
+            '<input type="hidden"  value="'+ file.datafileId + '" name="dataset[datafiles_attributes][' + newId + '][id]" id="dataset_datafiles_attributes_' + newId + '_id" />'+
+
+            '<span class="col-md-8">' + file.name + '<input class="bytestream_name" value="' + file.name + '" style="visibility: hidden;"/></span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
             if (file.error) {
                 row = row + '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-warning-sign"></span>';
             } else {
