@@ -620,7 +620,10 @@ class DatasetsController < ApplicationController
           web_ids.each do |web_id|
             datafile = Datafile.find_by_web_id(web_id)
             if datafile
+              Rails.logger.warn "recording datafile download for web_id #{web_id}"
               datafile.record_download(request.remote_ip)
+            else
+              Rails.logger.warn "did not find datafile for web_id #{web_id}"
             end
           end
 
