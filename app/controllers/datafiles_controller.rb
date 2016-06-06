@@ -90,6 +90,11 @@ class DatafilesController < ApplicationController
 
   end
 
+  def record_download
+    @datafile.record_download(request.remote_ip)
+    render json: {status: :ok}
+  end
+
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_datafile

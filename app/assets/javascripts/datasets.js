@@ -540,6 +540,7 @@ function offerDownloadLink() {
             //context: document.body
         }).done(function () {
             console.log("done");
+
         });
     }
 }

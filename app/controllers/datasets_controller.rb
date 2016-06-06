@@ -556,7 +556,7 @@ class DatasetsController < ApplicationController
 
     if @dataset.identifier && !@dataset.identifier.empty?
       @dataset.datafiles.each do |datafile|
-        datafile.record_download
+        datafile.record_download(request.remote_ip)
       end
 
       file_name = "DOI-#{@dataset.identifier}".parameterize + ".zip"
@@ -612,9 +612,18 @@ class DatasetsController < ApplicationController
 
       web_ids.each(&:strip!)
 
+
+
       download_hash = DownloaderClient.get_download_hash(web_ids, "DOI-#{@dataset.identifier}".parameterize)
       if download_hash
         if download_hash['status']== 'ok'
+          web_ids.each do |web_id|
+            datafile = Datafile.find_by_web_id(web_id)
+            if datafile
+              datafile.record_download(request.remote_ip)
+            end
+          end
+
           return_hash["status"]="ok"
           return_hash["url"]=download_hash['download_url']
           return_hash["total_size"]=download_hash['total_size']
