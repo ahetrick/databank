@@ -99,7 +99,7 @@ class Datafile < ActiveRecord::Base
           today_datatafile_download_relation = FileDownloadTally.where(["file_web_id = ? and download_date = ?", self.web_id, Date.current])
 
           if today_datatafile_download_relation.count == 1
-            today_file_download = today_dataset_download_relation.first
+            today_file_download = today_datatafile_download_relation.first
             today_file_download.tally = today_file_download.tally + 1
             today_file_download.save
           elsif today_datatafile_download_relation.count == 0
