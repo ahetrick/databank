@@ -525,7 +525,7 @@ function offerDownloadLink() {
                 if (result.status == 'ok') {
                     $('.download-link').html("<h2><a href='" + result.url + "' target='_blank'>Download</a></h2>");
                     if (Number(result.total_size) > zip64_threshold) {
-                        $('.download-help').html("<p>For selections of files larger than 4GB, the zip file will be in zip64 format. To open a zip64 formatted file on OS X (Mac), requires additional software not build into the operating system since version 10.11. Options include 7zip and The Unarchiver.</p>")
+                        $('.download-help').html("<p>For selections of files larger than 4GB, the zip file will be in zip64 format. To open a zip64 formatted file on OS X (Mac) requires additional software not build into the operating system since version 10.11. Options include 7zX and The Unarchiver. If a Windows system has trouble opening the zip file, 7-Zip can be used.</p>")
                     }
 
                     $('#downloadLinkModal').modal('show');
