@@ -107,4 +107,12 @@ namespace :databank do
     end
   end
 
+  desc 'reset delayed job workers'
+  task :reset_delayed_job_workers => :environment do
+    Delayed::Heartbeat.delete_timed_out_workers
+    if Delayed::Job.all.count == 0
+      system "cd #{Rails.root} && RAILS_ENV=#{::Rails.env} bin/delayed_job -n #{@@num_box_ingest_deamons} restart"
+    end
+  end
+
 end
