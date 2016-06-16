@@ -96,7 +96,7 @@ gem 'boxr'
 gem 'delayed_job_active_record'
 gem 'daemons'
 gem 'progress_job'
-gem 'delayed_job_heartbeat_plugin'
+# gem 'delayed_job_heartbeat_plugin'
 
 # Use canan to restrict what resources a given user is allowed to access
 gem 'cancancan'
