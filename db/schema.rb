@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160519192233) do
+ActiveRecord::Schema.define(version: 20160617150954) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,6 +69,7 @@ ActiveRecord::Schema.define(version: 20160519192233) do
     t.string   "medusa_path"
     t.string   "binary_name"
     t.integer  "binary_size",          limit: 8
+    t.string   "upload_status"
   end
 
   create_table "dataset_download_tallies", force: :cascade do |t|
@@ -228,6 +229,13 @@ ActiveRecord::Schema.define(version: 20160519192233) do
     t.datetime "updated_at",    null: false
     t.string   "selected_type"
     t.string   "datacite_list"
+  end
+
+  create_table "robots", force: :cascade do |t|
+    t.string   "source"
+    t.string   "address"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|

@@ -65,6 +65,10 @@ class Datafile < ActiveRecord::Base
 
   def record_download(request_ip)
 
+    if Robot.exists?(address: request_ip)
+      return nil
+    end
+
     dataset = Dataset.find(self.dataset_id)
 
     if dataset && dataset.identifier # ignore draft datasets

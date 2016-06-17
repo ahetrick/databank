@@ -1,4 +1,5 @@
 require 'rake'
+require 'open-uri'
 
 namespace :databank do
 
@@ -105,6 +106,42 @@ namespace :databank do
         end
       end
     end
+  end
+
+  desc 'get latest list of robot ip addresses'
+  task :get_robot_addresses => :environment do
+
+    Robot.destroy_all
+
+    source_base = "http://www.iplists.com/"
+    sources = Array.new
+    sources.push("google")
+    sources.push("inktomi")
+    sources.push("lycos")
+    sources.push("infoseek")
+    sources.push("altavista")
+    sources.push("excite")
+    sources.push("northernlight")
+    sources.push("misc")
+    sources.push("non_engines")
+
+    sources.each do |source|
+      robot_list_url = "#{source_base}#{source}.txt"
+      # puts robot_list_url
+      open(robot_list_url){|io|
+        io.each_line {|line|
+          if line[0] != "#" && line != "\n"
+            Robot.create(source: source, address: line)
+          end
+        }
+      }
+    end
+
+  end
+
+  desc 'remove download records with ip addresses, if they are more than 3 days old'
+  task :scrub_download_records => :environment do
+    DayFileDownload.where("download_date < ?", 3.days.ago ).destroy_all
   end
 
 end

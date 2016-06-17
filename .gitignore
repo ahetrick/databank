@@ -36,3 +36,6 @@ dj_stop.sh
 /public/sitemaps
 /public/robots.txt
 /dataset_staging
+
+/passenger.3000.log
+

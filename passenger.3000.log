@@ -1,0 +1,19 @@
+[ 2016-06-17 11:00:29.2390 10674/0x7fff7626d000 age/Wat/WatchdogMain.cpp:1301 ]: Starting Passenger watchdog...
+[ 2016-06-17 11:00:29.2539 10676/0x7fff7626d000 age/Cor/CoreMain.cpp:982 ]: Starting Passenger core...
+[ 2016-06-17 11:00:29.2545 10676/0x7fff7626d000 age/Cor/CoreMain.cpp:235 ]: Passenger core running in multi-application mode.
+[ 2016-06-17 11:00:29.2604 10676/0x7fff7626d000 age/Cor/CoreMain.cpp:732 ]: Passenger core online, PID 10676
+[ 2016-06-17 11:00:29.2664 10678/0x7fff7626d000 age/Ust/UstRouterMain.cpp:529 ]: Starting Passenger UstRouter...
+[ 2016-06-17 11:00:29.2671 10678/0x7fff7626d000 age/Ust/UstRouterMain.cpp:342 ]: Passenger UstRouter online, PID 10678
+App 10689 stdout: 
+App 10707 stdout: 
+App 10709 stdout: 
+App 10689 stderr: /Users/mfall3/Projects/databank/app/controllers/application_controller.rb:10: warning: toplevel constant StandardError referenced by Exception::StandardError
+App 10715 stdout: 
+App 10717 stdout: 
+App 10719 stdout: 
+App 10721 stdout: 
+[ 2016-06-17 11:05:46.0046 10676/0x700000084000 age/Cor/CoreMain.cpp:819 ]: Checking whether to disconnect long-running connections for process 10709, application /Users/mfall3/Projects/databank/public (development)
+[ 2016-06-17 11:05:46.0048 10676/0x700000084000 age/Cor/CoreMain.cpp:819 ]: Checking whether to disconnect long-running connections for process 10715, application /Users/mfall3/Projects/databank/public (development)
+[ 2016-06-17 11:05:46.0048 10676/0x700000084000 age/Cor/CoreMain.cpp:819 ]: Checking whether to disconnect long-running connections for process 10717, application /Users/mfall3/Projects/databank/public (development)
+[ 2016-06-17 11:05:46.0048 10676/0x700000084000 age/Cor/CoreMain.cpp:819 ]: Checking whether to disconnect long-running connections for process 10719, application /Users/mfall3/Projects/databank/public (development)
+[ 2016-06-17 11:05:46.0049 10676/0x700000084000 age/Cor/CoreMain.cpp:819 ]: Checking whether to disconnect long-running connections for process 10721, application /Users/mfall3/Projects/databank/public (development)
