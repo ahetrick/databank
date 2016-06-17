@@ -10,13 +10,13 @@
 
 license_cc01 = LicenseInfo.find_or_initialize_by(code: "CC01")
 license_cc01.name = "CC0"
-license_cc01.external_info_url = "https://creativecommons.org/about/cc0"
+license_cc01.external_info_url = "https://creativecommons.org/publicdomain/zero/1.0/"
 license_cc01.full_text_url = "#{Rails.root}/public/CC01.txt"
 license_cc01.save!
 
 license_cc0BY4 = LicenseInfo.find_or_initialize_by(code: "CCBY4")
 license_cc0BY4.name = "CC BY"
-license_cc0BY4.external_info_url = "https://creativecommons.org/licenses/by/4.0"
+license_cc0BY4.external_info_url = "http://creativecommons.org/licenses/by/4.0/"
 license_cc0BY4.full_text_url = "#{Rails.root}/public/CCBY4.txt"
 license_cc0BY4.save!
 
