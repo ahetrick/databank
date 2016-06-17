@@ -57,7 +57,7 @@ Edit these as necessary.
 `$ bundle exec rake db:setup`
 
 
-#### Run on unicorn server on nix system to support streaming zip file downloads
+#### Run using passenger standalone on nix system 
 
 `$ ./idb_start.sh`
 
@@ -166,6 +166,39 @@ bundle exec rake notify:send_embargo_approaching_1w_all >> $logfile
 
 #### cron example (daily @ 2am):
 `0 2 * * * /path/to/scripts/notify.sh`
+
+
+## Automated download request address scrubbing
+### Depends on script triggered by cron
+
+#### script example:
+
+```bash
+#!/usr/bin/env bash
+# scrub_download_records.sh
+# ensure a log file
+logfile=/path/to/log/file
+touch logfile
+
+# if using rvm, load RVM into shell session and specify context
+#[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+# rvm use 2.2.1@idb_v1 >> $logfile
+
+# log timestamp
+echo $(date -u) >> $logfile
+
+# change context to current databank directory
+cd /path/to/databank/current
+
+# specify environment
+export RAILS_ENV=[test|development|production]
+
+# run rake task to scrub records
+bundle exec rake databank:scrub_download_records >> $logfile
+
+
+#### cron example (daily @ 3am):
+`0 3 * * * /path/to/scripts/scrub_download_records_sh`
 
 
 
