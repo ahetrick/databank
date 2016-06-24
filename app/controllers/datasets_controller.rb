@@ -482,7 +482,7 @@ class DatasetsController < ApplicationController
           @dataset.identifier = Dataset.create_doi(@dataset, current_user)
           MedusaIngest.send_dataset_to_medusa(@dataset, old_publication_state)
 
-          # strange is double-save because publication changes the dataset, but should not trigger change flag
+          # strange double-save is because publication changes the dataset, but should not trigger change flag
           # there is probably a better way to do this, and alternatives would be welcome
           if @dataset.save
 
@@ -523,8 +523,15 @@ class DatasetsController < ApplicationController
               if IDB_CONFIG[:local_mode] && IDB_CONFIG[:local_mode] == true
                 Rails.logger.warn "Dataset #{@dataset.key} succesfully deposited."
               elsif old_publication_state == Databank::PublicationState::DRAFT && @dataset.is_import
-                notification = DatabankMailer.confirm_deposit(@dataset.key)
-                notification.deliver_now
+                begin
+                  notification = DatabankMailer.confirm_deposit(@dataset.key)
+                  notification.deliver_now
+                rescue Exception::StandardError => err
+                  Rails.logger.warn "Confirmation email not sent for #{@dataset.key}"
+                  Rails.logger.warn err.to_yaml
+                  notification = DatabankMailer.confirmation_not_sent(@dataset.key, err)
+                  notification.deliver_now
+                end
               else
                 notification = DatabankMailer.confirm_deposit_update(@dataset.key)
                 notification.deliver_now
