@@ -489,8 +489,14 @@ class DatasetsController < ApplicationController
             if IDB_CONFIG[:local_mode] && IDB_CONFIG[:local_mode] == true
               Rails.logger.warn "Dataset #{@dataset.key} succesfully deposited."
             else
-              notification = DatabankMailer.confirm_deposit(@dataset.key)
-              notification.deliver_now
+              begin
+                notification = DatabankMailer.confirm_deposit(@dataset.key)
+                notification.deliver_now
+              rescue StandardError => err
+                notification = DatabankMailer.confirmation_not_sent(@dataset.key, err)
+                notification.deliver_now
+              end
+
             end
             @dataset.save
             format.html { redirect_to dataset_path(@dataset.key), notice: Dataset.deposit_confirmation_notice(old_publication_state, @dataset) }

@@ -92,6 +92,19 @@ class DatabankMailer < ActionMailer::Base
     mail(to: "#{IDB_CONFIG[:tech_error_mail_list]}", subject: subject)
   end
 
+  def confirmation_not_sent(dataset_key, err)
+    subject = prepend_system_code('Illinois Data Bank] Dataset confirmation email not sent')
+
+    @err = err
+    @dataset = Dataset.where(key: dataset_key).first
+    if @dataset
+      mail(to: 'databank@library.illinois.edu', subject: subject )
+    else
+      Rails.logger.warn "Confirmation email not sent email not sent because dataset not found for key: #{dataset_key}."
+    end
+
+  end
+
   def prepend_system_code(subject)
     Rails.logger.warn IDB_CONFIG[:root_url_text]
     if IDB_CONFIG[:root_url_text].include?("dev")
