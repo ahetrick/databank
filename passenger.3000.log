@@ -17,3 +17,42 @@ App 10721 stdout:
 [ 2016-06-17 11:05:46.0048 10676/0x700000084000 age/Cor/CoreMain.cpp:819 ]: Checking whether to disconnect long-running connections for process 10717, application /Users/mfall3/Projects/databank/public (development)
 [ 2016-06-17 11:05:46.0048 10676/0x700000084000 age/Cor/CoreMain.cpp:819 ]: Checking whether to disconnect long-running connections for process 10719, application /Users/mfall3/Projects/databank/public (development)
 [ 2016-06-17 11:05:46.0049 10676/0x700000084000 age/Cor/CoreMain.cpp:819 ]: Checking whether to disconnect long-running connections for process 10721, application /Users/mfall3/Projects/databank/public (development)
+
+
+[ 2016-06-17 16:21:59.8251 10678/0x700000104000 age/Ust/UstRouterMain.cpp:422 ]: Signal received. Gracefully shutting down... (send signal 2 more time(s) to force shutdown)
+[ 2016-06-17 16:21:59.8251 10676/0x70000018a000 age/Cor/CoreMain.cpp:532 ]: Signal received. Gracefully shutting down... (send signal 2 more time(s) to force shutdown)
+[ 2016-06-17 16:21:59.8252 10676/0x7fff7626d000 age/Cor/CoreMain.cpp:901 ]: Received command to shutdown gracefully. Waiting until all clients have disconnected...
+[ 2016-06-17 16:21:59.8252 10676/0x7fff7626d000 age/Cor/CoreMain.cpp:819 ]: Checking whether to disconnect long-running connections for process 10707, application /Users/mfall3/Projects/databank/public (development)
+[ 2016-06-17 16:21:59.8253 10678/0x7fff7626d000 age/Ust/UstRouterMain.cpp:492 ]: Received command to shutdown gracefully. Waiting until all clients have disconnected...
+[ 2016-06-17 16:21:59.8254 10678/0x700000104000 Ser/Server.h:464 ]: [UstRouter] Shutdown finished
+[ 2016-06-17 16:21:59.8254 10678/0x70000020a000 Ser/Server.h:816 ]: [UstRouterApiServer] Freed 0 spare client objects
+[ 2016-06-17 16:21:59.8254 10678/0x70000020a000 Ser/Server.h:464 ]: [UstRouterApiServer] Shutdown finished
+[ 2016-06-17 16:21:59.8255 10676/0x700000290000 Ser/Server.h:816 ]: [ServerThr.2] Freed 128 spare client objects
+[ 2016-06-17 16:21:59.8255 10676/0x70000018a000 Ser/Server.h:816 ]: [ServerThr.1] Freed 128 spare client objects
+[ 2016-06-17 16:21:59.8255 10676/0x700000290000 Ser/Server.h:464 ]: [ServerThr.2] Shutdown finished
+[ 2016-06-17 16:21:59.8256 10676/0x70000018a000 Ser/Server.h:464 ]: [ServerThr.1] Shutdown finished
+[ 2016-06-17 16:21:59.8256 10676/0x700000396000 Ser/Server.h:816 ]: [ServerThr.3] Freed 128 spare client objects
+[ 2016-06-17 16:21:59.8257 10676/0x700000396000 Ser/Server.h:464 ]: [ServerThr.3] Shutdown finished
+[ 2016-06-17 16:21:59.8257 10676/0x70000049c000 Ser/Server.h:816 ]: [ServerThr.4] Freed 128 spare client objects
+[ 2016-06-17 16:21:59.8257 10676/0x7000006a8000 Ser/Server.h:816 ]: [ServerThr.6] Freed 128 spare client objects
+[ 2016-06-17 16:21:59.8257 10676/0x70000049c000 Ser/Server.h:464 ]: [ServerThr.4] Shutdown finished
+[ 2016-06-17 16:21:59.8258 10676/0x7000006a8000 Ser/Server.h:464 ]: [ServerThr.6] Shutdown finished
+[ 2016-06-17 16:21:59.8257 10676/0x7000005a2000 Ser/Server.h:816 ]: [ServerThr.5] Freed 128 spare client objects
+[ 2016-06-17 16:21:59.8258 10676/0x7000007ae000 Ser/Server.h:816 ]: [ServerThr.7] Freed 128 spare client objects
+[ 2016-06-17 16:21:59.8258 10676/0x7000007ae000 Ser/Server.h:464 ]: [ServerThr.7] Shutdown finished
+[ 2016-06-17 16:21:59.8258 10676/0x7000008b4000 Ser/Server.h:816 ]: [ServerThr.8] Freed 128 spare client objects
+[ 2016-06-17 16:21:59.8258 10676/0x7000005a2000 Ser/Server.h:464 ]: [ServerThr.5] Shutdown finished
+[ 2016-06-17 16:21:59.8259 10676/0x7000008b4000 Ser/Server.h:464 ]: [ServerThr.8] Shutdown finished
+[ 2016-06-17 16:21:59.8260 10678/0x7fff7626d000 age/Ust/UstRouterMain.cpp:523 ]: Passenger UstRouter shutdown finished
+[ 2016-06-17 16:21:59.8260 10676/0x7000009ba000 Ser/Server.h:816 ]: [ApiServer] Freed 0 spare client objects
+[ 2016-06-17 16:21:59.8260 10676/0x7000009ba000 Ser/Server.h:464 ]: [ApiServer] Shutdown finished
+[ 2016-06-17 16:21:59.8261 10676/0x7fff7626d000 age/Cor/CoreMain.cpp:819 ]: Checking whether to disconnect long-running connections for process 10707, application /Users/mfall3/Projects/databank/public (development)
+
+[ 2016-06-17 16:21:59.8274 10676/0x70000018a000 age/Cor/CoreMain.cpp:532 ]: Signal received. Gracefully shutting down... (send signal 1 more time(s) to force shutdown)
+App 10689 stderr: [ 2016-06-17 16:21:59.8295 10707/0x007fc56183c588(Worker 1) utils.rb:87 ]: *** Exception Errno::EBADF (Bad file descriptor) (process 10707, thread 0x007fc56183c588(Worker 1)):
+App 10689 stderr: 	from /Users/mfall3/.rvm/gems/ruby-2.2.1@idb_v1/gems/passenger-5.0.28/src/ruby_supportlib/phusion_passenger/request_handler/thread_handler.rb:136:in `accept'
+App 10689 stderr: 	from /Users/mfall3/.rvm/gems/ruby-2.2.1@idb_v1/gems/passenger-5.0.28/src/ruby_supportlib/phusion_passenger/request_handler/thread_handler.rb:136:in `accept_and_process_next_request'
+App 10689 stderr: 	from /Users/mfall3/.rvm/gems/ruby-2.2.1@idb_v1/gems/passenger-5.0.28/src/ruby_supportlib/phusion_passenger/request_handler/thread_handler.rb:113:in `main_loop'
+App 10689 stderr: 	from /Users/mfall3/.rvm/gems/ruby-2.2.1@idb_v1/gems/passenger-5.0.28/src/ruby_supportlib/phusion_passenger/request_handler.rb:416:in `block (3 levels) in start_threads'
+App 10689 stderr: 	from /Users/mfall3/.rvm/gems/ruby-2.2.1@idb_v1/gems/passenger-5.0.28/src/ruby_supportlib/phusion_passenger/utils.rb:113:in `block in create_thread_and_abort_on_exception'
+[ 2016-06-17 16:22:00.1611 10676/0x7fff7626d000 age/Cor/CoreMain.cpp:967 ]: Passenger core shutdown finished

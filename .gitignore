@@ -34,6 +34,7 @@ dj_stop.sh
 /public/agreements
 
 /public/sitemaps
+/public/deck
 /public/robots.txt
 /dataset_staging
 

@@ -375,8 +375,23 @@ class Dataset < ActiveRecord::Base
 
     dataset.creators.each do |creator|
       if !creator.email || creator.email == ''
-        validation_error_messages << "an email address for author(s)"
-        break
+        validation_error_messages << "an email address for #{creator.given_name} #{creator.family_name}"
+      end
+      if creator.email.include?('@illinois.edu')
+        netid = creator.email.split('@').first
+
+        creator_record = nil
+
+        #check to see if netid is found, to prevent email system errors
+        begin
+
+        creator_record = open("http://quest.grainger.uiuc.edu/directory/ed/person/#{netid}").read
+
+        rescue OpenURI::HTTPError => err
+          validation_error_messages << "a valid email address for #{creator.given_name} #{creator.family_name}"
+        end
+
+
       end
     end
 
@@ -682,6 +697,22 @@ class Dataset < ActiveRecord::Base
       break unless self.class.find_by_key(proposed_key)
     end
     proposed_key
+  end
+
+  def deck_location
+    "#{IDB_CONFIG[:deck_path]}/#{self.key}"
+  end
+
+  def has_deck_content
+    File.directory?(self.deck_location)
+  end
+
+  def deck_filepaths
+    if has_deck_content
+      return Dir["#{self.deck_location}/*"]
+    else
+      return nil
+    end
   end
 
   def set_primary_contact

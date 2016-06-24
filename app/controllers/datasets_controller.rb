@@ -200,6 +200,7 @@ class DatasetsController < ApplicationController
     @completion_check = Dataset.completion_check(@dataset, current_user)
     set_license(@dataset)
     @publish_modal_msg = Dataset.publish_modal_msg(@dataset)
+
   end
 
   # POST /datasets
@@ -791,6 +792,11 @@ class DatasetsController < ApplicationController
   end
 
   def download_metrics
+  end
+
+  def download_deckfile
+    Rails.logger.warn params.to_yaml
+    render :edit
   end
 
   private

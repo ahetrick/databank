@@ -10,6 +10,37 @@
               %span(class="metadata-label" ) Files
         .panel-collapse.collapse.in(id="collapseFiles" role="tabpanel" aria-labelledby="filesHeading" )
           .panel-body
+
+            - if @dataset.has_deck_content
+              .deckfiles_div
+                %span(class="metadata-label") Files pending approval to be included in this dataset:
+                %br
+                %table(class="table table-striped" id="deckfiles_table")
+                  %tbody
+                    - @dataset.deck_filepaths.each do |filepath|
+                      %tr
+                        %td
+                          .row
+                            %span(class="col-md-4")
+                              =filepath.split('/').last
+                            %span(class="col-md-2" )
+                              - if File.size?(filepath)
+                                = number_to_human_size( File.size(filepath) )
+                            %span(class="col-md-2")
+                              %button(type="button" class="btn btn-block btn-primary" )
+                                %span(class="glyphicon glyphicon-download" )
+                                Download
+                            %span(class="col-md-2")
+                              %button(type="button" class="btn btn-block btn-success" )
+                                %span(class="glyphicon glyphicon-check" )
+                                Approve
+                            %span(class="col-md-2" )
+                              %button(type="button" class="btn btn-block btn-danger" )
+                                %span(class="glyphicon glyphicon-trash" )
+                                Remove
+              %span(class="metadata-label" ) Other Files:
+              %br
+
             For files larger than 500 MB, importing from Box is recommended.  For files larger than Box supports,
             = succeed '.' do
               %a(href="/help#contact")contact us
@@ -61,3 +92,12 @@
                                   %button(class="cancel-upload-btn btn btn-danger btn-sm" onclick="cancelUpload('#{datafile.web_id}', '#{datafile.job_id}')") Cancel
 
             %div(id="datafiles_upload_progress")
+
+
+
+
+
+
+
+
+
