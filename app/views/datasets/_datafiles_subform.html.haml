@@ -17,27 +17,29 @@
                 %br
                 %table(class="table table-striped" id="deckfiles_table")
                   %tbody
-                    - @dataset.deck_filepaths.each do |filepath|
-                      %tr
-                        %td
-                          .row
-                            %span(class="col-md-4")
-                              =filepath.split('/').last
-                            %span(class="col-md-2" )
-                              - if File.size?(filepath)
-                                = number_to_human_size( File.size(filepath) )
-                            %span(class="col-md-2")
-                              %button(type="button" class="btn btn-block btn-primary" )
-                                %span(class="glyphicon glyphicon-download" )
-                                Download
-                            %span(class="col-md-2")
-                              %button(type="button" class="btn btn-block btn-success" )
-                                %span(class="glyphicon glyphicon-check" )
-                                Approve
-                            %span(class="col-md-2" )
-                              %button(type="button" class="btn btn-block btn-danger" )
-                                %span(class="glyphicon glyphicon-trash" )
-                                Remove
+
+                    - @dataset.deckfiles.each do |deckfile|
+                      - if !deckfile.remove
+                        %tr(id="deckfile_#{deckfile.id}")
+                          %td
+                            .row
+                              %span(class="col-md-4")
+                                =(deckfile.path).split('/').last
+                              %span(class="col-md-2" )
+                                - if File.size?(deckfile.path)
+                                  = number_to_human_size( File.size(deckfile.path) )
+                              %span(class="col-md-2")
+                                %button(type="button" class="btn btn-block btn-primary" onclick='window.location.href="/deckfiles/#{deckfile.id}/download"' )
+                                  %span(class="glyphicon glyphicon-download" )
+                                  Download
+                              %span(class="col-md-2")
+                                %button(type="button" class="btn btn-block btn-success" onclick="approve_deckfile(#{deckfile.id})" )
+                                  %span(class="glyphicon glyphicon-check" )
+                                  Approve
+                              %span(class="col-md-2" )
+                                %button(type="button" class="btn btn-block btn-danger" onclick="remove_deckfile(#{deckfile.id})" )
+                                  %span(class="glyphicon glyphicon-trash" )
+                                  Remove
               %span(class="metadata-label" ) Other Files:
               %br
 

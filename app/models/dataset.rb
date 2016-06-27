@@ -20,7 +20,9 @@ class Dataset < ActiveRecord::Base
   has_many :creators, dependent: :destroy
   has_many :funders, dependent: :destroy
   has_many :related_materials, dependent: :destroy
+  has_many :deckfiles, dependent: :destroy
   accepts_nested_attributes_for :datafiles, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :deckfiles, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :creators, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :funders, reject_if: proc { |attributes| (attributes['name'].blank?) }, allow_destroy: true
   accepts_nested_attributes_for :related_materials, reject_if: proc { |attributes| ((attributes['link'].blank?) && (attributes['citation'].blank?)) }, allow_destroy: true
@@ -699,11 +701,11 @@ class Dataset < ActiveRecord::Base
   end
 
   def deck_location
-    "#{IDB_CONFIG[:deck_path]}/#{self.key}"
+    "#{IDB_CONFIG[:ingest_deck_path]}/#{(self.key)}"
   end
 
   def has_deck_content
-    File.directory?(self.deck_location)
+    File.directory?(self.deck_location) && !Dir["#{self.deck_location}/*"].empty?
   end
 
   def deck_filepaths

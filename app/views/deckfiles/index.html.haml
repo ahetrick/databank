@@ -1,0 +1,27 @@
+%h1 Listing deckfiles
+
+%table
+  %thead
+    %tr
+      %th Disposition
+      %th Remove
+      %th Path
+      %th Dataset
+      %th
+      %th
+      %th
+
+  %tbody
+    - @deckfiles.each do |deckfile|
+      %tr
+        %td= deckfile.disposition
+        %td= deckfile.remove
+        %td= deckfile.path
+        %td= deckfile.dataset_id
+        %td= link_to 'Show', deckfile
+        %td= link_to 'Edit', edit_deckfile_path(deckfile)
+        %td= link_to 'Destroy', deckfile, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Deckfile', new_deckfile_path

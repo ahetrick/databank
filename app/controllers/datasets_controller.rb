@@ -200,6 +200,17 @@ class DatasetsController < ApplicationController
     @completion_check = Dataset.completion_check(@dataset, current_user)
     set_license(@dataset)
     @publish_modal_msg = Dataset.publish_modal_msg(@dataset)
+    if @dataset.has_deck_content
+      @dataset.deck_filepaths.each do |filepath|
+        Deckfile.find_or_create_by!(path: filepath, dataset_id: @dataset.id)
+      end
+    end
+
+    @dataset.deckfiles.each do |deckfile|
+      unless File.exists?(deckfile.path)
+        deckfile.destroy
+      end
+    end
 
   end
 

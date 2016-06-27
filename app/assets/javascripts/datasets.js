@@ -265,7 +265,7 @@ ready = function () {
 
                 $.ajax({
                     type: "POST",
-                    url: "/datafiles/create_from_box",
+                    url: "/datafiles/create_from_url",
                     data: boxItem,
                     success: function (data) {
                         eval($(data).text());

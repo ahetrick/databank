@@ -1,0 +1,18 @@
+%p#notice= notice
+
+%p
+  %b Disposition:
+  = @deckfile.disposition
+%p
+  %b Remove:
+  = @deckfile.remove
+%p
+  %b Path:
+  = @deckfile.path
+%p
+  %b Dataset:
+  = @deckfile.dataset_id
+
+= link_to 'Edit', edit_deckfile_path(@deckfile)
+\|
+= link_to 'Back', deckfiles_path

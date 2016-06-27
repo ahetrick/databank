@@ -186,3 +186,8 @@
   %script
     handleNotAgreed();
     $("#agreement").modal('show');
+
+- @dataset.deckfiles.each do |deckfile|
+  = form_tag("/datafiles/create_from_deckfile", {id: "form_for_deckfile_#{deckfile.id}"}) do
+    = hidden_field_tag("dataset_key","#{@dataset.key}" )
+    = hidden_field_tag("deckfile_id", "#{deckfile.id}")
