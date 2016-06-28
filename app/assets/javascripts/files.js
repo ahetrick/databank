@@ -68,8 +68,7 @@ function download_selected() {
 
 function approve_deckfile(deckfile_id){
 
-    console.log($('#form_for_deckfile_' + deckfile_id).attr('action'));
-    console.log($('#form_for_deckfile_' + deckfile_id).serialize());
+    $('#loadingModal').modal('show');
 
     // Use Ajax to submit form data
     $.ajax({
@@ -118,6 +117,7 @@ function approve_deckfile(deckfile_id){
             if ($('#deckfiles_table tr').length < 1  ){
                 $('.deckfiles_div').remove();
             }
+            $('#loadingModal').modal('hide');
         }
     });
 }
