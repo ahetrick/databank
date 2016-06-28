@@ -18,28 +18,45 @@
                 %table(class="table table-striped" id="deckfiles_table")
                   %tbody
 
-                    - @dataset.deckfiles.each do |deckfile|
-                      - if !deckfile.remove
-                        %tr(id="deckfile_#{deckfile.id}")
-                          %td
-                            .row
-                              %span(class="col-md-4")
-                                =(deckfile.path).split('/').last
-                              %span(class="col-md-2" )
-                                - if File.size?(deckfile.path)
-                                  = number_to_human_size( File.size(deckfile.path) )
-                              %span(class="col-md-2")
-                                %button(type="button" class="btn btn-block btn-primary" onclick='window.location.href="/deckfiles/#{deckfile.id}/download"' )
-                                  %span(class="glyphicon glyphicon-download" )
-                                  Download
-                              %span(class="col-md-2")
-                                %button(type="button" class="btn btn-block btn-success" onclick="approve_deckfile(#{deckfile.id})" )
-                                  %span(class="glyphicon glyphicon-check" )
-                                  Approve
-                              %span(class="col-md-2" )
-                                %button(type="button" class="btn btn-block btn-danger" onclick="remove_deckfile(#{deckfile.id})" )
-                                  %span(class="glyphicon glyphicon-trash" )
-                                  Remove
+                    - @dataset.deckfiles.each_with_index do |deckfile, i|
+                      - if ((can? :manage, @dataset ) || !deckfile.remove)
+                        = f.fields_for :deckfiles, deckfile do |dkf|
+
+                          %tr(id="deckfile_#{deckfile.id}")
+                            %td
+                              .row
+                                %span(class="col-md-4")
+                                  =(deckfile.path).split('/').last
+                                %span(class="col-md-2" )
+                                  - if File.size?(deckfile.path)
+                                    = number_to_human_size( File.size(deckfile.path) )
+                                %span(class="col-md-2")
+                                  %button(type="button" class="btn btn-block btn-primary" onclick='window.location.href="/deckfiles/#{deckfile.id}/download"' )
+                                    %span(class="glyphicon glyphicon-download" )
+                                    Download
+                                %span(class="col-md-2")
+                                  %button(type="button" class="btn btn-block btn-success" onclick="approve_deckfile(#{deckfile.id})" )
+                                    %span(class="glyphicon glyphicon-check" )
+                                    Approve
+                                %span(class="col-md-2" )
+
+
+
+                                  - if deckfile.remove
+                                    %button(type="button" class="btn btn-block btn-info deckfile_restore_btn" onclick="restore_deckfile(#{deckfile.id}, #{i})" )
+                                      %span(class="glyphicon glyphicon-refresh" )
+                                      Restore
+                                    %button(type="button" class="btn btn-block btn-danger deckfile_remove_btn" onclick="remove_deckfile(#{deckfile.id}, #{i})"  style="display:none")
+                                      %span(class="glyphicon glyphicon-trash" )
+                                      Remove
+                                  - else
+                                    %button(type="button" class="btn btn-block btn-info deckfile_restore_btn" onclick="restore_deckfile(#{deckfile.id}, #{i})"  style="display:none")
+                                      %span(class="glyphicon glyphicon-refresh" )
+                                      Restore
+                                    %button(type="button" class="btn btn-block btn-danger deckfile_remove_btn" onclick="remove_deckfile(#{deckfile.id}, #{i})" )
+                                      %span(class="glyphicon glyphicon-trash" )
+                                      Remove
+                          = dkf.hidden_field :remove
               %span(class="metadata-label" ) Other Files:
               %br
 

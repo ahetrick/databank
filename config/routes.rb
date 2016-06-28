@@ -66,6 +66,9 @@ Rails.application.routes.draw do
   #create from deckfile
   post "/datafiles/create_from_deckfile", to: 'datafiles#create_from_deckfile', defaults: {format: 'json'}
 
+  #remove deckfile
+
+
   # cancel box upload
   get "/datasets/:id/datafiles/:web_id/cancel_box_upload", to: 'datasets#cancel_box_upload', defaults: {format: 'js'}
 

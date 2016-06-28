@@ -122,8 +122,15 @@ function approve_deckfile(deckfile_id){
     });
 }
 
-function remove_deckfile(deckfile_id){
-    alert("inside remove deckfile")
+function remove_deckfile(deckfile_id, deckfile_index){
+    $('#dataset_deckfiles_attributes_'+ deckfile_index +'_remove').val("true");
+    $('#deckfile_'+ deckfile_id).remove();
+}
+
+function restore_deckfile(deckfile_id, deckfile_index){
+    $('#dataset_deckfiles_attributes_'+ deckfile_index +'_remove').val("false");
+    $('.deckfile_restore_btn').hide();
+    $('.deckfile_remove_btn').show();
 }
 
 //$(document).ready(files_ready);
