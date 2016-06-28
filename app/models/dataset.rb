@@ -36,36 +36,8 @@ class Dataset < ActiveRecord::Base
     self.key
   end
 
-  def self.search(search)
-    if search
-
-      #start with an empty relation
-      search_result = Array.new
-
-      search_terms = search.split(" ")
-
-      search_terms.each do |term|
-
-        clean_term = term.strip.downcase
-
-        if !clean_term.empty?
-
-          #TODO search creators
-          term_relations = Dataset.where('lower(title) LIKE :search OR lower(keywords) LIKE :search OR lower(creator_text) LIKE :search OR lower(identifier) LIKE :search OR lower(description) LIKE :search', search: "%#{clean_term}%")
-
-          term_relations.each do |tr|
-
-            search_result << tr
-
-          end # end of term_realtions each do
-
-        end # end of if clean term is not empty
-      end # end of search term each do
-
-      Dataset.where(id: search_result.map(&:id))
-    else # else of if search
-      Dataset.all
-    end # end if search
+  def publication_year
+    self.release_date.year || Time.now.year
   end
 
   def to_datacite_xml

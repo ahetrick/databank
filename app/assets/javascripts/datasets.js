@@ -614,6 +614,10 @@ function confirm_update(){
     }
 }
 
+function show_release_date(){
+    $('#release-date-picker').show();
+}
+
 $(document).ready(ready);
 $(document).on('page:load', ready);
 

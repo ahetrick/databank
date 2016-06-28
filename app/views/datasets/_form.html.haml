@@ -76,10 +76,14 @@
                     -else
                       = f.select :embargo, options_for_select([["File Only Publication Delay", Databank::PublicationState::Embargo::FILE]], @dataset.embargo), {include_blank: "No Publication Delay"}, {class: "form-control dataset"}
                 .col-md-2
+                  - if (can? :manage, @dataset)
+                    .curator-only
+                      %button(type="button" class="btn btn-block btn-primary" onclick="show_release_date()" )
+                        Show Release Date
                   %div(id="release-date-picker")
                     =f.label :release_date, "Release Date (max 1 year)",  :class => "control-label"
                     - if (can? :manage, @dataset)
-                      =f.date_field :release_date, min: Date.current, max: (Date.current + 1.years), class: "form-control dataset"
+                      =f.date_field :release_date, class: "form-control dataset"
                     -else
                       =f.date_field :release_date, min: Date.current, max: (Date.current + 1.years), class: "form-control dataset", onblur: 'validateReleaseDate()'
               -else
@@ -99,7 +103,7 @@
                     =f.label :is_import, "imported DOI", :class => "control-label"
                     %br
                     =f.check_box :is_import, :class => "form-control dataset"
-                %span(class="col-md-1" )
+                %span(class="col-md-2" )
                   .form-group.curator-only
 
                     =f.label :is_test, "test DOI", :class => "control-label"
@@ -115,16 +119,10 @@
                     = f.text_field :identifier, :class => "form-control dataset", :placeholder => "[Leave blank if requesting a DOI.]"
                 %span(class="col-md-2" )
                   .form-group.curator-only
-                    = f.label :publication_year, "Pub Year", :class => "control-label"
-                    %br
-                    = f.number_field :publication_year, :value => @dataset.publication_year || "#{Time.now.year}", :class => "form-control dataset", :min => "1800", :max => "#{Time.now.year + 1}", :maxlength => 4
-                %span(class="col-md-1" )
-                  .form-group.curator-only
                     =f.label :dataset_version, "Version", class: "control-label"
                     %br
                     =f.text_field :dataset_version, class: "form-control dataset"
-            - else
-              = f.hidden_field :publication_year, :value => @dataset.publication_year || "#{Time.now.year}"
+
 
     .panel-group(id="funder" role="tablist" aria-multiselectable="true")
       .panel.panel-default
