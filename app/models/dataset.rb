@@ -37,7 +37,12 @@ class Dataset < ActiveRecord::Base
   end
 
   def publication_year
-    self.release_date.year || Time.now.year
+    if self.release_date
+      self.release_date.year || Time.now.year
+    else
+      Time.now.year
+    end
+
   end
 
   def to_datacite_xml
