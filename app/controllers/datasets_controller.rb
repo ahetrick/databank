@@ -456,6 +456,9 @@ class DatasetsController < ApplicationController
 
     old_publication_state = @dataset.publication_state
 
+    #save because sometimes publishing is of updated metadata for published datasets
+    @dataset.save
+
     # only publish complete datasets
     if Dataset.completion_check(@dataset, current_user) == 'ok'
       @dataset.complete = true
