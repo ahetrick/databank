@@ -489,6 +489,12 @@ class DatasetsController < ApplicationController
           raise "Missing identifier for dataset that is not a draft. Dataset: #{@dataset.key}"
 
         elsif old_publication_state == Databank::PublicationState::DRAFT && !@dataset.is_import
+
+          #remove deck directory, if it exists
+          if File.exists?(@dataset.deck_location)
+            FileUtils.rm_rf(@dataset.deck_location)
+          end
+
           # the create_doi method uses a given identifier if it has been specified
           @dataset.identifier = Dataset.create_doi(@dataset, current_user)
           MedusaIngest.send_dataset_to_medusa(@dataset, old_publication_state)
