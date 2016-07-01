@@ -122,6 +122,140 @@ function approve_deckfile(deckfile_id){
     });
 }
 
+function create_from_remote_unknown_size(){
+    $('#loadingModal').modal('show');
+
+    // Use Ajax to submit form data
+
+    $.ajax({
+        url: $('#form_for_remote').attr('action'),
+        type: 'POST',
+        data: $('#form_for_remote').serialize(),
+        datatype: 'json',
+        success: function (data) {
+
+            console.log(data);
+
+            var maxId = Number($('#datafile_index_max').val());
+            var newId = 1;
+
+            if (maxId != NaN) {
+                newId = maxId + 1;
+            }
+            $('#datafile_index_max').val(newId);
+
+            var file = data.files[0];
+
+            var row =
+                '<tr id="datafile_index_' + newId + '"><td><div class = "row">' +
+
+                '<input value="false" type="hidden" name="dataset[datafiles_attributes][' + newId + '][_destroy]" id="dataset_datafiles_attributes_' + newId + '__destroy" />' +
+                '<input type="hidden"  value="' + file.datafileId + '" name="dataset[datafiles_attributes][' + newId + '][id]" id="dataset_datafiles_attributes_' + newId + '_id" />' +
+
+                '<span class="col-md-8">' + file.name + '<input class="bytestream_name" value="' + file.name + '" style="visibility: hidden;"/></span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
+            if (file.error) {
+                row = row + '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-warning-sign"></span>';
+            } else {
+                row = row + '<button type="button" class="btn btn-danger btn-sm" onclick="remove_file_row(' + newId + ')"><span class="glyphicon glyphicon-trash"></span></button></span>';
+            }
+
+            row = row + '</span></div></td></tr>';
+            if (file.error) {
+                $("#datafiles > tbody:last-child").append('<tr><td><div class="row"><p>' + file.name + ': ' + file.error + '</p></div></td></tr>');
+            } else {
+                $("#datafiles > tbody:last-child").append(row);
+            }
+
+            $('#loadingModal').modal('hide');
+        },
+        error: function (data) {
+            console.log(data);
+            alert("There was a problem ingesting the remote file");
+            $('#loadingModal').modal('hide');
+        }
+    });
+}
+
+function create_from_remote(){
+
+    //console.log("inside create from remote");
+
+    if (filename_isdup($('#remote_filename').val())) {
+        alert("Duplicate filename error: A file named " + $('#remote_filename').val() + " is already in this dataset.  For help, please contact the Research Data Service.");
+    }
+    else {
+
+       // console.log("inside not duplicate");
+
+       //try to get content length
+
+        var content_length = 5242879;
+
+        $.ajax({
+            url: "/datafiles/remote_content_length",
+            type: 'POST',
+            data: $('#form_for_remote').serialize(),
+            datatype: 'json',
+            success: function (data) {
+                //console.log("inside success");
+                //console.log(data);
+                //console.log(data.status);
+                if(data.status == "ok" ) {
+                    console.log(data);
+                    content_length = data.remote_content_length;
+                    console.log(content_length);
+                }
+
+            },
+            error: function (data) {
+                console.log("content-length unavailable");
+                create_from_remote_unknown_size();
+
+            }
+        });
+
+        if (content_length == null) {
+            console.log("content_length was detected as null for some reason");
+            console.log(content_length);
+
+            create_from_remote_unknown_size();
+        } else {
+            console.log("non null content length was detected");
+
+            if (content_length > 0) {
+                console.log("larger than zero content length was detected");
+                item = {
+                    "name": $('#remote_filename').val(),
+                    "size": content_length,
+                    "url": $('#remote_remote_url').val(),
+                    "dataset_key": dataset_key
+                };
+
+
+                $.ajax({
+                    type: "POST",
+                    url: "/datafiles/create_from_url",
+                    data: item,
+                    success: function (data) {
+                        eval($(data).text());
+                    },
+                    error: function (data) {
+                        console.log(data);
+                    },
+                    dataType: 'script'
+                });
+            } else {
+                console.log("content length not larger than 0");
+                create_from_remote_unknown_size();
+            }
+        }
+
+
+    }
+}
+
+
+
 function remove_deckfile(deckfile_id, deckfile_index){
     $('#dataset_deckfiles_attributes_'+ deckfile_index +'_remove').val("true");
     $('#deckfile_'+ deckfile_id).remove();

@@ -253,7 +253,7 @@ ready = function () {
     var boxSelect = new BoxSelect();
     // Register a success callback handler
     boxSelect.success(function (response) {
-        //console.log(response);
+        console.log(response);
 
         $.each(response, function (i, boxItem) {
 
@@ -318,7 +318,6 @@ function cancelUpload(datafile, job) {
 
     return false;
 }
-
 
 function setDepositor(email, name) {
 
@@ -543,6 +542,10 @@ function offerDownloadLink() {
 
         });
     }
+}
+
+function openRemoteFileModal(){
+    $("#remote-file-modal").modal();
 }
 
 function license_change_warning() {

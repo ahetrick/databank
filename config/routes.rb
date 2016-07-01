@@ -66,8 +66,11 @@ Rails.application.routes.draw do
   #create from deckfile
   post "/datafiles/create_from_deckfile", to: 'datafiles#create_from_deckfile', defaults: {format: 'json'}
 
-  #remove deckfile
+  #determine remote content length, if possible
+  post "/datafiles/remote_content_length", to: 'datafiles#remote_content_length', defaults: {format: 'json'}
 
+  #create from url
+  post "/datafiles/create_from_remote", to: 'datafiles#create_from_url_unknown_size', defaults: {format: 'json'}
 
   # cancel box upload
   get "/datasets/:id/datafiles/:web_id/cancel_box_upload", to: 'datasets#cancel_box_upload', defaults: {format: 'js'}

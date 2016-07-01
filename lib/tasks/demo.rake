@@ -13,7 +13,6 @@ namespace :demo do
         dataset.identifier = demoset['identifier']
       end
       dataset.publisher = demoset['publisher']
-      dataset.publication_year = demoset['publication_year']
       dataset.description = demoset['description']
       dataset.license = demoset['license']
       dataset.keywords = demoset['keywords']
