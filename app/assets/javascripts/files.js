@@ -185,12 +185,6 @@ function create_from_remote(){
     }
     else {
 
-       // console.log("inside not duplicate");
-
-       //try to get content length
-
-        var content_length = 5242879;
-
         $.ajax({
             url: "/datafiles/remote_content_length",
             type: 'POST',
@@ -201,9 +195,38 @@ function create_from_remote(){
                 //console.log(data);
                 //console.log(data.status);
                 if(data.status == "ok" ) {
-                    console.log(data);
-                    content_length = data.remote_content_length;
-                    console.log(content_length);
+                    var content_length = data.remote_content_length;
+
+                    if (content_length > 100000000000){
+                        alert("For files larger than 100 GB, please contact the Research Data Service.")
+                        create_from_remote_unknown_size();
+                    } else if (content_length > 0) {
+                        item = {
+                            "name": $('#remote_filename').val(),
+                            "size": content_length,
+                            "url": $('#remote_url').val(),
+                            "dataset_key": dataset_key
+                        };
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/datafiles/create_from_url",
+                            data: item,
+                            success: function (data) {
+                                eval($(data).text());
+                            },
+                            error: function (data) {
+                                console.log(data);
+                            },
+                            dataType: 'script'
+                        });
+                    } else {
+                        console.log("content length not larger than 0");
+                        create_from_remote_unknown_size();
+                    }
+                }
+                else{
+                    create_from_remote_unknown_size();
                 }
 
             },
@@ -214,41 +237,6 @@ function create_from_remote(){
             }
         });
 
-        if (content_length == null) {
-            console.log("content_length was detected as null for some reason");
-            console.log(content_length);
-
-            create_from_remote_unknown_size();
-        } else {
-            console.log("non null content length was detected");
-
-            if (content_length > 0) {
-                console.log("larger than zero content length was detected");
-                item = {
-                    "name": $('#remote_filename').val(),
-                    "size": content_length,
-                    "url": $('#remote_remote_url').val(),
-                    "dataset_key": dataset_key
-                };
-
-
-                $.ajax({
-                    type: "POST",
-                    url: "/datafiles/create_from_url",
-                    data: item,
-                    success: function (data) {
-                        eval($(data).text());
-                    },
-                    error: function (data) {
-                        console.log(data);
-                    },
-                    dataType: 'script'
-                });
-            } else {
-                console.log("content length not larger than 0");
-                create_from_remote_unknown_size();
-            }
-        }
 
 
     }

@@ -147,4 +147,15 @@ namespace :test do
 
   end
 
+  desc 'delete specified datasets'
+  task :delete_specified_datasets => :environment do
+
+    datasets_to_delete = Dataset.where(:key => ["idbdev-8493465", "idbdev-3240151", "idbdev-1809639"])
+
+    datasets_to_delete.each do |dataset|
+      dataset.destroy
+    end
+
+  end
+
 end
