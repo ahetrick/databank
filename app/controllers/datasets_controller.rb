@@ -456,6 +456,8 @@ class DatasetsController < ApplicationController
 
     old_publication_state = @dataset.publication_state
 
+    @dataset.release_date ||= Date.current()
+
     #save because sometimes publishing is of updated metadata for published datasets
     @dataset.save
 
