@@ -206,6 +206,8 @@ class DatasetsController < ApplicationController
       end
     end
 
+    @dataset.embargo ||= Databank::PublicationState::Embargo::NONE
+
     @dataset.deckfiles.each do |deckfile|
       unless File.exists?(deckfile.path)
         deckfile.destroy
