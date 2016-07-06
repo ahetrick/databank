@@ -10,7 +10,7 @@
               %span(class="glyphicon glyphicon-alert" )
               Embargo placeholders have not yet replaced DataCite metadata. Confirm to complete changes.
               %br
-            -elsif @dataset.publication_state == Databank::PublicationState::Embargo::METADATA && (@dataset.embargo != Databank::PublicationState::Embargo::METADATA)
+            -elsif (@dataset.publication_state == Databank::PublicationState::Embargo::METADATA) && (@dataset.embargo != Databank::PublicationState::Embargo::METADATA)
               .datacite-changes-warning
                 %span(class="glyphicon glyphicon-alert" )
                 This dataset record has not yet been published.  Confirm to complete changes.

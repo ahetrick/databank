@@ -20,7 +20,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :download_link
   skip_load_and_authorize_resource :only => :pre_deposit
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message]
 
   @@num_box_ingest_deamons = 10
 
@@ -107,7 +107,6 @@ class DatasetsController < ApplicationController
       end
 
     end
-
 
 
     @completion_check = Dataset.completion_check(@dataset, current_user)
@@ -237,6 +236,8 @@ class DatasetsController < ApplicationController
   # PATCH/PUT /datasets/1.json
   def update
 
+    old_publication_state = @dataset.publication_state
+    @dataset.release_date ||= Date.current
 
     respond_to do |format|
 
@@ -256,19 +257,36 @@ class DatasetsController < ApplicationController
           if Databank::PublicationState::DRAFT == @dataset.publication_state
             raise "invalid publication state for update-and-publish"
 
-          elsif [Databank::PublicationState::Embargo::METADATA, Databank::PublicationState::PermSuppress::METADATA, Databank::PublicationState::TempSuppress::METADATA].include?(@dataset.publication_state)
-            format.html { redirect_to dataset_path(@dataset.key) }
-          else
+            # only update complete datasets
+          elsif Dataset.completion_check(@dataset, current_user) == 'ok'
+
+            # set publication_state
+            if @dataset.embargo && [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA].include?(@dataset.embargo)
+              @dataset.publication_state = @dataset.embargo
+            else
+              @dataset.publication_state = Databank::PublicationState::RELEASED
+            end
+
+            if old_publication_state != Databank::PublicationState::RELEASED && @dataset.publication_state == Databank::PublicationState::RELEASED
+              @dataset.release_date = Date.current
+            end
+
+            @dataset.save
             Dataset.update_datacite_metadata(@dataset, current_user)
             format.html { redirect_to dataset_path(@dataset.key), notice: "Dataset successfully updated." }
+            format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+
+          else #this else means completion_check was not ok within publish context
+            Rails.logger.warn Dataset.completion_check(@dataset, current_user)
+            raise "Error: Cannot update published dataset with incomplete information."
           end
-        else
-          format.html { redirect_to dataset_path(@dataset.key) }
+
+        else #this else means context was not set to exit or publish - this is the normal draft update
+          format.html { redirect_to dataset_path(@dataset.key)}
+          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
         end
 
-        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
-
-      else
+      else #this else means update failed
         format.html { render :edit }
         format.json { render json: @dataset.errors, status: :unprocessable_entity }
       end
@@ -452,36 +470,27 @@ class DatasetsController < ApplicationController
     end
   end
 
-
   # publishing in IDB means interacting with DataCite and Medusa
   def publish
 
     old_publication_state = @dataset.publication_state
 
-    @dataset.release_date ||= Date.current()
-
-    #save because sometimes publishing is of updated metadata for published datasets
-    @dataset.save
+    @dataset.release_date ||= Date.current
 
     # only publish complete datasets
     if Dataset.completion_check(@dataset, current_user) == 'ok'
+
       @dataset.complete = true
 
       # set publication_state
-      if @dataset.embargo && @dataset.embargo != ""
+      if @dataset.embargo && [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA].include?(@dataset.embargo)
         @dataset.publication_state = @dataset.embargo
       else
         @dataset.publication_state = Databank::PublicationState::RELEASED
       end
 
-      # set release date
-      if [Databank::PublicationState::DRAFT, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA].include?(old_publication_state)
-        if (@dataset.release_date && @dataset.release_date <= Date.current()) || !@dataset.embargo || @dataset.embargo == ""
-          @dataset.release_date = Date.current()
-        end
-      end
-      if !@dataset.release_date
-        @dataset.release_date = Date.current()
+      if old_publication_state != Databank::PublicationState::RELEASED && @dataset.publication_state == Databank::PublicationState::RELEASED
+        @dataset.release_date = Date.current
       end
 
     else
@@ -647,7 +656,6 @@ class DatasetsController < ApplicationController
       web_ids.each(&:strip!)
 
 
-
       download_hash = DownloaderClient.get_download_hash(web_ids, "DOI-#{@dataset.identifier}".parameterize)
       if download_hash
         if download_hash['status']== 'ok'
@@ -678,6 +686,38 @@ class DatasetsController < ApplicationController
       return_hash["error"]="no web_ids in request"
       render(json: return_hash.to_json, content_type: request.format, :layout => false)
     end
+
+  end
+
+  def confirmation_message()
+
+    #Rails.logger.warn "inside confirmation_message"
+    #Rails.logger.warn params.to_yaml
+
+    proposed_dataset = @dataset
+    old_embargo_state = @dataset.embargo || Databank::PublicationState::Embargo::NONE
+    new_embargo_state = @dataset.embargo || Databank::PublicationState::Embargo::NONE
+    #old_publication_state = @dataset.publication_state
+    #new_publication_state = @dataset.publication_state
+
+    if params.has_key?('new_embargo_state')
+
+      case params['new_embargo_state']
+        when Databank::PublicationState::Embargo::FILE
+          new_embargo_state = Databank::PublicationState::Embargo::FILE
+        #new_publication_state = Databank::PublicationState::Embargo::FILE
+        when Databank::PublicationState::Embargo::METADATA
+          new_embargo_state = Databank::PublicationState::Embargo::METADATA
+        #new_publication_state = Databank::PublicationState::Embargo::METADATA
+        else
+          new_embargo_state = Databank::PublicationState::Embargo::NONE
+        #new_publication_state = Databank::PublicationState::RELEASED
+      end
+      proposed_dataset.embargo = new_embargo_state
+      #proposed_dataset.publication_state = new_publication_state
+    end
+
+    render json: {message: Dataset.publish_modal_msg(proposed_dataset)}
 
   end
 
@@ -860,6 +900,7 @@ class DatasetsController < ApplicationController
         @license_expanded = dataset.license
     end
   end
+
 
   # Never trust parameters from the scary internet, only allow the white list through.
   # def dataset_params
