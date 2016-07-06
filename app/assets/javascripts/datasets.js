@@ -621,6 +621,20 @@ function show_release_date(){
     $('#release-date-picker').show();
 }
 
+function reset_confirm_msg(){
+
+    //console.log("inside reset confirm msg");
+
+    if ($('.publish-msg').html() != undefined && $('.publish-msg').html().length > 0){
+        var new_embargo = $('#dataset_embargo').val();
+
+        $.getJSON( "/datasets/"+ dataset_key + "/confirmation_message?new_embargo_state="+ new_embargo, function( data ) {
+            console.log(data);
+            $('.publish-msg').html( '<p class="ds-paragraph">' + data.message + '</p>');
+        });
+    }
+}
+
 $(document).ready(ready);
 $(document).on('page:load', ready);
 

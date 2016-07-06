@@ -17,6 +17,7 @@ module Databank
     DRAFT = 'draft'
     RELEASED = 'released'
     class Embargo
+      NONE = 'none'
       FILE = 'file embargo'
       METADATA = 'metadata embargo'
     end
