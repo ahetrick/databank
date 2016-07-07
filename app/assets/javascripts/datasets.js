@@ -610,6 +610,7 @@ function update_and_publish() {
 
 function confirm_update(){
     if ($(".invalid-input").length == 0) {
+        reset_confirm_msg();
         $('#deposit').modal('show');
     } else {
         alert("Email address must be in a valid format.");
@@ -623,16 +624,21 @@ function show_release_date(){
 
 function reset_confirm_msg(){
 
-    //console.log("inside reset confirm msg");
+    console.log("inside reset confirm msg");
 
     if ($('.publish-msg').html() != undefined && $('.publish-msg').html().length > 0){
         var new_embargo = $('#dataset_embargo').val();
 
+        //console.log(new_embargo);
+
         $.getJSON( "/datasets/"+ dataset_key + "/confirmation_message?new_embargo_state="+ new_embargo, function( data ) {
-            console.log(data);
+            //console.log(data);
             $('.publish-msg').html( '<p class="ds-paragraph">' + data.message + '</p>');
         });
+    } else {
+        console.log("publish-msg element not found");
     }
+
 }
 
 $(document).ready(ready);

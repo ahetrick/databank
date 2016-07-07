@@ -90,18 +90,27 @@ module MessageText
 
     def publish_modal_msg(dataset)
 
-      # This method should only be called if there are DataCite relevant changes
+      Rails.logger.warn "dataset embargo inside publish_modal_msg: #{dataset.embargo}"
+      Rails.logger.warn "dataset publication state inside publish_modal_msg: #{dataset.publication_state}"
 
       effective_embargo = nil
       effective_release_date = Date.current.iso8601
 
       if dataset.release_date && dataset.release_date >= Date.current
         if dataset.embargo && [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA].include?(dataset.embargo)
+          Rails.logger.warn "inside embargo detected"
           effective_embargo = dataset.embargo
           effective_release_date = dataset.release_date.iso8601
+        else
+          Rails.logger.warn "dataset.embargo detection problem #{dataset.embargo}"
         end
 
+      else
+        Rails.logger.warn "release date problem"
       end
+
+      Rails.logger.warn "effective embargo inside publish_modal_msg: #{effective_embargo}"
+      Rails.logger.warn "publication state inside publish_modal_msg: #{dataset.publication_state}"
 
       msg = "<div class='confirm-modal-text'>"
 
@@ -114,7 +123,7 @@ module MessageText
             msg << "<li>Your Illinois Data Bank dataset record will be <strong>publicly</strong> visible through search engines.</li>"
             msg << "<li>Although the record for your dataset will be <strong>publicly</strong> visible, your data files will not be made available until #{effective_release_date}.</li>"
           elsif dataset.publication_state == Databank::PublicationState::Embargo::METADATA
-            msg << "<h4>This action will make your record <strong>public</strong>, but your files will remain unavailable.</h4><hr/>"
+            msg << "<h4>This action will make your record <strong>public</strong>, but your files will be unavailable.</h4><hr/>"
             msg << "<ul>"
             msg << "<li>Your Illinois Data Bank dataset record will be <strong>publicly</strong> visible through search engines.</li>"
             msg << "<li>Although the record for your dataset will be <strong>publicly</strong> visible, your data files will not be made available until #{effective_release_date}.</li>"

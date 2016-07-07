@@ -697,9 +697,6 @@ class DatasetsController < ApplicationController
 
   def confirmation_message()
 
-    #Rails.logger.warn "inside confirmation_message"
-    #Rails.logger.warn params.to_yaml
-
     proposed_dataset = @dataset
     old_embargo_state = @dataset.embargo || Databank::PublicationState::Embargo::NONE
     new_embargo_state = @dataset.embargo || Databank::PublicationState::Embargo::NONE
@@ -721,6 +718,7 @@ class DatasetsController < ApplicationController
       end
       proposed_dataset.embargo = new_embargo_state
       #proposed_dataset.publication_state = new_publication_state
+
     end
 
     render json: {message: Dataset.publish_modal_msg(proposed_dataset)}
