@@ -635,10 +635,9 @@ function reset_confirm_msg(){
             console.log(data);
             $('.publish-msg').html( '<p class="ds-paragraph">' + data.message + '</p>');
         })
-            .error(function(xhr) {
-                console.log("error");
-                console.log(xhr.status);
-                console.log(xhr.responseText);
+            .fail(function(xhr, textStatus, errorThrown) {
+                console.log("error" + textStatus);
+                console.log(errorThrown)
             });
     } else {
         console.log("publish-msg element not found");

@@ -721,7 +721,7 @@ class DatasetsController < ApplicationController
 
     end
 
-    render json: {message: Dataset.publish_modal_msg(proposed_dataset)}
+    render json: {status: :ok, message: Dataset.publish_modal_msg(proposed_dataset)}
 
   end
 
