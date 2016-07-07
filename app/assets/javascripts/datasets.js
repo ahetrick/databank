@@ -629,12 +629,17 @@ function reset_confirm_msg(){
     if ($('.publish-msg').html() != undefined && $('.publish-msg').html().length > 0){
         var new_embargo = $('#dataset_embargo').val();
 
-        //console.log(new_embargo);
+        console.log(new_embargo);
 
         $.getJSON( "/datasets/"+ dataset_key + "/confirmation_message?new_embargo_state="+ new_embargo, function( data ) {
-            //console.log(data);
+            console.log(data);
             $('.publish-msg').html( '<p class="ds-paragraph">' + data.message + '</p>');
-        });
+        })
+            .error(function(xhr) {
+                console.log("error");
+                console.log(xhr.status);
+                console.log(xhr.responseText);
+            });
     } else {
         console.log("publish-msg element not found");
     }
