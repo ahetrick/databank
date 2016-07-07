@@ -436,7 +436,7 @@ class DatasetsController < ApplicationController
       respond_to do |format|
 
         if @dataset.save
-          if delete_datacite_id(@dataset, current_user)
+          if Dataset.delete_datacite_id(@dataset, current_user)
             @dataset.save
             format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Reserved DOI has been deleted and all files have been permanently supressed.] }
             format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
