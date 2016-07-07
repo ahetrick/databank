@@ -162,10 +162,12 @@
         = df.file_field :binary, name: "datafile[binary]", multiple: true
       %span(class="metadata-label")or
       %div(id="box-select" data-link-type="direct" data-multiselect="true" data-client-id="r5tgofc05460skm84yjepz1ck16ptotr")
-      %span(class="metadata-label")or
-      %button(type="button" class="btn btn-primary" onclick="openRemoteFileModal()" )
-        %span(class="glyphicon glyphicon-link")
-        Provide a URL
+      %span(class="metadata-label")
+      .curator-only
+        or
+        %button(type="button" class="btn btn-primary" onclick="openRemoteFileModal()" )
+          %span(class="glyphicon glyphicon-link")
+          Provide a URL
 
 
 .review-deposit-agreement.container-fluid
