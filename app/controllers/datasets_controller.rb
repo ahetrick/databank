@@ -19,6 +19,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :datacite_record
   skip_load_and_authorize_resource :only => :download_link
   skip_load_and_authorize_resource :only => :pre_deposit
+  skip_load_and_authorize_resource :only => :confirmation_message
 
   before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message]
 

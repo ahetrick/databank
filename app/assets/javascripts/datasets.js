@@ -637,7 +637,8 @@ function reset_confirm_msg(){
         })
             .fail(function(xhr, textStatus, errorThrown) {
                 console.log("error" + textStatus);
-                console.log(errorThrown)
+                console.log(xhr.responseText);
+
             });
     } else {
         console.log("publish-msg element not found");

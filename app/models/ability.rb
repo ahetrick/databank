@@ -9,8 +9,10 @@ class Ability
     if user.is?(:admin)
       can :manage, :all
     elsif user.is?(:depositor)
+
       can :read, :all
       can :create, :all
+      can :confirmation_message, :all
       can :update, Dataset do |dataset|
         dataset.try(:depositor_email) == user.email
       end
