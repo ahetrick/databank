@@ -90,27 +90,17 @@ module MessageText
 
     def publish_modal_msg(dataset)
 
-      Rails.logger.warn "dataset embargo inside publish_modal_msg: #{dataset.embargo}"
-      Rails.logger.warn "dataset publication state inside publish_modal_msg: #{dataset.publication_state}"
-
       effective_embargo = nil
       effective_release_date = Date.current.iso8601
 
       if dataset.release_date && dataset.release_date >= Date.current
         if dataset.embargo && [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA].include?(dataset.embargo)
-          Rails.logger.warn "inside embargo detected"
+          # Rails.logger.warn "inside embargo detected"
           effective_embargo = dataset.embargo
           effective_release_date = dataset.release_date.iso8601
-        else
-          Rails.logger.warn "dataset.embargo detection problem #{dataset.embargo}"
         end
-
-      else
-        Rails.logger.warn "release date problem"
       end
 
-      Rails.logger.warn "effective embargo inside publish_modal_msg: #{effective_embargo}"
-      Rails.logger.warn "publication state inside publish_modal_msg: #{dataset.publication_state}"
 
       msg = "<div class='confirm-modal-text'>"
 

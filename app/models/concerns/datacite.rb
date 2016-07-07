@@ -284,6 +284,8 @@ module Datacite
         rescue Net::HTTPBadResponse, Net::HTTPServerError => error
           Rails.logger.warn error.message
           Rails.logger.warn response.body
+          Dataset.update_datacite_metadata(dataset, current_user)
+          return true
         end
 
         case response
@@ -299,6 +301,7 @@ module Datacite
         # if we get here, we are suppressing a dataset with a Metadata & File embargoed dataset that been released,
         # and so could not have a _status of 'reserved
         Dataset.update_datacite_metadata(dataset, current_user)
+        return true
       end
 
     end
