@@ -360,14 +360,14 @@ class Dataset < ActiveRecord::Base
 
         creator_record = nil
 
-        #check to see if netid is found, to prevent email system errors
-        # begin
-        #
-        # creator_record = open("http://quest.grainger.uiuc.edu/directory/ed/person/#{netid}").read
-        #
-        # rescue OpenURI::HTTPError => err
-        #   validation_error_messages << "a valid email address for #{creator.given_name} #{creator.family_name}"
-        # end
+        check to see if netid is found, to prevent email system errors
+        begin
+
+        creator_record = open("http://quest.grainger.uiuc.edu/directory/ed/person/#{netid}").read
+
+        rescue OpenURI::HTTPError => err
+          validation_error_messages << "a valid email address for #{creator.given_name} #{creator.family_name}"
+        end
 
 
       end
