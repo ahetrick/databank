@@ -360,7 +360,7 @@ class Dataset < ActiveRecord::Base
 
         creator_record = nil
 
-        check to see if netid is found, to prevent email system errors
+        #check to see if netid is found, to prevent email system errors
         begin
 
         creator_record = open("http://quest.grainger.uiuc.edu/directory/ed/person/#{netid}").read
