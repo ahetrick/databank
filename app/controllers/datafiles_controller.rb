@@ -38,8 +38,8 @@ class DatafilesController < ApplicationController
 
   def create_from_url
 
-    Rails.logger.warn "inside create from url"
-    Rails.logger.warn params.to_yaml
+    # Rails.logger.warn "inside create from url"
+    # Rails.logger.warn params.to_yaml
 
     @dataset ||= Dataset.find_by_key(params[:dataset_key])
 
