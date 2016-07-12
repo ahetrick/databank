@@ -103,7 +103,7 @@ module MessageText
 
 
       msg = "<div class='confirm-modal-text'>"
-
+      
       case effective_embargo
 
         when Databank::PublicationState::Embargo::FILE
