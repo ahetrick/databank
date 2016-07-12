@@ -112,21 +112,11 @@ module MessageText
             msg << "<ul>"
             msg << "<li>Your Illinois Data Bank dataset record will be <strong>publicly</strong> visible through search engines.</li>"
             msg << "<li>Although the record for your dataset will be <strong>publicly</strong> visible, your data files will not be made available until #{effective_release_date}.</li>"
-          elsif dataset.publication_state == Databank::PublicationState::Embargo::METADATA
-            msg << "<h4>This action will make your record <strong>public</strong>, but your files will be unavailable.</h4><hr/>"
-            msg << "<ul>"
-            msg << "<li>Your Illinois Data Bank dataset record will be <strong>publicly</strong> visible through search engines.</li>"
-            msg << "<li>Although the record for your dataset will be <strong>publicly</strong> visible, your data files will not be made available until #{effective_release_date}.</li>"
-          elsif dataset.publication_state == Databank::PublicationState::Embargo::FILE
-            msg << "<h4>This action will make your record <strong>public</strong>, but your files will be unavailable.</h4><hr/>"
-            msg << "<ul>"
-            msg << "<li>Your Illinois Data Bank dataset record will be <strong>publicly</strong> visible through search engines.</li>"
-            msg << "<li>Although the record for your dataset will be <strong>publicly</strong> visible, your data files will not be made available until #{effective_release_date}.</li>"
           else
-            msg << "<h4>This action will make your updates to your dataset record <strong>public</strong>.</h4><hr/>"
+            msg << "<h4>This action will make your record <strong>public</strong>, but your files will be unavailable.</h4><hr/>"
             msg << "<ul>"
             msg << "<li>Your Illinois Data Bank dataset record will be <strong>publicly</strong> visible through search engines.</li>"
-            msg << "<li>Your data files will be <strong>publicly</strong> available.</li>"
+            msg << "<li>Although the record for your dataset will be <strong>publicly</strong> visible, your data files will not be made available until #{effective_release_date}.</li>"
           end
 
         when Databank::PublicationState::Embargo::METADATA
