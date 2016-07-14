@@ -8,7 +8,9 @@
           &times;
         </button>
         <div class="publish-msg">
-          <p class="ds-paragraph"><%= @publish_modal_msg.html_safe %></p>
+          <% if @publish_modal_msg %>
+            <p class="ds-paragraph"><%= @publish_modal_msg.html_safe %></p>
+          <% end %>
         </div>
       </div>
 
