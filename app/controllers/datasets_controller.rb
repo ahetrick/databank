@@ -5,7 +5,8 @@ require 'zipruby'
 require 'json'
 
 class DatasetsController < ApplicationController
-  protect_from_forgery except: :cancel_box_upload
+  protect_from_forgery except: [:cancel_box_upload, :validate_change2published]
+  skip_before_filter :verify_authenticity_token, :only => :validate_change2published
 
   load_resource :find_by => :key
   authorize_resource
@@ -21,7 +22,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :pre_deposit
   skip_load_and_authorize_resource :only => :confirmation_message
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message, :validiate_change2published]
 
   @@num_box_ingest_deamons = 10
 
@@ -290,6 +291,107 @@ class DatasetsController < ApplicationController
       else #this else means update failed
         format.html { render :edit }
         format.json { render json: @dataset.errors, status: :unprocessable_entity }
+      end
+
+    end
+
+  end
+
+  def validate_change2published
+
+    # Rails.logger.warn params.to_yaml
+
+    if params.has_key?(:dataset) && (params[:dataset]).has_key?(:identifier) && params[:dataset][:identifer] != ""
+
+      proposed_dataset = Dataset.create()
+      if params[:dataset].has_key?(:title)
+        proposed_dataset.title = params[:dataset][:title]
+      end
+      if params[:dataset].has_key?(:license)
+        proposed_dataset.license = params[:dataset][:license]
+      end
+
+      has_license_file = false
+
+      if @dataset.datafiles
+        @dataset.datafiles.each do |datafile|
+          if datafile.bytestream_name && ((datafile.bytestream_name).downcase == "license.txt")
+            has_license_file = true
+            temporary_datafile = Datafile.create(dataset_id: proposed_dataset.id)
+            temporary_datafile.binary = Pathname.new(datafile.bytestream_path).open()
+            temporary_datafile.save
+          end
+        end
+
+        unless has_license_file
+          temporary_datafile = Datafile.create(dataset_id: proposed_dataset.id)
+          temporary_datafile.binary = Pathname.new("#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.txt").open()
+          temporary_datafile.save
+        end
+
+      end
+
+      if params[:dataset].has_key?(:embargo)
+        proposed_dataset.embargo = params[:dataset][:embargo]
+      end
+
+      if params[:dataset].has_key?(:release_date)
+        proposed_dataset.release_date = params[:dataset][:release_date]
+      end
+
+      if params[:dataset].has_key?(:license)
+        proposed_dataset.license = params[:dataset][:license]
+      end
+
+      if (params[:dataset]).has_key?(:creators_attributes)
+
+
+
+        # Rails.logger.warn params[:dataset][:creators_attributes]
+
+        proposed_dataset.creators = Array.new
+
+        params[:dataset][:creators_attributes].each do |creator_params|
+          creator_p = creator_params[1]
+
+          temporary_creator = nil
+
+          Rails.logger.warn "inside create temporary creator"
+          Rails.logger.warn "creator_p has a family name key? #{creator_p.has_key?(:family_name)}"
+          if creator_p.has_key?(:family_name)
+            temporary_creator = Creator.create(dataset_id: proposed_dataset.id, family_name: creator_p[:family_name])
+
+          end
+          if creator_p.has_key?(:given_name)
+            temporary_creator.given_name = creator_p[:given_name]
+          end
+          if creator_p.has_key?(:email)
+            temporary_creator.email = creator_p[:email]
+          end
+          if creator_p.has_key?(:is_contact)
+            temporary_creator.is_contact = creator_p[:is_contact]
+          end
+
+          temporary_creator.save
+          proposed_dataset.creators.push(temporary_creator)
+      end
+
+      end
+
+      completion_check_message = Dataset.completion_check(proposed_dataset, current_user)
+
+      proposed_dataset.destroy
+
+      respond_to do |format|
+
+        format.html { render :edit, alert: completion_check_message }
+        format.json { render json: {"message":completion_check_message}}
+      end
+
+    else
+      respond_to do |format|
+        format.html { render json: {"message":"dataset not found"} }
+        format.json { render json: {"message":"published dataset not found"}, status: :unprocessable_entity }
       end
 
     end

@@ -337,7 +337,7 @@ class Dataset < ActiveRecord::Base
       validation_error_messages << "title"
     end
 
-    if dataset.creator_list.empty?
+    if dataset.creators.count < 1
       validation_error_messages << "at least one creator"
     end
 
@@ -427,6 +427,11 @@ class Dataset < ActiveRecord::Base
     if dataset.embargo && [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA].include?(dataset.embargo)
       if !dataset.release_date || dataset.release_date <= Date.current
         validation_error_messages << "a future release date for delayed publication (embargo) selection"
+      end
+
+    else
+      if dataset.release_date && dataset.release_date > Date.current
+        validation_error_messages << "a delayed publication (embargo) selection for a future release date"
       end
     end
 

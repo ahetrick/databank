@@ -24,11 +24,11 @@ class BinaryUploader < CarrierWave::Uploader::Base
   end
 
   def move_to_store
-    true
+    false
   end
 
   def move_to_cache
-    true
+    false
   end
 
   def remember_cache_id(new_file)

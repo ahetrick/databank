@@ -29,7 +29,7 @@ ready = function () {
         $("#dataset_release_date").prop({type: "text"});
         $("#dataset_release_date").prop({placeholder: "YYYY-MM-DD"});
         $("#dataset_release_date").prop({"data-mask": "9999-99-99"});
-        console.log($("#dataset_release_date").val());
+        //console.log($("#dataset_release_date").val());
 
         $("#dataset_release_date").datepicker({
             inline: true,
@@ -609,6 +609,38 @@ function update_and_publish() {
 }
 
 function confirm_update(){
+    // Use Ajax to submit form data
+
+    // console.log($("[id^=edit_dataset]").serialize());
+    
+    // using patch because that method designation is in the form already
+    if ($(".invalid-input").length == 0) {
+
+        $.ajax({
+            url: '/datasets/' + dataset_key + '/validate_change2published',
+            type: 'patch',
+            data: $("[id^=edit_dataset]").serialize(),
+            datatype: 'json',
+            success: function (data) {
+                console.log(data);
+
+                if (data.message == "ok") {
+                    reset_confirm_msg();
+                    $('#deposit').modal('show');
+                } else {
+                    $('#validation-warning').html('<div class="alert alert-alert">'+ data.message + '</div>');
+                    $('#update-confirm').prop('disabled', true);
+                }
+
+            }
+        });
+    } else {
+        alert("Email address must be in a valid format.");
+        $(".invalid-input").first().focus();
+    }
+}
+
+/*function confirm_update(){
     if ($(".invalid-input").length == 0) {
         reset_confirm_msg();
         $('#deposit').modal('show');
@@ -616,7 +648,7 @@ function confirm_update(){
         alert("Email address must be in a valid format.");
         $(".invalid-input").first().focus();
     }
-}
+}*/
 
 function show_release_date(){
     $('#release-date-picker').show();

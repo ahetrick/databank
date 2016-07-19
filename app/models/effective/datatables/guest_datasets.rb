@@ -31,7 +31,7 @@ module Effective
 
 
       def collection
-        Dataset.where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE]).where(is_test: false)
+        Dataset.where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE, Databank::PublicationState::TempSuppress::FILE]).where(is_test: false)
       end
 
     end

@@ -76,16 +76,18 @@
                     -else
                       = f.select :embargo, options_for_select([["No Publication Delay", Databank::PublicationState::Embargo::NONE],["File Only Publication Delay", Databank::PublicationState::Embargo::FILE]], @dataset.embargo), {class: "form-control dataset"}
                 .col-md-2
-                  - if (can? :manage, @dataset)
-                    .curator-only
-                      %button(type="button" class="btn btn-block btn-primary" onclick="show_release_date()" )
-                        Show Release Date
+                  -#- if (can? :manage, @dataset)
+                  -#  .curator-only
+                  -#    %button(type="button" class="btn btn-block btn-primary" onclick="show_release_date()" )
+                  -#      Show Release Date
                   %div(id="release-date-picker")
                     =f.label :release_date, "Release Date (max 1 year)",  :class => "control-label"
+
                     - if (can? :manage, @dataset)
                       =f.date_field :release_date, class: "form-control dataset"
                     -else
                       =f.date_field :release_date, min: Date.current, max: (Date.current + 1.years), class: "form-control dataset", onblur: 'validateReleaseDate()'
+
               -else
                 .col-md-4
                   .form-group
@@ -96,7 +98,7 @@
                     = f.select :embargo, options_for_select([["No Publication Delay", Databank::PublicationState::Embargo::NONE]], @dataset.embargo), {class: "form-control dataset"}
                 .col-md-2
                   =f.label :release_date, "Date Released",  :class => "control-label"
-                  =f.text_field :release_date, class: "form-control dataset", disabled: true
+                  =f.text_field :release_date, class: "form-control dataset"
 
             = f.hidden_field :depositor_email, :class => "form-control", :id => "depositor_email", :title => "Must agree to deposit agreement to deposit data.", :required => true
 

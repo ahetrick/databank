@@ -70,7 +70,7 @@ Rails.application.routes.draw do
   get "/datasets/:id/datafiles/:web_id/cancel_box_upload", to: 'datasets#cancel_box_upload', defaults: {format: 'js'}
 
   # get citation text
-  get "datasets/:id/citation_text", to: 'datasets#citation_text', defaults: {format: 'json'}
+  get "/datasets/:id/citation_text", to: 'datasets#citation_text', defaults: {format: 'json'}
 
   #determine remote content length, if possible
   post "/datafiles/remote_content_length", to: 'datafiles#remote_content_length', defaults: {format: 'json'}
@@ -81,6 +81,8 @@ Rails.application.routes.draw do
   #get publish confirm message
   get "/datasets/:id/confirmation_message", to: 'datasets#confirmation_message', defaults: {format: 'json'}
 
+  #patch to validate before updating a published dataset
+  match "/datasets/:id/validate_change2published", to: 'datasets#validate_change2published', via: [:get, :post, :patch], defaults: {format: 'json'}
 
   post "/creators/update_row_order", to: 'creators#update_row_order'
   post "/creators/create_for_form", to: 'creators#create_for_form', defaults: {format: 'json'}

@@ -11,7 +11,7 @@ class Datafile < ActiveRecord::Base
   before_destroy 'destroy_job'
   before_destroy 'remove_directory'
 
-  after_save 'chmod_binary_for_medusa'
+  # after_save 'chmod_binary_for_medusa'
 
   def to_param
     self.web_id
@@ -163,12 +163,12 @@ class Datafile < ActiveRecord::Base
     proposed_id
   end
 
-  def chmod_binary_for_medusa
-    if self.binary && self.binary.file
-      FileUtils.chmod "u=wrx,go=rx", File.dirname(self.binary.path)
-      FileUtils.chmod "u=wrx,go=rx", self.binary.path
-
-    end
-  end
+  # def chmod_binary_for_medusa
+  #   if self.binary && self.binary.file
+  #     FileUtils.chmod "u=wrx,go=rx", File.dirname(self.binary.path)
+  #     FileUtils.chmod "u=wrx,go=rx", self.binary.path
+  #
+  #   end
+  # end
 
 end
