@@ -116,10 +116,13 @@ class DatasetsController < ApplicationController
     @changetable = nil
 
     changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', @dataset.id, @dataset.id)
+    # Rails.logger.warn "changes: #{changes.to_yaml}"
 
     if changes && changes.count > 0 && @dataset.publication_state != Databank::PublicationState::DRAFT
       @changetable = Effective::Datatables::DatasetChanges.new(dataset_id: @dataset.id)
     end
+
+    # Rails.logger.warn "changetable: #{@changetable.to_yaml}"
 
     @publish_modal_msg = Dataset.publish_modal_msg(@dataset)
 
@@ -188,6 +191,7 @@ class DatasetsController < ApplicationController
   # GET /datasets/new
   def new
     @dataset = Dataset.new
+    @dataset.publication_state = Databank::PublicationState::DRAFT
     @dataset.creators.build
     @dataset.funders.build
     @dataset.related_materials.build
@@ -356,8 +360,8 @@ class DatasetsController < ApplicationController
 
           temporary_creator = nil
 
-          Rails.logger.warn "inside create temporary creator"
-          Rails.logger.warn "creator_p has a family name key? #{creator_p.has_key?(:family_name)}"
+          # Rails.logger.warn "inside create temporary creator"
+          # Rails.logger.warn "creator_p has a family name key? #{creator_p.has_key?(:family_name)}"
           if creator_p.has_key?(:family_name)
             temporary_creator = Creator.create(dataset_id: proposed_dataset.id, family_name: creator_p[:family_name])
 

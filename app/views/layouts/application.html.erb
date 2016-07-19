@@ -33,7 +33,7 @@
   <!--support import from box-->
   <script type="text/javascript" src="https://app.box.com/js/static/select.js"></script>
 
-  <% if @dataset %>
+  <% if @dataset && @dataset.publication_state && @dataset.publication_state != Databank::PublicationState::DRAFT %>
     <meta name="citation_title" content="<%= @dataset.title %>"/>
     <meta name="citation_author" content="<%= @dataset.creator_list %>"/>
     <meta name="citation_publisher" content="<%= @dataset.publisher %>"/>

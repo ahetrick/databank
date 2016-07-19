@@ -32,19 +32,46 @@ module Effective
 
       def collection
         changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', attributes[:dataset_id], attributes[:dataset_id])
+
         medusaChangesArr = Array.new
         publication = nil
+
+
         changes.each do |change|
+
+          if change.audited_changes.keys.include?("publication_state")
+            pub_change = (change.audited_changes)["publication_state"]
+
+            if pub_change.class == String
+              Rails.logger.warn "class was String"
+            elsif pub_change.class == Array
+              Rails.logger.warn "class was Array"
+            else
+              Rails.logger.warn pub_change.class
+            end
+
+            Rails.logger.warn change.created_at
+          end
+
+
           if (change.audited_changes.has_key?('medusa_path')) || (change.audited_changes.has_key?('binary_name')) || (change.audited_changes.has_key?('medusa_dataset_dir'))
             medusaChangesArr << change.id
           end
-          if ((change.audited_changes.keys.first == 'publication_state') && ((change.audited_changes)[change.audited_changes.keys.first][0] == 'draft'))
-            publication = change.created_at
+          if (change.audited_changes.keys.include?("publication_state"))
+
+            pub_change = (change.audited_changes)["publication_state"]
+
+            if pub_change.class == Array && pub_change[0] == Databank::PublicationState::DRAFT
+              publication = change.created_at
+            end
+
           end
         end
+
         if publication
           changes = changes.where("created_at > ?", publication).where.not(id: medusaChangesArr)
         else
+          Rails.logger.warn "no changes found for dataset #{attributes[:dataset_id]}"
           changes = Audited::Adapters::ActiveRecord::Audit.none
         end
         changes
