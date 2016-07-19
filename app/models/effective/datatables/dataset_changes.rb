@@ -38,22 +38,7 @@ module Effective
 
 
         changes.each do |change|
-
-          if change.audited_changes.keys.include?("publication_state")
-            pub_change = (change.audited_changes)["publication_state"]
-
-            if pub_change.class == String
-              Rails.logger.warn "class was String"
-            elsif pub_change.class == Array
-              Rails.logger.warn "class was Array"
-            else
-              Rails.logger.warn pub_change.class
-            end
-
-            Rails.logger.warn change.created_at
-          end
-
-
+          
           if (change.audited_changes.has_key?('medusa_path')) || (change.audited_changes.has_key?('binary_name')) || (change.audited_changes.has_key?('medusa_dataset_dir'))
             medusaChangesArr << change.id
           end
