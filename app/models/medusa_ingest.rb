@@ -65,10 +65,10 @@ class MedusaIngest < ActiveRecord::Base
         full_staging_path = "#{staging_dir}/dataset_files/#{full_path_arr[7]}"
         # make symlink
 
-        Rails.logger.warn full_path
-        Rails.logger.warn full_staging_path
+        # Rails.logger.warn full_path
+        # Rails.logger.warn full_staging_path
 
-        FileUtils.symlink(full_path, full_staging_path)
+        FileUtils.ln(full_path, full_staging_path)
         FileUtils.chmod "u=wrx,go=rx", full_staging_path
         # point to symlink for path
         # staging_path = "#{full_path_arr[5]}/#{full_path_arr[6]}/#{full_path_arr[7]}"
@@ -84,7 +84,7 @@ class MedusaIngest < ActiveRecord::Base
         full_path = "#{IDB_CONFIG[:agreements_root_path]}/#{dataset.key}/deposit_agreement.txt"
         full_staging_path = "#{staging_dir}/system/deposit_agreement.txt"
         # make symlink
-        FileUtils.symlink(full_path, full_staging_path)
+        FileUtils.ln(full_path, full_staging_path)
         FileUtils.chmod "u=wrx,go=rx", full_staging_path
         # point to symlink for path
         #staging_path = "#{full_path_arr[5]}/#{full_path_arr[6]}/#{full_path_arr[7]}"
