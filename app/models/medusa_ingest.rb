@@ -30,7 +30,7 @@ class MedusaIngest < ActiveRecord::Base
     # create or confirm dataset_staging directory for dataset
     dataset_dirname = "DOI-#{(dataset.identifier).parameterize}"
     staging_dir = "#{IDB_CONFIG[:staging_root]}/#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}"
-    FileUtils.mkdir_p "#{staging_dir}/dataset_files"
+
     FileUtils.mkdir_p "#{staging_dir}/system"
     FileUtils.chmod "u=wrx,go=rx", File.dirname(staging_dir)
 
@@ -54,6 +54,8 @@ class MedusaIngest < ActiveRecord::Base
     # put test datasets in Medusa -- may reconsider later.
 
     if old_publication_state == Databank::PublicationState::DRAFT
+
+      FileUtils.mkdir_p "#{staging_dir}/dataset_files"
 
       dataset.datafiles.each do |datafile|
 

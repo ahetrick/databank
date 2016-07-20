@@ -278,7 +278,10 @@ class DatasetsController < ApplicationController
             end
 
             @dataset.save
+            # send_dataset_to_medusa only sends metadata files unless old_publication_state is draft
+            Dataset.send_dataset_to_medusa(@dataset, old_publication_state)
             Dataset.update_datacite_metadata(@dataset, current_user)
+
             format.html { redirect_to dataset_path(@dataset.key), notice: "Dataset successfully updated." }
             format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
 
