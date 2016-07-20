@@ -86,7 +86,7 @@ class MedusaIngest < ActiveRecord::Base
         # make symlink
         FileUtils.ln(full_path, full_staging_path)
         FileUtils.chmod "u=wrx,go=rx", full_staging_path
-        # point to symlink for path
+        # point to link for path
         #staging_path = "#{full_path_arr[5]}/#{full_path_arr[6]}/#{full_path_arr[7]}"
         staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/deposit_agreement.txt"
         medusa_ingest.staging_path = staging_path
