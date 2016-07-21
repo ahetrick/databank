@@ -10,9 +10,13 @@
     .form-group
       = f.label :read_only_alert, class: "control-label", value: "Read Only Alert Message:"
       %br
-      .small
-        %em A message saved here will override the default alert message for file-only fallback mode.  This can be used to include instance-specific information, such as expected timeframe for resumption of normal operations.  The alert message will only show when system is in file-only fallback mode.
-      = f.text_area :read_only_alert, class: "form-control", value: @admin.read_only_alert || "Illinois Data Bank system is undergoing maintenance, and datasets cannot currently be added or edited."
+      %ul
+        %li A message saved here will override the default alert message for file-only fallback mode.  This can be used to include instance-specific information, such as expected timeframe for resumption of normal operations.
+        %li The alert message will only show when system is in file-only fallback mode.
+        %li Reset only resets the form, you will still need to confirm by using the Update button.
+      = f.text_area :read_only_alert, id: "read-only-alert-text", class: "form-control", value: @admin.read_only_alert || "Illinois Data Bank system is undergoing maintenance, and datasets cannot currently be added or edited."
   .actions
-    .pull-right
-      %button(type="submit" class="btn btn-primary" ) Update
+    .row
+      .col-md-2.col-md-offset-10
+        %button(type="submit" class="btn btn-block btn-primary" ) Update
+        %button(type="button" class="btn btn-block btn-info" onclick="reset_alert_message()" ) Reset

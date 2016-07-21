@@ -1,7 +1,5 @@
 %h1 Pre-Deposit Considerations
 
-=debug(Databank::Application.file_mode)
-
 -if Databank::Application.file_mode == Databank::FileMode::READ_ONLY
   .alert.alert-alert
     -if Admin.instance.read_only_alert && Admin.instance.read_only_alert != ''

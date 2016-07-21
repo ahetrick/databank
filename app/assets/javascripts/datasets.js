@@ -674,8 +674,15 @@ function reset_confirm_msg(){
             });
     } else {
         console.log("publish-msg element not found");
+
     }
 
+}
+
+function reset_alert_message(){
+    
+    $('#read-only-alert-text').val("Illinois Data Bank system is undergoing maintenance, and datasets cannot currently be added or edited.");
+    //$('.edit_admin').submit();
 }
 
 $(document).ready(ready);
