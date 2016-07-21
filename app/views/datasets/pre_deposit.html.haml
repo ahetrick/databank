@@ -6,6 +6,11 @@
       =Admin.instance.read_only_alert
     -else
       =Databank::Application.alert_read_only_message
+    %br
+    Please
+    %a(href="/help#contact" target="_blank")
+      contact the Research Data Service Team
+    with questions.
 
 .panel-group(id="license" role="tablist" aria-multiselectable="true")
   .panel.panel-default

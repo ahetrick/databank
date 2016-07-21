@@ -1,6 +1,15 @@
 -if Databank::Application.file_mode == Databank::FileMode::READ_ONLY
   .alert.alert-alert
-    =Databank::Application.alert_read_only_message
+    .alert.alert-alert
+    -if Admin.instance.read_only_alert && Admin.instance.read_only_alert != ''
+      =Admin.instance.read_only_alert
+    -else
+      =Databank::Application.alert_read_only_message
+    %br
+    Please
+    %a(href="/help#contact" target="_blank")
+      contact the Research Data Service Team
+    with questions.
 
 -else
   %div(id="main-form-top")
