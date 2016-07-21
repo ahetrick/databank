@@ -4,8 +4,8 @@ Databank::Application.file_mode = Databank::FileMode::WRITE_READ
 
 mount_path = Pathname.new(IDB_CONFIG[:staging_root]).realpath
 
-# Rails.logger.warn "mount path: #{mount_path.to_yaml}"
-# Rails.logger.warn mount_path.class
+Rails.logger.warn "mount path: #{mount_path.to_s}"
+Rails.logger.warn IDB_CONFIG[:read_write_realpath]
 
 if (mount_path.to_s.casecmp IDB_CONFIG[:read_write_realpath]) != 0
   Databank::Application.file_mode = Databank::FileMode::READ_ONLY
