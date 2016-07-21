@@ -679,9 +679,9 @@ function reset_confirm_msg(){
 
 }
 
-function reset_alert_message(){
+function clear_alert_message(){
     
-    $('#read-only-alert-text').val("Illinois Data Bank system is undergoing maintenance, and datasets cannot currently be added or edited.");
+    $('#read-only-alert-text').val("");
     //$('.edit_admin').submit();
 }
 

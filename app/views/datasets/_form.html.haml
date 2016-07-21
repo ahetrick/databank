@@ -1,10 +1,10 @@
 -if Databank::Application.file_mode == Databank::FileMode::READ_ONLY
   .alert.alert-alert
-    .alert.alert-alert
+    Illinois Data Bank system is undergoing maintenance, and
+    %strong datasets cannot currently be added or edited.
     -if Admin.instance.read_only_alert && Admin.instance.read_only_alert != ''
+      %br
       =Admin.instance.read_only_alert
-    -else
-      =Databank::Application.alert_read_only_message
     %br
     Please
     %a(href="/help#contact" target="_blank")

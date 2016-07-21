@@ -59,8 +59,6 @@ module Databank
 
     attr_accessor :file_mode
 
-    attr_accessor :alert_read_only_message
-
     attr_accessor :settings
 
 
