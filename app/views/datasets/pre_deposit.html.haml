@@ -1,5 +1,12 @@
 %h1 Pre-Deposit Considerations
 
+-if Databank::Application.file_mode == Databank::FileMode::READ_ONLY
+  .alert.alert-alert
+    -if Admin.instance.read_only_alert && Admin.instance.read_only_alert != ''
+      =Admin.instance.read_only_alert
+    -else
+      =Databank::Application.alert_read_only_message
+
 .panel-group(id="license" role="tablist" aria-multiselectable="true")
   .panel.panel-default
     .panel-heading(role="tab" id="licenseHeading")
@@ -75,12 +82,14 @@
           links near form elements.
 
 %hr
-.row
-  .col-md-3.col-md-offset-9
-    %button(type="button" class="btn btn-primary btn-block" onclick='window.location = "/datasets/new"' )
-      Continue
-      %span(class="glyphicon glyphicon-triangle-right" )
-    %button(type="button" class="btn btn-danger btn-block" name="cancel" onclick='window.location = "/"' )
-      %span(class="glyphicon glyphicon-remove" )
-      Cancel
-    %br
+
+-if Databank::Application.file_mode != Databank::FileMode::READ_ONLY
+  .row
+    .col-md-3.col-md-offset-9
+      %button(type="button" class="btn btn-primary btn-block" onclick='window.location = "/datasets/new"' )
+        Continue
+        %span(class="glyphicon glyphicon-triangle-right" )
+      %button(type="button" class="btn btn-danger btn-block" name="cancel" onclick='window.location = "/"' )
+        %span(class="glyphicon glyphicon-remove" )
+        Cancel
+      %br

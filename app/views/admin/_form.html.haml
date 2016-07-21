@@ -1,0 +1,18 @@
+= form_for @admin do |f|
+  - if @admin.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@admin.errors.count, "error")} prohibited this admin from being saved:"
+      %ul
+        - @admin.errors.full_messages.each do |msg|
+          %li= msg
+
+  .field
+    .form-group
+      = f.label :read_only_alert, class: "control-label", value: "Read Only Alert Message:"
+      %br
+      .small
+        %em A message saved here will override the default alert message for file-only fallback mode.  This can be used to include instance-specific information, such as expected timeframe for resumption of normal operations.  The alert message will only show when system is in file-only fallback mode.
+      = f.text_area :read_only_alert, class: "form-control", value: @admin.read_only_alert || "Illinois Data Bank system is undergoing maintenance, and datasets cannot currently be added or edited."
+  .actions
+    .pull-right
+      %button(type="submit" class="btn btn-primary" ) Update

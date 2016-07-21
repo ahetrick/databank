@@ -1,0 +1,10 @@
+%p#notice= notice
+
+%p
+  %b Read-only mode alert message preview:
+  = @admin.read_only_alert
+
+.pull-right
+
+  = link_to 'Edit', edit_admin_path(@admin), class: "btn btn-primary"
+

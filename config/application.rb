@@ -32,6 +32,11 @@ module Databank
     end
   end
 
+  class FileMode
+    WRITE_READ = 'rw'
+    READ_ONLY = 'ro'
+  end
+
   class Relationship
     SUPPLEMENT_TO = 'IsSupplementTo'
     CITED_BY = 'IsCitedBy'
@@ -51,6 +56,13 @@ module Databank
   class Application < Rails::Application
 
     attr_accessor :shibboleth_host
+
+    attr_accessor :file_mode
+
+    attr_accessor :alert_read_only_message
+
+    attr_accessor :settings
+
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -74,9 +86,5 @@ module Databank
     config.autoload_once_paths << File.join(Rails.root, 'app/models/concerns')
     config.active_job.queue_adapter = :delayed_job
 
-    # config.after_initialize do
-    #   # Rails.logger.warn "inside after initialize"
-    #   MedusaIngest.subscribe_to_incoming
-    # end
   end
 end

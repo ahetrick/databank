@@ -1,0 +1,1 @@
+Databank::Application.settings = Admin.instance

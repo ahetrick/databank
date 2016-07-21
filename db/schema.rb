@@ -11,10 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160628202734) do
+ActiveRecord::Schema.define(version: 20160721145949) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "admin", force: :cascade do |t|
+    t.text     "read_only_alert"
+    t.integer  "singleton_guard"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "admin", ["singleton_guard"], name: "index_admin_on_singleton_guard", unique: true, using: :btree
 
   create_table "audits", force: :cascade do |t|
     t.integer  "auditable_id"

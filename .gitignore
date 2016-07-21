@@ -31,6 +31,8 @@ dj_start.sh
 dj_stop.sh
 
 /uploads
+/uploads_rw
+/uploads_ro
 /public/agreements
 
 /public/sitemaps

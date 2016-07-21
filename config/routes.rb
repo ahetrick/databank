@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :admin
   resources :deckfiles
   get "/datasets/pre_deposit", to: "datasets#pre_deposit"
 

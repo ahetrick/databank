@@ -202,6 +202,13 @@ class DatasetsController < ApplicationController
     @dataset.creators.build unless @dataset.creators.count > 0
     @dataset.funders.build unless @dataset.funders.count > 0
     @dataset.related_materials.build unless @dataset.related_materials.count > 0
+    @file_mode = Databank::Application.file_mode = Databank::FileMode::WRITE_READ
+    begin
+      FileUtils.touch("#{IDB_CONFIG[:datafile_store_dir]}/determine_file_mode")
+
+    rescue Exception::StandardError => ex
+      Databank::Application.file_mode = Databank::FileMode::READ_ONLY
+    end
     @completion_check = Dataset.completion_check(@dataset, current_user)
     set_license(@dataset)
     @publish_modal_msg = Dataset.publish_modal_msg(@dataset)
@@ -423,6 +430,12 @@ class DatasetsController < ApplicationController
 
   def pre_deposit
     @dataset = Dataset.new
+    @file_mode = Databank::Application.file_mode = Databank::FileMode::WRITE_READ
+    begin
+      FileUtils.touch("#{IDB_CONFIG[:datafile_store_dir]}/determine_file_mode")
+    rescue Exception::StandardError => ex
+      Databank::Application.file_mode = Databank::FileMode::READ_ONLY
+    end
   end
 
   def suppress_changelog
