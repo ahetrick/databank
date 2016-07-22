@@ -3,6 +3,7 @@ require 'net/http'
 require 'boxr'
 require 'zipruby'
 require 'json'
+require 'pathname'
 
 class DatasetsController < ApplicationController
   protect_from_forgery except: [:cancel_box_upload, :validate_change2published]
@@ -108,6 +109,8 @@ class DatasetsController < ApplicationController
         @all_in_medusa = false
       end
 
+      set_file_mode
+
     end
 
 
@@ -195,6 +198,7 @@ class DatasetsController < ApplicationController
     @dataset.creators.build
     @dataset.funders.build
     @dataset.related_materials.build
+    set_file_mode
   end
 
   # GET /datasets/1/edit
@@ -202,13 +206,6 @@ class DatasetsController < ApplicationController
     @dataset.creators.build unless @dataset.creators.count > 0
     @dataset.funders.build unless @dataset.funders.count > 0
     @dataset.related_materials.build unless @dataset.related_materials.count > 0
-    @file_mode = Databank::Application.file_mode = Databank::FileMode::WRITE_READ
-    begin
-      FileUtils.touch("#{IDB_CONFIG[:datafile_store_dir]}/determine_file_mode")
-
-    rescue Exception::StandardError => ex
-      Databank::Application.file_mode = Databank::FileMode::READ_ONLY
-    end
     @completion_check = Dataset.completion_check(@dataset, current_user)
     set_license(@dataset)
     @publish_modal_msg = Dataset.publish_modal_msg(@dataset)
@@ -225,6 +222,7 @@ class DatasetsController < ApplicationController
         deckfile.destroy
       end
     end
+    set_file_mode
 
   end
 
@@ -243,6 +241,8 @@ class DatasetsController < ApplicationController
         format.json { render json: @dataset.errors, status: :unprocessable_entity }
       end
     end
+    set_file_mode
+
   end
 
   # PATCH/PUT /datasets/1
@@ -430,12 +430,7 @@ class DatasetsController < ApplicationController
 
   def pre_deposit
     @dataset = Dataset.new
-    @file_mode = Databank::Application.file_mode = Databank::FileMode::WRITE_READ
-    begin
-      FileUtils.touch("#{IDB_CONFIG[:datafile_store_dir]}/determine_file_mode")
-    rescue Exception::StandardError => ex
-      Databank::Application.file_mode = Databank::FileMode::READ_ONLY
-    end
+    set_file_mode
   end
 
   def suppress_changelog
@@ -1026,6 +1021,19 @@ class DatasetsController < ApplicationController
       else
         @license_expanded = dataset.license
     end
+  end
+
+  def set_file_mode
+    Databank::Application.file_mode = Databank::FileMode::WRITE_READ
+
+    mount_path = (Pathname.new(IDB_CONFIG[:storage_mount]).realpath).to_s.strip
+    read_only_path = (IDB_CONFIG[:read_only_realpath]).to_s.strip
+
+    if (mount_path.casecmp(read_only_path) == 0 )
+      Databank::Application.file_mode = Databank::FileMode::READ_ONLY
+    end
+
+    Rails.logger.warn Databank::Application.file_mode
   end
 
 
