@@ -12,7 +12,7 @@
       %br
       %ul
         %li A message saved here will be appended to the default alert message for file-only fallback mode.  This can be used to include instance-specific information, such as expected timeframe for resumption of normal operations.
-        %li The alert message will only show when system is in file-only fallback mode.
+        %li The alert message will only show on deposit-relevant pages when the system is in read-only fallback mode.
       = f.text_area :read_only_alert, id: "read-only-alert-text", class: "form-control", value: @admin.read_only_alert
   .actions
     .row
