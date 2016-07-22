@@ -19,3 +19,18 @@
       .col-md-2.col-md-offset-10
         %button(type="submit" class="btn btn-block btn-primary" ) Update
         %button(type="button" class="btn btn-block btn-info" onclick="clear_alert_message()" ) Clear Form
+
+      %p
+
+%strong Current alert (before Update):
+.alert.alert-alert
+  Illinois Data Bank system is undergoing maintenance, and
+  %strong datasets cannot currently be added or edited.
+  -if Admin.instance.read_only_alert && Admin.instance.read_only_alert != ''
+    %br
+    =Admin.instance.read_only_alert
+  %br
+  Please
+  %a(href="/help#contact" target="_blank")
+    contact the Research Data Service Team
+  with questions.
