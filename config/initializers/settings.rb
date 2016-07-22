@@ -1,1 +1,1 @@
-Databank::Application.settings = Admin.instance
+# Databank::Application.settings = Admin.instance
