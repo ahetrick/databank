@@ -622,7 +622,7 @@ function confirm_update(){
             data: $("[id^=edit_dataset]").serialize(),
             datatype: 'json',
             success: function (data) {
-                console.log(data);
+                //console.log(data);
 
                 if (data.message == "ok") {
                     reset_confirm_msg();
@@ -660,11 +660,12 @@ function reset_confirm_msg(){
 
     if ($('.publish-msg').html() != undefined && $('.publish-msg').html().length > 0){
         var new_embargo = $('#dataset_embargo').val();
+        var release_date = $('#dataset_release_date').val();
 
-        console.log(new_embargo);
+        //console.log(new_embargo);
 
-        $.getJSON( "/datasets/"+ dataset_key + "/confirmation_message?new_embargo_state="+ new_embargo, function( data ) {
-            console.log(data);
+        $.getJSON( "/datasets/"+ dataset_key + "/confirmation_message?new_embargo_state="+ new_embargo + "&release_date=" + release_date, function( data ) {
+            //console.log(data);
             $('.publish-msg').html( '<p class="ds-paragraph">' + data.message + '</p>');
         })
             .fail(function(xhr, textStatus, errorThrown) {

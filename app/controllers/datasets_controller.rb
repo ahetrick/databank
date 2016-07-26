@@ -815,6 +815,8 @@ class DatasetsController < ApplicationController
 
   def confirmation_message()
 
+    Rails.logger.warn "params inside confirmation messaage: #{params.to_yaml}"
+
     proposed_dataset = @dataset
     old_embargo_state = @dataset.embargo || Databank::PublicationState::Embargo::NONE
     new_embargo_state = @dataset.embargo || Databank::PublicationState::Embargo::NONE
@@ -823,9 +825,12 @@ class DatasetsController < ApplicationController
 
     if params.has_key?('new_embargo_state')
 
+      Rails.logger.warn "new_embargo state detected: #{params['new_embargo_state']}"
+
       case params['new_embargo_state']
         when Databank::PublicationState::Embargo::FILE
           new_embargo_state = Databank::PublicationState::Embargo::FILE
+
         #new_publication_state = Databank::PublicationState::Embargo::FILE
         when Databank::PublicationState::Embargo::METADATA
           new_embargo_state = Databank::PublicationState::Embargo::METADATA
@@ -834,11 +839,16 @@ class DatasetsController < ApplicationController
           new_embargo_state = Databank::PublicationState::Embargo::NONE
         #new_publication_state = Databank::PublicationState::RELEASED
       end
+
       proposed_dataset.embargo = new_embargo_state
+      proposed_dataset.release_date = params['release_date'] || @dataset.release_date
+
       #proposed_dataset.publication_state = new_publication_state
 
     end
 
+    Rails.logger.warn "proposed dataset just before detection"
+    Rails.logger.warn proposed_dataset.to_yaml
     render json: {status: :ok, message: Dataset.publish_modal_msg(proposed_dataset)}
 
   end
