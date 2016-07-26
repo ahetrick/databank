@@ -616,6 +616,8 @@ function confirm_update(){
     // using patch because that method designation is in the form already
     if ($(".invalid-input").length == 0) {
 
+        $('#validation-warning').clear();
+
         $.ajax({
             url: '/datasets/' + dataset_key + '/validate_change2published',
             type: 'patch',
