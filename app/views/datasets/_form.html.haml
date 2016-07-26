@@ -144,6 +144,8 @@
                       =f.label :dataset_version, "Version", class: "control-label"
                       %br
                       =f.text_field :dataset_version, class: "form-control dataset"
+              -else
+                =f.hidden_field :identifier
 
 
       .panel-group(id="funder" role="tablist" aria-multiselectable="true")

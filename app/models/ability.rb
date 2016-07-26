@@ -50,6 +50,7 @@ class Ability
       can :show, Dataset
       can :splash_url, Dataset
       can :pre_deposit, Dataset
+      can :validiate_change2published, :all
 
     end
     #

@@ -609,12 +609,16 @@ function update_and_publish() {
 }
 
 function confirm_update(){
+
+    // console.log ("inside confirm_update");
     // Use Ajax to submit form data
 
     // console.log($("[id^=edit_dataset]").serialize());
     
     // using patch because that method designation is in the form already
     if ($(".invalid-input").length == 0) {
+
+        // console.log("inside valid input ok");
 
         $('#validation-wa619rning').empty();
 
@@ -624,7 +628,7 @@ function confirm_update(){
             data: $("[id^=edit_dataset]").serialize(),
             datatype: 'json',
             success: function (data) {
-                //console.log(data);
+                console.log(data);
 
                 if (data.message == "ok") {
                     reset_confirm_msg();

@@ -22,8 +22,9 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :download_link
   skip_load_and_authorize_resource :only => :pre_deposit
   skip_load_and_authorize_resource :only => :confirmation_message
+  skip_load_and_authorize_resource :only => :validate_change2published
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message, :validiate_change2published]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message]
 
   @@num_box_ingest_deamons = 10
 
@@ -313,7 +314,11 @@ class DatasetsController < ApplicationController
 
   def validate_change2published
 
-    # Rails.logger.warn params.to_yaml
+    set_dataset
+
+    raise "dataset not found" unless @dataset
+
+    Rails.logger.warn params.to_yaml
 
     if params.has_key?(:dataset) && (params[:dataset]).has_key?(:identifier) && params[:dataset][:identifer] != ""
 
