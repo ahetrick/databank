@@ -1043,7 +1043,6 @@ class DatasetsController < ApplicationController
       Databank::Application.file_mode = Databank::FileMode::READ_ONLY
     end
 
-    Rails.logger.warn Databank::Application.file_mode
   end
 
 
