@@ -9,8 +9,6 @@
 server 'rds-dev.library.illinois.edu', user: 'databank', roles: %w{app db web}
 
 set :rails_env, 'development'
-set :unicorn_rack_env, 'development'
-
 
 # role-based syntax
 # ==================
