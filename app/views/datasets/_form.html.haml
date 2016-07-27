@@ -86,9 +86,9 @@
                         %span(class="fa fa-question-circle")
                         what's this?
                       - if ((can? :manage, @dataset) || [Databank::PublicationState::DRAFT, Databank::PublicationState::Embargo::METADATA].include?(@dataset.publication_state))
-                        = f.select :embargo, options_for_select([["No Publication Delay", Databank::PublicationState::Embargo::NONE],["File Only Publication Delay", Databank::PublicationState::Embargo::FILE],["File and Metadata Publication Delay", Databank::PublicationState::Embargo::METADATA]], @dataset.embargo), {class: "form-control dataset"}
+                        = f.select :embargo, options_for_select([["No Publication Delay", Databank::PublicationState::Embargo::NONE],["File Only Publication Delay", Databank::PublicationState::Embargo::FILE],["File and Metadata Publication Delay", Databank::PublicationState::Embargo::METADATA]], @dataset.embargo), {}, {class: "form-control dataset"}
                       -else
-                        = f.select :embargo, options_for_select([["No Publication Delay", Databank::PublicationState::Embargo::NONE],["File Only Publication Delay", Databank::PublicationState::Embargo::FILE]], @dataset.embargo), {class: "form-control dataset"}
+                        = f.select :embargo, options_for_select([["No Publication Delay", Databank::PublicationState::Embargo::NONE],["File Only Publication Delay", Databank::PublicationState::Embargo::FILE]], @dataset.embargo), {}, {class: "form-control dataset"}
                   .col-md-2
                     -#- if (can? :manage, @dataset)
                     -#  .curator-only
