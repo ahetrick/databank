@@ -366,10 +366,9 @@ class Dataset < ActiveRecord::Base
         creator_record = open("http://quest.grainger.uiuc.edu/directory/ed/person/#{netid}").read
 
         rescue OpenURI::HTTPError => err
-          validation_error_messages << "a valid email address for #{creator.given_name} #{creator.family_name}"
+          validation_error_messages << "a valid email address for #{creator.given_name} #{creator.family_name} (please check and correct the netid)"
         end
-
-
+        
       end
     end
 
