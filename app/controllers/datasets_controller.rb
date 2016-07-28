@@ -318,7 +318,7 @@ class DatasetsController < ApplicationController
 
     raise "dataset not found" unless @dataset
 
-    Rails.logger.warn params.to_yaml
+    # Rails.logger.warn params.to_yaml
 
     if params.has_key?(:dataset) && (params[:dataset]).has_key?(:identifier) && params[:dataset][:identifer] != ""
 
@@ -364,14 +364,13 @@ class DatasetsController < ApplicationController
 
       if (params[:dataset]).has_key?(:creators_attributes)
 
-
-
         # Rails.logger.warn params[:dataset][:creators_attributes]
 
         proposed_dataset.creators = Array.new
 
         params[:dataset][:creators_attributes].each do |creator_params|
           creator_p = creator_params[1]
+          #Rails.logger.warn creator_p
 
           temporary_creator = nil
 

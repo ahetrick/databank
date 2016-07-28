@@ -73,7 +73,7 @@ function add_creator_row() {
         '<td class="col-md-2">' +
         '<input onchange="handle_creator_email_change(this)" class="form-control dataset creator-email" placeholder="[e.g.: netid@illinois.edu]" type="email" name="dataset[creators_attributes][' + newId + '][email]" id="dataset_creators_attributes_' + newId + '_email" />' +
         '</td>' +
-        '<td class="col-md-2" align="center"><input name="dataset[creators_attributes][' + newId + '][is_contact]" type="hidden" value="false" id="dataset_creators_attributes_' + newId + '_is_contact"><input class="dataset contact_radio" name="primary_contact" onchange="handle_contact_change()" type="radio" value="false"></td>' +
+        '<td class="col-md-2" align="center"><input name="dataset[creators_attributes][' + newId + '][is_contact]" type="hidden" value="false" id="dataset_creators_attributes_' + newId + '_is_contact"><input class="dataset contact_radio" name="primary_contact" onchange="handle_contact_change()" type="radio"  value="'+ newId  +'"></td>' +
         '<td class="col-md-1"></td>' +
         '</tr>';
     $("#creator_table tbody:last-child").append(creator_row);
@@ -182,10 +182,12 @@ function generate_creator_preview() {
 function handle_contact_change() {
     // set is_contact value to match selection staus and highlight required email input field if blank
     var selectedVal = $("input[type='radio'][name='primary_contact']:checked").val();
+    console.log("selected value: " + selectedVal);
 
     $('#creator_table tr').each(function (i) {
         if (i > 0) {
             var creator_index = $(this).find('td').first().next().find('input').first().attr('id').split('_')[3];
+
             //mark all as not the contact -- then later mark the contact as the contact.
             $("input[name='dataset[creators_attributes][" + creator_index + "][email]']").closest('td').removeClass('input-field-required');
             $("input[name='dataset[creators_attributes][" + creator_index + "][is_contact]']").val('false');
