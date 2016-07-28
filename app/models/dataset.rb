@@ -368,7 +368,7 @@ class Dataset < ActiveRecord::Base
         rescue OpenURI::HTTPError => err
           validation_error_messages << "a valid email address for #{creator.given_name} #{creator.family_name} (please check and correct the netid)"
         end
-        
+
       end
     end
 
