@@ -199,29 +199,31 @@ function create_from_remote(){
 
                     if (content_length > 100000000000){
                         alert("For files larger than 100 GB, please contact the Research Data Service.")
-                        create_from_remote_unknown_size();
-                    } else if (content_length > 0) {
-                        item = {
-                            "name": $('#remote_filename').val(),
-                            "size": content_length,
-                            "url": $('#remote_url').val(),
-                            "dataset_key": dataset_key
-                        };
-
-                        $.ajax({
-                            type: "POST",
-                            url: "/datafiles/create_from_url",
-                            data: item,
-                            success: function (data) {
-                                eval($(data).text());
-                            },
-                            error: function (data) {
-                                console.log(data);
-                            },
-                            dataType: 'script'
-                        });
+                    //
+                    // *** temporarily, at least, don't try to use progress bar
+                    // } else if (content_length > 0) {
+                    //     item = {
+                    //         "name": $('#remote_filename').val(),
+                    //         "size": content_length,
+                    //         "url": $('#remote_url').val(),
+                    //         "dataset_key": dataset_key
+                    //     };
+                    //
+                    //     $.ajax({
+                    //         type: "POST",
+                    //         url: "/datafiles/create_from_url",
+                    //         data: item,
+                    //         success: function (data) {
+                    //             eval($(data).text());
+                    //         },
+                    //         error: function (data) {
+                    //             console.log(data);
+                    //         },
+                    //         dataType: 'script'
+                    //     });
                     } else {
-                        console.log("content length not larger than 0");
+                        // getting here means not known to be too big
+                        //console.log("content length not larger than 0");
                         create_from_remote_unknown_size();
                     }
                 }
