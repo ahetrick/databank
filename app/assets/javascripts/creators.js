@@ -91,13 +91,14 @@ function remove_creator_row(creator_index) {
         alert("The primary long term contact for a published dataset may not be removed.  To delete this author listing, first select a different contact.")
     }
     else {
-        if ($("#dataset_creators_attributes_" + creator_index + "_id").val() != undefined) {
+        if ($("#dataset_creators_attributes_" + creator_index + "_id").val() == undefined) {
+            $("#creator_index_" + creator_index).remove();
+        } else {
             $("#dataset_creators_attributes_" + creator_index + "__destroy").val("true");
+            $("#deleted_creator_table > tbody:last-child").append($("#creator_index_" + creator_index));
+            $("#creator_index_" + creator_index).hide();
         }
 
-        $("#deleted_creator_table > tbody:last-child").append($("#creator_index_" + creator_index));
-
-        $("#creator_index_" + creator_index).hide();
         $('#creator_table').sortable('refresh');
 
         if ($("#creator_table tr").length < 2) {
