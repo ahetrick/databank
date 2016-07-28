@@ -613,7 +613,7 @@ class DatasetsController < ApplicationController
       end
 
       if old_publication_state != Databank::PublicationState::RELEASED && @dataset.publication_state == Databank::PublicationState::RELEASED
-        @dataset.release_date = Date.current
+        @dataset.release_date ||= Date.current
       end
 
     else
