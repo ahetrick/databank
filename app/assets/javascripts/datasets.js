@@ -620,8 +620,7 @@ function confirm_update(){
 
         // console.log("inside valid input ok");
 
-        $('#validation-wa619rning').empty();
-
+        $('#validation-warning').empty();
         $.ajax({
             url: '/datasets/' + dataset_key + '/validate_change2published',
             type: 'patch',
