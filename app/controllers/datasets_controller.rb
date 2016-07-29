@@ -24,7 +24,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :confirmation_message
   skip_load_and_authorize_resource :only => :validate_change2published
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message, :get_new_token]
 
   @@num_box_ingest_deamons = 10
 
@@ -223,8 +223,13 @@ class DatasetsController < ApplicationController
         deckfile.destroy
       end
     end
+    @token = @dataset.current_token
     set_file_mode
+  end
 
+  def get_new_token
+    @token = @dataset.new_token
+    render json: {token: @token.identifier, expires: @token.expires}
   end
 
   # POST /datasets

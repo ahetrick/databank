@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :tokens
   resources :admin
   resources :deckfiles
   get "/datasets/pre_deposit", to: "datasets#pre_deposit"
@@ -36,6 +37,8 @@ Rails.application.routes.draw do
 
   get '/datasets/:id/download_box_file/:box_file_id', to: 'datasets#download_box_file'
 
+  post 'api/dataset/:dataset_key/datafile', to: 'api_dataset#datafile'
+  get 'api', to: 'api_dataset#index'
 
   # deposit
   get '/datasets/:id/publish', to: 'datasets#publish'
@@ -50,6 +53,8 @@ Rails.application.routes.draw do
   get '/review_deposit_agreement', to: 'datasets#review_deposit_agreement'
   get '/datasets/:id/review_deposit_agreement', to: 'datasets#review_deposit_agreement'
 
+  # controller method protected by cancan
+  get '/datasets/:id/get_new_token', to: 'datasets#get_new_token', defaults: {format: 'json'}
 
   # authentication routes
   match '/auth/:provider/callback', to: 'sessions#create', via: [:get, :post]

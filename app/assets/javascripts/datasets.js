@@ -100,11 +100,11 @@ ready = function () {
 
     $('#update-confirm').prop('disabled', true);
 
-    $("[id^=edit_dataset] :input").keyup(function() {
+    $("[id^=edit_dataset] :input").keyup(function () {
         $('#update-confirm').prop('disabled', false);
     });
 
-    $("[id^=edit_dataset] :input").change(function() {
+    $("[id^=edit_dataset] :input").change(function () {
         $('#update-confirm').prop('disabled', false);
     });
 
@@ -183,6 +183,10 @@ ready = function () {
     //alert("pre-validity check");
     //alert("dataset key: "+ dataset_key)
 
+    $("#api-modal-btn").click(function() {
+       $("#api_modal").modal('show');
+    });
+
     $("#new_datafile").fileupload({
         downloadTemplate: null,
         downloadTemplateId: null,
@@ -223,18 +227,18 @@ ready = function () {
                 newId = maxId + 1;
             }
             $('#datafile_index_max').val(newId);
-            
+
             var file = o.files[0];
 
             console.log(file);
 
             var row =
-            '<tr id="datafile_index_' + newId + '"><td><div class = "row">' +
+                '<tr id="datafile_index_' + newId + '"><td><div class = "row">' +
 
-            '<input value="false" type="hidden" name="dataset[datafiles_attributes][' + newId + '][_destroy]" id="dataset_datafiles_attributes_' + newId + '__destroy" />' +
-            '<input type="hidden"  value="'+ file.datafileId + '" name="dataset[datafiles_attributes][' + newId + '][id]" id="dataset_datafiles_attributes_' + newId + '_id" />'+
+                '<input value="false" type="hidden" name="dataset[datafiles_attributes][' + newId + '][_destroy]" id="dataset_datafiles_attributes_' + newId + '__destroy" />' +
+                '<input type="hidden"  value="' + file.datafileId + '" name="dataset[datafiles_attributes][' + newId + '][id]" id="dataset_datafiles_attributes_' + newId + '_id" />' +
 
-            '<span class="col-md-8">' + file.name + '<input class="bytestream_name" value="' + file.name + '" style="visibility: hidden;"/></span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
+                '<span class="col-md-8">' + file.name + '<input class="bytestream_name" value="' + file.name + '" style="visibility: hidden;"/></span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
             if (file.error) {
                 row = row + '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-warning-sign"></span>';
             } else {
@@ -343,7 +347,6 @@ function handleAgreeModal(email, name) {
         $('#agree-button').prop("disabled", true);
     }
 }
-
 
 
 function handlePrivateYes() {
@@ -544,7 +547,7 @@ function offerDownloadLink() {
     }
 }
 
-function openRemoteFileModal(){
+function openRemoteFileModal() {
     $("#remote-file-modal").modal();
 }
 
@@ -552,14 +555,14 @@ function license_change_warning() {
     $("#licenseChangeModal").modal();
 }
 
-function suppressChangelog(){
+function suppressChangelog() {
     if (window.confirm("Are you sure?")) {
         $('#suppression_action').val("suppress_changelog");
         $('#suppression_form').submit();
     }
 }
 
-function unsuppressChangelog(){
+function unsuppressChangelog() {
     if (window.confirm("Are you sure?")) {
         $('#suppression_action').val("unsuppress_changelog");
         $('#suppression_form').submit();
@@ -608,13 +611,13 @@ function update_and_publish() {
     $("[id^=edit_dataset]").submit();
 }
 
-function confirm_update(){
+function confirm_update() {
 
     // console.log ("inside confirm_update");
     // Use Ajax to submit form data
 
     // console.log($("[id^=edit_dataset]").serialize());
-    
+
     // using patch because that method designation is in the form already
     if ($(".invalid-input").length == 0) {
 
@@ -633,7 +636,7 @@ function confirm_update(){
                     reset_confirm_msg();
                     $('#deposit').modal('show');
                 } else {
-                    $('#validation-warning').html('<div class="alert alert-alert">'+ data.message + '</div>');
+                    $('#validation-warning').html('<div class="alert alert-alert">' + data.message + '</div>');
                     $('#update-confirm').prop('disabled', true);
                 }
 
@@ -646,34 +649,34 @@ function confirm_update(){
 }
 
 /*function confirm_update(){
-    if ($(".invalid-input").length == 0) {
-        reset_confirm_msg();
-        $('#deposit').modal('show');
-    } else {
-        alert("Email address must be in a valid format.");
-        $(".invalid-input").first().focus();
-    }
-}*/
+ if ($(".invalid-input").length == 0) {
+ reset_confirm_msg();
+ $('#deposit').modal('show');
+ } else {
+ alert("Email address must be in a valid format.");
+ $(".invalid-input").first().focus();
+ }
+ }*/
 
-function show_release_date(){
+function show_release_date() {
     $('#release-date-picker').show();
 }
 
-function reset_confirm_msg(){
+function reset_confirm_msg() {
 
     console.log("inside reset confirm msg");
 
-    if ($('.publish-msg').html() != undefined && $('.publish-msg').html().length > 0){
+    if ($('.publish-msg').html() != undefined && $('.publish-msg').html().length > 0) {
         var new_embargo = $('#dataset_embargo').val();
         var release_date = $('#dataset_release_date').val();
 
         //console.log(new_embargo);
 
-        $.getJSON( "/datasets/"+ dataset_key + "/confirmation_message?new_embargo_state="+ new_embargo + "&release_date=" + release_date, function( data ) {
+        $.getJSON("/datasets/" + dataset_key + "/confirmation_message?new_embargo_state=" + new_embargo + "&release_date=" + release_date, function (data) {
             //console.log(data);
-            $('.publish-msg').html( '<p class="ds-paragraph">' + data.message + '</p>');
+            $('.publish-msg').html('<p class="ds-paragraph">' + data.message + '</p>');
         })
-            .fail(function(xhr, textStatus, errorThrown) {
+            .fail(function (xhr, textStatus, errorThrown) {
                 console.log("error" + textStatus);
                 console.log(xhr.responseText);
 
@@ -685,10 +688,17 @@ function reset_confirm_msg(){
 
 }
 
-function clear_alert_message(){
-    
+function clear_alert_message() {
+
     $('#read-only-alert-text').val("");
     //$('.edit_admin').submit();
+}
+
+function getToken() {
+    $.getJSON("/datasets/" + dataset_key + "/get_new_token", function (data) {
+        //console.log(data);
+        $('.current-token').html("<p><strong>Current Token:</strong> " + data.token + "<br/><strong>Expires:</strong> " + (new Date(data.expires)).toISOString() + "</p>")
+    });
 }
 
 $(document).ready(ready);

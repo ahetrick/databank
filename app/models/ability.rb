@@ -15,6 +15,9 @@ class Ability
       can :confirmation_message, Dataset do |dataset|
         dataset.try(:depositor_email) == user.email
       end
+      can :get_new_token, Dataset do |dataset|
+        dataset.try(:depositor_email) == user.email
+      end
       can :validiate_change2published, :all
       can :update, Dataset do |dataset|
         dataset.try(:depositor_email) == user.email

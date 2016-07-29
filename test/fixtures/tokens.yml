@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  dataset_key: MyString
+  identifier: MyString
+  expires: 2016-07-29 09:19:38
+
+two:
+  dataset_key: MyString
+  identifier: MyString
+  expires: 2016-07-29 09:19:38

@@ -21,6 +21,7 @@ config/shibboleth.yml
 public/uploads
 config/unicorn.rb
 config/medusa_downloader.yml
+nginx.conf.erb
 mock_medusa
 /scripts
 

@@ -2,6 +2,7 @@ require 'fileutils'
 require 'date'
 require 'open-uri'
 require 'net/http'
+require 'securerandom'
 
 class Dataset < ActiveRecord::Base
   include ActiveModel::Serialization
@@ -697,6 +698,26 @@ class Dataset < ActiveRecord::Base
     end
   end
 
+  def current_token
+    tokens = Token.where("dataset_key = ? AND expires > ?", self.key, DateTime.now)
+    if tokens.count == 1
+      return tokens.first
+    else
+      if tokens.count > 1
+        tokens.destroy_all
+        Rail.logger.warn "unexpected error: more than one current token for dataset #{self.key}"
+      end
+      return nil
+    end
+  end
+
+  def new_token
+    if current_token
+      current_token.destroy
+    end
+    return Token.create(dataset_key: self.key, identifier: generate_auth_token, expires: (Time.now + 3.days) )
+  end
+
   def set_primary_contact
     self.corresponding_creator_name = nil
     self.corresponding_creator_email = nil
@@ -808,5 +829,11 @@ class Dataset < ActiveRecord::Base
     URI.escape(s, /[%:\n\r]/)
   end
 
+
+  private
+
+  def generate_auth_token
+    SecureRandom.uuid.gsub(/\-/,'')
+  end
 
 end
