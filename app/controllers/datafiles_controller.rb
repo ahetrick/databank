@@ -32,7 +32,7 @@ class DatafilesController < ApplicationController
   # POST /datafiles
   # POST /datafiles.json
   def create
-    Rails.logger.warn datafile_params
+    # Rails.logger.warn datafile_params
     @datafile = Datafile.create(datafile_params)
     render(json: to_fileupload, content_type: request.format, :layout => false)
   end

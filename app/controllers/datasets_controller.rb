@@ -299,7 +299,7 @@ class DatasetsController < ApplicationController
             format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
 
           else #this else means completion_check was not ok within publish context
-            Rails.logger.warn Dataset.completion_check(@dataset, current_user)
+            # Rails.logger.warn Dataset.completion_check(@dataset, current_user)
             raise "Error: Cannot update published dataset with incomplete information."
           end
 
@@ -824,7 +824,7 @@ class DatasetsController < ApplicationController
 
   def confirmation_message()
 
-    Rails.logger.warn "params inside confirmation messaage: #{params.to_yaml}"
+    # Rails.logger.warn "params inside confirmation messaage: #{params.to_yaml}"
 
     proposed_dataset = @dataset
     old_embargo_state = @dataset.embargo || Databank::PublicationState::Embargo::NONE
@@ -834,7 +834,7 @@ class DatasetsController < ApplicationController
 
     if params.has_key?('new_embargo_state')
 
-      Rails.logger.warn "new_embargo state detected: #{params['new_embargo_state']}"
+      # Rails.logger.warn "new_embargo state detected: #{params['new_embargo_state']}"
 
       case params['new_embargo_state']
         when Databank::PublicationState::Embargo::FILE
@@ -856,8 +856,8 @@ class DatasetsController < ApplicationController
 
     end
 
-    Rails.logger.warn "proposed dataset just before detection"
-    Rails.logger.warn proposed_dataset.to_yaml
+    # Rails.logger.warn "proposed dataset just before detection"
+    # Rails.logger.warn proposed_dataset.to_yaml
     render json: {status: :ok, message: Dataset.publish_modal_msg(proposed_dataset)}
 
   end
@@ -1009,7 +1009,7 @@ class DatasetsController < ApplicationController
   end
 
   def download_deckfile
-    Rails.logger.warn params.to_yaml
+    # Rails.logger.warn params.to_yaml
     render :edit
   end
 

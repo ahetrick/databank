@@ -106,7 +106,7 @@ class DatabankMailer < ActionMailer::Base
   end
 
   def prepend_system_code(subject)
-    Rails.logger.warn IDB_CONFIG[:root_url_text]
+    # Rails.logger.warn IDB_CONFIG[:root_url_text]
     if IDB_CONFIG[:root_url_text].include?("dev")
       subject.prepend("[DEV: ")
     elsif IDB_CONFIG[:root_url_text].include?("localhost")

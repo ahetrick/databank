@@ -51,10 +51,10 @@ class ApplicationController < ActionController::Base
         format.html { render ('errors/error404'), status: 404}
         format.all { render nothing: true, status: 404 }
       end
+
+    elsif exception.class == ActionController::RoutingError
+      # do nothing
     else
-
-      # raise exception
-
       exception_string = "*** Standard Error caught in application_controller.rb on #{IDB_CONFIG[:root_url_text]} ***\nclass: #{exception.class}\nmessage: #{exception.message}\n"
       exception_string << Time.now.utc.iso8601
 

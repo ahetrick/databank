@@ -21,7 +21,7 @@ class ApiDatasetController < ApplicationController
   protected
 
   def authenticate
-    Rails.logger.warn params
+    # Rails.logger.warn params
     if params.has_key?(:dataset_key)
       @dataset = Dataset.find_by_key(params[:dataset_key])
       if @dataset
