@@ -9,6 +9,8 @@ class ApplicationController < ActionController::Base
 
   rescue_from Exception::StandardError, with: :error_occurred
 
+  rescue_from ActionController::RoutingError with: :ignore_error
+
   after_filter :store_location
 
   def store_location
@@ -28,7 +30,7 @@ class ApplicationController < ActionController::Base
   end
 
   protected
-
+  
   def error_occurred(exception)
 
     if exception.class == CanCan::AccessDenied
@@ -52,8 +54,6 @@ class ApplicationController < ActionController::Base
         format.all { render nothing: true, status: 404 }
       end
 
-    elsif exception.class == ActionController::RoutingError
-      # do nothing
     else
       exception_string = "*** Standard Error caught in application_controller.rb on #{IDB_CONFIG[:root_url_text]} ***\nclass: #{exception.class}\nmessage: #{exception.message}\n"
       exception_string << Time.now.utc.iso8601
