@@ -87,6 +87,7 @@
                                   %button(type="button" class="btn btn-danger btn-sm" onclick="remove_file_row(#{i})")
                                     %span(class="glyphicon glyphicon-trash")
                         = df.hidden_field :_destroy, value: false
+                        = df.hidden_field :web_id
                       -else
                         %tr(id="job#{datafile.job.id}")
                           %td

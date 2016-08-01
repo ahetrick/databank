@@ -188,9 +188,15 @@ class DatafilesController < ApplicationController
   # DELETE /datafiles/1
   # DELETE /datafiles/1.json
   def destroy
+    Rails.logger.warn "inside destroy datafile"
     @dataset = Dataset.find(@datafile.dataset_id)
+    Rails.logger.warn "dataset key: #{@dataset.key}"
     @datafile.destroy
-    redirect_to edit_dataset_path(@dataset.key)
+
+    respond_to do |format|
+      format.html{ redirect_to edit_dataset_path(@dataset.key)}
+      format.json{ render json: 'deleted', status: :ok}
+    end
   end
 
   def download

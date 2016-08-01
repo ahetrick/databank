@@ -19,11 +19,27 @@ function remove_file_row(datafile_index) {
         //console.log($("#dataset_datafiles_attributes_" + datafile_index + "_id").val() );
         //console.log($("#dataset_datafiles_attributes_" + datafile_index + "__destroy").val());
 
-        if ($("#dataset_datafiles_attributes_" + datafile_index + "_id").val() != undefined) {
-            $("#dataset_datafiles_attributes_" + datafile_index + "__destroy").val("true");
-            //console.log($("#dataset_datafiles_attributes_" + datafile_index + "__destroy").val());
-            $("table#datafiles > tbody:last-child").append($("#datafile_index_" + datafile_index));
-            $("#datafile_index_" + datafile_index).css("visibility", "hidden");
+        if ($("#dataset_datafiles_attributes_" + datafile_index + "_web_id").val() == undefined) {
+            $("#datafile_index_" + datafile_index).remove();
+        }
+        else {
+
+            web_id = $("#dataset_datafiles_attributes_" + datafile_index + "_web_id").val();
+
+            $.ajax({
+                url: '/datafiles/' + web_id,
+                type: 'DELETE',
+                datatype: "json",
+                success: function(result) {
+                    console.log("success" + result);
+                    $("#datafile_index_" + datafile_index).remove();
+                },
+                error: function(result){
+                    // oddly, even though an error is returned, the delete works ... ???
+                    console.log("error" + result);
+                    $("#datafile_index_" + datafile_index).remove();
+                }
+            });
         }
 
     }
