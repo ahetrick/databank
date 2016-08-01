@@ -9,8 +9,6 @@ class ApplicationController < ActionController::Base
 
   rescue_from Exception::StandardError, with: :error_occurred
 
-  rescue_from ActionController::RoutingError with: :ignore_error
-
   after_filter :store_location
 
   def store_location
