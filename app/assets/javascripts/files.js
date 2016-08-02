@@ -20,7 +20,7 @@ function remove_file_row(datafile_index) {
         //console.log($("#dataset_datafiles_attributes_" + datafile_index + "__destroy").val());
 
         if ($("#dataset_datafiles_attributes_" + datafile_index + "_web_id").val() == undefined) {
-            $("#datafile_index_" + datafile_index).remove();
+            console.log("web_id undefined");
         }
         else {
 
