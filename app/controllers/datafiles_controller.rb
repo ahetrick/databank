@@ -9,32 +9,81 @@ OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 class DatafilesController < ApplicationController
 
   before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download, :record_download]
+
   # GET /datafiles
   # GET /datafiles.json
   def index
+    @dataset = Dataset.find_by_key(params[:dataset_id])
     @datafiles = Datafile.all
+    authorize! :edit, @dataset
   end
 
   # GET /datafiles/1
   # GET /datafiles/1.json
   def show
+    @dataset = Dataset.where("id = ?", @datafile.dataset_id).first
+    authorize! :edit, @dataset
   end
 
   # GET /datafiles/new
   def new
+    @dataset = Dataset.find_by_key(params[:dataset_id])
     @datafile = Datafile.new
   end
 
   # GET /datafiles/1/edit
   def edit
+    @dataset = Dataset.find_by_key(params[:dataset_id])
+    authorize! :edit, @dataset
+
+    if (@datafile.medusa_path && @datafile.medusa_path != "") || (@datafile.binary.path && @datafile.binary.path != "")
+       redirect_to "/datasets/#{@dataset.key}/datafiles/#{@datafile.web_id}"
+    end
+
+  end
+
+  def add
+    Rails.logger.warn "inside add datafile"
+    @dataset = Dataset.find_by_key(params[:dataset_id])
+    @datafile = Datafile.create(dataset_id: @dataset.id)
+    authorize! :edit, @dataset
+    respond_to do |format|
+      format.html { redirect_to "/datasets/#{@dataset.key}/datafiles/#{@datafile.web_id}/edit" }
+      format.json { render :edit, status: :created, location: "/datasets/#{@dataset.key}/datafiles/#{@datafile.webi_id}/edit" }
+    end
   end
 
   # POST /datafiles
   # POST /datafiles.json
   def create
+
+    @dataset = nil
     # Rails.logger.warn datafile_params
-    @datafile = Datafile.create(datafile_params)
-    render(json: to_fileupload, content_type: request.format, :layout => false)
+    if params && params.has_key?(:dataset_id)
+      @dataset = Dataset.find_by_key(params[:dataset_id])
+    end
+
+    if datafile_params
+      @datafile = Datafile.new(datafile_params)
+      @dataset = Dataset.where("id = ?", @datafile.dataset_id).first
+    else
+      if @dataset
+       @datafile = Datafile.new(dataset_id: @dataset.id)
+      end
+    end
+
+    raise "A datafile can only be created in association with a dataset." unless @dataset
+
+    respond_to do |format|
+      if @datafile.save
+        format.html { redirect_to "/datasets/#{@dataset.key}/datafiles/#{@datafile.web_id}/upload" }
+        format.json { render json: to_fileupload, content_type: request.format, :layout => false }
+      else
+        format.html { render :new }
+        format.json { render json: @datafile.errors, status: :unprocessable_entity }
+      end
+    end
+
   end
 
   def create_from_url
@@ -174,6 +223,9 @@ class DatafilesController < ApplicationController
   # PATCH/PUT /datafiles/1
   # PATCH/PUT /datafiles/1.json
   def update
+
+    @datafile.assign_attributes(status: 'new', upload: nil) if params[:delete_upload] == 'yes'
+
     respond_to do |format|
       if @datafile.update(datafile_params)
         format.html { redirect_to @datafile, notice: 'Datafile was successfully updated.' }
@@ -188,15 +240,19 @@ class DatafilesController < ApplicationController
   # DELETE /datafiles/1
   # DELETE /datafiles/1.json
   def destroy
-    Rails.logger.warn "inside destroy datafile"
     @dataset = Dataset.find(@datafile.dataset_id)
-    Rails.logger.warn "dataset key: #{@dataset.key}"
     @datafile.destroy
 
     respond_to do |format|
-      format.html{ redirect_to edit_dataset_path(@dataset.key)}
+
+      if @dataset
+        format.html{ redirect_to edit_dataset_path(@dataset.key)}
+      else
+        format.html { redirect_to "/datasets" }
+      end
       format.json{ render json: 'deleted', status: :ok}
     end
+
   end
 
   def download
@@ -224,6 +280,11 @@ class DatafilesController < ApplicationController
   def record_download
     @datafile.record_download(request.remote_ip)
     render json: {status: :ok}
+  end
+
+
+  def upload
+
   end
 
   private

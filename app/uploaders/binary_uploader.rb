@@ -22,13 +22,16 @@ class BinaryUploader < CarrierWave::Uploader::Base
   def store_dir
     "#{IDB_CONFIG[:datafile_store_dir]}/#{model.web_id}"
   end
+  def cache_dir
+    "#{IDB_CONFIG[:datafile_store_dir]}/tmp"
+  end
 
   def move_to_store
-    false
+    true
   end
 
   def move_to_cache
-    false
+    true
   end
 
   def remember_cache_id(new_file)

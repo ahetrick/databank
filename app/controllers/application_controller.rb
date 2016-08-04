@@ -32,7 +32,7 @@ class ApplicationController < ActionController::Base
   def error_occurred(exception)
 
     if exception.class == CanCan::AccessDenied
-      alert_message = exception.message
+      alert_message = "You are not authorized to access the requested resource."
 
       if exception.subject.class == Dataset && exception.action == :new
         if current_user && current_user.role == 'no_deposit'

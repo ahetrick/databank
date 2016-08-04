@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  get '/datasets/:dataset_id/datafiles/add', to: 'datafiles#add'
+
   resources :tokens
   resources :admin
   resources :deckfiles
@@ -14,8 +16,23 @@ Rails.application.routes.draw do
   resources :datafiles
   resources :users
   resources :identities
-  resources :datasets
+  resources :datasets do
+    resources :datafiles do
+      member do
+        get 'upload', to: 'datafiles#upload'
+        patch 'upload', to: 'datafiles#do_upload'
+        get 'resume_upload', to: 'datafiles#resume_upload'
+        patch 'update_status', to: 'datafiles#update_status'
+        get 'reset_upload', to: 'datafiles#reset_upload'
+      end
+    end
+    resources :creators
+    resources :funders
+    resources :related_materials
+  end
   resources :creators
+
+
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
