@@ -67,7 +67,7 @@
             Importing from Box happens in the background, so it is not necessary to keep your browser window open, but processing may be delayed at times of heavy system usage.
             %table(class="table table-striped" id="datafiles")
               %tbody
-                - @dataset.datafiles.each_with_index do |datafile, i|
+                - @ordered_datafiles.each_with_index do |datafile, i|
 
                   = f.fields_for :datafiles, datafile do |df|
 

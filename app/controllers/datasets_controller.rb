@@ -110,6 +110,12 @@ class DatasetsController < ApplicationController
         @all_in_medusa = false
       end
 
+
+      @ordered_datafiles = @dataset.datafiles.sort_by {|obj| obj.bytestream_name}
+
+
+      # Rails.logger.warn @ordered_datafiles.to_yaml
+
       set_file_mode
 
     end
@@ -1018,6 +1024,9 @@ class DatasetsController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_dataset
     @dataset = Dataset.find_by_key(params[:id])
+    unless @dataset
+      @dataset = Dataset.find(params[:dataset_id])
+    end
     raise ActiveRecord::RecordNotFound unless @dataset
   end
 

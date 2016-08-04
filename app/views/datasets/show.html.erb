@@ -334,7 +334,7 @@
                           </td>
                         </tr>
                       <% end %>
-                      <% @dataset.datafiles.each do |datafile| %>
+                      <% @ordered_datafiles.each do |datafile| %>
                         <tr class="row">
                           <td>
                             <% if datafile.job_status == :complete %>
