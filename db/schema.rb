@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160812194655) do
+ActiveRecord::Schema.define(version: 20160812200636) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -78,7 +78,7 @@ ActiveRecord::Schema.define(version: 20160812194655) do
     t.string   "medusa_path"
     t.string   "binary_name"
     t.integer  "binary_size",          limit: 8
-    t.integer  "upload_file_size"
+    t.integer  "upload_file_size",     limit: 8
     t.string   "upload_status"
   end
 
