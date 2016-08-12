@@ -12,6 +12,18 @@
   .row
     .col-md-5.col-md-offset-1
       =link_to datafile.bytestream_name, "/datasets/#{@dataset.key}/datafiles/#{datafile.web_id}"
+      -#%br
+      -#binary:
+      -#- if datafile.binary && datafile.binary.file
+      -#  = debug(datafile.binary)
+      -#- else
+      -#  none
+      -#%br
+      -#medusa_path
+      -#- if datafile.medusa_path
+      -#  = datafile.medusa_path
+      -#- else
+      -#  none
     .col-md-2
       = number_to_human_size(datafile.bytestream_size)
     .col-md-2

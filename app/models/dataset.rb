@@ -732,9 +732,7 @@ class Dataset < ActiveRecord::Base
 
   def remove_invalid_datafiles
     self.datafiles.each do |datafile|
-      if (!datafile.medusa_path || datafile.medusa_path == "") && (!datafile.binary.path || datafile.binary.path == "")
-        datafile.destroy
-      end
+      datafile.destroy unless ( (datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != "") )
     end
   end
 

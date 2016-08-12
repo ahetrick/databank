@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160729141938) do
+ActiveRecord::Schema.define(version: 20160812192500) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,6 +79,7 @@ ActiveRecord::Schema.define(version: 20160729141938) do
     t.string   "binary_name"
     t.integer  "binary_size",          limit: 8
     t.string   "upload_status"
+    t.integer  "upload_file_size"
   end
 
   create_table "dataset_download_tallies", force: :cascade do |t|

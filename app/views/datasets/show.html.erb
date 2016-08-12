@@ -37,10 +37,10 @@
     </div>
 
   <% elsif ((can? :manage, @dataset) ||
-    (([Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE].include? @dataset.publication_state) &&
-      (@dataset.hold_state != Databank::PublicationState::TempSuppress::METADATA)) ||
-    ((can? :edit, @dataset) &&
-      (@dataset.publication_state != Databank::PublicationState::PermSuppress::METADATA))
+      (([Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE].include? @dataset.publication_state) &&
+          (@dataset.hold_state != Databank::PublicationState::TempSuppress::METADATA)) ||
+      ((can? :edit, @dataset) &&
+          (@dataset.publication_state != Databank::PublicationState::PermSuppress::METADATA))
   ) %>
     <!-- BEGIN metadata section-->
     <div class="panel panel-default">
@@ -118,13 +118,14 @@
             <% if @dataset.related_materials.count > 0 %>
               <% @dataset.related_materials.each do |material| %>
 
-                <% if material.relationship_arr.include?(Databank::Relationship::PREVIOUS_VERSION_OF)  && material.uri %>
+                <% if material.relationship_arr.include?(Databank::Relationship::PREVIOUS_VERSION_OF) && material.uri %>
                   <tr class="row">
                     <td>
                       <span class="metadata-label">Related Dataset:</span>
                     </td>
                     <td>
-                      This is an old version of <a href="<%= material.link %>" target="_blank" > <%= material.uri_type %>:<%= material.uri %></a>.
+                      This is an old version of
+                      <a href="<%= material.link %>" target="_blank"> <%= material.uri_type %>:<%= material.uri %></a>.
                     </td>
                   </tr>
 
@@ -134,7 +135,8 @@
                       <span class="metadata-label">Related Dataset:</span>
                     </td>
                     <td>
-                      This is an updated version of <a href="<%= material.link %>" target="_blank" > <%= material.uri_type %>:<%= material.uri %></a>.
+                      This is an updated version of
+                      <a href="<%= material.link %>" target="_blank"> <%= material.uri_type %>:<%= material.uri %></a>.
                     </td>
                   </tr>
 
@@ -142,7 +144,8 @@
                   <tr class="row">
                     <td>
                       <span class="metadata-label">Related
-                        <%= (material.material_type && material.material_type != "") ? material.material_type : "Material" %>:
+                        <%= (material.material_type && material.material_type != "") ? material.material_type : "Material" %>
+                        :
                       </span>
                     </td>
                     <td>
@@ -224,10 +227,10 @@
                 </td>
                 <td>
                   <%= funder.name %>
-                    <% if funder.grant && funder.grant != "" %>
-                      -
-                      <span class="metadata-label">Grant:</span>
-                      <%= funder.grant %>
+                  <% if funder.grant && funder.grant != "" %>
+                    -
+                    <span class="metadata-label">Grant:</span>
+                    <%= funder.grant %>
                   <% end %>
                 </td>
               </tr>
@@ -334,12 +337,15 @@
                           </td>
                         </tr>
                       <% end %>
-                      <% @ordered_datafiles.each do |datafile| %>
-                        <tr class="row">
-                          <td>
-                            <% if datafile.job_status == :complete %>
 
-                              <div class="row checkbox">
+                      <% if @ordered_datafiles %>
+
+                        <% @ordered_datafiles.each do |datafile| %>
+                          <tr class="row">
+                            <td>
+                              <% if datafile.job_status == :complete %>
+
+                                <div class="row checkbox">
 
                                 <span class="col-md-8">
                                   <% if @all_in_medusa || @total_files_size < @local_zip_max_size %>
@@ -351,7 +357,7 @@
                                   <% end %>
 
                                 </span>
-                                <span class="col-md-2"><%= number_to_human_size(datafile.bytestream_size) %></span>
+                                  <span class="col-md-2"><%= number_to_human_size(datafile.bytestream_size) %></span>
 
                                 <span class="col-md-2">
                                   <a href="#" onclick='window.location = "/datafiles/<%= datafile.web_id %>/download"' class=" idb btn btn-primary btn-sm" role="button">
@@ -359,12 +365,13 @@
                                   </a>
                                 </span>
 
-                              </div>
+                                </div>
 
-                            <% end %>
+                              <% end %>
 
-                          </td>
-                        </tr>
+                            </td>
+                          </tr>
+                        <% end %>
                       <% end %>
                       </tbody>
                     </table>

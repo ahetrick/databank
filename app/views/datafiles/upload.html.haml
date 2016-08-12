@@ -1,27 +1,29 @@
-%h1
-  Upload a file
+.row
+  - unless @datafile.upload_status == 'uploading'
+    .alert.alert-success.smaller-text
+      To begin an upload, please first select a file from your computer.
+  - else
+    .alert.alert-warning.smaller-text
+      The system detected an unfinished upload. To resume it, please select the same file and press the green button. <br />
+      Resume not working or receiving error messages? Then please click #{link_to 'here', "/datasets/#{@dataset.key}/datafiles/#{@datafile.web_id}/reset_upload"} to delete the temoporary file and start over.
+
+%button(type="button" class="btn btn-primary")
+  %span(class="glyphicon glyphicon-arrow-left" )
+  Back
+
+%h2
+  Upload File for
+  =link_to "#{@dataset.title}", dataset_path(@dataset.key)
+= @dataset.plain_text_citation
 %hr
 
-=link_to @dataset.plain_text_citation, "/datasets/#{@dataset.key}"
-
-= form_for @datafile, url: upload_datafile_path, method: :post, html: { multipart: true, id: "fileupload" } do |f|
-
+= form_for @datafile, url: "/datasets/#{@dataset.key}/datafiles/#{@datafile.web_id}/upload", method: :post, html: { multipart: true, id: "fileupload" } do |f|
   .row.empty-space
-
-  .row
-    - unless @datafile.upload_status == 'uploading'
-      .alert.alert-success.smaller-text
-        To begin an upload, please first select a file from your computer.
-    - else
-      .alert.alert-warning.smaller-text
-        The system detected an unfinished upload. To resume it, please select the same file and press the green button. <br />
-        Resume not working or receiving error messages? Then please click #{link_to 'here', "/datasets/#{@dataset.key}/datafiles/#{@datafile.web_id}/reset_upload"} to delete the temoporary file and start over.
-
   .row.fileupload-buttonbar
     #js-data{ data: { datafile: @datafile.id } }
-    .col-lg-7
-      .btn.btn-primary.fileinput-button
-        %i.glyphicon.glyphicon-plus
+    .col-md-5
+      %button(type="button" class="btn btn-primary fileinput-button")
+        %span(class="glyphicon glyphicon-plus")
         Select a file
         = f.file_field :binary
 
@@ -30,9 +32,7 @@
 
 :javascript
   $(document).ready(function () {
-    var datafile_id = $('#js-data').data('datafile');
-    var controller_name = $('body').data('controller');
-    var model_instance_path = '/' + controller_name + '/' + datafile_id;
+    var model_instance_path = '/datasets/' + dataset_key + '/datafiles/' + datafile_web_id;
     var resume_path = model_instance_path + '/resume_upload';
     var update_status_path = model_instance_path + '/update_status';
     $('#fileupload').fileupload({
@@ -99,7 +99,7 @@
   <script id="template-download" type="text/x-tmpl">
     {% for (var i=0, file; file=o.files[i]; i++) { %}
         <tr class="template-download fade">
-            <td>
+            <td>cd
                 <span class="preview">
                     {% if (file.thumbnailUrl) { %}
                         <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" data-gallery><img src="{%=file.thumbnailUrl%}"></a>

@@ -230,6 +230,9 @@ class DatasetsController < ApplicationController
       end
     end
     @token = @dataset.current_token
+
+    @ordered_datafiles = @dataset.datafiles.sort_by {|obj| obj.bytestream_name}
+
     set_file_mode
   end
 

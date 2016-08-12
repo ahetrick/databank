@@ -3,18 +3,22 @@ require 'tempfile'
 require 'open-uri'
 require 'fileutils'
 require 'net/http'
+require  Rails.root.join('app', 'uploaders', 'binary_uploader.rb')
 
 OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
 class DatafilesController < ApplicationController
 
-  before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download, :record_download]
+  before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download, :record_download, :upload, :do_upload, :reset_upload, :resume_upload, :update_status]
 
   # GET /datafiles
   # GET /datafiles.json
   def index
     @dataset = Dataset.find_by_key(params[:dataset_id])
     @datafiles = Datafile.all
+    @datafiles.each do |datafile|
+      datafile.destroy unless ( (datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != "") )
+    end
     authorize! :edit, @dataset
   end
 
@@ -48,8 +52,8 @@ class DatafilesController < ApplicationController
     @datafile = Datafile.create(dataset_id: @dataset.id)
     authorize! :edit, @dataset
     respond_to do |format|
-      format.html { redirect_to "/datasets/#{@dataset.key}/datafiles/#{@datafile.web_id}/edit" }
-      format.json { render :edit, status: :created, location: "/datasets/#{@dataset.key}/datafiles/#{@datafile.webi_id}/edit" }
+      format.html { redirect_to "/datasets/#{@dataset.key}/datafiles/#{@datafile.web_id}/upload" }
+      format.json { render :edit, status: :created, location: "/datasets/#{@dataset.key}/datafiles/#{@datafile.webi_id}/upload" }
     end
   end
 
@@ -255,10 +259,83 @@ class DatafilesController < ApplicationController
 
   end
 
+  def upload
+    @dataset = Dataset.find_by_key(params[:dataset_id])
+    raise "#{params.to_yaml}" unless @dataset
+  end
+
+  def do_upload
+    @dataset = Dataset.find_by_key(params[:dataset_id])
+    raise "#{params.to_yaml}" unless @dataset
+
+
+    unpersisted_datafile = Datafile.new(upload_params)
+    unpersisted_datafile.dataset_id = @dataset.id
+
+    # If no file has been uploaded or the uploaded file has a different filename,
+    # do a new upload from scratch
+
+    if !@datafile.binary || !@datafile.binary.file  || (@datafile.binary.file.filename != unpersisted_datafile.binary.file.filename)
+      @datafile.assign_attributes(upload_params)
+      @datafile.upload_status = 'uploading'
+      @datafile.save!
+      render json: to_fileupload and return
+
+    # If the already uploaded file has the same filename, try to resume
+    else
+      current_size = @datafile.binary.size
+      content_range = request.headers['CONTENT-RANGE']
+      begin_of_chunk =  content_range[/\ (.*?)-/,1].to_i # "bytes 100-999999/1973660678" will return '100'
+
+      # If the there is a mismatch between the size of the incomplete upload and the content-range in the
+      # headers, then it's the wrong chunk!
+      # In this case, start the upload from scratch
+      unless begin_of_chunk == current_size
+        @datafile.update!(upload_params)
+        render json: to_fileupload and return
+      end
+
+      # Add the following chunk to the incomplete upload
+      File.open(@datafile.binary.path, "ab") { |f| f.write(upload_params[:binary].read) }
+
+      # Update the upload_file_size attribute
+      @datafile.upload_file_size = @datafile.upload_file_size.nil? ? unpersisted_datafile.binary.file.size : @datafile.upload_file_size + unpersisted_datafile.binary.file.size
+      @datafile.save!
+
+      render json: to_fileupload and return
+
+    end
+
+  end
+
+  def reset_upload
+    @dataset = Dataset.find_by_key(params[:dataset_id])
+    raise "Dataset not Found, params:#{params.to_yaml}" unless @dataset
+    # Allow users to delete uploads only if they are incomplete
+    raise StandardError, "Action not allowed" unless @datafile.upload_status == 'uploading'
+    @datafile.update!(status: 'new', binary: nil)
+    redirect_to "/datasets/#{@dataset.key}/datafiles/#{@datafile.web_id}/upload", notice: "Upload reset successfully. You can now start over"
+  end
+
+  def resume_upload
+    @dataset = Dataset.find_by_key(params[:dataset_id])
+    raise "Dataset not Found, params:#{params.to_yaml}" unless @dataset
+    render json: { file: { name: "/datafiles/#{@dataset.key}/datafiles/#{@datafile.web_id}", size: @datafile.binary.size } } and return
+    #render json: {file: {name: "#{@datafile.binary.file.filename}", size: @datafile.binary.size}} and return
+  end
+
+  def update_status
+    raise ArgumentError, "Wrong status provided " + params[:status] unless @datafile.upload_status == 'uploading' && params[:status] == 'uploaded'
+    @datafile.update!(upload_status: params[:status])
+    head :ok
+  end
+
   def download
     @datafile.record_download(request.remote_ip)
     path = @datafile.bytestream_path
-    send_file path
+    if path
+      send_file path
+    end
   end
 
   def to_fileupload
@@ -269,6 +346,8 @@ class DatafilesController < ApplicationController
                     datafileId: @datafile.id,
                     webId: @datafile.web_id,
                     url: "datafiles/#{@datafile.web_id}",
+                    delete_url: "datafiles/#{@datafile.web_id}",
+                    delete_type: "DELETE",
                     name: "#{@datafile.binary.file.filename}",
                     size: "#{number_to_human_size(@datafile.binary.size)}"
                 }
@@ -283,9 +362,6 @@ class DatafilesController < ApplicationController
   end
 
 
-  def upload
-
-  end
 
   private
   # Use callbacks to share common setup or constraints between actions.
@@ -294,11 +370,13 @@ class DatafilesController < ApplicationController
     raise ActiveRecord::RecordNotFound unless @datafile
   end
 
-
-
   # Never trust parameters from the scary internet, only allow the white list through.
   def datafile_params
     params.require(:datafile).permit(:description, :binary, :web_id, :dataset_id)
+  end
+
+  def upload_params
+    params.require(:datafile).permit(:binary)
   end
 
 end

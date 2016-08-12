@@ -73,6 +73,11 @@
     window.dataset_key = '<%= j @dataset.key %>';
   <% end %>
 <% end %>
+<% if @datafile %>
+  <%= javascript_tag do %>
+    window.datafile_web_id = '<%= j @datafile.web_id %>';
+  <% end %>
+<% end %>
 
 <% if current_user && current_user.role %>
   <%= javascript_tag do %>
