@@ -26,6 +26,10 @@ class DatasetsController < ApplicationController
 
   before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message, :get_new_token]
 
+  before_action :remove_empty_datafiles, only: [:show, :edit]
+
+
+
   @@num_box_ingest_deamons = 10
 
   # enable streaming responses
@@ -1064,6 +1068,11 @@ class DatasetsController < ApplicationController
       Databank::Application.file_mode = Databank::FileMode::READ_ONLY
     end
 
+  end
+
+  def remove_empty_datafiles
+    set_dataset unless @dataset
+    @dataset.remove_invalid_datafiles
   end
 
 

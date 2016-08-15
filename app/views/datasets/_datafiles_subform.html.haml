@@ -71,46 +71,46 @@
                   - @ordered_datafiles.each_with_index do |datafile, i|
 
                     = f.fields_for :datafiles, datafile do |df|
+                      - if (datafile.binary && datafile.binary.file  && datafile.binary.size > 0 ) || (datafile.medusa_path && datafile.medusa_path != "")
+                        - if datafile.bytestream_name != ""
+                          -if datafile.job_status == :complete
+                            %tr(id="datafile_index_#{i}")
+                              %td
+                                .row
+                                  %span(class="col-md-8")
 
-                      - if datafile.bytestream_name != ""
-                        -if datafile.job_status == :complete
-                          %tr(id="datafile_index_#{i}")
-                            %td
-                              .row
-                                %span(class="col-md-8")
-
-                                  = datafile.bytestream_name
-                                  %input(type="text" class="bytestream_name" value="#{datafile.bytestream_name}" )
-                                %span(class="col-md-2")
-                                  = number_to_human_size(datafile.bytestream_size)
-                                %span(class="col-md-2")
-                                  - if ( (@dataset.publication_state == Databank::PublicationState::DRAFT) && ((can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?))) )
-                                    %button(type="button" class="btn btn-danger btn-sm" onclick="remove_file_row(#{i})")
-                                      %span(class="glyphicon glyphicon-trash")
-                          = df.hidden_field :_destroy, value: false
-                          = df.hidden_field :web_id
-                        -else
-                          %tr(id="job#{datafile.job.id}")
-                            %td
-                              .row
-                                %span(class="col-md-4")
-                                  = datafile.box_filename
-                                %span(class="col-md-6")
-                                  %span(class="metadata-label")
-                                    STATUS:
-                                  %span(class="metadata-value" )
-                                    = datafile.job_status
-                                  %span(class="metadata-label" )
-                                    | PROGRESS:
-                                  %span(class="metadata-value" )
-                                    = number_to_human_size((datafile.job.progress_current) * 10000)
-                                    of
-                                    = datafile.box_filesize_display
-                                  %span(class="metadata-note" )
-                                    (refresh page to update)
-                                %span(class="col-md-2")
-                                  - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
-                                    %button(class="cancel-upload-btn btn btn-danger btn-sm" onclick="cancelUpload('#{datafile.web_id}', '#{datafile.job_id}')") Cancel
+                                    = datafile.bytestream_name
+                                    %input(type="text" class="bytestream_name" value="#{datafile.bytestream_name}" )
+                                  %span(class="col-md-2")
+                                    = number_to_human_size(datafile.bytestream_size)
+                                  %span(class="col-md-2")
+                                    - if ( (@dataset.publication_state == Databank::PublicationState::DRAFT) && ((can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?))) )
+                                      %button(type="button" class="btn btn-danger btn-sm" onclick="remove_file_row(#{i})")
+                                        %span(class="glyphicon glyphicon-trash")
+                            = df.hidden_field :_destroy, value: false
+                            = df.hidden_field :web_id
+                          -else
+                            %tr(id="job#{datafile.job.id}")
+                              %td
+                                .row
+                                  %span(class="col-md-4")
+                                    = datafile.box_filename
+                                  %span(class="col-md-6")
+                                    %span(class="metadata-label")
+                                      STATUS:
+                                    %span(class="metadata-value" )
+                                      = datafile.job_status
+                                    %span(class="metadata-label" )
+                                      | PROGRESS:
+                                    %span(class="metadata-value" )
+                                      = number_to_human_size((datafile.job.progress_current) * 10000)
+                                      of
+                                      = datafile.box_filesize_display
+                                    %span(class="metadata-note" )
+                                      (refresh page to update)
+                                  %span(class="col-md-2")
+                                    - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
+                                      %button(class="cancel-upload-btn btn btn-danger btn-sm" onclick="cancelUpload('#{datafile.web_id}', '#{datafile.job_id}')") Cancel
 
             %div(id="datafiles_upload_progress")
 

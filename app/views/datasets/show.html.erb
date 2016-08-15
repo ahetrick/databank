@@ -341,36 +341,34 @@
                       <% if @ordered_datafiles %>
 
                         <% @ordered_datafiles.each do |datafile| %>
-                          <tr class="row">
-                            <td>
-                              <% if datafile.job_status == :complete %>
+                          <% if ((datafile.job_status == :complete) && ((datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != "")) )%>
+                            <tr class="row">
+                              <td>
 
-                                <div class="row checkbox">
+                                  <div class="row checkbox">
 
-                                <span class="col-md-8">
-                                  <% if @all_in_medusa || @total_files_size < @local_zip_max_size %>
-                                    <label>
-                                      <input type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="<%= datafile.web_id %>"><%= datafile.bytestream_name %>
-                                    </label>
-                                  <% else %>
-                                     <%= datafile.bytestream_name %>
-                                  <% end %>
+                                  <span class="col-md-8">
+                                    <% if @all_in_medusa || @total_files_size < @local_zip_max_size %>
+                                      <label>
+                                        <input type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="<%= datafile.web_id %>"><%= datafile.bytestream_name %>
+                                      </label>
+                                    <% else %>
+                                       <%= datafile.bytestream_name %>
+                                    <% end %>
 
-                                </span>
-                                  <span class="col-md-2"><%= number_to_human_size(datafile.bytestream_size) %></span>
+                                  </span>
+                                    <span class="col-md-2"><%= number_to_human_size(datafile.bytestream_size) %></span>
 
-                                <span class="col-md-2">
-                                  <a href="#" onclick='window.location = "/datafiles/<%= datafile.web_id %>/download"' class=" idb btn btn-primary btn-sm" role="button">
-                                    <span class="glyphicon glyphicon-download"></span> File
-                                  </a>
-                                </span>
+                                  <span class="col-md-2">
+                                    <a href="#" onclick='window.location = "/datafiles/<%= datafile.web_id %>/download"' class=" idb btn btn-primary btn-sm" role="button">
+                                      <span class="glyphicon glyphicon-download"></span> File
+                                    </a>
+                                  </span>
 
-                                </div>
-
-                              <% end %>
-
-                            </td>
-                          </tr>
+                                  </div>
+                              </td>
+                            </tr>
+                          <% end %>
                         <% end %>
                       <% end %>
                       </tbody>
