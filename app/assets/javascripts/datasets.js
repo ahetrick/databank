@@ -160,6 +160,10 @@ ready = function () {
         window.location.assign('/datasets/' + dataset_key + '/datafiles/add');
     });
 
+    $("#portable-upload").click(function() {
+        window.location.assign('/help');
+    });
+
     if (!$('#dataset_embargo').val()) {
 
         $('#release-date-picker').hide();

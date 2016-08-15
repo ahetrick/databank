@@ -186,6 +186,12 @@
               Select one or more files from your computer
             /# The file input field used as target for the file upload widget
             = df.file_field :binary, name: "datafile[binary]", multiple: true
+          %span(class="metadata-label")or
+          .btn.btn-info.fileinput-button(id="api-modal-btn")
+            %span(class="fileinput-button-content")
+              %span(class="glyphicon glyphicon-open" )
+              Use File Upload API
+
       .row.text-center
         .large-files
           Small or large files:
@@ -193,14 +199,14 @@
             %span(class="fileinput-button-content" )
               %span(class="fa fa-laptop fa-lg" )
               Select a file from your computer
-
           %span(class="metadata-label")or
           %div(id="box-select" data-link-type="direct" data-multiselect="true" data-client-id="r5tgofc05460skm84yjepz1ck16ptotr")
           %span(class="metadata-label")or
-          .btn.btn-info.fileinput-button(id="api-modal-btn")
+          .btn.btn-primary.fileinput-button(id="portable-upload")
             %span(class="fileinput-button-content")
-              %span(class="glyphicon glyphicon-open" )
-              Use File Upload API
+              %span(class="glyphicon glyphicon-briefcase" )
+              Contact us about portable upload
+
       .row.text-center
         - if can? :manage, @dataset
           %span(class="metadata-label")
