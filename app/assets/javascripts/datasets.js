@@ -156,6 +156,10 @@ ready = function () {
 
     // console.log("val: " + $('#dataset_embargo').val());
 
+    $("#chunked-upload-btn").click(function() {
+        window.location.assign('/datasets/' + dataset_key + '/datafiles/add');
+    });
+
     if (!$('#dataset_embargo').val()) {
 
         $('#release-date-picker').hide();
