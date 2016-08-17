@@ -10,6 +10,12 @@ class ApiDatasetController < ApplicationController
 
     begin
       df = Datafile.create(dataset_id: @dataset.id, binary: params['binary'])
+
+      unless df && df.binary && df.binary.file && df.binary.file.size > 0
+        raise 'Error uploading file. If error persists, please contact the Research Data Service.'
+        df.destroy if df
+      end
+
       render json: "successfully uploaded #{df.binary.file.filename}\nsee in dataset at #{IDB_CONFIG[:root_url_text]}/datasets/#{@dataset.key} \n", status: 200
     rescue Exception::StandardError => ex
       Rails.logger.warn ex.message
