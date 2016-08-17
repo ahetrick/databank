@@ -40,7 +40,7 @@
       -if @token
         %pre
           %code
-            = %Q[curl -F "binary=@/path/to/my_datafile.csv" -H "Authorization: Token token=#{@token.identifier}" -H "Transfer-Encoding: chunked"  -X POST #{IDB_CONFIG[:root_url_text]}/api/dataset/#{@dataset.key}/datafile -o /path/to/output.txt]
+            = %Q[curl -F "binary=@my_datafile.csv" -H "Authorization: Token token=#{@token.identifier}" -H "Transfer-Encoding: chunked"  -X POST #{IDB_CONFIG[:root_url_text]}/api/dataset/#{@dataset.key}/datafile -o output.txt]
             -if IDB_CONFIG[:root_url_text].include?("dev")
               = %Q[-k]
 
