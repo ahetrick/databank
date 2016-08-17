@@ -20,6 +20,7 @@
         %li The request method is POST.
         %li The authorization token must be sent in a header.
         %li If using cURL, the -o option must be used to send response output to a file to see the progress meter.
+        %li Even after the cURL progress meter reaches 100%, additional processing is done, which may take as long as it took to reach 100%.
         -if IDB_CONFIG[:root_url_text].include?("dev")
           %li For rds-dev only, -k at at the end of the cURL command makes it tolerate the self-signed certificate.
         -else
@@ -40,14 +41,16 @@
       -if @token
         %pre
           %code
-            = %Q[curl -F "binary=@my_datafile.csv" -H "Authorization: Token token=#{@token.identifier}" -H "Transfer-Encoding: chunked"  -X POST #{IDB_CONFIG[:root_url_text]}/api/dataset/#{@dataset.key}/datafile -o output.txt]
+            = %Q[curl -F "binary=@my_datafile.csv" -H "Authorization: Token token=#{@token.identifier}" -H "Transfer-Encoding: chunked" -X POST #{IDB_CONFIG[:root_url_text]}/api/dataset/#{@dataset.key}/datafile -o output.txt]
             -if IDB_CONFIG[:root_url_text].include?("dev")
               = %Q[-k]
 
       -else
         %pre
           %code
-            = %Q[curl -F "binary=@/path/to/my_datafile.csv" -H "Authorization: Token token=authentication_token" -H "Transfer-Encoding: chunked"  -X POST #{IDB_CONFIG[:root_url_text]}/api/dataset/dataset_key/datafile  -o /path/to/output.txt]
+            = %Q[curl -F "binary=@/path/to/my_datafile.csv" -H "Authorization: Token token=authentication_token" -H "Transfer-Encoding: chunked" -X POST #{IDB_CONFIG[:root_url_text]}/api/dataset/dataset_key/datafile -o /path/to/output.txt]
+            -if IDB_CONFIG[:root_url_text].include?("dev")
+              = %Q[-k]
 
       %button(type="button" onclick="getToken()" class="btn btn-primary" )
         Get New Token

@@ -202,7 +202,8 @@ ready = function () {
             file = data.files[0];
             num_bytes = file.size || file.fileSize;
             //check filesize and check for duplicate filename
-            if (num_bytes < 2147483648) {
+            //if (num_bytes < 2147483648) {
+            if (true) {
                 if (filename_isdup(file.name)) {
                     alert("Duplicate file error: A file named " + file.name + " is already in this dataset.  For help, please contact the Research Data Service.");
                 }
