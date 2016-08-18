@@ -200,11 +200,11 @@
             %td
               %span(class="fa fa-adjust")
             %td
-              %span(class="fa fa-cirle-o")
+              %span(class="fa fa-circle-o")
             %td
-              %span(class="fa fa-cirle-o")
+              %span(class="fa fa-circle-o")
             %td
-              %span(class="fa fa-cirle-o")
+              %span(class="fa fa-circle-o")
             %td
               Notes
           %tr
@@ -260,6 +260,24 @@
               %span(class="fa fa-adjust")
             %td
               Notes
+          - if can? :manage, @dataset
+            %tr(class="curator-only" )
+              %td
+                %button(type="button" class="btn btn-success" onclick="openRemoteFileModal()" )
+                  %span(class="glyphicon glyphicon-link")
+                  Provide a URL
+              %td
+                %span(class="fa fa-circle")
+              %td
+                %span(class="fa fa-circle")
+              %td
+                %span(class="fa fa-circle")
+              %td
+                %span(class="fa fa-adjust")
+              %td
+                %span(class="fa fa-adjust")
+              %td
+                Notes
           %tr
             %td
               %button(type="button" id="portable-upload" class="btn btn-success fileinput-button" )
@@ -277,24 +295,7 @@
               %span(class="fa fa-circle")
             %td
               Notes
-          - if can? :manage, @dataset
-            %tr(class="curator-only" )
-              %td
-                %button(type="button" class="btn btn-success" onclick="openRemoteFileModal()" )
-                  %span(class="glyphicon glyphicon-link")
-                  Provide a URL
-              %td
-                %span(class="fa fa-circle")
-              %td
-                %span(class="fa fa-circle")
-              %td
-                %span(class="fa fa-circle")
-              %td
-                %span(class="fa fa-circle")
-              %td
-                %span(class="fa fa-circle")
-              %td
-                Notes
+
 
 
 
