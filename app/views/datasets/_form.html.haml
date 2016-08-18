@@ -169,52 +169,135 @@
 
       = render partial: 'datafiles_subform', locals: {f: f}
 
-
   - if ( (@dataset.publication_state == Databank::PublicationState::DRAFT) && ((can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?))) )
     = form_for Datafile.new do |df|
       = df.hidden_field :dataset_id, value: @dataset.id
-      .row.text-center
-        .small-files
-          Small files (up to 250 MB):
-          .file-drop-instruction
-            %span(class="fa fa-cloud-upload fa-2x" )
-            Drop files anywhere on this page
-          %span(class="metadata-label")or
-          .btn.btn-success.fileinput-button
-            %span(class="fileinput-button-content" )
-              %span(class="fa fa-laptop fa-lg" )
-              Select one or more files from your computer
-            /# The file input field used as target for the file upload widget
-            = df.file_field :binary, name: "datafile[binary]", multiple: true
-          %span(class="metadata-label")or
-          .btn.btn-info.fileinput-button(id="api-modal-btn")
-            %span(class="fileinput-button-content")
-              %span(class="glyphicon glyphicon-open" )
-              Use File Upload API
+      %table(class="table" )
+        %thead
+          %tr
+            %td
 
-      .row.text-center
-        .large-files
-          Small or large files:
-          .btn.btn-success.fileinput-button(id="chunked-upload-btn")
-            %span(class="fileinput-button-content" )
-              %span(class="fa fa-laptop fa-lg" )
-              Select a file from your computer
-          %span(class="metadata-label")or
-          %div(id="box-select" data-link-type="direct" data-multiselect="true" data-client-id="r5tgofc05460skm84yjepz1ck16ptotr")
-          %span(class="metadata-label")or
-          .btn.btn-primary.fileinput-button(id="portable-upload")
-            %span(class="fileinput-button-content")
-              %span(class="glyphicon glyphicon-briefcase" )
-              Contact us about portable upload
+            %td
+              < 500 MB
+            %td
+              < 4 GB
+            %td
+              < 15 GB
+            %td
+              < 100 GB
+            %td
+              < 2 TB
+            %td
+              Notes
+        %tbody
+          %tr
+            %td
+              .file-drop-instruction
+                %span(class="fa fa-cloud-upload fa-2x" )
+                Drop files anywhere on this page
+            %td
+              %span(class="fa fa-circle")
+            %td
+              %span(class="fa fa-adjust")
+            %td
+              %span(class="fa fa-cirle-o")
+            %td
+              %span(class="fa fa-cirle-o")
+            %td
+              %span(class="fa fa-cirle-o")
+            %td
+              Notes
+          %tr
+            %td
+              .btn.btn-success.fileinput-button
+                %span(class="fileinput-button-content" )
+                  %span(class="fa fa-laptop fa-lg" )
+                  Select files from your computer
+                /# The file input field used as target for the file upload widget
+                = df.file_field :binary, name: "datafile[binary]", multiple: true
+            %td
+              %span(class="fa fa-circle")
+            %td
+              %span(class="fa fa-adjust")
+            %td
+              %span(class="fa fa-circle-o")
+            %td
+              %span(class="fa fa-circle-o")
+            %td
+              %span(class="fa fa-circle-o")
+            %td
+              Notes
+          %tr
+            %td
+              %div(id="box-select" data-link-type="direct" data-multiselect="true" data-client-id="r5tgofc05460skm84yjepz1ck16ptotr")
+            %td
+              %span(class="fa fa-circle")
+            %td
+              %span(class="fa fa-circle")
+            %td
+              %span(class="fa fa-circle")
+            %td
+              %span(class="fa fa-circle-o")
+            %td
+              %span(class="fa fa-circle-o")
+            %td
+              Notes
+          %tr
+            %td
+              .btn.btn-success.fileinput-button(id="api-modal-btn")
+                %span(class="fileinput-button-content")
+                  %span(class="glyphicon glyphicon-open" )
+                  Use File Upload API
+            %td
+              %span(class="fa fa-circle")
+            %td
+              %span(class="fa fa-circle")
+            %td
+              %span(class="fa fa-circle")
+            %td
+              %span(class="fa fa-adjust")
+            %td
+              %span(class="fa fa-adjust")
+            %td
+              Notes
+          %tr
+            %td
+              %button(type="button" id="portable-upload" class="btn btn-success fileinput-button" )
+                %span(class="glyphicon glyphicon-ice-lolly" )
+                Request physical pickup
+            %td
+              %span(class="fa fa-circle")
+            %td
+              %span(class="fa fa-circle")
+            %td
+              %span(class="fa fa-circle")
+            %td
+              %span(class="fa fa-circle")
+            %td
+              %span(class="fa fa-circle")
+            %td
+              Notes
+          - if can? :manage, @dataset
+            %tr(class="curator-only" )
+              %td
+                %button(type="button" class="btn btn-success" onclick="openRemoteFileModal()" )
+                  %span(class="glyphicon glyphicon-link")
+                  Provide a URL
+              %td
+                %span(class="fa fa-circle")
+              %td
+                %span(class="fa fa-circle")
+              %td
+                %span(class="fa fa-circle")
+              %td
+                %span(class="fa fa-circle")
+              %td
+                %span(class="fa fa-circle")
+              %td
+                Notes
 
-      .row.text-center
-        - if can? :manage, @dataset
-          %span(class="metadata-label")
-          .curator-only
-            or
-            %button(type="button" class="btn btn-primary" onclick="openRemoteFileModal()" )
-              %span(class="glyphicon glyphicon-link")
-              Provide a URL
+
+
 
 
   .review-deposit-agreement.container-fluid
