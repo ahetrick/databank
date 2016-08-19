@@ -810,6 +810,46 @@ class Dataset < ActiveRecord::Base
     changesHash
   end
 
+  def persistent_url
+    (self.identifier && !self.identifier.empty?) ? "https://doi.org/#{self.identifier}" : ""
+  end
+
+  def stuctured_data
+    return_string = ""
+    return_string << %Q[<script type="application/ld+json">{"@context": "http://schema.org", "@type": "Dataset", "@title": "#{self.title}"]
+
+    self.creators.each do |creator|
+      return_string << %Q[, "@creator": "#{creator.given_name} #{creator.family_name}"]
+    end
+
+    if self.keywords && self.keywords != ""
+
+      keywordArr = self.keywords.split(";")
+
+        if keywordArr.length > 0
+
+          keyword_commas = ""
+
+          keywordArr.each_with_index do |keyword, i|
+            if i != 0
+              keyword_commas << ", "
+            end
+            keyword_commas << keyword.strip
+          end
+
+          return_string << %Q[, "@keywords": "#{keyword_commas}" ]
+
+        else
+          return_string << %Q[, "@keywords": "#{keywordArr[0]}" ]
+        end
+
+    end
+
+    return_string << %Q[}</script>]
+
+    return return_string
+  end
+
   def self.make_anvl(metadata)
     anvl = ""
     metadata_count = metadata.count
@@ -826,7 +866,6 @@ class Dataset < ActiveRecord::Base
   def self.anvl_escape(s)
     URI.escape(s, /[%:\n\r]/)
   end
-
 
   private
 
