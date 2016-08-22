@@ -816,10 +816,10 @@ class Dataset < ActiveRecord::Base
 
   def stuctured_data
     return_string = ""
-    return_string << %Q[<script type="application/ld+json">{"@context": "http://schema.org", "@type": "Dataset", "@title": "#{self.title}"]
+    return_string << %Q[<script type="application/ld+json">{"@context": "http://schema.org", "@type": "Dataset", "name": "#{self.title}"]
 
     self.creators.each do |creator|
-      return_string << %Q[, "@creator": "#{creator.given_name} #{creator.family_name}"]
+      return_string << %Q[, "author": {"@type": "Person", "name":"#{creator.given_name} #{creator.family_name}"]
     end
 
     if self.keywords && self.keywords != ""
@@ -837,10 +837,10 @@ class Dataset < ActiveRecord::Base
             keyword_commas << keyword.strip
           end
 
-          return_string << %Q[, "@keywords": "#{keyword_commas}" ]
+          return_string << %Q[, "keywords": "#{keyword_commas}" ]
 
         else
-          return_string << %Q[, "@keywords": "#{keywordArr[0]}" ]
+          return_string << %Q[, "keywords": "#{keywordArr[0]}" ]
         end
 
     end
