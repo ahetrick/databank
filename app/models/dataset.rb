@@ -750,6 +750,14 @@ class Dataset < ActiveRecord::Base
     Dir.mkdir dir_text
     FileUtils.chmod "u=wrx,go=rx", File.dirname(dir_text)
     path = "#{dir_text}/deposit_agreement.txt"
+    unless File.exists? "#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.txt"
+      if File.exists? "#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.bk"
+        FileUtils.cp "#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.bk", "#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.txt"
+      else
+        raise "deposit agreement template not found"
+      end
+    end
+
     base_content = File.read("#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.txt")
     agent_text = "License granted by #{self.depositor_name} on #{self.created_at.iso8601}\n\n"
     agent_text << "=================================================================================================================\n\n"
@@ -769,6 +777,10 @@ class Dataset < ActiveRecord::Base
       f.write(content)
     end
     FileUtils.chmod "u=wrx,go=rx", path
+
+
+
+
   end
 
   def send_incomplete_1m
