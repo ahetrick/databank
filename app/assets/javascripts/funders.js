@@ -2,7 +2,7 @@
 
 var funders_ready;
 funders_ready = function () {
-    $('.funder-text').css("visibility", "hidden");
+    //$('.funder-text').css("visibility", "hidden");
     handleFunderTable();
     //alert("funders.js javascript working");
 }
@@ -43,8 +43,8 @@ function handleFunderChange(funderIndex) {
 
         case "IDOT":
             $('#dataset_funders_attributes_' + funderIndex + '_name').val('Illinois Department of Transportation (IDOT)');
-            $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('');
-            $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('');
+            $('#dataset_funders_attributes_' + funderIndex + '_identifier').val('10.13039/100009637');
+            $('#dataset_funders_attributes_' + funderIndex + '_identifier_scheme').val('DOI');
             break;
 
         case "USARMY":
