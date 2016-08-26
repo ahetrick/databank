@@ -56,6 +56,13 @@
                     %input(type="checkbox" name="datacite_relation" value="#{Databank::Relationship::SUPPLEMENT_TO}" class="material_checkbox_#{i}" onchange="handle_relationship_box(#{i})" )
                       = Databank::Relationship::SUPPLEMENT_TO
                   %br
+                  - if dataciteArr && dataciteArr.include?(Databank::Relationship::SUPPLEMENTED_BY)
+                    %input(type="checkbox" name="datacite_relation" value="#{Databank::Relationship::SUPPLEMENTED_BY}" class="material_checkbox_#{i}" onchange="handle_relationship_box(#{i})" checked )
+                      = Databank::Relationship::SUPPLEMENTED_BY
+                  - else
+                    %input(type="checkbox" name="datacite_relation" value="#{Databank::Relationship::SUPPLEMENTED_BY}" class="material_checkbox_#{i}" onchange="handle_relationship_box(#{i})" )
+                      = Databank::Relationship::SUPPLEMENTED_BY
+                  %br
                   - if dataciteArr  && dataciteArr.include?(Databank::Relationship::CITED_BY)
                     %input(type="checkbox" name="datacite_relation" value="#{Databank::Relationship::CITED_BY}" class="material_checkbox_#{i}" onchange="handle_relationship_box(#{i})" checked )
                       = Databank::Relationship::CITED_BY

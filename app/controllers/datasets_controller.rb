@@ -355,14 +355,16 @@ class DatasetsController < ApplicationController
           if datafile.bytestream_name && ((datafile.bytestream_name).downcase == "license.txt")
             has_license_file = true
             temporary_datafile = Datafile.create(dataset_id: proposed_dataset.id)
-            temporary_datafile.binary = Pathname.new(datafile.bytestream_path).open()
+            FileUtils.cp "#{datafile.bytestream_path}", "#{IDB_CONFIG[:agreements_root_path]}/new/license.txt"
+            temporary_datafile.binary = Pathname.new("#{IDB_CONFIG[:agreements_root_path]}/new/license.txt").open()
             temporary_datafile.save
           end
         end
 
         unless has_license_file
           temporary_datafile = Datafile.create(dataset_id: proposed_dataset.id)
-          temporary_datafile.binary = Pathname.new("#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.txt").open()
+          FileUtils.cp "#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.txt", "#{IDB_CONFIG[:agreements_root_path]}/new/tempfile.txt"
+          temporary_datafile.binary = Pathname.new("#{IDB_CONFIG[:agreements_root_path]}/new/tempfile.txt").open()
           temporary_datafile.save
         end
 

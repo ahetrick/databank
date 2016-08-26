@@ -39,6 +39,7 @@ module Databank
 
   class Relationship
     SUPPLEMENT_TO = 'IsSupplementTo'
+    SUPPLEMENTED_BY = 'IsSupplementedBy'
     CITED_BY = 'IsCitedBy'
     PREVIOUS_VERSION_OF = 'IsPreviousVersionOf'
     NEW_VERSION_OF = 'IsNewVersionOf'
