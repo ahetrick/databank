@@ -215,9 +215,30 @@ ready = function () {
         
         downloadTemplate: null,
         downloadTemplateId: null,
+        uploadTemplate: null,
+        uploadTemplateId: null,
 
         add: function (e, data) {
+            
+            $('#collapseFiles').collapse('show');
+
+            var cancelBtn = $( '<a/>' )
+                .attr( 'href', 'javascript:void(0)' )
+                .addClass('btn')
+                .addClass('btn-danger')
+                .addClass('idb')
+                .append('<span class="glyphicon glyphicon-remove"/>')
+                .append( 'Cancel Upload' )
+                .click( function() {
+                    data.abort();
+                    data.context.remove();
+                } );
+
+
             file = data.files[0];
+
+            var uploadRow = $('<div class="upload"><div class="progress"><div class="bar progress-bar" style="width: 0%;"></div></div></div>');
+
             num_bytes = file.size || file.fileSize;
             //check filesize and check for duplicate filename
             if (num_bytes < 4194304000) {
@@ -226,7 +247,10 @@ ready = function () {
                     alert("Duplicate file error: A file named " + file.name + " is already in this dataset.  For help, please contact the Research Data Service.");
                 }
                 else {
-                    data.context = $(tmpl("template-upload", data));
+                    data.context = uploadRow;
+                    data.context.prepend(file.name.toString());
+                    data.context.prepend("  ");
+                    data.context.prepend(cancelBtn);
                     $('#datafiles_upload_progress').append(data.context);
                     return data.submit();
                 }
@@ -242,6 +266,9 @@ ready = function () {
             var progress;
             if (data.context) {
                 progress = parseInt(data.loaded / data.total * 100, 10);
+                if (progress > 99){
+                    data.context.prepend("processing...");
+                }
                 return data.context.find('.bar').css('width', progress + '%');
             }
         },
