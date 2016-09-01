@@ -166,17 +166,17 @@ function remove_funder_row(funder_index) {
     if ($("#dataset_funders_attributes_" + funder_index + "_id").val() != undefined) {
         $("#dataset_funders_attributes_" + funder_index + "__destroy").val("true");
         $("#deleted_funder_table > tbody:last-child").append($("#funder_index_" + funder_index));
+        $("#funder_index_" + funder_index).hide();
+    } else {
+        $("#funder_index_" + funder_index).remove();
     }
-
-    $("#funder_index_" + funder_index).hide();
-
+    
     if ($("#funder_table tr").length < 2) {
         add_funder_row();
     }
     $('#update-confirm').prop('disabled', false);
     handleFunderTable();
 }
-
 
 $(document).ready(funders_ready);
 $(document).on('page:load', funders_ready);
