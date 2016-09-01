@@ -212,19 +212,21 @@ ready = function () {
     });
 
     $("#new_datafile").fileupload({
+        
         downloadTemplate: null,
         downloadTemplateId: null,
+
         add: function (e, data) {
             file = data.files[0];
             num_bytes = file.size || file.fileSize;
             //check filesize and check for duplicate filename
-            //if (num_bytes < 2147483648) {
-            if (true) {
+            if (num_bytes < 4194304000) {
+            //if (true) {
                 if (filename_isdup(file.name)) {
                     alert("Duplicate file error: A file named " + file.name + " is already in this dataset.  For help, please contact the Research Data Service.");
                 }
                 else {
-                    data.context = $(tmpl("template-upload", data.files[0]));
+                    data.context = $(tmpl("template-upload", data));
                     $('#datafiles_upload_progress').append(data.context);
                     return data.submit();
                 }
@@ -233,7 +235,7 @@ ready = function () {
             }
             else {
                 //alert('num_bytes: ' + num_bytes);
-                alert("For files larger than 2GB, please import from box.");
+                alert("For files larger than 4GB, use an alternative upload method.");
             }
         },
         progress: function (e, data) {
@@ -243,8 +245,9 @@ ready = function () {
                 return data.context.find('.bar').css('width', progress + '%');
             }
         },
+        
         downloadTemplate: function (o) {
-
+            
             var maxId = Number($('#datafile_index_max').val());
             var newId = 1;
 
@@ -255,7 +258,7 @@ ready = function () {
 
             var file = o.files[0];
 
-            console.log(file);
+            //console.log(file);
 
             var row =
                 '<tr id="datafile_index_' + newId + '"><td><div class = "row">' +
@@ -690,7 +693,7 @@ function show_release_date() {
 
 function reset_confirm_msg() {
 
-    console.log("inside reset confirm msg");
+    //console.log("inside reset confirm msg");
 
     if ($('.publish-msg').html() != undefined && $('.publish-msg').html().length > 0) {
         var new_embargo = $('#dataset_embargo').val();
@@ -725,6 +728,21 @@ function getToken() {
         //console.log(data);
         $('.current-token').html("<p><strong>Current Token:</strong> " + data.token + "<br/><strong>Expires:</strong> " + (new Date(data.expires)).toISOString() + "</p>")
     });
+}
+
+function cancelUpload(){
+
+    if (!event) {
+        event = window.event; // Older versions of IE use
+                              // a global reference
+                              // and not an argument.
+    };
+
+    var el = (event.target || event.srcElement); // DOM uses 'target';
+    // older versions of
+    // IE use 'srcElement'
+    console.log($(el).parent().parent());
+    $(el).parent().remove();
 }
 
 $(document).ready(ready);

@@ -251,8 +251,10 @@ class DatafilesController < ApplicationController
 
       if @dataset
         format.html{ redirect_to edit_dataset_path(@dataset.key)}
+        format.json{ render json: 'deleted', status: :ok }
       else
-        format.html { redirect_to "/datasets" }
+        format.html { redirect_to "/datasets/edit" }
+        format.json{ render json: 'deleted', status: :ok }
       end
       format.json{ render json: 'deleted', status: :ok}
     end
