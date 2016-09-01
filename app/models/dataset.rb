@@ -334,6 +334,8 @@ class Dataset < ActiveRecord::Base
     validation_error_messages = Array.new
     validation_error_message = ""
 
+    datafilesArr = Array.new
+
     if !dataset.title || dataset.title.empty?
       validation_error_messages << "title"
     end
@@ -422,6 +424,17 @@ class Dataset < ActiveRecord::Base
 
     if dataset.datafiles.count < 1
       validation_error_messages << "at least one file"
+    else
+      dataset.datafiles.each do |datafile|
+        datafilesArr << datafile.bytestream_name
+      end
+
+      firstDup = datafilesArr.detect{ |e| datafilesArr.count(e) > 1 }
+
+      if firstDup
+        validation_error_messages << "no duplicate filenames (#{firstDup})"
+      end
+
     end
 
     if dataset.embargo && [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA].include?(dataset.embargo)
@@ -777,9 +790,6 @@ class Dataset < ActiveRecord::Base
       f.write(content)
     end
     FileUtils.chmod "u=wrx,go=rx", path
-
-
-
 
   end
 
