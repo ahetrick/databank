@@ -32,8 +32,6 @@ Rails.application.routes.draw do
   end
   resources :creators
 
-
-
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
@@ -54,7 +52,8 @@ Rails.application.routes.draw do
 
   get '/datasets/:id/download_box_file/:box_file_id', to: 'datasets#download_box_file'
 
-  post 'api/dataset/:dataset_key/datafile', to: 'api_dataset#datafile'
+  post 'api/dataset/:dataset_key/upload', to: 'api_dataset#upload', defaults: {format: 'json'}
+  post 'api/dataset/:dataset_key/datafile', to: 'api_dataset#datafile', defaults: {format: 'json'}
   get 'api', to: 'api_dataset#index'
 
   # deposit
