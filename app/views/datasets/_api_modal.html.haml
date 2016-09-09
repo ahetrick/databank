@@ -18,8 +18,12 @@
         and is more tolerant of variations in connectivity.
 
       %p
+        For help, see the
         %a(href="/api" )
           %strong API Reference
+        or
+        =succeed(".") do
+          %a(href="/help#contact") Contact Us
 
       .current-token
         -if @token
@@ -32,7 +36,7 @@
       =@dataset.key
 
       -if @token
-        %h3 Example cURL command:
+        %h3 Example cURL command for the simple protocol:
         %pre
           %code
             = %Q[curl -F "binary=@my_datafile.csv" -H "Authorization: Token token=#{@token.identifier}" -H "Transfer-Encoding: chunked" -X POST #{IDB_CONFIG[:root_url_text]}/api/dataset/#{@dataset.key}/datafile -o output.txt]
