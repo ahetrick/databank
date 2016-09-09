@@ -3,11 +3,7 @@ require 'digest/md5'
 
 class ApiDatasetController < ApplicationController
 
-  before_action :authenticate, except: [:index]
   skip_before_action :verify_authenticity_token, only: [:datafile, :upload]
-
-  def index
-  end
 
   def datafile
     Rails.logger.warn params.to_yaml

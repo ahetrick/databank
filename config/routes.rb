@@ -54,7 +54,6 @@ Rails.application.routes.draw do
 
   post 'api/dataset/:dataset_key/upload', to: 'api_dataset#upload', defaults: {format: 'json'}
   post 'api/dataset/:dataset_key/datafile', to: 'api_dataset#datafile', defaults: {format: 'json'}
-  get 'api', to: 'api_dataset#index'
 
   # deposit
   get '/datasets/:id/publish', to: 'datasets#publish'

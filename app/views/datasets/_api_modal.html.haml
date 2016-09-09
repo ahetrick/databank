@@ -7,20 +7,24 @@
 
     .modal-body
       %p
-        The Illinois Data Bank file upload APIs allow you to upload a file to a draft dataset - before it is published or scheduled for publication. The
-        %a(href="/api#api_upload_simple" )simple
+        The Illinois Data Bank file upload APIs allow you to upload a file to an unpublished dataset.
+      %p
+        The
+        %a(href="/help#api_upload_simple" )simple
         one-call protocol supports files
         %emp up to 4GB
-        in size. The
-        %a(href="/api#api_upload_complex" )complex
+        in size.
+      %p
+        The
+        %a(href="/help#api_upload_complex" )complex
         protocol requires several coordinated calls, but supports files
         %em up to 2TB
         and is more tolerant of variations in connectivity.
 
       %p
         For help, see the
-        %a(href="/api" )
-          %strong API Reference
+        =succeed(",") do
+          %a(href="/help#api" ) API Reference
         or
         =succeed(".") do
           %a(href="/help#contact") Contact Us
