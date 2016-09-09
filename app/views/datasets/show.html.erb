@@ -343,7 +343,7 @@
                       <% if @ordered_datafiles %>
 
                         <% @ordered_datafiles.each do |datafile| %>
-                          <% if ((datafile.job_status == :complete) && ((datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != "")) )%>
+                          <% if ((datafile.bytestream_size > 0) && (datafile.job_status == :complete) && ((datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != "")) )%>
                             <tr class="row">
                               <td>
 

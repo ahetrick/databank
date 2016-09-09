@@ -104,26 +104,27 @@ class DatasetsController < ApplicationController
 
     @dataset.datafiles.each do |df|
 
-      if df.bytestream_size > 500000000
-        @single_download_ok = false
+      if df.bytestream_size == 0
+        df.destroy
+      else
+
+        if df.bytestream_size > 500000000
+          @single_download_ok = false
+        end
+
+        @total_files_size = @total_files_size + df.bytestream_size
+        if !df.medusa_path || df.medusa_path == ""
+          # Rails.logger.warn "no path found for #{df.to_yaml}"
+          @all_in_medusa = false
+        end
       end
 
-      @total_files_size = @total_files_size + df.bytestream_size
-      if !df.medusa_path || df.medusa_path == ""
-        # Rails.logger.warn "no path found for #{df.to_yaml}"
-        @all_in_medusa = false
-      end
-
-
-      @ordered_datafiles = @dataset.datafiles.sort_by {|obj| obj.bytestream_name}
-
-
-      # Rails.logger.warn @ordered_datafiles.to_yaml
-
-      set_file_mode
 
     end
 
+    @ordered_datafiles = @dataset.datafiles.sort_by {|obj| obj.bytestream_name}
+
+    set_file_mode
 
     @completion_check = Dataset.completion_check(@dataset, current_user)
 

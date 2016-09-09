@@ -11,99 +11,104 @@ class ApiDatasetController < ApplicationController
 
   def datafile
 
-    begin
-        df = Datafile.create(dataset_id: @dataset.id, binary: params['binary'])
+    if params.has_key?('binary')
 
-        unless df && df.binary && df.binary.file && df.binary.file.size > 0
-          raise 'Error uploading file. If error persists, please contact the Research Data Service.'
-          df.destroy if df
+
+      begin
+          df = Datafile.create(dataset_id: @dataset.id, binary: params['binary'])
+
+          unless df && df.binary && df.binary.file && df.binary.file.size > 0
+            raise 'Error uploading file. If error persists, please contact the Research Data Service.'
+            df.destroy if df
+          end
+
+          render json: "successfully uploaded #{df.binary.file.filename}\nsee in dataset at #{IDB_CONFIG[:root_url_text]}/datasets/#{@dataset.key} \n", status: 200
+        rescue Exception::StandardError => ex
+          Rails.logger.warn ex.message
+          render json: "#{ex.message}\n", status: 500
+      end
+
+    elsif params.has_key?('phase')
+      begin
+
+        unless params.has_key?('phase')
+          render json: "missing paramter: phase", status: 400
+        end
+        unless params.has_key?('filename')
+          render json: "missing paramter: filename", status: 400
         end
 
-        render json: "successfully uploaded #{df.binary.file.filename}\nsee in dataset at #{IDB_CONFIG[:root_url_text]}/datasets/#{@dataset.key} \n", status: 200
+        case params['phase']
+          when 'setup'
+
+            if File.directory?("#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}")
+              FileUtils.rm_rf("#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}")
+            end
+
+            FileUtils::mkdir_p "#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}"
+            FileUtils.touch("#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}/#{params['filename']}")
+            if File.exists?("#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}/#{params['filename']}")
+              render json: "successfully set up #{params['filename']}", status: 200
+            else
+              render json: "error setting up #{params['filename']}", status: 500
+            end
+
+          when 'transfer'
+
+            raise "missing paramater: previous_size" unless params.has_key?('previous_size')
+            raise "missing bytechunk" unless params.has_key?('bytechunk')
+
+            writepath = "#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}/#{params['filename']}"
+            begin
+              File.open(writepath, "a") do |f|
+                f.write(File.read(params['bytechunk'].open))
+              end
+              render json: "successfully added chunk to #{params['filename']}", status: 200
+            rescue Exception::StandardError => ex
+              Rails.logger.warn ex.message
+              render json: "#{ex.message}\n", status: 500
+            end
+
+          when 'verify'
+            raise "missing checksum" unless params.has_key?('checksum')
+
+            writepath = "#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}/#{params['filename']}"
+
+            Rails.logger.warn "#{params['checksum']}"
+            Rails.logger.warn "#{md5(writepath)}"
+
+            if (params['checksum']).to_s.eql?(md5(writepath).to_s)
+
+              df = Datafile.create(dataset_id: @dataset.id)
+              df.binary = Pathname.new(writepath).open
+              df.save
+
+              unless df && df.binary && df.binary.file && df.binary.file.size > 0
+                raise 'Error uploading file. If error persists, please contact the Research Data Service.'
+                df.destroy if df
+              end
+
+              render json: "#{params['filename']} successfully uploaded.  Refresh dataset page to see newly uploaded file. #{IDB_CONFIG[:root_url_text]}/datasets/#{@dataset.key}/edit", status: 200
+            else
+              render json: "upload error, checksum verification failed", status: 500
+            end
+
+          else
+            render json: "invalid phase parameter: #{params['phase']}", status: 400
+        end
+
+
       rescue Exception::StandardError => ex
         Rails.logger.warn ex.message
         render json: "#{ex.message}\n", status: 500
       end
+    else
+      render json: "invalid request", status: 500
+
+    end
+
 
   end
-
- def upload
-
-   begin
-
-     unless params.has_key?('phase')
-       render json: "missing paramter: phase", status: 400
-     end
-     unless params.has_key?('filename')
-      render json: "missing paramter: filename", status: 400
-     end
-
-     case params['phase']
-       when 'setup'
-
-         if File.directory?("#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}")
-           FileUtils.rm_rf("#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}")
-         end
-
-         FileUtils::mkdir_p "#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}"
-         FileUtils.touch("#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}/#{params['filename']}")
-         if File.exists?("#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}/#{params['filename']}")
-           render json: "successfully set up #{params['filename']}", status: 200
-         else
-           render json: "error setting up #{params['filename']}", status: 500
-         end
-
-       when 'transfer'
-
-         raise "missing paramater: previous_size" unless params.has_key?('previous_size')
-         raise "missing bytechunk" unless params.has_key?('bytechunk')
-
-         writepath = "#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}/#{params['filename']}"
-         begin
-           File.open(writepath, "a") do |f|
-             f.write(File.read(params['bytechunk'].open))
-           end
-           render json: "successfully added chunk to #{params['filename']}", status: 200
-         rescue Exception::StandardError => ex
-           Rails.logger.warn ex.message
-           render json: "#{ex.message}\n", status: 500
-         end
-
-       when 'verify'
-         raise "missing checksum" unless params.has_key?('checksum')
-
-         writepath = "#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}/#{params['filename']}"
-
-         Rails.logger.warn "#{params['checksum']}"
-         Rails.logger.warn "#{md5(writepath)}"
-
-         if (params['checksum']).to_s.eql?(md5(writepath).to_s)
-
-           df = Datafile.create(dataset_id: @dataset.id)
-           df.binary = Pathname.new(writepath).open
-           df.save
-
-           unless df && df.binary && df.binary.file && df.binary.file.size > 0
-             raise 'Error uploading file. If error persists, please contact the Research Data Service.'
-             df.destroy if df
-           end
-
-           render json: "#{params['filename']} successfully uploaded.  Refresh dataset page to see newly uploaded file. #{IDB_CONFIG[:root_url_text]}/datasets/#{@dataset.key}/edit", status: 200
-         else
-           render json: "upload error, checksum verification failed", status: 500
-         end
-
-       else
-         render json: "invalid phase parameter: #{params['phase']}", status: 400
-     end
-
-
-   rescue Exception::StandardError => ex
-       Rails.logger.warn ex.message
-       render json: "#{ex.message}\n", status: 500
-   end
-
- end
 
   protected
 
