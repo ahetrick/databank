@@ -10,9 +10,9 @@ class ApiDatasetController < ApplicationController
   end
 
   def datafile
+    Rails.logger.warn params.to_yaml
 
     if params.has_key?('binary')
-
 
       begin
           df = Datafile.create(dataset_id: @dataset.id, binary: params['binary'])

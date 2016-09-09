@@ -1,0 +1,38 @@
+.bs-callout.bs-callout-info.idb-help(id="api_upload_overview")
+  %h2 Overview
+  %p
+    The Illinois Data Bank file upload APIs allow you to upload a file to a draft dataset - before it is published or scheduled for publication. The
+    %a(href="#api_upload_simple" )simple
+    one-call protocol supports files
+    %emp up to 4GB
+    in size. The
+    %a(href="#api_upload_complex" )complex
+    protocol requires several coordinated calls, but supports files
+    %em up to 2TB
+    and is more tolerant of variations in connectivity.
+  %h3 Preparing the Dataset
+  %p
+    Before uploading a file using either protocol,
+    %a(href="/datasets/new" target="_blank" ) create
+    or
+    %a(href="/datasets" target="_blank" ) find
+    your draft dataset, and navigate to the edit form for that dataset.
+  %p
+    At the bottom of the Files section is a matrix of upload options buttons. Click the [ Use File Upload API ] button to display required elements for use in the APIs.
+  %h3 Dataset Key
+  %p
+    Within the Illinois Data Bank File Upload API information screen triggered by the [ Use File Upload API ] button on a draft dataset edit form, one of the elements displayed is
+    =succeed(".") do
+      %strong Dataset Key
+    This dataset key uniquely identifies this dataset and is required as part of a call for either protocol.  The dataset key does not change while the dataset exists.
+
+  %h3 Authentication Token
+  %p
+    Within the Illinois Data Bank File Upload API information screen triggered by the [ Use File Upload API ] button on a draft dataset edit form, one of the elements that may displayed is
+    =succeed(".") do
+      %strong Current HTTP Authentication Token
+    If not, click on the [ Get New Token ] button at the bottom of the screen to request a token.
+  %p The token expires in 3 days, but a new one can be requested using the same method.
+  %p Anyone can use this token to upload a file to this dataset, so keep it secure.
+  %p A distinct token is required for each dataset.
+

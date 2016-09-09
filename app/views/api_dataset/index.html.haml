@@ -1,3 +1,16 @@
-%h1 Dataset file upload API
+.row(id="help-layout")
+  %nav(class="col-xs-3 bs-docs-sidebar")
+    %ul(class="nav nav-stacked fixed" id="sidebar")
+      %li
+        %a(href="#top" )
+          %strong File Upload APIs
+      %li
+        %a(href="#api_upload_simple") Simple
+      %li
+        %a(href="#api_upload_complex") Complex
 
-%p Informative content.
+  .col-xs-9
+    %h1 File Upload APIs
+    = render partial: 'overview'
+    = render partial: 'simple'
+    = render partial: 'complex'
