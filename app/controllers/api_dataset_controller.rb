@@ -59,9 +59,7 @@ class ApiDatasetController < ApplicationController
             end
 
           when 'transfer'
-
-            Rails.logger.warn params['bytechunk'].to_yaml
-
+            
             begin
 
               raise "missing paramater: previous_size" unless params.has_key?('previous_size')
@@ -81,7 +79,7 @@ class ApiDatasetController < ApplicationController
               File.open(writepath, "a") do |f|
                 f.write(File.read(params['bytechunk'].open))
               end
-              
+
               render json: "successfully added chunk to #{params['filename']}", status: 200
             rescue Exception::StandardError => ex
               Rails.logger.warn ex.message
