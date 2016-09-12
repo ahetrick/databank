@@ -59,7 +59,7 @@ class ApiDatasetController < ApplicationController
             end
 
           when 'transfer'
-            
+
             begin
 
               raise "missing paramater: previous_size" unless params.has_key?('previous_size')

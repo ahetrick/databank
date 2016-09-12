@@ -34,14 +34,11 @@
           %li
             %p
               %em filesize:
-              number of bytes to be expected in the whole file - max 2199023255552 (2TB)
+              number of bytes to be expected in the whole file, max 2199023255552 (2TB)
           %li
             %p
               %em filename:
-              just the leaf base name and file extension.
-            %p This will be the filename within Illinois Data Bank.
-            %p This becomes an identifier for the file during the transfer phase, and must be the same for each subsequent call.
-
+              base name and file extension.
       %h3 Example cURL command for setup phase of complex protocol:
       %pre
         %code
@@ -61,7 +58,7 @@
           %li
             %p
               %em filename:
-              just the leaf base name and file extension - the same one that was used in setup phase.
+              base name and file extension, the same one that was used in setup phase.
           %li
             %p
               %em previous_size:
@@ -94,7 +91,7 @@
           %li
             %p
               %em filename:
-              just the leaf base name and file extension - the same one that was used in setup phase.
+              base name and file extension, the same one that was used in setup phase.
           %li
             %p
               %em checksum:
