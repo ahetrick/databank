@@ -102,11 +102,18 @@ ready = function () {
     $('#update-save-button').click(function () {
 
         if ($(".invalid-input").length == 0) {
-            window.onbeforeunload = null;
 
-            //console.log($("[id^=edit_dataset]").serialize());
+            if($(".progress-bar").length == 0) {
 
-            $("[id^=edit_dataset]").submit();
+                window.onbeforeunload = null;
+
+                //console.log($("[id^=edit_dataset]").serialize());
+
+                $("[id^=edit_dataset]").submit();
+            } else {
+                alert("UPLOADS IN PROGRESS. Try again once uploads are complete.")
+            }
+
         } else {
             alert("Email address must be in a valid format.");
             $(".invalid-input").first().focus();
@@ -127,9 +134,16 @@ ready = function () {
     $('#save-exit-button').click(function () {
 
         if ($(".invalid-input").length == 0) {
-            $("[id^=edit_dataset]").append("<input type='hidden' name='context' value='exit' />");
-            window.onbeforeunload = null;
-            $("[id^=edit_dataset]").submit();
+
+            if($(".progress-bar").length == 0) {
+
+                $("[id^=edit_dataset]").append("<input type='hidden' name='context' value='exit' />");
+                window.onbeforeunload = null;
+                $("[id^=edit_dataset]").submit();
+
+            } else {
+                alert("UPLOADS IN PROGRESS. Try again once uploads are complete.")
+            }
         } else {
             alert("Email address must be in a valid format.");
             $(".invalid-input").first().focus();
