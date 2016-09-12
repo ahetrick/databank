@@ -33,6 +33,10 @@
               must be "setup"
           %li
             %p
+              %em filesize:
+              number of bytes to be expected in the whole file - max 2199023255552 (2TB)
+          %li
+            %p
               %em filename:
               just the leaf base name and file extension.
             %p This will be the filename within Illinois Data Bank.
@@ -41,7 +45,7 @@
       %h3 Example cURL command for setup phase of complex protocol:
       %pre
         %code
-          = %Q[curl -d phase=setup -d filename=my_datafile.csv -H "Authorization: Token token=authentication_token" -X POST #{IDB_CONFIG[:root_url_text]}/api/dataset/dataset_key/datafile]
+          = %Q[curl -d phase=setup -d -d filesize=10737418240 filename=my_datafile.csv -H "Authorization: Token token=authentication_token" -X POST #{IDB_CONFIG[:root_url_text]}/api/dataset/dataset_key/datafile]
           -if IDB_CONFIG[:root_url_text].include?("dev")
             = %Q[-k]
     %li

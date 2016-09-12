@@ -753,7 +753,8 @@ function clear_alert_message() {
 function getToken() {
     $.getJSON("/datasets/" + dataset_key + "/get_new_token", function (data) {
         //console.log(data);
-        $('.current-token').html("<p><strong>Current Token:</strong> " + data.token + "<br/><strong>Expires:</strong> " + (new Date(data.expires)).toISOString() + "</p>")
+        $('.current-token').html("<p><strong>Current Token:</strong> " + data.token + "<br/><strong>Expires:</strong> " + (new Date(data.expires)).toISOString() + "</p>");
+        $('.token-btn').html("Get New Token");
     });
 }
 

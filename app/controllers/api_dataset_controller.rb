@@ -3,10 +3,15 @@ require 'digest/md5'
 
 class ApiDatasetController < ApplicationController
 
-  skip_before_action :verify_authenticity_token, only: [:datafile, :upload]
+  skip_before_action :verify_authenticity_token, only: [:datafile]
 
   def datafile
-    Rails.logger.warn params.to_yaml
+
+    @dataset = Dataset.find_by_key(params['dataset_key'])
+
+    raise "dataset not found" unless @dataset
+
+    # Rails.logger.warn params.to_yaml
 
     if params.has_key?('binary')
 
@@ -37,6 +42,10 @@ class ApiDatasetController < ApplicationController
         case params['phase']
           when 'setup'
 
+            raise "missing paramter: filesize" unless params.has_key?('filesize')
+
+            raise "File too large. Max file size: 2TB." if (params['filesize']).to_i > 2199023255552
+
             if File.directory?("#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}")
               FileUtils.rm_rf("#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}")
             end
@@ -51,14 +60,28 @@ class ApiDatasetController < ApplicationController
 
           when 'transfer'
 
-            raise "missing paramater: previous_size" unless params.has_key?('previous_size')
-            raise "missing bytechunk" unless params.has_key?('bytechunk')
+            Rails.logger.warn params['bytechunk'].to_yaml
 
-            writepath = "#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}/#{params['filename']}"
             begin
+
+              raise "missing paramater: previous_size" unless params.has_key?('previous_size')
+
+              raise "missing bytechunk" unless params.has_key?('bytechunk')
+
+              writepath = "#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}/#{params['filename']}"
+
+              written_size = File.size(writepath)
+
+              raise "File too large. Max file size: 2TB." if written_size > 2199023255551
+
+              unless(params['previous_size'].to_i == written_size.to_i)
+                raise("Unexpected previous_size value.  Expected: #{written_size.to_s}, Recieved: #{params['previous_size']}")
+              end
+
               File.open(writepath, "a") do |f|
                 f.write(File.read(params['bytechunk'].open))
               end
+              
               render json: "successfully added chunk to #{params['filename']}", status: 200
             rescue Exception::StandardError => ex
               Rails.logger.warn ex.message
@@ -69,9 +92,6 @@ class ApiDatasetController < ApplicationController
             raise "missing checksum" unless params.has_key?('checksum')
 
             writepath = "#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}/#{params['filename']}"
-
-            Rails.logger.warn "#{params['checksum']}"
-            Rails.logger.warn "#{md5(writepath)}"
 
             if (params['checksum']).to_s.eql?(md5(writepath).to_s)
 
