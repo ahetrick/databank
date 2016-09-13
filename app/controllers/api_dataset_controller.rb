@@ -42,6 +42,12 @@ class ApiDatasetController < ApplicationController
         case params['phase']
           when 'setup'
 
+            @dataset.datafiles.each do |datafile|
+              if datafile.bytestream_name == params['filename']
+                raise "File with the name #{params['filename']} already exists in this dataset."
+              end
+            end
+
             raise "missing paramter: filesize" unless params.has_key?('filesize')
 
             raise "File too large. Max file size: 2TB." if (params['filesize']).to_i > 2199023255552
