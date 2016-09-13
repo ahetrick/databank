@@ -107,8 +107,6 @@ ready = function () {
 
                 window.onbeforeunload = null;
 
-                //console.log($("[id^=edit_dataset]").serialize());
-
                 $("[id^=edit_dataset]").submit();
             } else {
                 alert("UPLOADS IN PROGRESS. Try again once uploads are complete.")
@@ -118,7 +116,6 @@ ready = function () {
             alert("Email address must be in a valid format.");
             $(".invalid-input").first().focus();
         }
-
     });
 
     $('#update-confirm').prop('disabled', true);

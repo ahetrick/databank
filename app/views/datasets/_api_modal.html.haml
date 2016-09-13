@@ -6,28 +6,67 @@
       %h3 Illinois Data Bank File Upload API
 
     .modal-body
-      %p
-        The Illinois Data Bank file upload API protocols allow you to upload a file programatically or from a command line. Using the API or web interface, files can only be uploaded to a draft dataset - before it is published or scheduled for publication.
-      %p
-        The
-        %a(href="/help#api_upload_simple" )simple
-        one-call protocol supports files
-        %em up to 4GB
-        in size.
-      %p
-        The
-        %a(href="/help#api_upload_complex" )complex
-        protocol requires several coordinated calls, but supports files
-        %em up to 2TB
-        and is more tolerant of variations in connectivity.
+      %h4 Existing Draft Dataset Required
+      .indent
+        %p
+          The Illinois Data Bank file upload API protocols allow you to upload a file programatically, or from a command line. Files can only be uploaded to a draft dataset - after the deposit agreement has been accepted and before the dataset is published or scheduled for publication.
+      %h4 Sample Python Client
+      .indent
+        %p
+          If you would like to use our sample Python client, you can download
+          %a(href="https://raw.githubusercontent.com/medusa-project/databank-client/master/illinois_data_bank_datafile.py" ) illinois_data_bank_datafile.py
+          and use it with recent versions of Python 2 or 3. Package dependencies: requests and docopts. For help,
+          %a(href="/help#contact" )contact the Research Data Service.
+        .client-example
+          Usage:
+          %br
+          .indent
+            ="python illinois_data_bank_datafile.py [-h] <FILE> <DATASET> <TOKEN> [<SYSTEM>]"
+          Arguments:
+          %br
+          .indent
+            FILE - input file
+            %br
+            DATASET - dataset key
+            =surround("(",")") do
+              =@dataset.key
+            %br
+            TOKEN - API token
+            -if @token
+              =surround("(",")") do
+                =@token.identifier
+            -else
+              obtained below
+            %br
+            SYSTEM - optional, for testing (local | development | production), default is production
+          %br
+          Options:
+          %br
+          .indent
+            ="-h --help"
 
-      %p
-        For help, see the
-        =succeed(",") do
-          %a(href="/help#api" ) API Reference
-        or
-        =succeed(".") do
-          %a(href="/help#contact") Contact Us
+      %h4 Custom Support
+      .indent
+        %p
+          The
+          %a(href="/help#api_upload_simple" )simple
+          one-call protocol supports files
+          %em up to 4GB
+          in size.
+        %p
+          The
+          %a(href="/help#api_upload_complex" )complex
+          protocol requires several coordinated calls, but supports files
+          %em up to 2TB
+          and is more tolerant of variations in connectivity.
+
+        %p
+          For more help, see the
+          =succeed(",") do
+            %a(href="/help#api" ) API Reference
+          or
+          =succeed(".") do
+            %a(href="/help#contact") Contact Us
 
       .current-token
         -if @token
@@ -38,21 +77,12 @@
           = @token.expires.iso8601
       %strong Dataset Key:
       =@dataset.key
-
+      %br
       -if @token
-        %h3 Example cURL command for the simple protocol:
-        %pre
-          %code
-            = %Q[curl -F "binary=@my_datafile.csv" -H "Authorization: Token token=#{@token.identifier}" -H "Transfer-Encoding: chunked" -X POST #{IDB_CONFIG[:root_url_text]}/api/dataset/#{@dataset.key}/datafile -o output.txt]
-            -if IDB_CONFIG[:root_url_text].include?("dev")
-              = %Q[-k]
-
-        %br
         .text-center
           %button(type="button" onclick="getToken()" class="btn btn-primary token-btn" )
             Get New Token
       -else
-        %br
         .text-center
           %button(type="button" onclick="getToken()" class="btn btn-primary token-btn" )
             Get Token

@@ -2,45 +2,84 @@
 .bs-callout.bs-callout-info.idb-help(id="api_upload_overview")
   %br
   %hr
-  %h1 File Upload API
+  %h1 File Upload API / Client
   %hr
-  %p
-    The Illinois Data Bank file upload API protocols allow you to upload a file programatically or from a command line. Using the API or web interface, files can only be uploaded to a draft dataset - before it is published or scheduled for publication.
-  %p
-    The
-    %a(href="#api_upload_simple" )simple
-    one-call protocol supports files
-    %em up to 4GB
-    in size.
-  %p
-    The
-    %a(href="#api_upload_complex" )complex
-    protocol requires several coordinated calls, but supports files
-    %em up to 2TB
-    and is more tolerant of variations in connectivity.
-  %h3 Preparing the Dataset
-  %p
-    Before uploading a file using either protocol,
-    %a(href="/datasets/new" target="_blank" ) create
-    or
-    %a(href="/datasets" target="_blank" ) find
-    your draft dataset, and navigate to the edit form for that dataset.
-  %p
-    At the bottom of the Files section is a matrix of upload options buttons. Click the [ Use File Upload API ] button to display required elements for use in the APIs.
-  %h3 Dataset Key
-  %p
-    Within the Illinois Data Bank File Upload API information screen triggered by the [ Use File Upload API ] button on a draft dataset edit form, one of the elements displayed is
-    =succeed(".") do
-      %strong Dataset Key
-    This dataset key uniquely identifies this dataset and is required as part of a call for either protocol.  The dataset key does not change while the dataset exists.
+  %h3 Existing Draft Dataset Required
+  .indent
+    %p
+      The Illinois Data Bank file upload API protocols allow you to upload a file programatically, or from a command line.
+    %p
+      %strong
+        %em Files can only be uploaded to an existing draft dataset.
+    %p
+      A dataset in a draft state after the deposit agreement has been accepted and before the dataset is published or scheduled for publication.  Before uploading a file using the sample client or a custom application of the API,
+      %a(href="/datasets/new" target="_blank" ) create
+      or
+      %a(href="/datasets" target="_blank" ) find
+      your draft dataset, and navigate to the edit form for that dataset.
 
-  %h3 Authentication Token
-  %p
-    Within the Illinois Data Bank File Upload API information screen triggered by the [ Use File Upload API ] button on a draft dataset edit form, one of the elements that may displayed is
-    =succeed(".") do
+    %p
+      At the bottom of the Files section is a matrix of upload options buttons. Click the
+      %em Use File Upload API
+      button to display required elements for use in the APIs. Scroll down to
+      =succeed(",") do
+        %strong Dataset Key
+      a unique identifier for this dataset within the Illinois Data Bank. The dataset key does not change while the dataset exists. If a
       %strong Current HTTP Authentication Token
-    If not, click on the [ Get New Token ] button at the bottom of the screen to request a token.
-  %p The token expires in 3 days, but a new one can be requested using the same method.
-  %p Anyone can use this token to upload a file to this dataset, so keep it secure.
-  %p A distinct token is required for each dataset.
+      for the dataset exists, it will be listed above the Dataset Key. If not, click on the
+      %em Get New Token
+      button at the bottom of the screen to request a token.
+    %p A token expires in 3 days, but a new one can be requested using the same method.
+    %p Anyone can use this token to upload a file to this dataset, so keep it secure.
+    %p A distinct token is required for each dataset.
+
+  %h3 Sample Python Client
+  .indent
+    %p
+      If you would like to use our sample Python client, you can download
+      %a(href="https://raw.githubusercontent.com/medusa-project/databank-client/master/illinois_data_bank_datafile.py" ) illinois_data_bank_datafile.py
+      and use it with recent versions of Python 2 or 3. Package dependencies: requests and docopts. For help,
+      %a(href="/help#contact" )contact the Research Data Service.
+    .client-example
+      Usage:
+      %br
+      .indent
+        ="python illinois_data_bank_datafile.py [-h] <FILE> <DATASET> <TOKEN> [<SYSTEM>]"
+      Arguments:
+      %br
+      .indent
+        FILE - input file
+        %br
+        DATASET - dataset key from edit page of draft dataset
+        %br
+        TOKEN - API token from edit page of draft dataset
+        %br
+        SYSTEM - optional, for testing (local | development | production), default is production
+      Options:
+      %br
+      .indent
+        ="-h --help"
+
+  %h3 Custom Support
+  .indent
+    %p
+      The
+      %a(href="/help#api_upload_simple" )simple
+      one-call protocol supports files
+      %em up to 4GB
+      in size.
+    %p
+      The
+      %a(href="/help#api_upload_complex" )complex
+      protocol requires several coordinated calls, but supports files
+      %em up to 2TB
+      and is more tolerant of variations in connectivity.
+
+    %p
+      For more help,
+      =succeed(".") do
+        %a(href="/help#contact") Contact Us
+
+
+
 
