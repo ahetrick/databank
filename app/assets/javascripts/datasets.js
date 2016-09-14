@@ -263,6 +263,7 @@ ready = function () {
                     data.context.prepend("  ");
                     data.context.prepend(cancelBtn);
                     $('#datafiles_upload_progress').append(data.context);
+                    window.onbeforeunload = confirmOnPageExit;
                     return data.submit();
                 }
             } else if (typeof num_bytes === "undefined") {
@@ -333,7 +334,7 @@ ready = function () {
             }
             else {
                 boxItem.dataset_key = dataset_key;
-
+                window.onbeforeunload = confirmOnPageExit;
                 $.ajax({
                     type: "POST",
                     url: "/datafiles/create_from_url",
