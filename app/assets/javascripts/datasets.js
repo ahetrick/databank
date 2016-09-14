@@ -188,7 +188,7 @@ ready = function () {
     });
 
     $("#portable-upload").click(function() {
-        window.location.assign('/help');
+        window.location.assign('/help?context=pickup&key=' + dataset_key);
     });
 
     if (!$('#dataset_embargo').val()) {

@@ -1,4 +1,5 @@
 .bs-callout.bs-callout-info.idb-help(id="contact")
+
   - case params['context']
     - when 'sensitive'
       %p(class="idb-callout" )
@@ -44,14 +45,21 @@
               %option{value: "Dataset Consultation", selected: true} Dataset Consultation
             -else
               %option{value: "Dataset Consultation"} Dataset Consultation
+
+            -if params['context'] == 'pickup'
+              %option{value: "Request Physical Pickup", selected: true} Request Physical Pickup of File Media
+            -else
+              %option{value: "Request Physical Pickup"} Request Physical Pickup of File Media
+
             %option{value: "Delaying Publication (Embargo)"} Delaying Publication (Embargo)
             %option{value: "Finding Data"} Finding Data
+
             -if params['context']=='feedback'
               %option{value: "Feeback", selected:true} Feedback
             -else
               %option{value: "Feeback"} Feedback
             %option{value: "Other"} Other
-      -if dataset
+      -if @dataset
         .form-group
           %label(for='help-dataset' class="control-label col-md-2" )
             Dataset
@@ -62,6 +70,8 @@
         %label(for="help-message" class="control-label col-md-2" ) Message
         .col-md-10
           %textarea(rows="6" name="help-message" id="help-message" class="form-control help")
+            - if params['context']=='pickup'
+              Please contact me to arrange pickup of physical media containing dataset files.
 
       .row
         .col-md-8.col-md-offset-2
