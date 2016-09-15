@@ -117,6 +117,7 @@ class DatafilesController < ApplicationController
     @datafile.box_filename = @filename
     @datafile.box_filesize_display = @filesize_display
     @datafile.save
+
   end
 
   def create_from_deckfile

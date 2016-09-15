@@ -146,60 +146,80 @@ class DatasetsController < ApplicationController
   end
 
   def cancel_box_upload
+    begin
 
-    @job_id_string = "0"
+      @job_id_string = "0"
 
-    @datafile = Datafile.find_by_web_id(params[:web_id])
+      @datafile = Datafile.find_by_web_id(params[:web_id])
 
-    if @datafile
-      if @datafile.job_id
-        @job_id_string = @datafile.job_id.to_s
-        job = Delayed::Job.where(id: @datafile.job_id).first
-        if job && job.locked_by && !job.locked_by.empty?
-          locked_by_text = job.locked_by.to_s
+      if @datafile
+        if @datafile.job_id
+          @job_id_string = @datafile.job_id.to_s
+          job = Delayed::Job.where(id: @datafile.job_id).first
+          if job && job.locked_by && !job.locked_by.empty?
+            locked_by_text = job.locked_by.to_s
 
-          pid = locked_by_text.split(":").last
+            pid = locked_by_text.split(":").last
 
-          if !pid.empty?
+            if !pid.empty?
 
-            begin
+              begin
 
-              Process.kill('QUIT', Integer(pid))
+                Process.kill('QUIT', Integer(pid))
+                Dir.foreach(IDB_CONFIG[:delayed_job_pid_dir]) do |pid_filename|
+                  next if pid_filename == '.' or pid_filename == '..'
+                  next unless pid_filename.include? 'delayed_job'
+                  if File.exists?("/tmp/pids/#{pid_filename}")
+                    Rails.logger.warn "file existed"
+                    file_contents = IO.read("/tmp/pids/#{pid_filename}")
+                    pid_file_path = pid_filename.path
+                    if file_contents.include? pid.to_s
+                      File.delete(pid_file_path)
+                    end
+                  else
+                    Rails.logger.warn "file did not exist"
+                  end
+                  
+                end
+
+              rescue Errno::ESRCH => ex
+                Rails.logger.warn ex.message
+              end
+            end
+
+            if Delayed::Job.all.count == 0
+              system "cd #{Rails.root} && RAILS_ENV=#{::Rails.env} bin/delayed_job -n #{@@num_box_ingest_deamons} restart"
+            else
+              running_deamon_count = 0
               Dir.foreach(IDB_CONFIG[:delayed_job_pid_dir]) do |item|
                 next if item == '.' or item == '..'
                 next unless item.include? 'delayed_job'
-                file_contents = IO.read(item)
-                pid_file_path = item.path
-                if file_contents.include? pid.to_s
-                  File.delete(pid_file_path)
-                end
+                running_deamon_count = running_deamon_count + 1
               end
-
-            rescue Errno::ESRCH => ex
-              Rails.logger.warn ex.message
             end
-          end
+          elsif job
+            job.destroy
+            @datafile.destroy
 
-          if Delayed::Job.all.count == 0
-            system "cd #{Rails.root} && RAILS_ENV=#{::Rails.env} bin/delayed_job -n #{@@num_box_ingest_deamons} restart"
-          else
-            running_deamon_count = 0
-            Dir.foreach(IDB_CONFIG[:delayed_job_pid_dir]) do |item|
-              next if item == '.' or item == '..'
-              next unless item.include? 'delayed_job'
-              running_deamon_count = running_deamon_count + 1
-            end
-          end
-        elsif job
-          job.destroy
+          end 
+        else
           @datafile.destroy
-
         end
-      else
-        @datafile.destroy
       end
 
+      respond_to do |format|
+          format.html { render json: "successfully canceled upload from Box", status: :ok}
+          format.json { render json: "successfully canceled upload from Box", status: :ok}
+      end
+    
+    rescue Exception::StandardError => ex
+      Rails.logger.warn ex.message
+      respond_to do |format|
+        format.html { render json: "successfully canceled upload from Box", status: :unprocessable_entity}
+        format.json { render json: "successfully canceled upload from Box", status: :unprocessable_entity}
+      end
     end
+
   end
 
 
@@ -252,6 +272,8 @@ class DatasetsController < ApplicationController
 
     @dataset = Dataset.new(dataset_params)
 
+    set_file_mode
+
     respond_to do |format|
       if @dataset.save
         format.html { redirect_to edit_dataset_path(@dataset.key) }
@@ -261,7 +283,7 @@ class DatasetsController < ApplicationController
         format.json { render json: @dataset.errors, status: :unprocessable_entity }
       end
     end
-    set_file_mode
+    
 
   end
 

@@ -40,7 +40,6 @@ ready = function () {
             defaultDate: (Date.now())
         });
     }
-    
 
     $(".upload-consistent").tooltip({
         html: "true",
@@ -255,11 +254,11 @@ ready = function () {
             if (num_bytes < 4194304000) {
             //if (true) {
                 if (filename_isdup(file.name)) {
-                    alert("Duplicate file error: A file named " + file.name + " is already in this dataset.  For help, please contact the Research Data Service.");
+                    alert("Duplicate file error: A file named " + file.name + " detected in this dataset.  For help, please contact the Research Data Service.");
                 }
                 else {
                     data.context = uploadRow;
-                    data.context.prepend(file.name.toString());
+                    data.context.prepend('<span class="bytestream_name">' + file.name.toString()) + '</span>';
                     data.context.prepend("  ");
                     data.context.prepend(cancelBtn);
                     $('#datafiles_upload_progress').append(data.context);
@@ -378,17 +377,20 @@ function pad(n) {
     return n < 10 ? '0' + n : n
 }
 
-function cancelUpload(datafile, job) {
-
-    $("#job" + job).hide();
+function cancelBoxUpload(datafile, job) {
 
     $.ajax({
-        type: 'GET',
+        type: "GET",
         url: '/datasets/' + dataset_key + '/datafiles/' + datafile + '/cancel_box_upload',
-        dataType: 'script'
+        success: function(data) {
+            $("#job" + job).remove();
+        },
+        error: function(data){
+            console.log("error cancelling upload from Box: " + data);
+        },
+        dataType: 'text'
     });
 
-    return false;
 }
 
 function setDepositor(email, name) {
@@ -550,28 +552,25 @@ function validateReleaseDate() {
 
     if (releaseDate > yearFromNow) {
         alert('The maximum amount of time that data can be delayed for publication is is 1 year.');
-        //$('#dataset_release_date').val((yearFromNow.getMonth() + 1) + '/' + yearFromNow.getDate() + '/' +  yearFromNow.getFullYear());
-        //$('#dataset_release_date').val(yearFromNow.toISOString());
         $('#dataset_release_date').val(yearFromNow.getFullYear() + '-' + pad((yearFromNow.getMonth() + 1)) + '-' + pad(yearFromNow.getDate()));
     }
-
 }
 
 function filename_isdup(proposed_name) {
     var returnVal = false;
 
     $.each($('.bytestream_name'), function (index, value) {
-        //console.log('proposed_name: ' + proposed_name + ' val: ' + $(value).val())
 
         if (proposed_name == $(value).val()) {
-            //console.log ('equality detected');
             returnVal = true;
         }
-
+        if ( $(value).text().indexOf(proposed_name) >= 0) {
+            returnVal = true;
+        }
     });
 
-    return returnVal;
 
+    return returnVal;
 }
 
 function offerDownloadLink() {
@@ -781,7 +780,6 @@ function cancelUpload(){
     var el = (event.target || event.srcElement); // DOM uses 'target';
     // older versions of
     // IE use 'srcElement'
-    console.log($(el).parent().parent());
     $(el).parent().remove();
 }
 
