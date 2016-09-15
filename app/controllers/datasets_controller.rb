@@ -169,15 +169,16 @@ class DatasetsController < ApplicationController
                 Dir.foreach(IDB_CONFIG[:delayed_job_pid_dir]) do |pid_filename|
                   next if pid_filename == '.' or pid_filename == '..'
                   next unless pid_filename.include? 'delayed_job'
-                  if File.exists?("/tmp/pids/#{pid_filename}")
-                    Rails.logger.warn "file existed"
-                    file_contents = IO.read("/tmp/pids/#{pid_filename}")
-                    pid_file_path = pid_filename.path
+                  pid_filepath = "#{IDB_CONFIG[:delayed_job_pid_dir]}/#{pid_filename}"
+                  
+                  if File.exists?(pid_filepath)
+                    
+                    file_contents = IO.read(pid_filepath)
                     if file_contents.include? pid.to_s
-                      File.delete(pid_file_path)
+                      File.delete(pid_filepath)
                     end
                   else
-                    Rails.logger.warn "file did not exist"
+                    Rails.logger.warn "#{pid_filepath} did not exist"
                   end
                   
                 end
