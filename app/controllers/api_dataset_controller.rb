@@ -89,7 +89,7 @@ class ApiDatasetController < ApplicationController
               render json: "successfully added chunk to #{params['filename']}", status: 200
             rescue Exception::StandardError => ex
               Rails.logger.warn ex.message
-              render json: "#{ex.message}\n", status: 500
+              render json: {error: "#{ex.message}\n", progress: File.size(writepath), status: 500}
             end
 
           when 'verify'
@@ -97,7 +97,9 @@ class ApiDatasetController < ApplicationController
 
             writepath = "#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}/#{params['filename']}"
 
-            if (params['checksum']).to_s.eql?(md5(writepath).to_s)
+            local_checksum = md5(writepath).to_s
+
+            if (params['checksum']).to_s.eql?(local_checksum)
 
               df = Datafile.create(dataset_id: @dataset.id)
               df.binary = Pathname.new(writepath).open
@@ -110,7 +112,7 @@ class ApiDatasetController < ApplicationController
 
               render json: "#{params['filename']} successfully uploaded.  Refresh dataset page to see newly uploaded file. #{IDB_CONFIG[:root_url_text]}/datasets/#{@dataset.key}/edit", status: 200
             else
-              render json: "upload error, checksum verification failed", status: 500
+              render json: {error: "upload error, checksum verification failed", checksum: local_checksum,  progress: File.size(writepath), status: 500}
             end
 
           else
