@@ -105,6 +105,7 @@ class DatasetsController < ApplicationController
     @dataset.datafiles.each do |df|
 
       if df.bytestream_size == 0
+        @dataset.save
         df.destroy
       else
 
