@@ -3,15 +3,14 @@ class Admin < ActiveRecord::Base
 
   def self.instance
     # there will be only one row, and its ID must be '1'
-    begin
-      find(1)
-    rescue ActiveRecord::RecordNotFound
-      # slight race condition here, but it will only happen once
-      row = Admin.new
-      row.singleton_guard = 0
-      row.save!
-      row
+    if Admin.all.count == 1
+      return Admin.all.first
+    else
+      Admin.destroy_all
+      admin = Admin.create(singleton_guard: 0)
+      return admin
     end
+
   end
 
 end

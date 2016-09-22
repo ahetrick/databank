@@ -1,9 +1,0 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  term: MyString
-  meaning: MyString
-
-two:
-  term: MyString
-  meaning: MyString

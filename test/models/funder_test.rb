@@ -6,7 +6,6 @@ class FunderTest < ActiveSupport::TestCase
   # end
 
   test "should not save funder without dataset" do
-
     funder = Funder.new
     assert_not funder.save
   end

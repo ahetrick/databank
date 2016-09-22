@@ -46,6 +46,7 @@ class Dataset < ActiveRecord::Base
 
   end
 
+  # assumes complete dataset
   def to_datacite_xml
 
     begin

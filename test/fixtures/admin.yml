@@ -1,9 +1,0 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  read_only_alert: MyText
-  singleton_guard: 1
-
-two:
-  read_only_alert: MyText
-  singleton_guard: 1

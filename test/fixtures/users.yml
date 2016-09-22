@@ -1,0 +1,35 @@
+# t.string   "provider"
+# t.string   "uid"
+# t.string   "name"
+# t.string   "email"
+# t.string   "role"
+# t.datetime "created_at", null: false
+# t.datetime "updated_at", null: false
+# t.string   "username"
+
+curator:
+  id: 1
+  provider: identity
+  uid: mfall3@mailinator.com
+  name: "Colleen Fallaw"
+  email: mfall3@mailinator.com
+  role: admin
+  username: mfall3
+
+depositor:
+  id: 2
+  provider: identity
+  uid: wingram2@mailinator.com
+  name: "Bill Ingram"
+  email: wingram2@mailinator.com
+  role: depositor
+  username: wingram2
+
+no_deposit:
+  id: 3
+  provider: identity
+  uid: haydary2@mailinator.com
+  name: "Spencer Haydary"
+  email: haydary2@illinois.edu
+  role: no_deposit
+  username: haydary2
