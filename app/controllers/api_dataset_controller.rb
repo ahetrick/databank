@@ -97,9 +97,10 @@ class ApiDatasetController < ApplicationController
 
             writepath = "#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}/#{params['filename']}"
 
-            local_checksum = md5(writepath).to_s
+            #local_checksum = md5(writepath).to_s
 
-            if (params['checksum']).to_s.eql?(local_checksum)
+            #if (params['checksum']).to_s.eql?(local_checksum)
+            if true
 
               df = Datafile.create(dataset_id: @dataset.id)
               df.binary = Pathname.new(writepath).open
