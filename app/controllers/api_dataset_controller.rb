@@ -93,7 +93,7 @@ class ApiDatasetController < ApplicationController
             end
 
           when 'verify'
-            raise "missing checksum" unless params.has_key?('checksum')
+            #raise "missing checksum" unless params.has_key?('checksum')
 
             writepath = "#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}/#{params['filename']}"
 
@@ -112,8 +112,8 @@ class ApiDatasetController < ApplicationController
               end
 
               render json: "#{params['filename']} successfully uploaded.  Refresh dataset page to see newly uploaded file. #{IDB_CONFIG[:root_url_text]}/datasets/#{@dataset.key}/edit", status: 200
-            else
-              render json: {error: "upload error, checksum verification failed", checksum: local_checksum,  progress: File.size(writepath), status: 500}
+            # else
+            #   render json: {error: "upload error, checksum verification failed", checksum: local_checksum,  progress: File.size(writepath), status: 500}
             end
 
           else
