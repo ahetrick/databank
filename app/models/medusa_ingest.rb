@@ -42,7 +42,7 @@ class MedusaIngest < ActiveRecord::Base
     FileUtils.chmod 0755, "#{staging_dir}/system/description.#{file_time}.xml"
 
     medusa_ingest = MedusaIngest.new
-    staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/description.#{file_time}.xml"
+    staging_path = "#{staging_dir}/system/description.#{file_time}.xml"
     medusa_ingest.staging_path = staging_path
     medusa_ingest.idb_class = 'description'
     medusa_ingest.idb_identifier = dataset.key
@@ -63,17 +63,12 @@ class MedusaIngest < ActiveRecord::Base
         datafile.binary_size = datafile.binary.size
         medusa_ingest = MedusaIngest.new
         full_path = datafile.binary.path
-        full_path_arr = full_path.split("/")
-        full_staging_path = "#{staging_dir}/dataset_files/#{datafile.bytestream_name}"
-        # make symlink
-
-        # Rails.logger.warn full_path
-        # Rails.logger.warn full_staging_path
-
+        full_staging_path = "#{staging_dir}/dataset_files/#{datafile.binary_name}"
+        #make symlink
         FileUtils.ln(full_path, full_staging_path)
         FileUtils.chmod "u=wrx,go=rx", full_staging_path
         # point to symlink for path
-        staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/dataset_files/#{datafile.bytestream_name}"
+        staging_path = "#{staging_dir}/dataset_files/#{datafile.binary_name}"
         medusa_ingest.staging_path = staging_path
         medusa_ingest.idb_class = 'datafile'
         medusa_ingest.idb_identifier = datafile.web_id
