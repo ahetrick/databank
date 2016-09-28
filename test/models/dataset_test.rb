@@ -5,9 +5,11 @@ class DatasetTest < ActiveSupport::TestCase
   #   assert true
   # end
 
-  test "should generate key for new dataset" do
+  test "should generate key for empty new dataset" do
     dataset = Dataset.create
     assert_not_nil dataset.key, "Key was not generated for newly created dataset."
   end
+
+
 
 end
