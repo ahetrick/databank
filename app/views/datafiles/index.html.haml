@@ -39,6 +39,10 @@
     %hr
 
 -else
-  -Datafiles.all do |datafile|
+  -@datafiles.each do |datafile|
+    Dataset:
+    =(Dataset.where(id: datafile.dataset_id)).first.key
+    %br
     =datafile.to_json
-      
+    %br
+
