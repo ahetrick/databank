@@ -112,6 +112,7 @@ namespace :medusa do
   task :update_paths => :environment do
     datafiles = Datafile.all
     datafiles.each do |df|
+      puts "web_id: #{df.web_id}"
       if !df.binary && !df.medusa_path
         puts "no binary or no medusa_path"
         ingest = MedusaIngest.find_by_idb_identifier(df.web_id)
@@ -122,18 +123,22 @@ namespace :medusa do
         else
           puts "has no ingest"
         end
-      end
-    end
-    datafiles.each do |df|
-      if df.binary && !df.medusa_path
+
+      elsif df.binary && !df.medusa_path
         puts "binary but no medusa path"
         ingest = MedusaIngest.find_by_idb_identifier(df.web_id)
         if ingest
           puts "has ingest"
-          df.medusa_path = ingest.medusa_path
-          df.medusa_id = ingest.medusa_uuid
-          df.remove_binary!
-          df.save
+
+          if File.exists?("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}") && FileUtils.identical?("#{binary.path}", "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}")
+            df.medusa_path = ingest.medusa_path
+            df.medusa_id = ingest.medusa_uuid
+            df.remove_binary!
+            df.save
+          else
+            puts "file validation failed"
+          end
+
         else
           puts "has no ingest for web_id: #{df.web_id}"
         end
