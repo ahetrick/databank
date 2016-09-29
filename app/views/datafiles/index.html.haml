@@ -1,8 +1,8 @@
 -if @dataset
 
-  %h2
+  %h3
     Files for
-    =link_to "#{@dataset.plaintext_citation}", dataset_path(@dataset.key)
+    =link_to "#{@dataset.plain_text_citation}", dataset_path(@dataset.key)
 
   .row
     .col-md-2.col-md-offset-10
@@ -14,18 +14,7 @@
     .row
       .col-md-5.col-md-offset-1
         =link_to datafile.bytestream_name, "/datasets/#{@dataset.key}/datafiles/#{datafile.web_id}"
-        -#%br
-        -#binary:
-        -#- if datafile.binary && datafile.binary.file
-        -#  = debug(datafile.binary)
-        -#- else
-        -#  none
-        -#%br
-        -#medusa_path
-        -#- if datafile.medusa_path
-        -#  = datafile.medusa_path
-        -#- else
-        -#  none
+
       .col-md-2
         = number_to_human_size(datafile.bytestream_size)
       .col-md-2
@@ -39,10 +28,12 @@
     %hr
 
 -else
-  -@datafiles.each do |datafile|
-    Dataset:
-    =(Dataset.where(id: datafile.dataset_id)).first.key
-    %br
-    =datafile.to_json
-    %br
-
+  .dialog.text-center
+    %h2 The page you were looking for doesn't exist.
+    %hr
+    %p You may have mistyped the address or the page may have moved.
+    %p
+      Please
+      %a(href="/help#contact" target="_blank")
+        contact the Research Data Service Team
+      with questions.
