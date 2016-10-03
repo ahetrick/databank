@@ -112,8 +112,9 @@ namespace :medusa do
   task :update_paths => :environment do
     datafiles = Datafile.all
     datafiles.each do |df|
-      puts "web_id: #{df.web_id}"
+
       if !df.binary && !df.medusa_path
+        puts "web_id: #{df.web_id}"
         puts "no binary or no medusa_path"
         ingest = MedusaIngest.find_by_idb_identifier(df.web_id)
         if ingest
@@ -125,12 +126,13 @@ namespace :medusa do
         end
 
       elsif df.binary && !df.medusa_path
+        puts "web_id: #{df.web_id}"
         puts "binary but no medusa path"
         ingest = MedusaIngest.find_by_idb_identifier(df.web_id)
         if ingest
           puts "has ingest"
 
-          if File.exists?("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}") && FileUtils.identical?("#{binary.path}", "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}")
+          if File.exists?("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}") && FileUtils.identical?("#{df.binary.path}", "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}")
             df.medusa_path = ingest.medusa_path
             df.medusa_id = ingest.medusa_uuid
             df.remove_binary!

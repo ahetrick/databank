@@ -1,0 +1,26 @@
+dataset_draft_1:
+  id: 1
+  key: "idblocal-8934470"
+  title: "Another Test"
+  identifier: ""
+  publisher: "University of Illinois at Urbana-Champaign"
+  description: ""
+  license: "CC01"
+  depositor_name: "Colleen Fallaw"
+  depositor_email: "mfall3@mailinator.com"
+  corresponding_creator_name: "Colleen Fallaw"
+  corresponding_creator_email: "mfall3@illinois.edu"
+  created_at: "2016-09-09 21:15:05"
+  updated_at: "2016-09-09 21:15:19"
+  keywords: ""
+  publication_state: "draft"
+  curator_hold: false
+  embargo: "none"
+  is_test: false
+  is_import: false
+  have_permission: "yes"
+  removed_private: "na"
+  agree: "yes"
+  hold_state: "none"
+  dataset_version: "1"
+  suppress_changelog: false

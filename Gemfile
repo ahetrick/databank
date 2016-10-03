@@ -135,8 +135,11 @@ group :development, :test do
   # Use mocha to support stubs for testing
   gem 'mocha', '~> 1.1'
 
-  #Use rspec to support testing
-  gem 'rspec', '~> 3.4'
+  #Use rspec-rails to support testing
+  gem 'rspec-rails', '~> 3.5'
+
+  #Use Capybara for behavior testing
+  gem 'capybara'
 
   # Use Capistrano for deployment
 
