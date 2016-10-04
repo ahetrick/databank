@@ -1,7 +1,7 @@
 require 'open-uri'
 require 'net/http'
 require 'boxr'
-require 'zipruby'
+# require 'zipruby'
 require 'json'
 require 'pathname'
 

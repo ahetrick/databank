@@ -29,7 +29,7 @@ gem 'zeroclipboard-rails'
 # gem 'zipline', path: "vendor/zipline"
 
 # Use zipruby to make temp zip file
-gem 'zipruby', '~> 0.3.6'
+# gem 'zipruby'
 
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
@@ -127,7 +127,7 @@ group :development, :test do
   gem 'byebug'
 
   # Access an IRB console on exception pages or by using <%= console %> in views
-  gem 'web-console', '~> 2.0'
+  # gem 'web-console', '~> 2.0'
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
@@ -135,11 +135,23 @@ group :development, :test do
   # Use mocha to support stubs for testing
   gem 'mocha', '~> 1.1'
 
+  #Use Selenenium web driver in testing
+  gem 'selenium-webdriver'
+
   #Use rspec-rails to support testing
   gem 'rspec-rails', '~> 3.5'
 
+  #Use factory girl for fixtures
+  gem 'factory_girl_rails'
+
+  #Use Cucumber for behavior testing
+  gem 'cucumber-rails', :require => false
+
   #Use Capybara for behavior testing
   gem 'capybara'
+
+  #Use DatabaseCleaner to clean the database (because transactional fixtures do not work with Selenium)
+  gem 'database_cleaner'
 
   # Use Capistrano for deployment
 
