@@ -24,6 +24,7 @@ config/medusa_downloader.yml
 nginx.conf.erb
 mock_medusa
 /scripts
+features/support/login_data.yml
 
 idb_stop.sh
 idb_start.sh

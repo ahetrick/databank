@@ -1,0 +1,3 @@
+shibboleth:
+  name: shib_name
+  password: shib_pw
