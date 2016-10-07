@@ -28,8 +28,6 @@ class DatasetsController < ApplicationController
 
   before_action :remove_empty_datafiles, only: [:show, :edit]
 
-
-
   @@num_box_ingest_deamons = 10
 
   # enable streaming responses
@@ -261,6 +259,9 @@ class DatasetsController < ApplicationController
     @ordered_datafiles = @dataset.datafiles.sort_by {|obj| obj.bytestream_name}
 
     set_file_mode
+
+    @funder_info_arr = FUNDER_INFO_ARR
+    @license_info_arr = LICENSE_INFO_ARR
   end
 
   def get_new_token
@@ -1066,23 +1067,14 @@ class DatasetsController < ApplicationController
 
   def set_license(dataset)
 
-    @license_link = ""
+    @license_name = "License not selected"
 
-    @license = LicenseInfo.where(:code => dataset.license).first
-    case dataset.license
-      when "CC01", "CCBY4"
-        @license_link = @license.external_info_url
-
-      when "deposit_agreement.txt"
-        @dataset.datafiles.each do |datafile|
-          if datafile.bytestream_name && ((datafile.bytestream_name).downcase == "deposit_agreement.txt")
-            @license_link = "#{request.base_url}/datafiles/#{datafile.web_id}/download"
-          end
-        end
-
-      else
-        @license_expanded = dataset.license
+    LICENSE_INFO_ARR.each do |license_info|
+      if (license_info.code == dataset.license) && (dataset.license !='license.txt')
+        @license_name = license_info.name
+      end
     end
+
   end
 
   def set_file_mode

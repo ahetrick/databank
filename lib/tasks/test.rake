@@ -158,4 +158,11 @@ namespace :test do
 
   end
 
+  desc 'expose license and funder info'
+  task :list_info => :environment do
+    LICENSE_INFO_ARR.each do |info|
+      puts info.to_yaml
+    end
+  end
+
 end

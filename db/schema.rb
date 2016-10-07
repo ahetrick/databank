@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160922165713) do
+ActiveRecord::Schema.define(version: 20161007144824) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -180,16 +180,6 @@ ActiveRecord::Schema.define(version: 20160922165713) do
     t.datetime "updated_at",    null: false
   end
 
-  create_table "funder_infos", force: :cascade do |t|
-    t.string   "code"
-    t.string   "name"
-    t.string   "identifier"
-    t.integer  "display_position"
-    t.string   "identifier_scheme"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
-  end
-
   create_table "funders", force: :cascade do |t|
     t.string   "name"
     t.string   "identifier"
@@ -207,16 +197,6 @@ ActiveRecord::Schema.define(version: 20160922165713) do
     t.string   "password_digest"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
-  end
-
-  create_table "license_infos", force: :cascade do |t|
-    t.string   "code"
-    t.string   "name"
-    t.string   "external_info_url"
-    t.string   "full_text_url"
-    t.string   "idb_help_url"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
   end
 
   create_table "medusa_ingests", force: :cascade do |t|

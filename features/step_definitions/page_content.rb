@@ -1,19 +1,19 @@
-Then(/^I should see '(.*)'$/) do |text|
-  page.should have_content(text)
+Then(/^I see '(.*)'$/) do |text|
+  expect(page).to have_content(text)
 end
 
-And(/^I should not see '(.*)'$/) do |text|
-  page.should_not have_content(text)
+And(/^I do not see '(.*)'$/) do |text|
+  expect(page).to have_no_content(text)
 end
 
-And /^I should see all of:$/ do |table|
+And /^I see all of:$/ do |table|
   table.headers.each do |header|
-    step "I should see '#{header}'"
+    step "I see '#{header}'"
   end
 end
 
-And /^I should see none of:$/ do |table|
+And /^I see none of:$/ do |table|
   table.headers.each do |header|
-    step "I should not see '#{header}'"
+    step "I do not see '#{header}'"
   end
 end

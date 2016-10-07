@@ -197,17 +197,7 @@
                 <span class="metadata-label">License:</span>
               </td>
               <td>
-                <% if @license_link == "" %>
-                  <%= (@dataset.license && @dataset.license != "") ? @dataset.license : "[License not selected]" %>
-                <% else %>
-                  <a href="<%= @license_link %>">
-                    <% if @license.code == 'deposit_agreement.txt' %>
-                      See license.txt in dataset.
-                    <% else %>
-                      <%= @license.name %>
-                    <% end %>
-                  </a>
-                <% end %>
+                <%= @license_name %>
               </td>
             </tr>
 

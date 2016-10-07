@@ -196,6 +196,7 @@ ready = function () {
     }
 
     $("#dataset_embargo").change(function () {
+        $('#update-confirm').prop('disabled', false);
         switch ($(this).val()) {
             case 'file embargo':
                 $('#release-date-picker').show();

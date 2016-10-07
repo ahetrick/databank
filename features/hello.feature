@@ -5,6 +5,6 @@ Feature: Hello
 
   Scenario: View page and looks right
     When I visit the home page
-    Then I should see all of:
+    Then I see all of:
       | The Illinois Data Bank is a public access repository for publishing research data from the University of Illinois at Urbana-Champaign  | You are ready to deposit data if: |
 

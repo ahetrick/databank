@@ -2,11 +2,11 @@ FactoryGirl.define do
 
   factory :user do
     provider "identity"
-    uid "user@mailinator.com"
-    name "Test User"
-    email "user@mailinator.com"
-    role "guest"
-    username "test_user"
+    uid "mfall3@mailinator.com"
+    name "Test Curator"
+    email "mfall3@mailinator.com"
+    role "curator"
+    username "test_curator"
   end
 
   factory :dataset do
@@ -17,7 +17,7 @@ FactoryGirl.define do
     depositor_name "Colleen Fallaw"
     depositor_email "mfall3@mailinator.com"
     corresponding_creator_name "Colleen Fallaw"
-    corresponding_creator_email "mfall3@illinois.edu"
+    corresponding_creator_email "mfall3@mailinator.com"
     curator_hold false
     embargo "none"
     is_test false

@@ -58,9 +58,10 @@
                       %span(class="fa fa-question-circle")
                       what's this?
                     -if @dataset.publication_state == Databank::PublicationState::DRAFT
-                      = f.collection_select :license, LicenseInfo.order('code ASC'), :code, :name, {:prompt => true}, {:class => "form-control dataset"}
+                      = f.collection_select :license, @license_info_arr, :code, :name, {:prompt => true}, {:class => "form-control dataset"}
+
                     -else
-                      = f.collection_select :license, LicenseInfo.order('code ASC'), :code, :name, {:prompt => true}, {:class => "form-control dataset", onchange: "license_change_warning()"}
+                      = f.collection_select :license, @license_info_arr, :code, :name, {:prompt => true}, {:class => "form-control dataset", onchange: "license_change_warning()"}
 
               = render partial: 'creators_subform', locals: {f: f}
 

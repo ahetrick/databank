@@ -66,6 +66,7 @@ class AdminController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_admin
+      # Databank::Application.settings = Admin.instance
       @admin = Admin.instance
     end
 

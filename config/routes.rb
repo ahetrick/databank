@@ -8,11 +8,9 @@ Rails.application.routes.draw do
   get "/datasets/pre_deposit", to: "datasets#pre_deposit"
 
   resources :related_materials
-  resources :funder_infos
   resources :funders
   resources :definitions
   resources :medusa_ingests
-  resources :license_infos
   resources :datafiles
   resources :users
   resources :identities
