@@ -3,7 +3,7 @@ module Effective
     class CuratorDatasets < Effective::Datatable
       datatable do
         table_column :depositor_name, label: 'search by depositor'
-        array_column :search_citation, filter: {fuzzy: true} do |dataset|
+        array_column :search, filter: {fuzzy: true} do |dataset|
 
           table_description = nil
           if dataset.description && !dataset.description.empty?

@@ -14,6 +14,10 @@ When(/^I visit the policies page$/) do
   visit '/policies'
 end
 
+When(/^I visit the find page$/) do
+  visit '/datasets'
+end
+
 And(/^I click the help link$/) do
   within('#navbar') do
     click_on('Help')

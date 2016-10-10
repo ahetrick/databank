@@ -4,13 +4,13 @@
       Your draft is saved. We'll save a draft dataset for at least six months.  When you're ready to continue, select your dataset and click 'Edit' to pick up where you left off.
     -elsif params['context'] == 'exit_doi'
       Your dataset is saved.
-- if params.has_key?('depositor') && current_user && current_user.role != 'admin'
+- if params.has_key?('depositor') && current_user && current_user.role == 'depositor'
   %h2 My Datasets
   %button(type="button" class="btn btn-primary btn-block dataset-index-btn" onclick='window.location = "/datasets"')
     Click this bar to list
     %strong ALL
     Datasets
-- elsif current_user && current_user.role != 'admin'
+- elsif current_user && current_user.role == 'depositor'
   %h2 All Datasets
   %button(type="button" class="btn btn-primary btn-block dataset-index-btn" onclick='window.location = "/datasets?depositor=#{current_user.name}"')
     Click this bar to list just
