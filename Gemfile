@@ -118,43 +118,41 @@ gem 'curb', '~> 0.9.1'
 # Use modernizr-rails to handle different browsers differently
 gem 'modernizr-rails'
 
-group :development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug'
+# Call 'byebug' anywhere in the code to stop execution and get a debugger console
+gem 'byebug'
 
-  # Access an IRB console on exception pages or by using <%= console %> in views
-  # gem 'web-console', '~> 2.0'
+# Access an IRB console on exception pages or by using <%= console %> in views
+# gem 'web-console', '~> 2.0'
 
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring'
+# Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+gem 'spring'
 
-  # Use mocha to support stubs for testing
-  gem 'mocha', '~> 1.1'
+# Use mocha to support stubs for testing
+gem 'mocha', '~> 1.1'
 
-  #Use Selenenium web driver in testing
-  gem 'selenium-webdriver'
+#Use Selenenium web driver in testing
+gem 'selenium-webdriver'
 
-  #Use rspec-rails to support testing
-  gem 'rspec-rails', '~> 3.5'
+#Use rspec-rails to support testing
+gem 'rspec-rails', '~> 3.5'
 
-  #Use factory girl for fixtures
-  gem 'factory_girl_rails'
+#Use factory girl for fixtures
+gem 'factory_girl_rails'
 
-  #Use Cucumber for behavior testing
-  gem 'cucumber-rails', :require => false
+#Use Cucumber for behavior testing
+gem 'cucumber-rails', :require => false
 
-  #Use Capybara for behavior testing
-  gem 'capybara'
+#Use Capybara for behavior testing
+gem 'capybara'
 
-  #Use DatabaseCleaner to clean the database (because transactional fixtures do not work with Selenium)
-  gem 'database_cleaner'
+#Use DatabaseCleaner to clean the database (because transactional fixtures do not work with Selenium)
+gem 'database_cleaner'
 
-  # Use Capistrano for deployment
+# Use Capistrano for deployment
 
-  gem 'capistrano-rails'
-  gem 'capistrano-bundler'
-  gem 'capistrano-rvm'
-  gem 'capistrano-passenger'
+gem 'capistrano-rails'
+gem 'capistrano-bundler'
+gem 'capistrano-rvm'
+gem 'capistrano-passenger'
 
-end
 
