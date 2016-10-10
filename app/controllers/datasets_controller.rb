@@ -1,7 +1,8 @@
 require 'open-uri'
 require 'net/http'
 require 'boxr'
-# require 'zipruby'
+require 'zip'
+require 'zipline'
 require 'json'
 require 'pathname'
 
@@ -32,8 +33,9 @@ class DatasetsController < ApplicationController
 
   # enable streaming responses
   include ActionController::Streaming
+
   # enable zipline
-  # include Zipline
+  include Zipline
 
   # GET /datasets
   # GET /datasets.json
@@ -121,7 +123,7 @@ class DatasetsController < ApplicationController
 
     end
 
-    @ordered_datafiles = @dataset.datafiles.sort_by {|obj| obj.bytestream_name}
+    @ordered_datafiles = @dataset.datafiles.sort_by { |obj| obj.bytestream_name }
 
     set_file_mode
 
@@ -169,9 +171,9 @@ class DatasetsController < ApplicationController
                   next if pid_filename == '.' or pid_filename == '..'
                   next unless pid_filename.include? 'delayed_job'
                   pid_filepath = "#{IDB_CONFIG[:delayed_job_pid_dir]}/#{pid_filename}"
-                  
+
                   if File.exists?(pid_filepath)
-                    
+
                     file_contents = IO.read(pid_filepath)
                     if file_contents.include? pid.to_s
                       File.delete(pid_filepath)
@@ -179,7 +181,7 @@ class DatasetsController < ApplicationController
                   else
                     Rails.logger.warn "#{pid_filepath} did not exist"
                   end
-                  
+
                 end
 
               rescue Errno::ESRCH => ex
@@ -201,22 +203,22 @@ class DatasetsController < ApplicationController
             job.destroy
             @datafile.destroy
 
-          end 
+          end
         else
           @datafile.destroy
         end
       end
 
       respond_to do |format|
-          format.html { render json: "successfully canceled upload from Box", status: :ok}
-          format.json { render json: "successfully canceled upload from Box", status: :ok}
+        format.html { render json: "successfully canceled upload from Box", status: :ok }
+        format.json { render json: "successfully canceled upload from Box", status: :ok }
       end
-    
+
     rescue Exception::StandardError => ex
       Rails.logger.warn ex.message
       respond_to do |format|
-        format.html { render json: "successfully canceled upload from Box", status: :unprocessable_entity}
-        format.json { render json: "successfully canceled upload from Box", status: :unprocessable_entity}
+        format.html { render json: "successfully canceled upload from Box", status: :unprocessable_entity }
+        format.json { render json: "successfully canceled upload from Box", status: :unprocessable_entity }
       end
     end
 
@@ -256,7 +258,7 @@ class DatasetsController < ApplicationController
     end
     @token = @dataset.current_token
 
-    @ordered_datafiles = @dataset.datafiles.sort_by {|obj| obj.bytestream_name}
+    @ordered_datafiles = @dataset.datafiles.sort_by { |obj| obj.bytestream_name }
 
     set_file_mode
 
@@ -286,7 +288,7 @@ class DatasetsController < ApplicationController
         format.json { render json: @dataset.errors, status: :unprocessable_entity }
       end
     end
-    
+
 
   end
 
@@ -343,7 +345,7 @@ class DatasetsController < ApplicationController
           end
 
         else #this else means context was not set to exit or publish - this is the normal draft update
-          format.html { redirect_to dataset_path(@dataset.key)}
+          format.html { redirect_to dataset_path(@dataset.key) }
           format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
         end
 
@@ -438,7 +440,7 @@ class DatasetsController < ApplicationController
 
           temporary_creator.save
           proposed_dataset.creators.push(temporary_creator)
-      end
+        end
 
       end
 
@@ -449,13 +451,13 @@ class DatasetsController < ApplicationController
       respond_to do |format|
 
         format.html { render :edit, alert: completion_check_message }
-        format.json { render json: {"message":completion_check_message}}
+        format.json { render json: {"message": completion_check_message} }
       end
 
     else
       respond_to do |format|
-        format.html { render json: {"message":"dataset not found"} }
-        format.json { render json: {"message":"published dataset not found"}, status: :unprocessable_entity }
+        format.html { render json: {"message": "dataset not found"} }
+        format.json { render json: {"message": "published dataset not found"}, status: :unprocessable_entity }
       end
 
     end
@@ -775,40 +777,30 @@ class DatasetsController < ApplicationController
       @dataset.datafiles.each do |datafile|
         datafile.record_download(request.remote_ip)
       end
-
       file_name = "DOI-#{@dataset.identifier}".parameterize + ".zip"
     else
       file_name = "datafiles.zip"
     end
 
-    temp_zipfile = Tempfile.new("#{@dataset.key}.zip")
+    datafiles = Datafile.where(web_id: params[:selected_files])
 
-    begin
+    datafiles = Array.new
 
-      web_ids = params[:selected_files]
+    web_ids = params[:selected_files]
 
+    web_ids.each do |web_id|
 
-      Zip::Archive.open(temp_zipfile.path, Zip::CREATE, Zip::BEST_SPEED) do |ar|
-
-        web_ids.each do |web_id|
-
-          df = Datafile.find_by_web_id(web_id)
-          if df
-            ar.add_file(df.bytestream_path) # add file to zip archive
-          end
-
-        end
-
+      df = Datafile.find_by_web_id(web_id)
+      if df
+        datafiles.append([df.bytestream_path, df.bytestream_name])
       end
 
-      zip_data = File.read(temp_zipfile.path)
-
-      send_data(zip_data, :type => 'application/zip', :filename => file_name)
-
-    ensure
-      temp_zipfile.close
-      temp_zipfile.unlink
     end
+
+    file_mappings = datafiles
+                        .lazy  # Lazy allows us to begin sending the download immediately instead of waiting to download everything
+                        .map { |url, path| [open(url), path] }
+    zipline(file_mappings, file_name)
 
   end
 
@@ -1083,7 +1075,7 @@ class DatasetsController < ApplicationController
     mount_path = (Pathname.new(IDB_CONFIG[:storage_mount]).realpath).to_s.strip
     read_only_path = (IDB_CONFIG[:read_only_realpath]).to_s.strip
 
-    if (mount_path.casecmp(read_only_path) == 0 )
+    if (mount_path.casecmp(read_only_path) == 0)
       Databank::Application.file_mode = Databank::FileMode::READ_ONLY
     end
 

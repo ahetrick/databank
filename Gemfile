@@ -1,4 +1,4 @@
-source 'https://rubygems.org'
+source 'http://rubygems.org'
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -24,13 +24,9 @@ gem 'highcharts-rails'
 # Use zeroclipboard-rails to copy text to clipboards
 gem 'zeroclipboard-rails'
 
-# Use Zipline with rubyzip to stream dynamically generated zip files
-# gem 'rubyzip', '>= 1.0.0' # will load new rubyzip version
-# gem 'zipline', path: "vendor/zipline"
-
-# Use zipruby to make temp zip file
-# gem 'zipruby'
-
+# Use rubyzip to stream dynamically generated zip files
+gem 'rubyzip'
+gem 'zipline'
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 # gem 'turbolinks'

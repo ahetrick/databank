@@ -1,5 +1,5 @@
 GEM
-  remote: https://rubygems.org/
+  remote: http://rubygems.org/
   specs:
     actionmailer (4.2.3)
       actionpack (= 4.2.3)
@@ -338,6 +338,11 @@ GEM
       nokogiri (~> 1.3)
     zeroclipboard-rails (0.1.2)
       railties (>= 3.1)
+    zip_tricks (4.2.0)
+    zipline (0.0.12)
+      curb (>= 0.8.0, < 0.10)
+      rails (>= 3.2.1, < 5.1)
+      zip_tricks (>= 4.0.0, <= 5.0.0)
 
 PLATFORMS
   ruby
@@ -387,6 +392,7 @@ DEPENDENCIES
   progress_job
   rails (= 4.2.3)
   rspec-rails (~> 3.5)
+  rubyzip
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
   selenium-webdriver
@@ -397,6 +403,7 @@ DEPENDENCIES
   uuid
   valid_email
   zeroclipboard-rails
+  zipline
 
 BUNDLED WITH
    1.11.2
