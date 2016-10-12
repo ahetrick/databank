@@ -53,22 +53,23 @@ set :keep_assets, 2
 
 namespace :deploy do
 
-  after 'deploy:publishing', 'deploy:restart'
+  before 'deploy:starting', 'deploy:stop_idb'
+  after 'deploy:cleanup', 'deploy:start_idb'
   namespace :deploy do
-    task :restart do
-      within "/home/databank/current" do
-        execute "dj_start.sh"
-        execute "idb_start.sh"
-      end
-    end
-  end
+    task :stop_idb do
 
-  after :restart, :clear_cache do
-    on roles(:web), in: :groups, limit: 3, wait: 10 do
-      # within "/home/databank/current" do
-      #   execute "pwd"
-      #   execute "whoami"
-      # end
+      run "source ~./profile"
+      run "rvm use 2.2.1@idb_v1"
+      run "cd /home/databank/current"
+      run "./idb_start.sh"
+      run "./dj_stop.sh"
+    end
+    task :start_idb do
+      run "source ~/.profile"
+      run "rvm use 2.2.1@idb_v1"
+      run "cd /home/databank/current"
+      run "./dj_start.sh"
+      run "./idb_start.sh"
     end
   end
 
