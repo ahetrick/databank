@@ -43,3 +43,7 @@ end
 When(/^I visit the dataset edit page$/) do
   visit "/datasets/#{@dataset.key}/edit"
 end
+
+When(/^I maximize the browser$/) do
+  @driver.manage.window.maximize
+end

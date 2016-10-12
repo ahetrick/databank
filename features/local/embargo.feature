@@ -139,6 +139,6 @@ Feature:
     And I select file & metadata publication delay
     And I select release date delay (2+ years)
     And I leave release date field
-    And I pause for 5 seconds
+    And I pause for 10 seconds
     Then I see an alert "The maximum amount of time that data can be delayed for publication is is 1 year."
     And I see the release date set to one year from now

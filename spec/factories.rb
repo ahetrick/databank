@@ -32,7 +32,6 @@ FactoryGirl.define do
   end
 
   factory :creator do
-
     family_name "Last"
     given_name "First"
     type_of 0

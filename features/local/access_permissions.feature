@@ -23,7 +23,7 @@ Feature: Access Permissions
     Then I see none of:
       | imported DOI | test DOI |
 
-  Scenario: Deposit form unavailable for depositor
+  Scenario: Deposit form unavailable for undergrad
     Given I am logged out
     When I log in as a curator
     And I switch role to undergrad

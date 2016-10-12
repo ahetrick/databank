@@ -9,14 +9,12 @@ Feature: Search
     Then I see all of:
       | Search  | Log In |
 
-
   Scenario: As curator, view page and looks right
     Given I am logged out
     When I log in
     And I visit the find page
     Then I see all of:
       | Search  | Status |
-
 
   Scenario: As depositor, view page and looks right
     Given I am logged out
@@ -26,7 +24,6 @@ Feature: Search
     And I visit the find page
     Then I see all of:
       | Search  | this bar to list |
-
 
   Scenario: As an undergrad, view page and looks right
     Given I am logged out
@@ -38,7 +35,6 @@ Feature: Search
       | Search  |
     And I see none of:
       | this bar to list | Status |
-
 
   # curator
   Scenario: Search for datasets
@@ -92,7 +88,7 @@ Feature: Search
     # don't see other people's drafts
     And I see none of:
       | Temperatures | Heights |
-    
+
     When I enter search phrase: fact
     And I pause for 2 seconds
     Then I see all of:
