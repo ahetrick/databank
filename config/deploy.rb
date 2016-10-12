@@ -53,20 +53,10 @@ set :keep_assets, 2
 
 namespace :deploy do
 
-  before 'deploy:starting', 'deploy:stop_idb'
   after 'deploy:cleanup', 'deploy:start_idb'
   namespace :deploy do
-    task :stop_idb do
 
-      run "source ~./profile"
-      run "rvm use 2.2.1@idb_v1"
-      run "cd /home/databank/current"
-      run "./idb_start.sh"
-      run "./dj_stop.sh"
-    end
     task :start_idb do
-      run "source ~/.profile"
-      run "rvm use 2.2.1@idb_v1"
       run "cd /home/databank/current"
       run "./dj_start.sh"
       run "./idb_start.sh"
