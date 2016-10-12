@@ -56,7 +56,10 @@ namespace :deploy do
   after 'deploy:publishing', 'deploy:restart'
   namespace :deploy do
     task :restart do
-      invoke 'unicorn:restart'
+      within "/home/databank/current" do
+        execute "dj_start.sh"
+        execute "idb_start.sh"
+      end
     end
   end
 
