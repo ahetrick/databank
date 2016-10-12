@@ -51,16 +51,3 @@ set :assets_roles, [:web, :app]
 # set this to the number of versions to keep
 set :keep_assets, 2
 
-namespace :deploy do
-
-  after 'deploy:cleanup', 'deploy:start_idb'
-  namespace :deploy do
-
-    task :start_idb do
-      run "cd /home/databank/current"
-      run "./dj_start.sh"
-      run "./idb_start.sh"
-    end
-  end
-
-end
