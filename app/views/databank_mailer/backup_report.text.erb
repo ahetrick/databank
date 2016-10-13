@@ -1,2 +1,1 @@
-backup found for <%= Date.current %>: <%= @is_ok %>
-expected path: <%= @expected_path %>
+<%= @is_ok? "CONFIRMED" : "NO" %> backup found for <%= Date.current %> at <%= @expected_path %>.
