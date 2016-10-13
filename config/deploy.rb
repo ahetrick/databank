@@ -51,3 +51,8 @@ set :assets_roles, [:web, :app]
 # set this to the number of versions to keep
 set :keep_assets, 2
 
+namespace :deploy do
+  task :restart, :roles => :web do
+    run "/home/databank/shared/scripts/full_restart.sh"
+  end
+end
