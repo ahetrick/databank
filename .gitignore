@@ -36,6 +36,7 @@ dj_stop.sh
 /uploads_rw
 /uploads_ro
 /public/agreements
+/public/backups
 
 /public/sitemaps
 /public/deck

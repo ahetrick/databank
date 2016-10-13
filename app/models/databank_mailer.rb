@@ -92,6 +92,24 @@ class DatabankMailer < ActionMailer::Base
     mail(to: "#{IDB_CONFIG[:tech_error_mail_list]}", subject: subject)
   end
 
+  def backup_report()
+
+    @expected_path = "#{IDB_CONFIG[:databank_backup_root]}/#{Date.current}.sql"
+
+    @is_ok = File.exists?(@expected_path)
+
+    subject = nil
+
+    if @is_ok
+      subject = prepend_system_code("Illinois Data Bank] Backup exists for #{Date.current}")
+    else
+      subject = prepend_system_code("Illinois Data Bank] Backup NOT FOUND for #{Date.current}")
+    end
+
+    mail(to: "#{IDB_CONFIG[:tech_error_mail_list]}", subject: subject)
+
+  end
+
   def confirmation_not_sent(dataset_key, err)
     subject = prepend_system_code('Illinois Data Bank] Dataset confirmation email not sent')
 
@@ -116,6 +134,8 @@ class DatabankMailer < ActionMailer::Base
     end
     return subject
   end
+
+
 
 end
 
