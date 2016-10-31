@@ -44,7 +44,7 @@ class Ability
       can :review_deposit_agreement, Dataset
       can :pre_deposit, Dataset
       can :validiate_change2published, :all
-      
+
     else
       can :read, :all
       can :download_link, Dataset
