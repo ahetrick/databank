@@ -32,6 +32,7 @@ class Ability
         dataset.try(:depositor_email) == user.email
       end
 
+      can :download_link, Dataset
       can :stream_file, Dataset
       can :download_datafiles, Dataset
       can :download_endNote_XML, Dataset
@@ -39,8 +40,11 @@ class Ability
       can :download_BibTeX, Dataset
       can :download_RIS, Dataset
       can :show, Dataset
+      can :splash_url, Dataset
       can :review_deposit_agreement, Dataset
       can :pre_deposit, Dataset
+      can :validiate_change2published, :all
+      
     else
       can :read, :all
       can :download_link, Dataset
