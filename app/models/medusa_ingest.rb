@@ -97,10 +97,12 @@ class MedusaIngest < ActiveRecord::Base
     end
 
     serialization_json = (dataset.recovery_serialization).to_json
-    File.open("#{staging_dir}/system/serialization.#{file_time}.json", "w") do |serialization_file|
+
+    writepath = "#{staging_dir}/system/serialization.#{file_time}.json"
+    File.open(writepath, "w") do |serialization_file|
       serialization_file.puts(serialization_json)
     end
-    FileUtils.chmod 0755, "#{staging_dir}/system/serialization.#{file_time}.json"
+    FileUtils.chmod 0755, writepath
 
     medusa_ingest = MedusaIngest.new
     staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/serialization.#{file_time}.json"

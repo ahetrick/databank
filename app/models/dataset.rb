@@ -7,6 +7,7 @@ require 'securerandom'
 class Dataset < ActiveRecord::Base
   include ActiveModel::Serialization
   include Datacite
+  include Recovery
   include MessageText
 
   audited except: [:creator_text, :key, :complete, :is_test, :is_import, :updated_at, :embargo], allow_mass_assignment: true
@@ -32,6 +33,7 @@ class Dataset < ActiveRecord::Base
   after_create 'store_agreement'
   before_save 'set_primary_contact'
   after_save 'remove_invalid_datafiles'
+  before_destroy 'destroy_audit'
 
   def to_param
     self.key
@@ -745,8 +747,12 @@ class Dataset < ActiveRecord::Base
   end
 
   def remove_invalid_datafiles
-    self.datafiles.each do |datafile|
-      datafile.destroy unless ( (datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != "") )
+    begin
+      self.datafiles.each do |datafile|
+        datafile.destroy unless ( (datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != "") )
+      end
+    rescue StandardError => ex
+      # sigh
     end
   end
 
@@ -761,6 +767,12 @@ class Dataset < ActiveRecord::Base
 
   def store_agreement
     dir_text = "#{IDB_CONFIG[:agreements_root_path]}/#{self.key}"
+
+    # agreement may exist during a restoration to database from medusa serialization
+    if File.exists? dir_text
+      return true
+    end
+
     Dir.mkdir dir_text
     FileUtils.chmod "u=wrx,go=rx", File.dirname(dir_text)
     path = "#{dir_text}/deposit_agreement.txt"
@@ -808,6 +820,7 @@ class Dataset < ActiveRecord::Base
     notification = DatabankMailer.embargo_approaching_1w(self.key)
     notification.deliver_now
   end
+
 
   def full_changelog
     changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', self.id, self.id)
@@ -873,6 +886,7 @@ class Dataset < ActiveRecord::Base
     return return_string
   end
 
+
   def self.make_anvl(metadata)
     anvl = ""
     metadata_count = metadata.count
@@ -894,6 +908,13 @@ class Dataset < ActiveRecord::Base
 
   def generate_auth_token
     SecureRandom.uuid.gsub(/\-/,'')
+  end
+
+  def destroy_audit
+    changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', self.id, self.id)
+    changes.each do |change|
+      change.destroy
+    end
   end
 
 end

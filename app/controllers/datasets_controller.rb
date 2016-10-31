@@ -821,8 +821,13 @@ class DatasetsController < ApplicationController
 
       web_ids.each(&:strip!)
 
+      path_arr = Array.new
+      web_ids.each do |web_id|
 
-      download_hash = DownloaderClient.get_download_hash(web_ids, "DOI-#{@dataset.identifier}".parameterize)
+      end
+
+
+      download_hash = DownloaderClient.datafiles_download_hash(web_ids, "DOI-#{@dataset.identifier}".parameterize)
       if download_hash
         if download_hash['status']== 'ok'
           web_ids.each do |web_id|

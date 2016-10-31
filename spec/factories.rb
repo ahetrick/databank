@@ -1,5 +1,15 @@
 FactoryGirl.define do
+  factory :restoration_id_map do
+    id_class "dataset"
+    old_id 1
+    new_id 1
+    restoration_event_id 1
+  end
 
+  factory :restoration_event do
+    note "bad thing happened"
+  end
+  
   factory :user do
     provider "identity"
     uid "mfall3@mailinator.com"
@@ -39,6 +49,13 @@ FactoryGirl.define do
     is_contact true
     row_position 1
     identifier_scheme "ORCID"
+  end
+
+  factory :funder do
+    name "DOE"
+    identifier "10.13039/100000015"
+    identifier_scheme "DOI"
+    grant "RFA-Unicorns"
   end
 
 

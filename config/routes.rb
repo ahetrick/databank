@@ -38,6 +38,10 @@ Rails.application.routes.draw do
 
   get '/', to: 'welcome#index'
 
+  get '/restoration_events', to: 'restoration_events#index'
+
+  get '/audits', to: 'admin#audits'
+
   get '/policies', to: 'policies#index', :as => :policies
   get '/help', to: 'help#index', :as => :help
   get '/welcome/deposit_login_modal', to: 'welcome#deposit_login_modal'
