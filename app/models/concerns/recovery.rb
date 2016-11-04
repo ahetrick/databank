@@ -124,7 +124,41 @@ module Recovery
       if existing_record_relation.count == 0
         change.delete('id')
         change['user_id'] = agent_id
-        Audited::Adapters::ActiveRecord::Audit.create(change)
+
+        new_change_record = Audited::Adapters::ActiveRecord::Audit.create(change)
+
+        Rails.logger.warn "before"
+        Rails.logger.warn new_change_record.to_yaml
+
+        if change['auditable_type'] == "Dataset"
+          old_dataset_id = change['auditable_id']
+          map = RestorationIdMap.find_by(restoration_event_id: event_id, id_class: "Dataset", old_id: old_dataset_id)
+          raise("no map found for change #{change['id']} with event #{event_id}") unless map
+          new_dataset_id = map.new_id
+          new_change_record.auditable_id = new_dataset_id
+
+          new_change_record.save
+        else
+          old_dataset_id = change['associated_id']
+
+          dataset_map = RestorationIdMap.find_by(restoration_event_id: event_id, id_class: "Dataset", old_id: old_dataset_id)
+          raise("no map found for change #{change['id']} with event #{event_id}") unless dataset_map
+          new_dataset_id = dataset_map.new_id
+
+          resource_map = RestorationIdMap.find_by(restoration_event_id: event_id, id_class: change['auditable_type'], old_id: change['auditable_id'])
+          raise("no map found for change #{change['id']} with event #{event_id}") unless resource_map
+          new_resource_id = resource_map.new_id
+
+          new_change_record.associated_id = new_dataset_id
+          new_change_record.auditable_id = new_resource_id
+
+        end
+
+        Rails.logger.warn "after"
+        Rails.logger.warn new_change_record.to_yaml
+
+
+
       else
         raise("record exists")
       end
