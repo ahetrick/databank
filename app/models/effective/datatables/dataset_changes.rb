@@ -36,7 +36,6 @@ module Effective
         medusaChangesArr = Array.new
         publication = nil
 
-
         changes.each do |change|
           
           if (change.audited_changes.has_key?('medusa_path')) || (change.audited_changes.has_key?('binary_name')) || (change.audited_changes.has_key?('medusa_dataset_dir'))

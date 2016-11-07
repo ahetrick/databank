@@ -88,24 +88,23 @@ module Recovery
         if change['auditable_type'] == "Dataset"
           old_dataset_id = change['auditable_id']
           map = RestorationIdMap.find_by(event_id: event_id, id_class: "Dataset", old_id: old_dataset_id)
-          raise("no map found for change #{change['id']} with event #{event_id}") unless map
-          new_dataset_id = map.new_id
-          existing_record.auditable_id = new_dataset_id
-
+          raise("no map found for #{event_id} #{change.to_yaml}") unless map
           existing_record.save
         else
           old_dataset_id = change['associated_id']
 
-          dataset_map = RestorationIdMap.find_by(event_id: event_id, id_class: "Dataset", old_id: old_dataset_id)
-          raise("no map found for change #{change['id']} with event #{event_id}") unless dataset_map
+          dataset_map = RestorationIdMap.find_by(event_id: event_id, id_class: 'Dataset', old_id: old_dataset_id)
+          raise("no map found for #{event_id} #{change.to_yaml}") unless dataset_map
           new_dataset_id = dataset_map.new_id
+          existing_record.associated_id = new_dataset_id
 
           resource_map = RestorationIdMap.find_by(event_id: event_id, id_class: change['auditable_type'], old_id: change['auditable_id'])
-          raise("no map found for change #{change['id']} with event #{event_id}") unless resource_map
-          new_resource_id = resource_map.new_id
-
-          existing_record.associated_id = new_dataset_id
-          existing_record.auditable_id = new_resource_id
+          if resource_map
+            new_resource_id = resource_map.new_id
+            existing_record.auditable_id = new_resource_id
+          #else
+            # assume resource was deleted
+          end
 
         end
 
@@ -122,42 +121,41 @@ module Recovery
       existing_record_relation = Audited::Adapters::ActiveRecord::Audit.where(id:change['id'])
 
       if existing_record_relation.count == 0
-        change.delete('id')
+
         change['user_id'] = agent_id
 
-        new_change_record = Audited::Adapters::ActiveRecord::Audit.create(change)
+        #Rails.logger.warn change
 
-        Rails.logger.warn "before"
-        Rails.logger.warn new_change_record.to_yaml
+        new_change_record = Audited::Adapters::ActiveRecord::Audit.create(change)
 
         if change['auditable_type'] == "Dataset"
           old_dataset_id = change['auditable_id']
           map = RestorationIdMap.find_by(restoration_event_id: event_id, id_class: "Dataset", old_id: old_dataset_id)
-          raise("no map found for change #{change['id']} with event #{event_id}") unless map
+          raise("no map found for #{event_id}#{change.to_yaml}") unless map
           new_dataset_id = map.new_id
           new_change_record.auditable_id = new_dataset_id
 
-          new_change_record.save
         else
           old_dataset_id = change['associated_id']
 
           dataset_map = RestorationIdMap.find_by(restoration_event_id: event_id, id_class: "Dataset", old_id: old_dataset_id)
-          raise("no map found for change #{change['id']} with event #{event_id}") unless dataset_map
+          raise("no map found for #{event_id} #{change.to_yaml}") unless dataset_map
           new_dataset_id = dataset_map.new_id
+          new_change_record.associated_id = new_dataset_id
 
           resource_map = RestorationIdMap.find_by(restoration_event_id: event_id, id_class: change['auditable_type'], old_id: change['auditable_id'])
-          raise("no map found for change #{change['id']} with event #{event_id}") unless resource_map
-          new_resource_id = resource_map.new_id
-
-          new_change_record.associated_id = new_dataset_id
-          new_change_record.auditable_id = new_resource_id
-
+          if resource_map
+            new_resource_id = resource_map.new_id
+            new_change_record.auditable_id = new_resource_id
+          #else
+            #assume resource was deleted
+          end
+          
         end
 
-        Rails.logger.warn "after"
-        Rails.logger.warn new_change_record.to_yaml
-
-
+        new_change_record.save
+        #Rails.logger.warn "change #{change['id']} created at #{new_change_record.created_at}."
+        #Rails.logger.warn new_change_record.to_json
 
       else
         raise("record exists")
@@ -237,7 +235,7 @@ module Recovery
       restore_dataset_hash.delete('id')
       restore_dataset_hash.delete('publication_year')
       restore_dataset_hash.delete('has_datacite_change')
-      restore_dataset_hash.delete('created_at')
+      #restore_dataset_hash.delete('created_at')
       restore_dataset_hash.delete('updated_at')
       restored_dataset = Dataset.create(restore_dataset_hash)
       RestorationIdMap.create(restoration_event_id: event_id, id_class: "Dataset", old_id: dataset_old_id, new_id: restored_dataset.id)
@@ -246,7 +244,7 @@ module Recovery
         creator_old_id = creator['id']
         creator.delete('id')
         creator['dataset_id'] = restored_dataset.id
-        creator.delete('created_at')
+        #creator.delete('created_at')
         creator.delete('updated_at')
         creator.delete('row_order')
         restored_creator = restored_dataset.creators.build(creator)
@@ -262,10 +260,10 @@ module Recovery
         datafile_old_id = datafile['id']
         datafile.delete('id')
         datafile['dataset_id'] = restored_dataset.id
-        datafile.delete('created_at')
+        # datafile.delete('created_at')
         datafile.delete('updated_at')
         restored_datafile = restored_dataset.datafiles.build(datafile)
-        restored_dataset.save
+        restored_datafile.save
         RestorationIdMap.create(restoration_event_id: event_id, id_class: "Datafile", old_id: datafile_old_id, new_id: restored_datafile.id)
       end
 
@@ -274,7 +272,7 @@ module Recovery
         material_old_id = material['id']
         material.delete('id')
         material['dataset_id'] = restored_dataset.id
-        material.delete('created_at')
+        #material.delete('created_at')
         material.delete('updated_at')
         restored_material = restored_dataset.related_materials.build(material)
         restored_material.save
@@ -285,18 +283,23 @@ module Recovery
         funder_old_id = funder['id']
         funder.delete('id')
         funder['dataset_id'] = restored_dataset.id
-        funder.delete('created_at')
+        #funder.delete('created_at')
         funder.delete('updated_at')
         restored_funder = restored_dataset.funders.build(funder)
         restored_funder.save
-        Rails.logger.warn restored_funder.to_yaml
         RestorationIdMap.create(restoration_event_id: event_id, id_class: "Funder", old_id: funder_old_id, new_id: restored_funder.id)
       end
+
+      # clear changelog from audits done during restoration
+      changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', restored_dataset.id, restored_dataset.id)
+      changes.destroy_all
 
       # restore changelog
 
       changes_hash_raw = JSON.parse(Dataset.get_changelog_from_medusa(identifier_to_restore))
       change_hash_array = changes_hash_raw['changes']
+
+      Rails.logger.warn "change_hash_array count: #{change_hash_array.count}"
 
       change_hash_array.each do |change_hash|
         change = change_hash['change']

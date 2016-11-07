@@ -35,7 +35,7 @@ namespace :recovery do
     serializations_from_medusa = Dataset.serializations_from_medusa
     serializations_from_medusa.each do |serialization|
 
-      #begin
+      begin
         identifier = nil
         serialization_json = JSON.parse(serialization)
         if serialization_json.has_key?('idb_dataset') && serialization_json['idb_dataset'].has_key?('dataset') && serialization_json['idb_dataset']['dataset'].has_key?('identifier')
@@ -46,12 +46,17 @@ namespace :recovery do
         end
 
         Dataset.restore_db_from_serialization(serialization, event.id)
-      # rescue StandardError => ex
-      #   puts ex.message
-      # else
-      #   puts "successfully restored #{identifier}"
-      #
-      # end
+
+        new_dataset = Dataset.find_by_key(serialization_json['idb_dataset']['dataset']['key'])
+
+        #puts new_dataset.full_changelog.to_json
+
+      rescue StandardError => ex
+        puts ex.message
+      else
+        puts "successfully restored #{identifier}"
+
+      end
 
     end
 
