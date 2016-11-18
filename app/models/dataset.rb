@@ -851,39 +851,84 @@ class Dataset < ActiveRecord::Base
   end
 
   def stuctured_data
-    return_string = ""
-    return_string << %Q[<script type="application/ld+json">{"@context": "http://schema.org", "@type": "Dataset", "name": "#{self.title}"]
 
-    self.creators.each do |creator|
-      return_string << %Q[, "author": {"@type": "Person", "name":"#{creator.given_name} #{creator.family_name}"]
-    end
+    if self.publication_state == Databank::PublicationState::RELEASED
 
-    if self.keywords && self.keywords != ""
+      return_string = ""
 
-      keywordArr = self.keywords.split(";")
+      return_string << %Q[<script type="application/ld+json">{"@context": "http://schema.org", "@type": "Dataset", "name": "#{self.title}"]
 
-        if keywordArr.length > 0
+      self.creators.each do |creator|
+        return_string << %Q[, "author": {"@type": "Person", "name":"#{creator.given_name} #{creator.family_name}"}]
+      end
 
-          keyword_commas = ""
+      if self.keywords && self.keywords != ""
 
-          keywordArr.each_with_index do |keyword, i|
-            if i != 0
-              keyword_commas << ", "
+        keywordArr = self.keywords.split(";")
+
+          if keywordArr.length > 0
+
+            keyword_commas = ""
+
+            keywordArr.each_with_index do |keyword, i|
+              if i != 0
+                keyword_commas << ", "
+              end
+              keyword_commas << keyword.strip
             end
-            keyword_commas << keyword.strip
+
+            return_string << %Q[, "keywords": "#{keyword_commas}" ]
+
+          else
+            return_string << %Q[, "keywords": "#{keywordArr[0]}" ]
           end
 
-          return_string << %Q[, "keywords": "#{keyword_commas}" ]
+      end
 
-        else
-          return_string << %Q[, "keywords": "#{keywordArr[0]}" ]
+      if self.description
+        return_string << %Q[, "description":"#{self.description}"]
+      end
+
+      return_string << %Q[, "version":"#{self.dataset_version}"]
+
+      return_string << %Q[, "url":"https://doi.org/#{self.identifier}"]
+
+      return_string << %Q[, "sameAs":"#{IDB_CONFIG[:root_url_text]}/#{self.key}"]
+
+      if self.funders && self.funders.count > 0
+        self.funders.each do |funder|
+          return_string << %Q[, "funder":{"@type": "Organization", "name":"#{funder.name}", "url":"https://doi.org/#{funder.identifier}"}]
         end
+      end
+
+      return_string << %Q[, "citation":"#{self.plain_text_citation}"]
+
+      license_link = nil
+
+      LICENSE_INFO_ARR.each do |license_info|
+        if (license_info.code == self.license) && (self.license !='license.txt')
+          license_link = license_info.external_info_url
+        end
+      end
+
+      if license_link
+        return_string << %Q[, "license":"#{license_link}"]
+      else
+        return_string << %Q[, "license":"See license.txt"]
+      end
+
+      return_string << %Q[, "includedInDataCatalog":{"@type":"DataCatalog", "name":"Illinois Data Bank", "url":"https://databank.illinois.edu"}]
+
+      return_string << %Q[}</script>]
+
+      return return_string
+
+    else
+
+      return ""
 
     end
 
-    return_string << %Q[}</script>]
-
-    return return_string
   end
 
 

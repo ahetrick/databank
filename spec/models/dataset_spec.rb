@@ -79,7 +79,7 @@ RSpec.describe Dataset, type: :model do
   describe '#plain_text_citation' do
 
     it "returns a string in the expected format" do
-      expect(@dataset.plain_text_citation.strip).to eq("Last, First (#{Time.new.year}): Test Dataset. University of Illinois at Urbana-Champaign. https://doi.org/#{@dataset.identifier}".strip)
+      expect(@dataset.plain_text_citation.strip).to eq("Smith, First (#{@dataset.publication_year}): Changed Title. University of Illinois at Urbana-Champaign. https://doi.org/#{@dataset.identifier}".strip)
     end
 
   end
@@ -129,10 +129,6 @@ RSpec.describe Dataset, type: :model do
       expect(@recovery_hash).to be_kind_of(Hash)
     end
 
-    it "has title element with correct content" do
-      expect(@recovery_hash['idb_dataset']['dataset']['title']).to eq(@dataset.title)
-    end
-
     it "has creators array with at least one element" do
       expect(@recovery_hash['idb_dataset']['creators'].length).to be > 0
     end
@@ -150,72 +146,72 @@ RSpec.describe Dataset, type: :model do
 
   end
 
-  describe '.restore_db_from_serialization' do
-
-    it "raises an error if the identifier already exists in database" do
-      serialzation_from_medusa = Dataset.get_serialzation_json_from_medusa(@independent_identifier)
-      expect{Dataset.restore_db_from_serialization(serialzation_from_medusa, RestorationEvent.create())}.to raise_error("record already exists in database")
-    end
-
-    it "adds a duplicate dataset to the database" do
-
-      funder = @dataset.funders.build(dataset_id: @dataset.id, name: "DOE", identifier: "10.13039/100000015", identifier_scheme: "DOI", grant: "RFA-Unicorns")
-      funder.save
-      #puts funder.to_yaml
-      @dataset.save
-
-      file_time = Time.now.strftime('%Y-%m-%d_%H-%M')
-      serialization_json = (@dataset.recovery_serialization).to_json
-      dir = "#{IDB_CONFIG['medusa']['medusa_path_root']}/DOI-#{(@dataset.identifier.tr('.', '-').tr('/', '-')).downcase}/system"
-      FileUtils::mkdir_p dir
-      writepath = "#{dir}/serialization.#{file_time}.json"
-      File.open(writepath, "w") do |serialization_file|
-        serialization_file.puts(serialization_json)
-      end
-      FileUtils.chmod 0755, writepath
-
-      serialzation_from_medusa = Dataset.get_serialzation_json_from_medusa(@independent_identifier)
-
-      puts @dataset.funders.count
-
-      dataset_copy = @dataset.dup
-
-      @dataset.destroy
-      restored_dataset = nil
-      #puts Dataset.count
-      expect {restored_dataset = Dataset.restore_db_from_serialization(serialzation_from_medusa, RestorationEvent.create())}.to change{Dataset.count}.by(1)
-      #puts Dataset.count
-      #puts restored_dataset.to_yaml
-
-      expect(dataset_copy.title).to eq(restored_dataset.title)
-      expect(dataset_copy.publisher).to eq(restored_dataset.publisher)
-      expect(dataset_copy.license).to eq(restored_dataset.license)
-      expect(dataset_copy.depositor_name).to eq(restored_dataset.depositor_name)
-      expect(dataset_copy.depositor_email).to eq(restored_dataset.depositor_email)
-      expect(dataset_copy.corresponding_creator_name).to eq(restored_dataset.corresponding_creator_name)
-      expect(dataset_copy.corresponding_creator_email).to eq(restored_dataset.corresponding_creator_email)
-      expect(dataset_copy.curator_hold).to eq(restored_dataset.curator_hold)
-      expect(dataset_copy.publication_state).to eq(restored_dataset.publication_state)
-      expect(dataset_copy.embargo).to eq(restored_dataset.embargo)
-      expect(dataset_copy.is_test).to eq(restored_dataset.is_test)
-      expect(dataset_copy.is_import).to eq(restored_dataset.is_import)
-      expect(dataset_copy.have_permission).to eq(restored_dataset.have_permission)
-      expect(dataset_copy.removed_private).to eq(restored_dataset.removed_private)
-      expect(dataset_copy.agree).to eq(restored_dataset.agree)
-      expect(dataset_copy.hold_state).to eq(restored_dataset.hold_state)
-      expect(dataset_copy.dataset_version).to eq(restored_dataset.dataset_version)
-      expect(dataset_copy.suppress_changelog).to eq(restored_dataset.suppress_changelog)
-      expect(dataset_copy.keywords).to eq(restored_dataset.keywords)
-      expect(dataset_copy.key).to eq(restored_dataset.key)
-      expect(dataset_copy.identifier).to eq(restored_dataset.identifier)
-      expect(dataset_copy.medusa_dataset_dir).to eq(restored_dataset.medusa_dataset_dir)
-      expect(dataset_copy.description).to eq(restored_dataset.description)
-      expect(dataset_copy.medusa_dataset_dir).to eq(restored_dataset.medusa_dataset_dir)
-      expect(restored_dataset.funders.count).to eq(1)
-
-    end
-
-  end
+  # describe '.restore_db_from_serialization' do
+  #
+  #   it "raises an error if the identifier already exists in database" do
+  #     serialzation_from_medusa = Dataset.get_serialzation_json_from_medusa(@independent_identifier)
+  #     expect{Dataset.restore_db_from_serialization(serialzation_from_medusa, RestorationEvent.create())}.to raise_error("record already exists in database")
+  #   end
+  #
+  #   it "adds a duplicate dataset to the database" do
+  #
+  #     funder = @dataset.funders.build(dataset_id: @dataset.id, name: "DOE", identifier: "10.13039/100000015", identifier_scheme: "DOI", grant: "RFA-Unicorns")
+  #     funder.save
+  #     #puts funder.to_yaml
+  #     @dataset.save
+  #
+  #     file_time = Time.now.strftime('%Y-%m-%d_%H-%M')
+  #     serialization_json = (@dataset.recovery_serialization).to_json
+  #     dir = "#{IDB_CONFIG['medusa']['medusa_path_root']}/DOI-#{(@dataset.identifier.tr('.', '-').tr('/', '-')).downcase}/system"
+  #     FileUtils::mkdir_p dir
+  #     writepath = "#{dir}/serialization.#{file_time}.json"
+  #     File.open(writepath, "w") do |serialization_file|
+  #       serialization_file.puts(serialization_json)
+  #     end
+  #     FileUtils.chmod 0755, writepath
+  #
+  #     serialzation_from_medusa = Dataset.get_serialzation_json_from_medusa(@independent_identifier)
+  #
+  #     puts @dataset.funders.count
+  #
+  #     dataset_copy = @dataset.dup
+  #
+  #     @dataset.destroy
+  #     restored_dataset = nil
+  #     #puts Dataset.count
+  #     expect {restored_dataset = Dataset.restore_db_from_serialization(serialzation_from_medusa, RestorationEvent.create())}.to change{Dataset.count}.by(1)
+  #     #puts Dataset.count
+  #     #puts restored_dataset.to_yaml
+  #
+  #     expect(dataset_copy.title).to eq(restored_dataset.title)
+  #     expect(dataset_copy.publisher).to eq(restored_dataset.publisher)
+  #     expect(dataset_copy.license).to eq(restored_dataset.license)
+  #     expect(dataset_copy.depositor_name).to eq(restored_dataset.depositor_name)
+  #     expect(dataset_copy.depositor_email).to eq(restored_dataset.depositor_email)
+  #     expect(dataset_copy.corresponding_creator_name).to eq(restored_dataset.corresponding_creator_name)
+  #     expect(dataset_copy.corresponding_creator_email).to eq(restored_dataset.corresponding_creator_email)
+  #     expect(dataset_copy.curator_hold).to eq(restored_dataset.curator_hold)
+  #     expect(dataset_copy.publication_state).to eq(restored_dataset.publication_state)
+  #     expect(dataset_copy.embargo).to eq(restored_dataset.embargo)
+  #     expect(dataset_copy.is_test).to eq(restored_dataset.is_test)
+  #     expect(dataset_copy.is_import).to eq(restored_dataset.is_import)
+  #     expect(dataset_copy.have_permission).to eq(restored_dataset.have_permission)
+  #     expect(dataset_copy.removed_private).to eq(restored_dataset.removed_private)
+  #     expect(dataset_copy.agree).to eq(restored_dataset.agree)
+  #     expect(dataset_copy.hold_state).to eq(restored_dataset.hold_state)
+  #     expect(dataset_copy.dataset_version).to eq(restored_dataset.dataset_version)
+  #     expect(dataset_copy.suppress_changelog).to eq(restored_dataset.suppress_changelog)
+  #     expect(dataset_copy.keywords).to eq(restored_dataset.keywords)
+  #     expect(dataset_copy.key).to eq(restored_dataset.key)
+  #     expect(dataset_copy.identifier).to eq(restored_dataset.identifier)
+  #     expect(dataset_copy.medusa_dataset_dir).to eq(restored_dataset.medusa_dataset_dir)
+  #     expect(dataset_copy.description).to eq(restored_dataset.description)
+  #     expect(dataset_copy.medusa_dataset_dir).to eq(restored_dataset.medusa_dataset_dir)
+  #     expect(restored_dataset.funders.count).to eq(1)
+  #
+  #   end
+  #
+  # end
 
   describe '.get_changelog_from_medusa' do
     it 'returns changelog' do
