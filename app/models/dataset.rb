@@ -856,7 +856,7 @@ class Dataset < ActiveRecord::Base
 
       return_string = ""
 
-      return_string << %Q[<script type="application/ld+json">{"@context": "http://schema.org", "@type": "Dataset", "name": "#{self.title}"]
+      return_string << %Q[<script type="application/ld+json">{"@context": "http://schema.org", "@type": "Dataset", "name": "#{self.title.gsub('"', '\\"')}"]
 
       self.creators.each do |creator|
         return_string << %Q[, "author": {"@type": "Person", "name":"#{creator.given_name} #{creator.family_name}"}]
@@ -886,7 +886,7 @@ class Dataset < ActiveRecord::Base
       end
 
       if self.description
-        return_string << %Q[, "description":"#{self.description}"]
+        return_string << %Q[, "description":"#{self.description.gsub('"', '\\"')}"]
       end
 
       return_string << %Q[, "version":"#{self.dataset_version}"]
@@ -901,7 +901,7 @@ class Dataset < ActiveRecord::Base
         end
       end
 
-      return_string << %Q[, "citation":"#{self.plain_text_citation}"]
+      return_string << %Q[, "citation":"#{self.plain_text_citation.gsub('"', '\\"')}"]
 
       license_link = nil
 
