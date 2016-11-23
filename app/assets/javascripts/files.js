@@ -27,17 +27,16 @@ function remove_file_row(datafile_index) {
             web_id = $("#dataset_datafiles_attributes_" + datafile_index + "_web_id").val();
 
             $.ajax({
-                url: '/datafiles/' + web_id,
+                url: '/datafiles/' + web_id + '.json',
                 type: 'DELETE',
                 datatype: "json",
                 success: function(result) {
-                    console.log("success" + result);
                     $("#datafile_index_" + datafile_index).remove();
+                    $("#dataset_datafiles_attributes_" + datafile_index + "_id").remove();
                 },
-                error: function(result){
-                    // oddly, even though an error is returned, the delete works ... ???
-                    console.log("error" + result);
-                    $("#datafile_index_" + datafile_index).remove();
+                error: function(xhr, status, error){
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
                 }
             });
         }

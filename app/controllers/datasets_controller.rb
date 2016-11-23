@@ -107,6 +107,7 @@ class DatasetsController < ApplicationController
       if df.bytestream_size == 0
         @dataset.save
         df.destroy
+        @dataset.save
       else
 
         if df.bytestream_size > 500000000
@@ -127,7 +128,7 @@ class DatasetsController < ApplicationController
 
     set_file_mode
 
-    @completion_check = Dataset.completion_check(@dataset, current_user)
+
 
     @changetable = nil
 
@@ -143,6 +144,8 @@ class DatasetsController < ApplicationController
     @publish_modal_msg = Dataset.publish_modal_msg(@dataset)
 
     set_license(@dataset)
+
+    @completion_check = Dataset.completion_check(@dataset, current_user)
 
   end
 
@@ -345,7 +348,7 @@ class DatasetsController < ApplicationController
           end
 
         else #this else means context was not set to exit or publish - this is the normal draft update
-          format.html { redirect_to dataset_path(@dataset.key) }
+          format.html { render :show }
           format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
         end
 
@@ -1055,11 +1058,14 @@ class DatasetsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_dataset
+
     @dataset = Dataset.find_by_key(params[:id])
     unless @dataset
       @dataset = Dataset.find(params[:dataset_id])
     end
-    raise ActiveRecord::RecordNotFound unless @dataset
+    # raise ActiveRecord::RecordNotFound unless @dataset
+    raise "dataset not found" unless @dataset
+
   end
 
   def set_license(dataset)

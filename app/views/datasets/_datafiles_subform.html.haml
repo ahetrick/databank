@@ -64,11 +64,11 @@
               %tbody
                 - if @ordered_datafiles
                   - @ordered_datafiles.each_with_index do |datafile, i|
-
                     = f.fields_for :datafiles, datafile do |df|
                       - if (datafile.binary && datafile.binary.file  && datafile.binary.size > 0 ) || (datafile.medusa_path && datafile.medusa_path != "")
                         - if datafile.bytestream_name != ""
                           -if datafile.job_status == :complete
+
                             %tr(id="datafile_index_#{i}")
                               %td
                                 .row
@@ -80,10 +80,10 @@
                                     = number_to_human_size(datafile.bytestream_size)
                                   %span(class="col-md-2")
                                     - if ( (@dataset.publication_state == Databank::PublicationState::DRAFT) && ((can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?))) )
-                                      %button(type="button" class="btn btn-danger btn-sm" onclick="remove_file_row(#{i})")
+                                      %button(type="button" id="remove_#{i}" class="btn btn-danger btn-sm" onclick="remove_file_row(#{i})")
                                         %span(class="glyphicon glyphicon-trash")
-                            = df.hidden_field :_destroy, value: false
-                            = df.hidden_field :web_id
+                                  = df.hidden_field :_destroy, value: false
+                                  = df.hidden_field :web_id
                           -else
                             %tr(id="job#{datafile.job.id}")
                               %td

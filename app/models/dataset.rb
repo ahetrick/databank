@@ -60,7 +60,8 @@ class Dataset < ActiveRecord::Base
       end
 
       contact = Creator.where(dataset_id: self.id, is_contact: true).first
-      raise ActiveRecord::RecordNotFound unless contact
+      #raise ActiveRecord::RecordNotFound unless contact
+      raise "contact not found" unless contact
 
       doc = Nokogiri::XML::Document.parse(%Q(<?xml version="1.0 encoding="UTF-8"?><resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd"></resource>))
       resourceNode = doc.first_element_child
@@ -859,7 +860,13 @@ class Dataset < ActiveRecord::Base
       return_string << %Q[<script type="application/ld+json">{"@context": "http://schema.org", "@type": "Dataset", "name": "#{self.title.gsub('"', '\\"')}"]
 
       self.creators.each do |creator|
-        return_string << %Q[, "author": {"@type": "Person", "name":"#{creator.given_name} #{creator.family_name}"}]
+
+        if creator.identifier && creator.identifier != ""
+          return_string << %Q[, "author": {"@type": "Person", "name":"#{creator.given_name} #{creator.family_name}", "url":"http://orcid.org/#{creator.identifier}"}]
+        else
+          return_string << %Q[, "author": {"@type": "Person", "name":"#{creator.given_name} #{creator.family_name}"}]
+        end
+
       end
 
       if self.keywords && self.keywords != ""

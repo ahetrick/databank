@@ -58,5 +58,4 @@ FactoryGirl.define do
     grant "RFA-Unicorns"
   end
 
-
 end

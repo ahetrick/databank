@@ -28,7 +28,7 @@
                 %span(class="glyphicon glyphicon-alert" )
                 This dataset record has not yet been published.  Confirm to complete changes.
                 %br
-          -else
+          -elsif @completion_check && @completion_check.length > 0
             .completion-warning
               %span(class="glyphicon glyphicon-alert" )
               = @completion_check
@@ -52,7 +52,7 @@
                 Confirm
                 %span(class="glyphicon glyphicon-triangle-right" )
 
-            -elsif (@completion_check == 'ok') && (@dataset.publication_state == Databank::PublicationState::DRAFT)
+            -elsif (@dataset.publication_state == Databank::PublicationState::DRAFT)
               %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit")
                 Confirm
                 %span(class="glyphicon glyphicon-triangle-right" )

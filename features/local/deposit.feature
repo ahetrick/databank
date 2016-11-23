@@ -41,5 +41,3 @@ Feature: Deposit
      Then I see all of:
       | Dataset was successfully published |
 
-
-

@@ -4,6 +4,7 @@
 
 <%= render partial: "download_link_modal" %>
 <% if (can? :edit, @dataset) %>
+
   <%= render partial: "confirm_deposit_modal" %>
   <%= render partial: 'datasets/dashboards/show' %>
   <%= render partial: 'incomplete_deposit_modal' %>
@@ -301,7 +302,7 @@
                   <div class="form-group" id="select-files-form-group">
                     <table id="show-files-table" class="table table-striped">
                       <tbody>
-                      <% if @all_in_medusa || @total_files_size < @local_zip_max_size %>
+                      <% if @all_in_medusa || ( @total_files_size && (@total_files_size < @local_zip_max_size) ) %>
                         <tr class="row">
                           <td>
                             <div class="row">

@@ -251,17 +251,18 @@ class DatafilesController < ApplicationController
   def destroy
     @dataset = Dataset.find(@datafile.dataset_id)
     @datafile.destroy
+    @dataset.save
 
     respond_to do |format|
 
       if @dataset
         format.html{ redirect_to edit_dataset_path(@dataset.key)}
-        format.json{ render json: 'deleted', status: :ok }
+        format.json { render json: {"confirmation" => "deleted"}, status: :ok }
       else
         format.html { redirect_to "/datasets/edit" }
-        format.json{ render json: 'deleted', status: :ok }
+        format.json { render json: {"confirmation" => "deleted"}, status: :ok }
       end
-      format.json{ render json: 'deleted', status: :ok}
+      format.json { render json: {"confirmation" => "deleted"}, status: :ok }
     end
 
   end
@@ -374,7 +375,8 @@ class DatafilesController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_datafile
     @datafile = Datafile.find_by_web_id(params[:id])
-    raise ActiveRecord::RecordNotFound unless @datafile
+    #raise ActiveRecord::RecordNotFound unless @datafile
+    raise "datafile not found" unless @datafile
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
