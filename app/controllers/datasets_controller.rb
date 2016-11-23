@@ -1063,9 +1063,7 @@ class DatasetsController < ApplicationController
     unless @dataset
       @dataset = Dataset.find(params[:dataset_id])
     end
-    # raise ActiveRecord::RecordNotFound unless @dataset
-    raise "dataset not found" unless @dataset
-
+    raise ActiveRecord::RecordNotFound unless @dataset
   end
 
   def set_license(dataset)

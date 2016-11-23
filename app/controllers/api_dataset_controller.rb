@@ -9,7 +9,7 @@ class ApiDatasetController < ApplicationController
 
     @dataset = Dataset.find_by_key(params['dataset_key'])
 
-    raise "dataset not found" unless @dataset
+    raise ActiveRecord::RecordNotFound unless @dataset
 
     # Rails.logger.warn params.to_yaml
 

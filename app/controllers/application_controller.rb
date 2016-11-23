@@ -46,11 +46,11 @@ class ApplicationController < ActionController::Base
         redirect_to redirect_path, alert: alert_message
       end
 
-    # elsif exception.class == ActiveRecord::RecordNotFound
-    #   respond_to do |format|
-    #     format.html { render ('errors/error404'), status: 404}
-    #     format.all { render nothing: true, status: 404 }
-    #   end
+    elsif exception.class == ActiveRecord::RecordNotFound
+      respond_to do |format|
+        format.html { render ('errors/error404'), status: 404}
+        format.all { render nothing: true, status: 404 }
+      end
 
     else
       exception_string = "*** Standard Error caught in application_controller.rb on #{IDB_CONFIG[:root_url_text]} ***\nclass: #{exception.class}\nmessage: #{exception.message}\n"

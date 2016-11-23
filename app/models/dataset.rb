@@ -60,8 +60,7 @@ class Dataset < ActiveRecord::Base
       end
 
       contact = Creator.where(dataset_id: self.id, is_contact: true).first
-      #raise ActiveRecord::RecordNotFound unless contact
-      raise "contact not found" unless contact
+      raise ActiveRecord::RecordNotFound unless contact
 
       doc = Nokogiri::XML::Document.parse(%Q(<?xml version="1.0 encoding="UTF-8"?><resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd"></resource>))
       resourceNode = doc.first_element_child

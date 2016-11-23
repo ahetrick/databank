@@ -375,8 +375,7 @@ class DatafilesController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_datafile
     @datafile = Datafile.find_by_web_id(params[:id])
-    #raise ActiveRecord::RecordNotFound unless @datafile
-    raise "datafile not found" unless @datafile
+    raise ActiveRecord::RecordNotFound unless @datafile
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
