@@ -67,6 +67,7 @@ gem 'effective_datatables'
 #gem 'httpclient', git: 'git://github.com/medusa-project/httpclient.git'
 
 gem 'nokogiri'
+gem 'nokogiri-diff'
 gem 'equivalent-xml'
 
 # Use ActiveModel has_secure_password
