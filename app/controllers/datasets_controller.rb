@@ -101,6 +101,7 @@ class DatasetsController < ApplicationController
     @total_files_size = 0
     @local_zip_max_size = 750000000
     @single_download_ok = true
+    @completion_check = Dataset.completion_check(@dataset, current_user)
 
     @dataset.datafiles.each do |df|
 
@@ -145,7 +146,7 @@ class DatasetsController < ApplicationController
 
     set_license(@dataset)
 
-    @completion_check = Dataset.completion_check(@dataset, current_user)
+
 
   end
 
@@ -348,7 +349,7 @@ class DatasetsController < ApplicationController
           end
 
         else #this else means context was not set to exit or publish - this is the normal draft update
-          format.html { render :show }
+          format.html { redirect_to dataset_path(@dataset.key), notice: "Dataset successfully updated." }
           format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
         end
 

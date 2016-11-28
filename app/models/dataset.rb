@@ -858,15 +858,20 @@ class Dataset < ActiveRecord::Base
 
       return_string << %Q[<script type="application/ld+json">{"@context": "http://schema.org", "@type": "Dataset", "name": "#{self.title.gsub('"', '\\"')}"]
 
-      self.creators.each do |creator|
+      return_string << %Q(, "author": [)
+
+      self.creators.each_with_index do |creator, index|
+
+        return_string << ", " if index > 0
 
         if creator.identifier && creator.identifier != ""
-          return_string << %Q[, "author": {"@type": "Person", "name":"#{creator.given_name} #{creator.family_name}", "url":"http://orcid.org/#{creator.identifier}"}]
+          return_string << %Q[{"@type": "Person", "name":"#{creator.given_name} #{creator.family_name}", "url":"http://orcid.org/#{creator.identifier}"}]
         else
-          return_string << %Q[, "author": {"@type": "Person", "name":"#{creator.given_name} #{creator.family_name}"}]
+          return_string << %Q[{"@type": "Person", "name":"#{creator.given_name} #{creator.family_name}"}]
         end
 
       end
+      return_string << "]"
 
       if self.keywords && self.keywords != ""
 
@@ -902,9 +907,14 @@ class Dataset < ActiveRecord::Base
       return_string << %Q[, "sameAs":"#{IDB_CONFIG[:root_url_text]}/#{self.key}"]
 
       if self.funders && self.funders.count > 0
-        self.funders.each do |funder|
-          return_string << %Q[, "funder":{"@type": "Organization", "name":"#{funder.name}", "url":"https://doi.org/#{funder.identifier}"}]
+
+        return_string << %Q(, "funder": [)
+
+        self.funders.each_with_index  do |funder, index|
+          return_string << ", " if index > 0
+          return_string << %Q[{"@type": "Organization", "name":"#{funder.name}", "url":"https://doi.org/#{funder.identifier}"}]
         end
+        return_string << "]"
       end
 
       return_string << %Q[, "citation":"#{self.plain_text_citation.gsub('"', '\\"')}"]
