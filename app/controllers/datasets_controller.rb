@@ -340,7 +340,7 @@ class DatasetsController < ApplicationController
             MedusaIngest.send_dataset_to_medusa(@dataset, old_publication_state)
             Dataset.update_datacite_metadata(@dataset, current_user)
 
-            format.html { redirect_to dataset_path(@dataset.key), notice: "Dataset successfully updated." }
+            format.html { redirect_to dataset_path(@dataset.key)}
             format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
 
           else #this else means completion_check was not ok within publish context
@@ -349,7 +349,7 @@ class DatasetsController < ApplicationController
           end
 
         else #this else means context was not set to exit or publish - this is the normal draft update
-          format.html { redirect_to dataset_path(@dataset.key), notice: "Dataset successfully updated." }
+          format.html { redirect_to dataset_path(@dataset.key)}
           format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
         end
 
