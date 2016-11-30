@@ -3,6 +3,26 @@ require 'open-uri'
 
 namespace :databank do
 
+  desc 'recover missing dois from file download tally records'
+  task :recover_file_download => :environment do
+    incomplete_records = FileDownloadTally.where(doi: "")
+    incomplete_records.each do |tally|
+      dataset = Dataset.find_by_key(tally.dataset_key)
+      if dataset
+
+        if dataset.identifier && dataset.identifier != ""
+
+          tally.doi = dataset.identifier
+          tally.save
+        else
+          tally.destroy
+        end
+      else
+        puts tally.to_yaml
+      end
+    end
+  end
+
   desc 'delete all datasets'
   task :delete_all => :environment do
 
