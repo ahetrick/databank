@@ -101,7 +101,7 @@ namespace :ezid do
             end
 
           else
-            puts "inside released with no ezid record"
+            #puts "inside released with no ezid record"
             has_conflict = true
             note = "no EZID record found for published dataset"
           end
