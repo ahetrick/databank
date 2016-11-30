@@ -13,14 +13,29 @@ namespace :ezid do
 
     datacite_report = ""
 
+    existing_idb_record = nil
+
     Dataset.all.each do |dataset|
 
       existing_datacite_record = Dataset.datacite_record_hash(dataset)
-      existing_idb_record = Net::HTTP.get(URI.parse("#{IDB_CONFIG[:root_url_text]}/datasets/#{dataset.key}.xml"))
+
+      uri = URI("#{IDB_CONFIG[:root_url_text]}/datasets/#{dataset.key}.xml")
+      req = Net::HTTP::Get.new(uri.path)
+
+      res = Net::HTTP.start(
+          uri.host, uri.port,
+          :use_ssl => uri.scheme == 'https',
+          :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |https|
+        https.request(req)
+      end
+
+      case res
+        when Net::HTTPSuccess, Net::HTTPRedirection
+          existing_idb_record = res.body
+      end
 
       has_conflict = nil
       note = "OK"
-
 
       case dataset.publication_state
 
@@ -86,6 +101,7 @@ namespace :ezid do
             end
 
           else
+            puts "inside released with no ezid record"
             has_conflict = true
             note = "no EZID record found for published dataset"
           end
