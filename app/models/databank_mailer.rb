@@ -92,6 +92,14 @@ class DatabankMailer < ActionMailer::Base
     mail(to: "#{IDB_CONFIG[:tech_error_mail_list]}", subject: subject)
   end
 
+  def ezid_warnings(report)
+    @report = report
+
+    subject = prepend_system_code('Illinois Data Bank] EZID Differences Report')
+
+    mail(to: "#{IDB_CONFIG[:tech_error_mail_list]}", subject: subject)
+  end
+
   def backup_report()
 
     @expected_path = "#{IDB_CONFIG[:databank_backup_root]}/#{Date.current}.sql"
