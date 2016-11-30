@@ -84,7 +84,7 @@ namespace :ezid do
                       has_conflict = false
                     else
                       has_conflict = true
-                      note "check metadata on EZID for Metadata & File hold"
+                      note = "check metadata on EZID for Metadata & File hold"
 
                     end
 
@@ -135,7 +135,7 @@ namespace :ezid do
             end
           else
             has_conflict = true
-            note = "No EZID record for Embargo dataset"
+            note = "no EZID record for Embargo dataset"
           end
 
         when Databank::PublicationState::Embargo::FILE
@@ -155,6 +155,7 @@ namespace :ezid do
             end
           else
             has_conflict = true
+            note = "no EZID record found for File Embargo"
           end
 
         when Databank::PublicationState::TempSuppress::METADATA
@@ -164,7 +165,7 @@ namespace :ezid do
               has_conflict = false
             else
               has_conflict = true
-              note "check metadata on EZID for Metadata & File hold"
+              note = "check metadata on EZID for temporary Metadata & File hold"
 
             end
           else
@@ -203,6 +204,7 @@ namespace :ezid do
             end
           else
             has_conflict = true
+            note = "check metadata on EZID for Metadata & File hold"
           end
 
         when Databank::PublicationState::PermSuppress::FILE
@@ -222,6 +224,7 @@ namespace :ezid do
             end
           else
             has_conflict = true
+            note = "no EZID record found for permenantly File Only suppressed"
           end
 
       end
