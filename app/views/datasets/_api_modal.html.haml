@@ -14,9 +14,10 @@
       .indent
         %p
           If you would like to use our sample Python client, you can download
-          %a(href="https://raw.githubusercontent.com/medusa-project/databank-client/master/illinois_data_bank_datafile.py" ) illinois_data_bank_datafile.py
+          %a(href="#{IDB_CONFIG[:root_url_text]}/illinois_data_bank_datafile.py" target="_blank" ) illinois_data_bank_datafile.py
           and use it with recent versions of Python 2 or 3. Package dependencies: requests and docopts. For help,
           %a(href="/help#contact" )contact the Research Data Service.
+
         .client-example
           Required python packages:
           %br
@@ -24,10 +25,15 @@
             pip install docopt
             %br
             pip install requests
+          %div(id="command-to-copy")
+            -if @token
+              Example command template:
+              .indent
+                ="python illinois_data_bank_datafile.py #{@dataset.key} #{@token.identifier} myfile.csv #{IDB_CONFIG[:root_url_text].include?("dev") ? 'development':''}"
           Usage:
           %br
           .indent
-            ="python illinois_data_bank_datafile.py [-h] <FILE> <DATASET> <TOKEN> [<SYSTEM>]"
+            ="python illinois_data_bank_datafile.py [-h] <DATASET> <TOKEN> <FILE> [<SYSTEM>]"
           Arguments:
           %br
           .indent
