@@ -17,7 +17,6 @@
                 %br
                 %table(class="table table-striped" id="deckfiles_table")
                   %tbody
-
                     - @dataset.deckfiles.each_with_index do |deckfile, i|
                       - if ((can? :manage, @dataset ) || !deckfile.remove)
                         = f.fields_for :deckfiles, deckfile do |dkf|
@@ -39,9 +38,6 @@
                                     %span(class="glyphicon glyphicon-check" )
                                     Approve
                                 %span(class="col-md-2" )
-
-
-
                                   - if deckfile.remove
                                     %button(type="button" class="btn btn-block btn-info deckfile_restore_btn" onclick="restore_deckfile(#{deckfile.id}, #{i})" )
                                       %span(class="glyphicon glyphicon-refresh" )
@@ -78,7 +74,8 @@
                           %input(type="checkbox" id="checkAllFiles" value="checkAllFiles")
                             Select all
                             =surround "(", ")" do
-                              = @dataset.datafiles.count
+                              %span(id = "datafiles-count")
+                                = @dataset.datafiles.count
 
                   - @ordered_datafiles.each_with_index do |datafile, i|
                     = f.fields_for :datafiles, datafile do |df|
@@ -92,11 +89,11 @@
                                   %span(class="col-md-8")
                                     - if ( (@dataset.publication_state == Databank::PublicationState::DRAFT) && ((can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?))) )
                                       %label
-                                        %input(type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="#{i}")
+                                        %input(type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="#{i}" onchange="handleCheckFileGroupChange()" )
                                           = datafile.bytestream_name
                                     -else
                                       = datafile.bytestream_name
-                                      %input(type="text" class="bytestream_name" value="#{datafile.bytestream_name}" )
+                                    %input(type="text" class="bytestream_name" value="#{datafile.bytestream_name}" )
                                   %span(class="col-md-2")
                                     = number_to_human_size(datafile.bytestream_size)
                                   %span(class="col-md-2")

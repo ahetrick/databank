@@ -55,17 +55,12 @@ ready = function () {
         html: "true",
         title: "<table class='upload-key'><tr> <td> <span class='fa upload-guide fa-circle'></span></td> <td> consistent </td><td> Reliable performance for a variety of connection speeds and configurations. </td> </tr> <tr> <td> <span class='fa upload-guide fa-adjust'></span> <td>inconsistent</td> </td> <td> Depends for reliability on connection strength and speed. Works well on campus, but home and coffee-shop environments vary. </td> </tr> <tr class='highlight-background'> <td> <span class='fa upload-guide fa-circle-o'></span> <td>unavailable</td> </td> <td> Either does not work at all, or is so unreliable as to be inadvisable. </td> </tr> </table> </table>"
     });
-    
+
     $("#checkFileSelectedCount").html('0');
 
     $("#checkAllFiles").click(function () {
         $(".checkFileGroup").prop('checked', $(this).prop('checked'));
         $("#checkFileSelectedCount").html($('.checkFile:checked').size());
-    });
-
-    $(".checkFileGroup").change(function () {
-        $("#checkFileSelectedCount").html($('.checkFile:checked').size());
-        $('#checkAllFiles').prop('checked', false);
     });
 
     $('#term-supports').tooltip();
@@ -102,7 +97,7 @@ ready = function () {
 
         if ($(".invalid-input").length == 0) {
 
-            if($(".progress-bar").length == 0) {
+            if ($(".progress-bar").length == 0) {
 
                 window.onbeforeunload = null;
 
@@ -131,7 +126,7 @@ ready = function () {
 
         if ($(".invalid-input").length == 0) {
 
-            if($(".progress-bar").length == 0) {
+            if ($(".progress-bar").length == 0) {
 
                 $("[id^=edit_dataset]").append("<input type='hidden' name='context' value='exit' />");
                 window.onbeforeunload = null;
@@ -182,11 +177,11 @@ ready = function () {
 
     // console.log("val: " + $('#dataset_embargo').val());
 
-    $("#chunked-upload-btn").click(function() {
+    $("#chunked-upload-btn").click(function () {
         window.location.assign('/datasets/' + dataset_key + '/datafiles/add');
     });
 
-    $("#portable-upload").click(function() {
+    $("#portable-upload").click(function () {
         window.location.assign('/help?context=pickup&key=' + dataset_key);
     });
 
@@ -218,32 +213,32 @@ ready = function () {
     //alert("pre-validity check");
     //alert("dataset key: "+ dataset_key)
 
-    $("#api-modal-btn").click(function() {
-       $("#api_modal").modal('show');
+    $("#api-modal-btn").click(function () {
+        $("#api_modal").modal('show');
     });
 
     $("#new_datafile").fileupload({
-        
+
         downloadTemplate: null,
         downloadTemplateId: null,
         uploadTemplate: null,
         uploadTemplateId: null,
 
         add: function (e, data) {
-            
+
             $('#collapseFiles').collapse('show');
 
-            var cancelBtn = $( '<a/>' )
-                .attr( 'href', 'javascript:void(0)' )
+            var cancelBtn = $('<a/>')
+                .attr('href', 'javascript:void(0)')
                 .addClass('btn')
                 .addClass('btn-danger')
                 .addClass('idb')
                 .append('<span class="glyphicon glyphicon-remove"/>')
-                .append( 'Cancel Upload' )
-                .click( function() {
+                .append('Cancel Upload')
+                .click(function () {
                     data.abort();
                     data.context.remove();
-                } );
+                });
 
 
             file = data.files[0];
@@ -253,7 +248,7 @@ ready = function () {
             num_bytes = file.size || file.fileSize;
             //check filesize and check for duplicate filename
             if (num_bytes < 4194304000) {
-            //if (true) {
+                //if (true) {
                 if (filename_isdup(file.name)) {
                     alert("Duplicate file error: A file named " + file.name + " detected in this dataset.  For help, please contact the Research Data Service.");
                 }
@@ -278,15 +273,15 @@ ready = function () {
             var progress;
             if (data.context) {
                 progress = parseInt(data.loaded / data.total * 100, 10);
-                if (progress > 99){
+                if (progress > 99) {
                     data.context.prepend("processing...");
                 }
                 return data.context.find('.bar').css('width', progress + '%');
             }
         },
-        
+
         downloadTemplate: function (o) {
-            
+
             var maxId = Number($('#datafile_index_max').val());
             var newId = 1;
 
@@ -300,13 +295,18 @@ ready = function () {
             //console.log(file);
 
             var row =
-                '<tr id="datafile_index_' + newId + '"><td><div class = "row">' +
-
+                '<tr id="datafile_index_' + newId + '"><td><div class = "row checkbox">' +
                 '<input value="false" type="hidden" name="dataset[datafiles_attributes][' + newId + '][_destroy]" id="dataset_datafiles_attributes_' + newId + '__destroy" />' +
+                '<input type="hidden" value="'+ file.webId +'" name="dataset[datafiles_attributes]['+ newId +'][web_id]" id="dataset_datafiles_attributes_'+ newId +'_web_id" />' +
                 '<input type="hidden"  value="' + file.datafileId + '" name="dataset[datafiles_attributes][' + newId + '][id]" id="dataset_datafiles_attributes_' + newId + '_id" />' +
-                '<input type="hidden"  value="' + file.webId + '" name="dataset[datafiles_attributes][' + newId + '][web_id]" id="dataset_datafiles_attributes_' + newId + '_web_id" />' +
 
-                '<span class="col-md-8">' + file.name + '<input class="bytestream_name" value="' + file.name + '" style="visibility: hidden;"/></span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
+                '<span class="col-md-8">' +
+                    '<label>' +
+                '<input class="checkFile checkFileGroup" name="selected_files[]" type="checkbox" value="' + newId + '" onchange="handleCheckFileGroupChange()">' +
+                file.name +
+                '</input>' +
+                '</label>' +
+                '<input class="bytestream_name" value="' + file.name + '" style="visibility: hidden;"/></span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
             if (file.error) {
                 row = row + '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-warning-sign"></span>';
             } else {
@@ -317,6 +317,8 @@ ready = function () {
             if (file.error) {
                 $("#datafiles > tbody:last-child").append('<tr><td><div class="row"><p>' + file.name + ': ' + file.error + '</p></div></td></tr>');
             } else {
+                var old_count = Number($("#datafiles-count").html());
+                $("#datafiles-count").html(String(old_count + 1));
                 $("#datafiles > tbody:last-child").append(row);
             }
         }
@@ -383,10 +385,10 @@ function cancelBoxUpload(datafile, job) {
     $.ajax({
         type: "GET",
         url: '/datasets/' + dataset_key + '/datafiles/' + datafile + '/cancel_box_upload',
-        success: function(data) {
+        success: function (data) {
             $("#job" + job).remove();
         },
-        error: function(data){
+        error: function (data) {
             console.log("error cancelling upload from Box: " + data);
         },
         dataType: 'text'
@@ -565,7 +567,7 @@ function filename_isdup(proposed_name) {
         if (proposed_name == $(value).val()) {
             returnVal = true;
         }
-        if ( $(value).text().indexOf(proposed_name) >= 0) {
+        if ($(value).text().indexOf(proposed_name) >= 0) {
             returnVal = true;
         }
     });
@@ -770,13 +772,14 @@ function getToken() {
     });
 }
 
-function cancelUpload(){
+function cancelUpload() {
 
     if (!event) {
         event = window.event; // Older versions of IE use
                               // a global reference
                               // and not an argument.
-    };
+    }
+    ;
 
     var el = (event.target || event.srcElement); // DOM uses 'target';
     // older versions of
@@ -784,14 +787,23 @@ function cancelUpload(){
     $(el).parent().remove();
 }
 
-function deleteSelected(){
-    console.log($("input[name='selected_files[]']:checked"));
-
+function deleteSelected() {
+    
     if (window.confirm("Are you sure?")) {
+
+        console.log($('#checkFileSelectedCount').html());
+        $('#checkFileSelectedCount').html('0');
+        $('#checkAllFiles').prop('checked', false);
+
         $.each($("input[name='selected_files[]']:checked"), function () {
             remove_file_row_pre_confirm($(this).val());
         });
     }
+}
+
+function handleCheckFileGroupChange(){
+    $("#checkFileSelectedCount").html($('.checkFile:checked').size());
+    $('#checkAllFiles').prop('checked', false);
 }
 
 $(document).ready(ready);

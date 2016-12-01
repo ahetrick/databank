@@ -18,6 +18,9 @@ function remove_file_row_pre_confirm(datafile_index){
     }
     else {
 
+        var old_count = Number($("#datafiles-count").html())
+        $("#datafiles-count").html(String(old_count - 1));
+
         web_id = $("#dataset_datafiles_attributes_" + datafile_index + "_web_id").val();
 
         $.ajax({
