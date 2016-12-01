@@ -11,35 +11,36 @@
 // work-around turbo links to trigger ready function stuff on every page.
 
 
+function remove_file_row_pre_confirm(datafile_index){
+    
+    if ($("#dataset_datafiles_attributes_" + datafile_index + "_web_id").val() == undefined) {
+        console.log("web_id undefined");
+    }
+    else {
+
+        web_id = $("#dataset_datafiles_attributes_" + datafile_index + "_web_id").val();
+
+        $.ajax({
+            url: '/datafiles/' + web_id + '.json',
+            type: 'DELETE',
+            datatype: "json",
+            success: function(result) {
+                $("#datafile_index_" + datafile_index).remove();
+                $("#dataset_datafiles_attributes_" + datafile_index + "_id").remove();
+            },
+            error: function(xhr, status, error){
+                var err = eval("(" + xhr.responseText + ")");
+                alert(err.Message);
+            }
+        });
+    }
+}
+
 function remove_file_row(datafile_index) {
 
     if (window.confirm("Are you sure?")) {
 
-        //console.log("datafile_index: " + datafile_index);
-        //console.log($("#dataset_datafiles_attributes_" + datafile_index + "_id").val() );
-        //console.log($("#dataset_datafiles_attributes_" + datafile_index + "__destroy").val());
-
-        if ($("#dataset_datafiles_attributes_" + datafile_index + "_web_id").val() == undefined) {
-            console.log("web_id undefined");
-        }
-        else {
-
-            web_id = $("#dataset_datafiles_attributes_" + datafile_index + "_web_id").val();
-
-            $.ajax({
-                url: '/datafiles/' + web_id + '.json',
-                type: 'DELETE',
-                datatype: "json",
-                success: function(result) {
-                    $("#datafile_index_" + datafile_index).remove();
-                    $("#dataset_datafiles_attributes_" + datafile_index + "_id").remove();
-                },
-                error: function(xhr, status, error){
-                    var err = eval("(" + xhr.responseText + ")");
-                    alert(err.Message);
-                }
-            });
-        }
+        remove_file_row_pre_confirm(datafile_index);
 
     }
 

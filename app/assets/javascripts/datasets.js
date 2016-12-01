@@ -784,6 +784,16 @@ function cancelUpload(){
     $(el).parent().remove();
 }
 
+function deleteSelected(){
+    console.log($("input[name='selected_files[]']:checked"));
+
+    if (window.confirm("Are you sure?")) {
+        $.each($("input[name='selected_files[]']:checked"), function () {
+            remove_file_row_pre_confirm($(this).val());
+        });
+    }
+}
+
 $(document).ready(ready);
 $(document).on('page:load', ready);
 

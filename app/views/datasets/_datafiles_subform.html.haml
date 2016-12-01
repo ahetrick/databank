@@ -63,6 +63,23 @@
             %table(class="table table-striped" id="datafiles")
               %tbody
                 - if @ordered_datafiles
+
+                  - if ( (@dataset.publication_state == Databank::PublicationState::DRAFT) && ((can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?))) )
+                    .row
+                      %span(class="col-md-4" )
+                        %button(class="btn btn-danger" type="button" onclick="deleteSelected()")
+                          Delete Selected
+                          = surround "(", ")" do
+                            %span(id="checkFileSelectedCount")
+                          %span(class="glyphicon glyphicon-trash")
+                    .row
+                      %span(class=" checkbox col-md-4")
+                        %label
+                          %input(type="checkbox" id="checkAllFiles" value="checkAllFiles")
+                            Select all
+                            =surround "(", ")" do
+                              = @dataset.datafiles.count
+
                   - @ordered_datafiles.each_with_index do |datafile, i|
                     = f.fields_for :datafiles, datafile do |df|
                       - if (datafile.binary && datafile.binary.file  && datafile.binary.size > 0 ) || (datafile.medusa_path && datafile.medusa_path != "")
@@ -71,11 +88,15 @@
 
                             %tr(id="datafile_index_#{i}")
                               %td
-                                .row
+                                .row.checkbox
                                   %span(class="col-md-8")
-
-                                    = datafile.bytestream_name
-                                    %input(type="text" class="bytestream_name" value="#{datafile.bytestream_name}" )
+                                    - if ( (@dataset.publication_state == Databank::PublicationState::DRAFT) && ((can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?))) )
+                                      %label
+                                        %input(type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="#{i}")
+                                          = datafile.bytestream_name
+                                    -else
+                                      = datafile.bytestream_name
+                                      %input(type="text" class="bytestream_name" value="#{datafile.bytestream_name}" )
                                   %span(class="col-md-2")
                                     = number_to_human_size(datafile.bytestream_size)
                                   %span(class="col-md-2")
