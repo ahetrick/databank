@@ -769,7 +769,7 @@ function getToken() {
         //console.log(data);
         $('.current-token').html("<p><strong>Current Token:</strong> " + data.token + "<br/><strong>Expires:</strong> " + (new Date(data.expires)).toISOString() + "</p>");
         $('.token-btn').html("Get New Token");
-        $('#command-to-copy').html("Example command template:<indent>python illinois_data_bank_datafile.py "+ dataset_key +" "+ data.token +" myfile.csv</indent>")
+        $('#command-to-copy').html("Example command template:<br/><div class='indent'>python illinois_data_bank_datafile.py "+ dataset_key +" "+ data.token +" myfile.csv</div>")
     });
 }
 
