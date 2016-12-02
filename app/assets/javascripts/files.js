@@ -263,7 +263,22 @@ function create_from_remote(){
     }
 }
 
-
+function preview(web_id){
+    $.ajax({
+        url: '/datafiles/' + web_id + '/preview.json',
+        type: 'GET',
+        datatype: "json",
+        success: function(data) {
+            //console.log(data);
+            $("#previewFilename").html(data.filename);
+            $("#previewContent").html("<pre>" + data.body + "</pre>");
+        },
+        error: function(xhr, status, error){
+            var err = eval("(" + xhr.responseText + ")");
+            alert(err.Message);
+        }
+    });
+}
 
 function remove_deckfile(deckfile_id, deckfile_index){
     $('#dataset_deckfiles_attributes_'+ deckfile_index +'_remove').val("true");

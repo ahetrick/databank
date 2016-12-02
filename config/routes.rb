@@ -22,6 +22,7 @@ Rails.application.routes.draw do
         get 'resume_upload', to: 'datafiles#resume_upload'
         patch 'update_status', to: 'datafiles#update_status'
         get 'reset_upload', to: 'datafiles#reset_upload'
+        get 'preview', to: 'datafiles#preview'
       end
     end
     resources :creators
@@ -82,6 +83,9 @@ Rails.application.routes.draw do
 
   # route binary downloads
   get "/datafiles/:id/download", to: "datafiles#download"
+
+  # direct preview
+  get '/datafiles/:id/preview', to: "datafiles#preview"
 
   # create from box file select widget
   post "/datafiles/create_from_url", to: 'datafiles#create_from_url'

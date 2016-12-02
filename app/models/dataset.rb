@@ -765,6 +765,37 @@ class Dataset < ActiveRecord::Base
     end
   end
 
+  def default_preview_file
+
+    returnfile = nil
+    if self.datafiles.count > 0
+
+      self.datafiles.each do |datafile|
+        if datafile.bytestream_name.downcase.include?("readme")
+          returnfile = datafile
+        end
+      end
+      unless returnfile
+        self.datafiles.each do |datafile|
+
+          filename_split = datafile.bytestream_name.split(".")
+          if filename_split.count > 1
+            if filename_split.last == "txt"
+              returnfile = datafile
+            end
+          end
+        end
+      end
+      unless returnfile
+        returnfile = self.datafiles.first
+      end
+
+    end
+
+    return returnfile
+
+  end
+
   def store_agreement
     dir_text = "#{IDB_CONFIG[:agreements_root_path]}/#{self.key}"
 

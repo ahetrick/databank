@@ -129,8 +129,6 @@ class DatasetsController < ApplicationController
 
     set_file_mode
 
-
-
     @changetable = nil
 
     changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', @dataset.id, @dataset.id)
@@ -145,8 +143,6 @@ class DatasetsController < ApplicationController
     @publish_modal_msg = Dataset.publish_modal_msg(@dataset)
 
     set_license(@dataset)
-
-
 
   end
 

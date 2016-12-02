@@ -59,6 +59,50 @@ class Datafile < ActiveRecord::Base
     end
   end
 
+  def preview
+    if self.bytestream_name != ""
+      filename_split = self.bytestream_name.split(".")
+      if filename_split.count > 1
+
+        case filename_split.last
+
+          when 'txt', 'csv', 'tsv', 'rb', 'xml', 'json'
+            return File.read(self.bytestream_path)
+          when 'zip'
+            return_string = ""
+            entry_arr = Array.new
+            Zip::File.open(self.bytestream_path) do |zip_file|
+              zip_file.each do |entry|
+                #Rails.logger.warn entry.to_yaml
+                if ((entry.name).to_s).exclude?('__MACOSX/')
+
+                  name_arr = entry.name.split("/")
+                  name_arr.length.times do
+                    return_string << "<div class='indent'>"
+                  end
+                  if entry.ftype == :file
+                    return_string << '<span class="glyphicon glyphicon-file"></span> '
+                  elsif entry.ftype == :directory
+                    return_string << '<span class="glyphicon glyphicon-folder-open"></span> '
+                  end
+                  return_string << name_arr.last
+                  name_arr.length.times do
+                    return_string << "</div>"
+                  end
+                end
+              end
+            end
+            return return_string
+
+          else
+            return "no preview available"
+        end
+      end
+    else
+      return "no preview available"
+    end
+  end
+
   def ip_downloaded_file_today(request_ip)
     DayFileDownload.where(["ip_address = ? and file_web_id = ? and download_date = ?", request_ip, self.web_id, Date.current]).count > 0
   end
