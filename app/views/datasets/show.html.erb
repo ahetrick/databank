@@ -284,35 +284,6 @@
     </div>
     <!-- END metadata section-->
 
-
-    <!-- PREVIEW -->
-
-    <% if ((can? :manage, @dataset) || ((can? :edit, @dataset) && (@dataset.publication_state != Databank::PublicationState::PermSuppress::FILE)) || ((@dataset.publication_state == Databank::PublicationState::RELEASED) && (@dataset.hold_state != Databank::PublicationState::TempSuppress::FILE))) %>
-
-      <% if (@dataset.datafiles.count > 0) && (@dataset.default_preview_file) %>
-        <div class="panel-group" id="preview" role="tablist" aria-multiselectable="true">
-          <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="headingPreview">
-              <h4 class="panel-title">
-                <a role="button" data-toggle="collapse" data-parent="#preview" href="#collapsePreview" aria-expanded="true" aria-controls="collapsePreview" class="accordion-toggle">
-                  File Preview
-                </a>
-              </h4>
-            </div>
-            <div id="collapsePreview" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingPreview">
-              <div class="panel-body preview-panel">
-                <div id="previewContent">
-                <pre>
-                  <%= (@dataset.default_preview_file.preview).html_safe %>
-                </pre>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      <% end %>
-    <% end %>
-
     <!-- BEGIN file section -->
 
     <div class="dataset-files">
@@ -396,6 +367,9 @@
 
                                 </div>
                               </td>
+                            </tr>
+                            <tr class="row">
+                              <td><span class="preview col-md-12" id="preview_<%=datafile.web_id %>"></span></td>
                             </tr>
                           <% end %>
                         <% end %>

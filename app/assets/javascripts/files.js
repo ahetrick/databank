@@ -264,6 +264,10 @@ function create_from_remote(){
 }
 
 function preview(web_id){
+
+    $('.preview').css("visibility", "hidden");
+    $('.preview').empty();
+
     $.ajax({
         url: '/datafiles/' + web_id + '/preview.json',
         type: 'GET',
@@ -271,7 +275,8 @@ function preview(web_id){
         success: function(data) {
             //console.log(data);
             //$("#previewFilename").html(data.filename);
-            $("#previewContent").html("<pre>" + data.body + "</pre>");
+            $("#preview_" + web_id).css("visibility", "visible");
+            $("#preview_" + web_id).html("<pre>" + data.body + "</pre>");
         },
         error: function(xhr, status, error){
             var err = eval("(" + xhr.responseText + ")");
