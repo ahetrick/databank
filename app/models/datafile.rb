@@ -92,8 +92,13 @@ class Datafile < ActiveRecord::Base
               end
             end
             if return_string.length > 0
-              return_string = %Q[<span class="glyphicon glyphicon-folder-open"></span> #{self.bytestream_name} <div class ="indent" #{return_string} </div>]
-              return return_string
+
+              rooted_return_string = '<span class="glyphicon glyphicon-folder-open"></span>'
+              rooted_return_string << self.bytestream_name
+              rooted_return_string << '<div class ="indent">'
+              rooted_return_string << return_string
+              rooted_return_string << '</div>'
+              return rooted_return_string
             else
               return "no preview available"
             end
