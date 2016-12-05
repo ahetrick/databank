@@ -70,7 +70,6 @@ class Datafile < ActiveRecord::Base
             return File.read(self.bytestream_path)
           when 'zip'
             return_string = ""
-            entry_arr = Array.new
             Zip::File.open(self.bytestream_path) do |zip_file|
               zip_file.each do |entry|
                 #Rails.logger.warn entry.to_yaml
@@ -92,8 +91,12 @@ class Datafile < ActiveRecord::Base
                 end
               end
             end
-            return return_string
-
+            if return_string.length > 0
+              return_string = %Q[<span class="glyphicon glyphicon-folder-open"></span> #{self.bytestream_name} <div class ="indent" #{return_string} </div>]
+              return return_string
+            else
+              return "no preview available"
+            end
           else
             return "no preview available"
         end

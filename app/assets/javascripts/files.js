@@ -270,7 +270,7 @@ function preview(web_id){
         datatype: "json",
         success: function(data) {
             //console.log(data);
-            $("#previewFilename").html(data.filename);
+            //$("#previewFilename").html(data.filename);
             $("#previewContent").html("<pre>" + data.body + "</pre>");
         },
         error: function(xhr, status, error){
