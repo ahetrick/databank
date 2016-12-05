@@ -149,7 +149,8 @@
                   <tr class="row">
                     <td>
                       <span class="metadata-label">Related
-                        <%= (material.material_type && material.material_type != "") ? material.material_type : "Material" %>:</span>
+                        <%= (material.material_type && material.material_type != "") ? material.material_type : "Material" %>
+                        :</span>
                     </td>
                     <td>
                       <% if material.link && material.link != '' %>
@@ -286,27 +287,31 @@
 
     <!-- PREVIEW -->
 
-    <% if (@dataset.datafiles.count > 0) && (@dataset.default_preview_file) %>
-      <div class="panel-group" id="preview" role="tablist" aria-multiselectable="true">
-        <div class="panel panel-default">
-          <div class="panel-heading" role="tab" id="headingPreview">
-            <h4 class="panel-title">
-              <a role="button" data-toggle="collapse" data-parent="#preview" href="#collapsePreview" aria-expanded="true" aria-controls="collapsePreview" class="accordion-toggle">
-                Preview of <span class="metadata-label" id="previewFilename"><%=@dataset.default_preview_file.bytestream_name %></span>
-              </a>
-            </h4>
-          </div>
-          <div id="collapsePreview" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingPreview">
-            <div class="panel-body preview-panel">
-              <div id="previewContent">
+    <% if ((can? :manage, @dataset) || ((can? :edit, @dataset) && (@dataset.publication_state != Databank::PublicationState::PermSuppress::FILE)) || ((@dataset.publication_state == Databank::PublicationState::RELEASED) && (@dataset.hold_state != Databank::PublicationState::TempSuppress::FILE))) %>
+
+      <% if (@dataset.datafiles.count > 0) && (@dataset.default_preview_file) %>
+        <div class="panel-group" id="preview" role="tablist" aria-multiselectable="true">
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingPreview">
+              <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#preview" href="#collapsePreview" aria-expanded="true" aria-controls="collapsePreview" class="accordion-toggle">
+                  Preview of
+                  <span class="metadata-label" id="previewFilename"><%= @dataset.default_preview_file.bytestream_name %></span>
+                </a>
+              </h4>
+            </div>
+            <div id="collapsePreview" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingPreview">
+              <div class="panel-body preview-panel">
+                <div id="previewContent">
                 <pre>
                   <%= (@dataset.default_preview_file.preview).html_safe %>
                 </pre>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      <% end %>
     <% end %>
 
     <!-- BEGIN file section -->
@@ -328,7 +333,7 @@
                   <div class="form-group" id="select-files-form-group">
                     <table id="show-files-table" class="table table-striped">
                       <tbody>
-                      <% if @all_in_medusa || ( @total_files_size && (@total_files_size < @local_zip_max_size) ) %>
+                      <% if @all_in_medusa || (@total_files_size && (@total_files_size < @local_zip_max_size)) %>
                         <tr class="row">
                           <td>
                             <div class="row">
@@ -360,11 +365,11 @@
                       <% if @ordered_datafiles %>
 
                         <% @ordered_datafiles.each do |datafile| %>
-                          <% if ((datafile.bytestream_size > 0) && (datafile.job_status == :complete) && ((datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != "")) )%>
+                          <% if ((datafile.bytestream_size > 0) && (datafile.job_status == :complete) && ((datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != ""))) %>
                             <tr class="row">
                               <td>
 
-                                  <div class="row checkbox">
+                                <div class="row checkbox">
 
                                   <span class="col-md-6">
                                     <% if @all_in_medusa || @total_files_size < @local_zip_max_size %>
@@ -376,7 +381,7 @@
                                     <% end %>
 
                                   </span>
-                                    <span class="col-md-2"><%= number_to_human_size(datafile.bytestream_size) %></span>
+                                  <span class="col-md-2"><%= number_to_human_size(datafile.bytestream_size) %></span>
 
                                   <span class="col-md-2">
                                     <button type="button" class="btn btn-sm btn-success" onclick='preview("<%= datafile.web_id %>")'>
@@ -390,7 +395,7 @@
                                     </a>
                                   </span>
 
-                                  </div>
+                                </div>
                               </td>
                             </tr>
                           <% end %>
