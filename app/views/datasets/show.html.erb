@@ -299,9 +299,9 @@
           <div id="collapsePreview" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingPreview">
             <div class="panel-body preview-panel">
               <div id="previewContent">
-
+                <pre>
                   <%= (@dataset.default_preview_file.preview).html_safe %>
-
+                </pre>
               </div>
             </div>
           </div>
@@ -379,7 +379,7 @@
                                     <span class="col-md-2"><%= number_to_human_size(datafile.bytestream_size) %></span>
 
                                   <span class="col-md-2">
-                                    <button type="button" class="btn btn-success" onclick='preview("<%= datafile.web_id %>")'>
+                                    <button type="button" class="btn btn-sm btn-success" onclick='preview("<%= datafile.web_id %>")'>
                                       <span class="glyphicon glyphicon-eye-open"></span> Preview
                                     </button>
 
