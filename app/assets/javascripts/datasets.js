@@ -250,11 +250,14 @@ ready = function () {
             num_bytes = file.size || file.fileSize;
             //check filesize and check for duplicate filename
             if (num_bytes < 4194304000) {
-                //if (true) {
                 if (filename_isdup(file.name)) {
                     alert("Duplicate file error: A file named " + file.name + " detected in this dataset.  For help, please contact the Research Data Service.");
+                } else if (file.name == ".DS_Store"){
+                    //ignore
                 }
-                else {
+                else  if (!file.type && num_bytes%4096 == 0) {
+                    alert(file.name + " detected as a folder - Illinois Data Bank supports file uploads only.");
+                } else {
                     data.context = uploadRow;
                     data.context.prepend('<span class="bytestream_name">' + file.name.toString()) + '</span>';
                     data.context.prepend("  ");
@@ -263,7 +266,11 @@ ready = function () {
                     window.onbeforeunload = confirmOnPageExit;
                     return data.submit();
                 }
-            } else if (typeof num_bytes === "undefined") {
+            } else  if ( (typeof num_bytes === "undefined" && !file.type) || (!file.type && num_bytes%4096 == 0)) {
+                alert(file.name + " detected as a folder - Illinois Data Bank supports file uploads only.");
+            }  else if (typeof num_bytes === "undefined" && (file.type) ) {
+                console.log(num_bytes);
+                console.log("file type:  " + file.type);
                 alert("No file contents were detected for file named " + file.name + ".  For help, please contact the Research Data Service.");
             }
             else {
