@@ -38,14 +38,12 @@ class DatabankMailer < ActionMailer::Base
   def contact_help(params)
 
     subject = prepend_system_code('Illinois Data Bank] Help Request')
-
     @params = params
-
     if @params['help-topic'] == 'Dataset Consultation'
       subject = prepend_system_code('Illinois Data Bank] Dataset Consultation Request')
     end
-
     mail(from: @params['help-email'], to: ['databank@library.illinois.edu', @params['help-email']], subject: subject)
+
   end
 
   def dataset_incomplete_1m(dataset_key)

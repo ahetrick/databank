@@ -148,7 +148,7 @@ ready = function () {
         }
     });
 
-    $('.preview').css("visibility", "hidden");
+    //$('.preview').css("visibility", "hidden");
 
     $('#dataset_title').change(function () {
         if ($("input[name='dataset[publication_state]']").val() == 'draft' || $(this).val() != "") {

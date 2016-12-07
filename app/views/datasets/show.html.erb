@@ -354,10 +354,13 @@
                                   <span class="col-md-2"><%= number_to_human_size(datafile.bytestream_size) %></span>
 
                                   <span class="col-md-2">
-                                    <button type="button" class="btn btn-sm btn-success" onclick='preview("<%= datafile.web_id %>")'>
-                                      <span class="glyphicon glyphicon-eye-open"></span> Preview
-                                    </button>
-
+                                    <% if datafile.has_preview? %>
+                                      <span id="preview_btn_<%= datafile.web_id %>">
+                                        <button type='button' class='btn btn-sm btn-success' onclick='preview("<%= datafile.web_id %>")'>
+                                          <span class='glyphicon glyphicon-eye-open'></span> Preview
+                                        </button>
+                                      </span>
+                                    <% end %>
                                   </span>
                                     <span class="col-md-2">
                                     <a href="#" onclick='window.location = "/datafiles/<%= datafile.web_id %>/download"' class=" idb btn btn-primary btn-sm" role="button">
@@ -366,10 +369,8 @@
                                   </span>
 
                                 </div>
+                                <div class="preview col-md-12" id="preview_<%=datafile.web_id %>"></div>
                               </td>
-                            </tr>
-                            <tr class="row">
-                              <td><span class="preview col-md-12" id="preview_<%=datafile.web_id %>"></span></td>
                             </tr>
                           <% end %>
                         <% end %>

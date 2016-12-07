@@ -265,24 +265,37 @@ function create_from_remote(){
 
 function preview(web_id){
 
-    $('.preview').css("visibility", "hidden");
-    $('.preview').empty();
+    //$('.preview').css("visibility", "hidden");
+    //$('.preview').empty();
 
-    $.ajax({
-        url: '/datafiles/' + web_id + '/preview.json',
-        type: 'GET',
-        datatype: "json",
-        success: function(data) {
-            //console.log(data);
-            //$("#previewFilename").html(data.filename);
-            $("#preview_" + web_id).css("visibility", "visible");
-            $("#preview_" + web_id).html("<pre>" + data.body + "</pre>");
-        },
-        error: function(xhr, status, error){
-            var err = eval("(" + xhr.responseText + ")");
-            alert(err.Message);
-        }
-    });
+    if ($("#preview_" + web_id).is(':empty')){
+        $.ajax({
+            url: '/datafiles/' + web_id + '/preview.json',
+            type: 'GET',
+            datatype: "json",
+            success: function(data) {
+                //console.log(data);
+                //$("#previewFilename").html(data.filename);
+                $("#preview_" + web_id).show();
+                $("#preview_" + web_id).html("<pre>" + data.body + "</pre>");
+                $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> Preview</button>');
+            },
+            error: function(xhr, status, error){
+                var err = eval("(" + xhr.responseText + ")");
+                alert(err.Message);
+            }
+        });
+    } else {
+        //console.log($("#preview_" + web_id));
+        $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> Preview</button>');
+        $("#preview_" + web_id).show();
+    }
+}
+
+function hide_preview(web_id){
+
+    $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-open"></span> Preview</button>');
+    $("#preview_" + web_id).hide();
 }
 
 function remove_deckfile(deckfile_id, deckfile_index){

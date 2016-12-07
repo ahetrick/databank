@@ -111,6 +111,22 @@ class Datafile < ActiveRecord::Base
     end
   end
 
+
+  def has_preview?
+    if self.bytestream_name == ""
+      return false
+    else
+      filename_split = self.bytestream_name.split(".")
+      extension = filename_split.last
+      if ['txt', 'csv', 'tsv', 'rb', 'xml', 'json', 'zip'].include?(extension)
+        return true
+      else
+        return false
+      end
+    end
+
+  end
+
   def ip_downloaded_file_today(request_ip)
     DayFileDownload.where(["ip_address = ? and file_web_id = ? and download_date = ?", request_ip, self.web_id, Date.current]).count > 0
   end
