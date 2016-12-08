@@ -268,6 +268,7 @@ function preview(web_id){
     //$('.preview').css("visibility", "hidden");
     //$('.preview').empty();
 
+    $("#preview_" + web_id).show();
     if ($("#preview_" + web_id).is(':empty')){
         $.ajax({
             url: '/datafiles/' + web_id + '/preview.json',
@@ -276,8 +277,7 @@ function preview(web_id){
             success: function(data) {
                 //console.log(data);
                 //$("#previewFilename").html(data.filename);
-                $("#preview_" + web_id).show();
-                $("#preview_" + web_id).html("<pre>" + data.body + "</pre>");
+                $("#preview_" + web_id).html("<pre class='preview_body'>" + data.body + "</pre>");
                 $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> Preview</button>');
             },
             error: function(xhr, status, error){
@@ -288,7 +288,7 @@ function preview(web_id){
     } else {
         //console.log($("#preview_" + web_id));
         $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> Preview</button>');
-        $("#preview_" + web_id).show();
+
     }
 }
 
@@ -297,6 +297,21 @@ function hide_preview(web_id){
     $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-open"></span> Preview</button>');
     $("#preview_" + web_id).hide();
 }
+
+function preview_image(web_id){
+    
+    $("#preview_" + web_id).show();
+    if ($("#preview_" + web_id).is(':empty')){
+        $("#preview_" + web_id).html("<img src='/datafiles/" + web_id + "/display_image'>");
+    }
+    $("#preview_img_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_image_preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> Preview</button>');
+}
+
+function hide_image_preview(web_id){
+    $("#preview_img_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="preview_image(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-open"></span> Preview</button>');
+    $("#preview_" + web_id).hide();
+}
+
 
 function remove_deckfile(deckfile_id, deckfile_index){
     $('#dataset_deckfiles_attributes_'+ deckfile_index +'_remove').val("true");

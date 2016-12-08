@@ -9,7 +9,7 @@ OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
 class DatafilesController < ApplicationController
 
-  before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download, :record_download, :upload, :do_upload, :reset_upload, :resume_upload, :update_status, :preview]
+  before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download, :record_download, :upload, :do_upload, :reset_upload, :resume_upload, :update_status, :preview, :display]
 
   # GET /datafiles
   # GET /datafiles.json
@@ -97,6 +97,18 @@ class DatafilesController < ApplicationController
   def preview
     respond_to do |format|
       format.html {render :preview}
+      format.json {render json: {filename: @datafile.bytestream_name, body: @datafile.preview, status: :ok}}
+    end
+  end
+
+  def display
+    respond_to do |format|
+      format.html {
+        send_file( @datafile.bytestream_path,
+                   :disposition => 'inline',
+                   :type => @datafile.mime_type,
+                   :x_sendfile => true )
+      }
       format.json {render json: {filename: @datafile.bytestream_name, body: @datafile.preview, status: :ok}}
     end
   end

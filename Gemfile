@@ -49,6 +49,9 @@ gem 'uuid'
 
 gem 'simple_form'
 
+# Use RMagick to connect with ImageMagick
+gem 'rmagick'
+
 # Use cocoon to make it easier to handle nested forms
 #gem 'cocoon'
 

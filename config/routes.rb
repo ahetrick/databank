@@ -23,6 +23,7 @@ Rails.application.routes.draw do
         patch 'update_status', to: 'datafiles#update_status'
         get 'reset_upload', to: 'datafiles#reset_upload'
         get 'preview', to: 'datafiles#preview'
+        get 'display', to: 'datafiles#display'
       end
     end
     resources :creators
@@ -86,6 +87,9 @@ Rails.application.routes.draw do
 
   # direct preview
   get '/datafiles/:id/preview', to: "datafiles#preview"
+
+  # direct display
+  get '/datafiles/:id/display', to: "datafiles#display"
 
   # create from box file select widget
   post "/datafiles/create_from_url", to: 'datafiles#create_from_url'

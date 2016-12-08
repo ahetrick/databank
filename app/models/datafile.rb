@@ -127,6 +127,43 @@ class Datafile < ActiveRecord::Base
 
   end
 
+  def is_image?
+    if self.bytestream_name == ""
+      return false
+    else
+      filename_split = self.bytestream_name.split(".")
+      extension = filename_split.last
+      if ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'jpg2'].include?(extension)
+        return true
+      else
+        return false
+      end
+    end
+  end
+
+  def mime_type
+    if self.bytestream_name == ""
+      return nil
+    else
+      filename_split = self.bytestream_name.split(".")
+      extension = filename_split.last
+      case extension
+        when 'png'
+          return 'image/png'
+        when 'jpg', 'jpeg', 'jpg2'
+          return 'image/jpeg'
+        when 'bmp'
+          return 'image/bmp'
+        when 'gif'
+          return 'image/gif'
+        when 'pdf'
+          return 'application/pdf'
+        else
+          return 'application/octet-stream'
+      end
+    end
+  end
+
   def ip_downloaded_file_today(request_ip)
     DayFileDownload.where(["ip_address = ? and file_web_id = ? and download_date = ?", request_ip, self.web_id, Date.current]).count > 0
   end
