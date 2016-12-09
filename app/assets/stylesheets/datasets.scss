@@ -369,15 +369,22 @@ ul.help-info {
   background-color: $color__yellow-background;
 }
 
-.preview-panel{
+//.preview{
+//
+//
+//}
+
+.preview_body{
+
+  margin-top: 5px;
+
   max-height: 400px;
+  max-width: 10in;
+
   overflow-y: scroll;
   overflow-x: scroll;
 }
 
-.preview_body{
-  margin: 5px;
-}
 //div#box-select{
 //  top: 15px !important;
 //}

@@ -87,6 +87,8 @@ ready = function () {
 
     $('.new-save').hide();
 
+    $('.preview').hide();
+
     $('.nav-item').click(function () {
 
         $('.nav-item').removeClass('current');
