@@ -268,7 +268,7 @@ ready = function () {
                     window.onbeforeunload = confirmOnPageExit;
                     return data.submit();
                 }
-            } else  if ( (typeof num_bytes === "undefined" && !file.type) || (!file.type && num_bytes%4096 == 0)) {
+            } else  if (typeof num_bytes === "undefined" && !file.type) {
                 alert(file.name + " detected as a folder - Illinois Data Bank supports file uploads only.");
             }  else if (typeof num_bytes === "undefined" && (file.type) ) {
                 console.log(num_bytes);

@@ -226,7 +226,7 @@ class Datafile < ActiveRecord::Base
   def remove_directory
     dir = "#{IDB_CONFIG[:datafile_store_dir]}/#{self.web_id}"
     if Dir.exists? dir
-      FileUtils.remove_dir(dir)
+      FileUtils.rm_rf(dir)
     end
   end
 
