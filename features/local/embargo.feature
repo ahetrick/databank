@@ -34,7 +34,7 @@ Feature:
 
     When I click on 'Publish'
     Then I see all of:
-      | successfully updated | Metadata Published, Files Publication Delayed (Embargoed) |
+      | Metadata Published, Files Publication Delayed (Embargoed) |
 
     When I visit the dataset edit page
     And I select no publication delay
@@ -45,7 +45,7 @@ Feature:
 
     When I click on 'Publish'
     Then I see all of:
-      | successfully updated | Metadata and Files Published |
+      | Metadata and Files Published |
 
     When I visit the dataset edit page
     And I select file only publication delay
@@ -57,7 +57,7 @@ Feature:
 
     When I click on 'Publish'
     Then I see all of:
-      | successfully updated | Metadata Published, Files Publication Delayed (Embargoed) |
+      | Metadata Published, Files Publication Delayed (Embargoed) |
 
     When I visit the dataset edit page
     And I select file & metadata publication delay
@@ -68,7 +68,7 @@ Feature:
 
     When I click on 'Publish'
     Then I see all of:
-      | successfully updated | Metadata and Files Publication Delayed (Embargoed) |
+      | Metadata and Files Publication Delayed (Embargoed) |
 
   ####################
   #
@@ -109,7 +109,7 @@ Feature:
 
     When I click on 'Publish'
     Then I see all of:
-      | successfully updated | Metadata Published, Files Publication Delayed (Embargoed) |
+      | Metadata Published, Files Publication Delayed (Embargoed) |
 
     When I visit the dataset edit page
     And I select no publication delay
@@ -120,7 +120,7 @@ Feature:
 
     When I click on 'Publish'
     Then I see all of:
-      | successfully updated | Metadata and Files Published |
+      | Metadata and Files Published |
 
     # END of what depositor should be able to do - the rest are making sure depositor can't do something.
 

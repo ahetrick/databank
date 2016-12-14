@@ -312,6 +312,16 @@ function hide_image_preview(web_id){
     $("#preview_" + web_id).hide();
 }
 
+// function preview_doc(web_id){
+//     $("#preview_" + web_id).show();
+//     if ($("#preview_" + web_id).is(':empty')) {
+//         $("#preview_" + web_id).html('<iframe src="http://docs.google.com/gview?url=&embedded=true"></iframe>');
+//     } else {
+//         $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> Preview</button>');
+//     }
+//
+// }
+
 
 function remove_deckfile(deckfile_id, deckfile_index){
     $('#dataset_deckfiles_attributes_'+ deckfile_index +'_remove').val("true");
