@@ -173,7 +173,7 @@
 
     .container-fluid
 
-      - if current_user.role == 'admin' || current_user.net_id == 'emolloy2'
+      - if current_user.role == 'admin' || ['emolloy2', 'pjb34'].include?(current_user.net_id)
 
         = form_for Datafile.new do |df|
           = df.hidden_field :dataset_id, value: @dataset.id
