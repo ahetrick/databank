@@ -141,6 +141,27 @@ class Datafile < ActiveRecord::Base
     end
   end
 
+  def is_microsoft?
+    if self.bytestream_name == ""
+      return false
+    else
+      filename_split = self.bytestream_name.split(".")
+      extension = filename_split.last
+      return ['doc', 'docx', 'xls', 'xslx', '.ppt', 'pptx' ].include?(extension)
+    end
+  end
+
+  def microsoft_preview_url
+    if self.is_microsoft?
+
+      return "https://view.officeapps.live.com/op/view.aspx?src=#{IDB_CONFIG[:root_url_text]}%2Fdatafiles%2#{self.web_id}%2Fdisplay"
+
+    else
+      raise "Microsoft preview url requested for non-Microsoft file."
+
+    end
+  end
+
   def mime_type
     if self.bytestream_name == ""
       return nil

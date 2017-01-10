@@ -24,6 +24,8 @@ ready = function () {
     $('.deposit-agreement-selection-warning').hide();
     $('#agree-button').prop("disabled", true);
 
+    $('#keyword-text').keyup(handleKeywordKeyup);
+
     // handle non-chrome datepicker:
     if (!Modernizr.inputtypes.date) {
         $("#dataset_release_date").prop({type: "text"});
@@ -819,6 +821,23 @@ function deleteSelected() {
 function handleCheckFileGroupChange(){
     $("#checkFileSelectedCount").html($('.checkFile:checked').size());
     $('#checkAllFiles').prop('checked', false);
+}
+
+function handleKeywordKeyup(){
+
+    var keywordString = $('#keyword-text').val();
+    keywordArr = keywordString.split(";");
+    var keyword_count = keywordArr.length;
+
+    $.each(keywordArr, function(index, keyword ) {
+        if ((keyword.trim()).length < 1 ){
+            keyword_count = keyword_count -1;
+        }
+    });
+
+    //console.log(keywordArr);
+    $('#keyword-label').html("<strong>Keywords</strong> (" + keyword_count +" -- semicolon separated)");
+
 }
 
 $(document).ready(ready);

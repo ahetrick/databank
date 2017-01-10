@@ -74,9 +74,9 @@
               .row
                 .col-md-6
                   .form-group
-                    = f.label :keywords, "Keywords", :class => "control-label"
+                    = f.label :keywords, "Keywords", class: "control-label", id: "keyword-label"
                     %br
-                    = f.text_field :keywords, :class => "form-control dataset", :placeholder => "[Semi-colon separated list of keywords or phrases, e.g.: institutional repositories; file formats]"
+                    = f.text_field :keywords, class: "form-control dataset", id: "keyword-text", placeholder: "[Semicolon separated list of keywords or phrases, e.g.: institutional repositories; file formats]"
 
                 -if ( params[:action]=='new' || (can? :manage, @dataset) || ((can? :edit, @dataset) && ([Databank::PublicationState::Embargo::METADATA, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::DRAFT].include?(@dataset.publication_state))))
                   .col-md-4

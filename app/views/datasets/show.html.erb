@@ -372,6 +372,12 @@
                                             <span class='glyphicon glyphicon-eye-open'></span> Preview
                                           </a>
                                       </span>
+                                    <% elsif datafile.is_microsoft? %>
+                                      <span id="preview_btn_<%= datafile.web_id %>">
+                                          <a href="<%= datafile.microsoft_preview_url %>/display" target="_blank" class="btn btn-sm btn-success idb">
+                                            <span class='glyphicon glyphicon-eye-open'></span> Preview
+                                          </a>
+                                      </span>
                                     <% end %>
 
                                   </span>
