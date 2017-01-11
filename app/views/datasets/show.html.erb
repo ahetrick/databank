@@ -357,25 +357,25 @@
                                     <% if datafile.has_preview? %>
                                       <span id="preview_btn_<%= datafile.web_id %>">
                                         <button type='button' class='btn btn-sm btn-success' onclick='preview("<%= datafile.web_id %>")'>
-                                          <span class='glyphicon glyphicon-eye-open'></span> Preview
+                                          <span class='glyphicon glyphicon-eye-open'></span> View
                                         </button>
                                       </span>
                                     <% elsif datafile.is_image? %>
                                       <span id="preview_img_btn_<%= datafile.web_id %>">
                                           <button type='button' class='btn btn-sm btn-success' onclick='preview_image("<%= datafile.web_id %>")'>
-                                            <span class='glyphicon glyphicon-eye-open'></span> Preview
+                                            <span class='glyphicon glyphicon-eye-open'></span> View
                                           </button>
                                       </span>
                                     <% elsif datafile.mime_type && datafile.mime_type == 'application/pdf' %>
                                       <span id="preview_btn_<%= datafile.web_id %>">
                                           <a href="/datafiles/<%= datafile.web_id %>/display" target="_blank" class="btn btn-sm btn-success idb">
-                                            <span class='glyphicon glyphicon-eye-open'></span> Preview
+                                            <span class='glyphicon glyphicon-eye-open'></span> View
                                           </a>
                                       </span>
                                     <% elsif datafile.is_microsoft? %>
                                       <span id="preview_btn_<%= datafile.web_id %>">
                                           <a href="<%= datafile.microsoft_preview_url %>/display" target="_blank" class="btn btn-sm btn-success idb">
-                                            <span class='glyphicon glyphicon-eye-open'></span> Preview
+                                            <span class='glyphicon glyphicon-eye-open'></span> View
                                           </a>
                                       </span>
                                     <% end %>
