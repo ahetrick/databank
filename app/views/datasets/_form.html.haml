@@ -73,8 +73,16 @@
                 = f.text_area :description, :rows => 3,  :class => "form-control dataset", :placeholder => "[Provide a brief description of the dataset you are publishing. This will be publicly displayed for visitors to your dataset's page. This information should inform another researcher how your dataset may be useful or what conclusions it may support. You may choose to repeat a portion of your main documentation file here as well. This information should describe your dataset, not summarize a paper that may be associated with it.]"
               .row
                 .col-md-6
+
+
+
                   .form-group
-                    = f.label :keywords, "Keywords", class: "control-label", id: "keyword-label"
+
+                    - if @dataset.keywords && @dataset.keywords.length > 0
+
+                      = f.label :keywords, "Keywords (#{@dataset.keywords.split(';').length} -- semicolon separated)", class: "control-label", id: "keyword-label"
+                    - else
+                      = f.label :keywords, "Keywords", class: "control-label", id: "keyword-label"
                     %br
                     = f.text_field :keywords, class: "form-control dataset", id: "keyword-text", placeholder: "[Semicolon separated list of keywords or phrases, e.g.: institutional repositories; file formats]"
 

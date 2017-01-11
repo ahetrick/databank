@@ -25,6 +25,7 @@ ready = function () {
     $('#agree-button').prop("disabled", true);
 
     $('#keyword-text').keyup(handleKeywordKeyup);
+    $('#keyword-text').blur(handleKeywordKeyup);
 
     // handle non-chrome datepicker:
     if (!Modernizr.inputtypes.date) {
@@ -836,7 +837,7 @@ function handleKeywordKeyup(){
     });
 
     //console.log(keywordArr);
-    $('#keyword-label').html("<strong>Keywords</strong> (" + keyword_count +" -- semicolon separated)");
+    $('#keyword-label').html("Keywords (" + keyword_count +" -- semicolon separated)");
 
 }
 
