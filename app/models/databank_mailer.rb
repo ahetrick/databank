@@ -4,7 +4,7 @@ class DatabankMailer < ActionMailer::Base
   def confirm_deposit(dataset_key)
     @dataset = Dataset.where(key: dataset_key).first
 
-    subject = prepend_system_code('Illinois Data Bank] Dataset successfully deposited')
+    subject = prepend_system_code("Illinois Data Bank] Dataset successfully deposited (#{@dataset.identifier})")
 
 
     if @dataset
