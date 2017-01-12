@@ -23,6 +23,7 @@ class Dataset < ActiveRecord::Base
   has_many :funders, dependent: :destroy
   has_many :related_materials, dependent: :destroy
   has_many :deckfiles, dependent: :destroy
+
   accepts_nested_attributes_for :datafiles, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :deckfiles, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :creators, reject_if: :all_blank, allow_destroy: true
@@ -718,17 +719,29 @@ class Dataset < ActiveRecord::Base
     tokens = Token.where("dataset_key = ? AND expires > ?", self.key, DateTime.now)
     if tokens.count == 1
       return tokens.first
-    else
-      if tokens.count > 1
+    elsif tokens.count > 1
         tokens.destroy_all
         Rail.logger.warn "unexpected error: more than one current token for dataset #{self.key}"
-      end
-      return nil
+    else
+      return "token"
+    end
+  end
+
+  def current_token_expires
+    tokens = Token.where("dataset_key = ? AND expires > ?", self.key, DateTime.now)
+    if tokens.count == 1
+      return tokens.first
+    elsif tokens.count > 1
+      tokens.destroy_all
+      Rail.logger.warn "unexpected error: more than one current token for dataset #{self.key}"
+      return "n/a"
+    else
+      return "n/a"
     end
   end
 
   def new_token
-    if current_token
+    if current_token && current_token != "token"
       current_token.destroy
     end
     return Token.create(dataset_key: self.key, identifier: generate_auth_token, expires: (Time.now + 3.days) )

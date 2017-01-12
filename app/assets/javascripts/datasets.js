@@ -221,6 +221,7 @@ ready = function () {
     //alert("dataset key: "+ dataset_key)
 
     $("#api-modal-btn").click(function () {
+        getToken();
         $("#api_modal").modal('show');
     });
 
@@ -778,8 +779,8 @@ function clear_alert_message() {
 
 function getToken() {
     $.getJSON("/datasets/" + dataset_key + "/get_new_token", function (data) {
-        //console.log(data);
-        $('.current-token').html("<p><strong>Current Token:</strong> " + data.token + "<br/><strong>Expires:</strong> " + (new Date(data.expires)).toISOString() + "</p>");
+        console.log(data);
+        $('.current-token').html("<p><strong>Current HTTP Authentication Token: </strong>" + data.token + "<br/><strong>Expires:</strong> " + (new Date(data.expires)).toISOString() + "</p>");
         $('.token-btn').html("Get New Token");
 
         if(window.location.href.indexOf("dev") > -1) {
