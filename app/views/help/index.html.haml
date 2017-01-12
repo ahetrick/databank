@@ -39,15 +39,13 @@
         %a(href="#versioning") Changing, Updating, or Adding Files
       %li
         %a(href="#accessibility") Accessibility
-      -#%li
-      -#  %a(href="#api" ) File Upload API / Client
-      -#  %ul(class="nav nav-stacked")
-      -#    %li
-      -#      %a(href="#api_upload_overview" ) Overview
-      -#    %li
-      -#      %a(href="#api_upload_simple" ) Simple
-      -#    %li
-      -#      %a(href="#api_upload_complex" ) Complex
+      %li
+        %a(href="#api" ) Command Line Tools
+        %ul(class="nav nav-stacked")
+          %li
+            %a(href="#python_client" ) File Upload Python Script
+          %li
+            %a(href="#upload_api" ) File Upload API
       %li
         %a(href="#developers" ) For Developers
 
@@ -75,12 +73,10 @@
     = render partial: 'versioning'
     %a(href="#top" class="pull-right" ) Go to Top
     = render partial: 'accessibility'
-    -#%a(href="#top" class="pull-right" ) Go to Top
-    -#= render partial: 'api_upload_overview'
-    -#%a(href="#top" class="pull-right" ) Go to Top
-    -#= render partial: 'api_upload_simple'
-    -#%a(href="#top" class="pull-right" ) Go to Top
-    -#= render partial: 'api_upload_complex'
+    %a(href="#top" class="pull-right" ) Go to Top
+    = render partial: 'python_client'
+    %a(href="#top" class="pull-right" ) Go to Top
+    = render partial: 'upload_api'
     %a(href="#top" class="pull-right" ) Go to Top
     = render partial: 'developers'
     %a(href="#top" class="pull-right" ) Go to Top

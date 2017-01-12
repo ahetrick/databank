@@ -2,7 +2,7 @@
 
 var related_materials_ready;
 related_materials_ready = function () {
-    $('.material-text').css("visibility", "hidden");
+    //$('.material-text').css("visibility", "hidden");
 
     handleMaterialTable();
     // console.log ("user role: " + user_role);

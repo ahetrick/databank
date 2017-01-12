@@ -1,0 +1,72 @@
+.bs-callout.bs-callout-info.idb-help(id="upload_api")
+  %br
+  %h1 File Upload API
+  %hr
+  %h3 Existing Draft Dataset Required
+  .indent
+    %p
+      %strong
+        %em Files can only be uploaded to an existing draft dataset.
+    %p
+      A dataset is in a draft state after the deposit agreement has been accepted and before the dataset is published or scheduled for publication.  Before uploading a file using the sample client or a custom application of the API,
+      %a(href="/datasets/new" target="_blank" ) create
+      or
+      %a(href="/datasets" target="_blank" ) find
+      your draft dataset, and navigate to the edit form for that dataset.
+
+    %p
+      At the bottom of the Files section is a matrix of upload options buttons. Click the
+      %em Use File Upload API
+      button to display required elements for use in the APIs. Scroll down to
+      =succeed(",") do
+        %strong Dataset Key
+      a unique identifier for this dataset within the Illinois Data Bank. The dataset key does not change while the dataset exists. If a
+      %strong Current HTTP Authentication Token
+      for the dataset exists, it will be listed above the Dataset Key. If not, click on the
+      %em Get New Token
+      button at the bottom of the screen to request a token.
+    %p A token expires in 3 days, but a new one can be requested using the same method.
+    %p Anyone can use a token to upload a file to this dataset, so keep it secure.
+    %p A distinct token is required for each dataset.
+  %hr
+
+  %h3 Simple File Upload API
+  %hr
+  .indent
+    %p
+      The simple one-call protocol supports files
+      %emp up to 4GB
+      in size, to an existing draft dataset with an authentication token and dataset key as described in the
+      =succeed(".") do
+        %a(href="#top") overview
+    %p
+      The basic URL pattern is
+      = %Q[#{IDB_CONFIG[:root_url_text]}/api/dataset/[dataset key]/datafile]
+    %p The request method is POST.
+    %p The authorization token must be sent in a header.
+    %p A header setting the Transfer-Encoding to chunked is recommended.
+    %p The file must be sent in a form in an element named binary.  In cURL, that can be done with the -F option and an element like "binary=@my_datafile.csv".
+    %p If using cURL, the -o option must be used to send response output to a file to see the progress meter.
+    %p Even after the cURL progress meter reaches 100%, additional processing is done, which may take as long as it took to reach 100%.
+    -if IDB_CONFIG[:root_url_text].include?("dev")
+      %p For rds-dev only, -k at at the end of the cURL command makes it tolerate the self-signed certificate.
+    -else
+    %p After upload is complete, refresh the dataset page to see the new datafile listing.
+
+
+    %h3 Example cURL command for simple protocol:
+    %pre
+      %code
+        = %Q[curl -F "binary=@my_datafile.csv" -H "Authorization: Token token=authentication_token" -H "Transfer-Encoding: chunked" -X POST #{IDB_CONFIG[:root_url_text]}/api/dataset/dataset_key/datafile -o output.txt]
+        -if IDB_CONFIG[:root_url_text].include?("dev")
+          = %Q[-k]
+
+  %hr
+  %h3 Complex File Upload API
+  %hr
+  .indent
+    %p
+      The complex protocol, used by the sample python client, requires several coordinated calls, but supports files
+      %em up to 2TB
+      in size, to an existing draft dataset with an authentication token and dataset key as described above.
+    %p Detailed documenatation is available from link to pdf, or contact us to request custom support.

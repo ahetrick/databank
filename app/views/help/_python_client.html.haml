@@ -1,13 +1,14 @@
 .bs-callout.bs-callout-info.idb-help(id="api")
-.bs-callout.bs-callout-info.idb-help(id="api_upload_overview")
+  %br
+  %h1
+    %strong Command Line tools
+.bs-callout.bs-callout-info.idb-help(id="python_client")
   %br
   %hr
-  %h1 File Upload API / Client
+  %h1 Python File Upload Client
   %hr
   %h3 Existing Draft Dataset Required
   .indent
-    %p
-      The Illinois Data Bank file upload API protocols allow you to upload a file programatically, or from a command line.
     %p
       %strong
         %em Files can only be uploaded to an existing draft dataset.
@@ -36,7 +37,7 @@
   %h3 Sample Python Client
   .indent
     %p
-      If you would like to use our sample Python client, you can download
+      If you would like to use our Python client, you can download
       %a(href="https://raw.githubusercontent.com/medusa-project/databank-client/master/illinois_data_bank_datafile.py" ) illinois_data_bank_datafile.py
       and use it with recent versions of Python 2 or 3. Package dependencies: requests and docopts. For help,
       %a(href="/help#contact" )contact the Research Data Service.
@@ -59,26 +60,6 @@
       %br
       .indent
         ="-h --help"
-
-  %h3 Custom Support
-  .indent
-    %p
-      The
-      %a(href="/help#api_upload_simple" )simple
-      one-call protocol supports files
-      %em up to 4GB
-      in size.
-    %p
-      The
-      %a(href="/help#api_upload_complex" )complex
-      protocol requires several coordinated calls, but supports files
-      %em up to 2TB
-      and is more tolerant of variations in connectivity.
-
-    %p
-      For more help,
-      =succeed(".") do
-        %a(href="/help#contact") Contact Us
 
 
 
