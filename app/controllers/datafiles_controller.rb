@@ -95,6 +95,7 @@ class DatafilesController < ApplicationController
   end
 
   def preview
+    @datafile.record_download(request.remote_ip)
     respond_to do |format|
       format.html {render :preview}
       format.json {render json: {filename: @datafile.bytestream_name, body: @datafile.preview, status: :ok}}
@@ -102,6 +103,7 @@ class DatafilesController < ApplicationController
   end
 
   def display
+    @datafile.record_download(request.remote_ip)
     respond_to do |format|
       format.html {
         send_file( @datafile.bytestream_path,
