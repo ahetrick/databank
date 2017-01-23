@@ -77,12 +77,14 @@ class Datafile < ActiveRecord::Base
 
             entry_list_array = entry_list_text.split("\n")
 
-            return_string = ""
+            return_string = '<span class="glyphicon glyphicon-folder-open"></span> '
+
+            return_string << self.bytestream_name
 
             entry_list_array.each_with_index do |raw_entry, index|
 
 
-              if index > 2 # first three lines are headers
+              if index > 2  && index < (entry_list_array.length - 1) # first three lines are headers, last line is summary
 
                 entry_array = raw_entry.strip.split " "
 
@@ -121,11 +123,7 @@ class Datafile < ActiveRecord::Base
 
             end
 
-            if return_string == ""
-              return "no preview available"
-            else
-              return return_string
-            end
+            return return_string
 
 
           else
