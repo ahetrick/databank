@@ -1,3 +1,5 @@
+require 'zip'
+
 class Datafile < ActiveRecord::Base
   include ActiveModel::Serialization
   mount_uploader :binary, BinaryUploader
@@ -62,50 +64,79 @@ class Datafile < ActiveRecord::Base
   def preview
     if self.bytestream_name != ""
       filename_split = self.bytestream_name.split(".")
-      if filename_split.count > 1
 
-        case filename_split.last
+      if filename_split.count > 1 # otherwise cannot determine extension
+
+        case filename_split.last # extension
 
           when 'txt', 'csv', 'tsv', 'rb', 'xml', 'json'
             return File.read(self.bytestream_path)
+
           when 'zip'
+            entry_list_text = `unzip -l "#{self.bytestream_path}"`
+
+            entry_list_array = entry_list_text.split("\n")
+
             return_string = ""
-            Zip::File.open(self.bytestream_path) do |zip_file|
-              zip_file.each do |entry|
-                #Rails.logger.warn entry.to_yaml
-                if ((entry.name).to_s).exclude?('__MACOSX/')
 
-                  name_arr = entry.name.split("/")
-                  name_arr.length.times do
-                    return_string << "<div class='indent'>"
+            entry_list_array.each_with_index do |raw_entry, index|
+
+
+              if index > 2 # first three lines are headers
+
+                entry_array = raw_entry.strip.split " "
+
+                filepath = entry_array[-1]
+                entry_length = entry_array[0].to_i
+
+                if filepath && entry_length > 0
+
+                  if filepath.exclude?('__MACOSX/')
+                    name_arr = filepath.split("/")
+
+                    Rails.logger.warn name_arr.last
+
+                    name_arr.length.times do
+                      return_string << "<div class='indent'>"
+                    end
+
+                    if filepath[-1] == "/" # means directory
+                      return_string << '<span class="glyphicon glyphicon-folder-open"></span> '
+
+                    else
+                      return_string << '<span class="glyphicon glyphicon-file"></span> '
+                    end
+
+                    return_string << name_arr.last
+                    name_arr.length.times do
+                      return_string << "</div>"
+                    end
                   end
-                  if entry.ftype == :file
-                    return_string << '<span class="glyphicon glyphicon-file"></span> '
-                  elsif entry.ftype == :directory
-                    return_string << '<span class="glyphicon glyphicon-folder-open"></span> '
-                  end
-                  return_string << name_arr.last
-                  name_arr.length.times do
-                    return_string << "</div>"
-                  end
+
                 end
-              end
-            end
-            if return_string.length > 0
 
-              rooted_return_string = '<span class="glyphicon glyphicon-folder-open"></span> '
-              rooted_return_string << self.bytestream_name
-              rooted_return_string << "<div>"
-              rooted_return_string << return_string
-              rooted_return_string << "</div>"
-              return rooted_return_string
-            else
-              return "no preview available"
+
+              end
+
+
             end
+
+            if return_string == ""
+              return "no preview available"
+            else
+              return return_string
+            end
+
+
           else
             return "no preview available"
+
         end
+
+      else
+        return "no preview available"
       end
+
     else
       return "no preview available"
     end
