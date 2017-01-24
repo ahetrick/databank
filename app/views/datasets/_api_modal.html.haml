@@ -34,7 +34,7 @@
         .command-to-copy
           %pre
             %code
-              ="python illinois_data_bank_datafile.py #{@dataset.key} [TOKEN] myfile.csv #{IDB_CONFIG[:root_url_text].include?("dev") ? 'development':''}"
+              ="python illinois_data_bank_datafile.py #{@dataset.key} [TOKEN] #{IDB_CONFIG[:root_url_text].include?("dev") ? 'development':''} myfile.csv "
 
       %h3 Execute a cURL command
       .indent
