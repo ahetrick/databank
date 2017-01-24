@@ -75,6 +75,9 @@ Rails.application.routes.draw do
   # controller method protected by cancan
   get '/datasets/:id/get_new_token', to: 'datasets#get_new_token', defaults: {format: 'json'}
 
+  get '/datasets/:id/get_current_token', to: 'datasets#get_current_token', defaults: {format: 'json'}
+
+
   # authentication routes
   match '/auth/:provider/callback', to: 'sessions#create', via: [:get, :post]
   match '/login', to: 'sessions#new', as: :login, via: [:get, :post]

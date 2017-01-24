@@ -271,6 +271,18 @@ class DatasetsController < ApplicationController
     render json: {token: @token.identifier, expires: @token.expires}
   end
 
+  def get_current_token
+
+    if @dataset.current_token && @dataset.current_token != "token"
+      @token = @dataset.current_token
+      render json: {token: @token.identifier, expires: @token.expires}
+    else
+      @token = nil
+      render json: {token: "token"}
+    end
+
+  end
+
   # POST /datasets
   # POST /datasets.json
   def create
