@@ -727,6 +727,11 @@ class Dataset < ActiveRecord::Base
     end
   end
 
+  def has_expired_token_only
+    expired_tokens = Token.where("dataset_key = ? AND expires < ?", self.key, DateTime.now)
+    return expired_tokens.count > 0 && self.current_token == "token"
+  end
+
   def current_token_expires
     tokens = Token.where("dataset_key = ? AND expires > ?", self.key, DateTime.now)
     if tokens.count == 1

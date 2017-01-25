@@ -9,15 +9,14 @@
 
       %h3 Here is your token:
       .indent
-
         .current-token
-        %strong Dataset identifier
+        %strong Dataset identifier:
         =@dataset.key
         (Unique and persistent identifier for this dataset within Illinois Data Bank)
         .instruction-box
-          Your token and dataset identifier are pre-populated into example commands.
+          Your token and dataset identifier are pre-populated into example commands in sections below.
           %br
-          Expand Python or cURL section below to see the example command for that option.
+          Expand Python or cURL section to see the example command for that option.
         %br
       .panel-group(id="python" role="tablist" aria-multiselectable="true")
         .panel.panel-default
@@ -37,17 +36,27 @@
                 =succeed(",") do
                   %a(href="https://www.python.org/" ) python 2 or 3
                 %em works on files up to 2 TB.
-              %em Required Modules
+              %p Required Modules
               %pre
                 %code
                   = simple_format("pip install docopt\npip install requests\npip install urllib3[secure]")
 
-              %em Usage Example
+              %p
+                The only part that would need to change from the following example is the name of your file at the end where the example has
+                %em myfile.csv.
               .command-to-copy
                 %pre
                   %code
                     ="python illinois_data_bank_datafile.py #{@dataset.key} [TOKEN] #{IDB_CONFIG[:root_url_text].include?("dev") ? 'development':''} myfile.csv "
-      
+
+              %p
+                For more help, see the
+                =succeed(",") do
+                  %a(href="/help#api" ) Command Line Tools / API Reference
+                or
+                =succeed(".") do
+                  %a(href="/help#contact") Contact Us
+
       .panel-group(id="cURL" role="tablist" aria-multiselectable="true")
         .panel.panel-default
           .panel-heading(role="tab" id="cURLHeading")
@@ -62,12 +71,22 @@
                   %a(href="https://curl.haxx.se/" target="_blank" ) cURL
                 %em works on files up to 4 GB.
 
+              %p The only part that would need to change from this example is the name of your file in the "binary = @my_datafile.csv" section. The at symbol (@) is required just before the file name.
+
               .curl-to-copy
                 %pre
                   %code
                     = %Q[curl -F "binary=@my_datafile.csv" -H "Authorization: Token token=authentication_token" -H "Transfer-Encoding: chunked" -X POST #{IDB_CONFIG[:root_url_text]}/api/dataset/dataset_key/datafile -o output.txt]
                     -if IDB_CONFIG[:root_url_text].include?("dev")
                       = %Q[-k]
+
+              %p
+                For more help, see the
+                =succeed(",") do
+                  %a(href="/help#api" ) Command Line Tools / API Reference
+                or
+                =succeed(".") do
+                  %a(href="/help#contact") Contact Us
       
       
       .panel-group(id="script" role="tablist" aria-multiselectable="true")

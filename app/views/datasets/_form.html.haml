@@ -274,7 +274,14 @@
                   .btn.btn-success.fileinput-button(id="api-modal-btn")
                     %span(class="fileinput-button-content")
                       %span(class="glyphicon glyphicon-open" )
-                      Get token for command line tools
+                      - if @dataset.has_expired_token_only
+                        %span(class="strong" ) TOKEN EXPIRED
+                        Get new upload token
+                      - elsif @dataset.current_token == "token"
+                        Get token for command line tools
+                      - else
+                        View token for command line tools
+
                 %td
                   %span(class="fa upload-consistent fa-circle")
                 %td
