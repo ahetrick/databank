@@ -7,62 +7,89 @@
 
     .modal-body
 
-
-      %strong Dataset Key:
-      =@dataset.key
-      .current-token
-
-      .text-center
-        %button(type="button" onclick="getNewToken()" class="btn btn-primary token-btn" )
-          Get Token
-
-      %h3
-        Download our sample Python client
-        %a(href="#{IDB_CONFIG[:root_url_text]}/illinois_data_bank_datafile.py" target="_blank" ) illinois_data_bank_datafile.py
+      %h3 Here is your token:
       .indent
-        %p
-          Requires recent version of
-          =succeed(",") do
-            %a(href="https://www.python.org/" ) Python 2 or 3
-          works on files up to 2 TB
-        %em Required Modules
-        %pre
-          %code
-            = simple_format("pip install docopt\npip install requests\npip install urllib3[secure]")
 
-        %em Usage Example
-        .command-to-copy
-          %pre
-            %code
-              ="python illinois_data_bank_datafile.py #{@dataset.key} [TOKEN] #{IDB_CONFIG[:root_url_text].include?("dev") ? 'development':''} myfile.csv "
+        .current-token
+        %strong Dataset identifier
+        =@dataset.key
+        (Unique and persistent identifier for this dataset within Illinois Data Bank)
+        .instruction-box
+          Your token and dataset identifier are pre-populated into example commands.
+          %br
+          Expand Python or cURL below to see the example command for that option.
+        %br  
+      .panel-group(id="python" role="tablist" aria-multiselectable="true")
+        .panel.panel-default
+          .panel-heading(role="tab" id="pythonHeading")
+            %h4(class="panel-title")
+              %a( role="button" data-toggle="collapse" data-parent="#python" href="#pythonPanel" aria-expanded="false" aria-controls="pythonPanel" class="accordion-toggle collapsed" )
+                %span( class="metadata-label" ) Use our sample Python file upload script. (click to expand)
+          .panel-collapse.collapse(id="pythonPanel" role="tabpanel" aria-labelledby="pythonHeading" )
+            .panel-body
 
-      %h3 Execute a cURL command
-      .indent
-        %p
-          Requires
-          =succeed(",") do
-            %a(href="https://curl.haxx.se/" target="_blank" ) cURL
-          works on files up to 4 GB
+              %p
+                Download our sample python client
+                %a(href="#{IDB_CONFIG[:root_url_text]}/illinois_data_bank_datafile.py" target="_blank" ) illinois_data_bank_datafile.py
 
-        .curl-to-copy
-          %pre
-            %code
-              = %Q[curl -F "binary=@my_datafile.csv" -H "Authorization: Token token=authentication_token" -H "Transfer-Encoding: chunked" -X POST #{IDB_CONFIG[:root_url_text]}/api/dataset/dataset_key/datafile -o output.txt]
-              -if IDB_CONFIG[:root_url_text].include?("dev")
-                = %Q[-k]
+              %p
+                Requires recent version of
+                =succeed(",") do
+                  %a(href="https://www.python.org/" ) python 2 or 3
+                %em works on files up to 2 TB.
+              %em Required Modules
+              %pre
+                %code
+                  = simple_format("pip install docopt\npip install requests\npip install urllib3[secure]")
 
-      %h3 Create your own program using our API
-      .indent
-        %em Size constraints depend on implementation details.
+              %em Usage Example
+              .command-to-copy
+                %pre
+                  %code
+                    ="python illinois_data_bank_datafile.py #{@dataset.key} [TOKEN] #{IDB_CONFIG[:root_url_text].include?("dev") ? 'development':''} myfile.csv "
+      
+      .panel-group(id="cURL" role="tablist" aria-multiselectable="true")
+        .panel.panel-default
+          .panel-heading(role="tab" id="cURLHeading")
+            %h4(class="panel-title")
+              %a( role="button" data-toggle="collapse" data-parent="#cURL" href="#cURLPanel" aria-expanded="false" aria-controls="cURLPanel" class="accordion-toggle collapsed" )
+                %span( class="metadata-label" ) Execute a cURL command. (click to expand)
+          .panel-collapse.collapse(id="cURLPanel" role="tabpanel" aria-labelledby="cURLHeading" )
+            .panel-body
+              %p
+                Requires
+                =succeed(",") do
+                  %a(href="https://curl.haxx.se/" target="_blank" ) cURL
+                %em works on files up to 4 GB.
 
-        %br
-        %p
-          See the
-          =succeed(",") do
-            %a(href="/help#api" ) Command Line Tools / API Reference
-          or
-          =succeed(".") do
-            %a(href="/help#contact") Contact Us
+              .curl-to-copy
+                %pre
+                  %code
+                    = %Q[curl -F "binary=@my_datafile.csv" -H "Authorization: Token token=authentication_token" -H "Transfer-Encoding: chunked" -X POST #{IDB_CONFIG[:root_url_text]}/api/dataset/dataset_key/datafile -o output.txt]
+                    -if IDB_CONFIG[:root_url_text].include?("dev")
+                      = %Q[-k]
+      
+      
+      .panel-group(id="script" role="tablist" aria-multiselectable="true")
+        .panel.panel-default
+          .panel-heading(role="tab" id="scriptHeading")
+            %h4(class="panel-title")
+              %a(role="button" data-toggle="collapse" data-parent="#script" href="#scriptPanel" aria-expanded="false" aria-controls="scriptPanel" class="accordion-toggle collapsed" )
+                %span( class="metadata-label" ) Create your own custom script using our API. (click to expand)
+          .panel-collapse.collapse(id="scriptPanel" role="tabpanel" aria-labelledby="scriptHeading" )
+            .panel-body
+              %p
+                %em Size constraints depend on implementation details.
+              %p
+                See the
+                =succeed(",") do
+                  %a(href="/help#api" ) Command Line Tools / API Reference
+                or
+                =succeed(".") do
+                  %a(href="/help#contact") Contact Us
+      %p
+        %strong
+          You can see this screen again by clicking the command line tools token option again from the edit dataset screen, as you did to get here this time.
 
     .modal-footer
       .control-group

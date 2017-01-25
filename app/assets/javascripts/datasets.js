@@ -803,7 +803,7 @@ function setTokenExamples(upload_token, token_expiration){
 
 
     $('.current-token').html("<p><strong>Current HTTP Authentication Token: </strong>" + upload_token + "<br/><strong>Expires:</strong> " + (new Date(token_expiration)).toISOString() + "</p>");
-    $('.token-btn').html("Get New Token");
+    
     if(window.location.href.indexOf("dev") > -1) {
 
         $('.command-to-copy').html("<pre><code>python illinois_data_bank_datafile.py "+ dataset_key +" "+ upload_token +"development myfile.csv</code></pre>");

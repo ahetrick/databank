@@ -371,3 +371,10 @@ table.deposit-agreement-selection-warning > tbody > tr > td {
   background-color: $color__navy;
   color: $color__text-light;
 }
+
+.instruction-box{
+  background-color: $color__yellow-background;
+  border: 1px solid $color__light-grey;
+  padding: 3px;
+  border-radius: 3px;
+}
