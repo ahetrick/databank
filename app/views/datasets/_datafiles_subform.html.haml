@@ -1,8 +1,9 @@
 %div(id="datafiles-form")
   %input(type="hidden" name="datafile_index_max" id="datafile_index_max" value="#{@dataset.datafiles.count.to_i}" )
-
-  - if (params[:action] != 'new')
+  - if @dataset.datafiles.count > 0
     .panel-group(id="files" role="tablist" aria-multiselectable="true")
+  -else
+    .panel-group(id="files" role="tablist" aria-multiselectable="true" style="display: none")
       .panel.panel-default
         .panel-heading(role="tab" id="filesHeading")
           %h4(class="panel-title")
@@ -10,7 +11,6 @@
               %span(class="metadata-label" ) Files
         .panel-collapse.collapse.in(id="collapseFiles" role="tabpanel" aria-labelledby="filesHeading" )
           .panel-body
-
             - if @dataset.has_deck_content
               .deckfiles_div
                 %span(class="metadata-label") Files pending approval to be included in this dataset:

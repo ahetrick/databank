@@ -245,6 +245,7 @@ ready = function () {
 
         add: function (e, data) {
 
+            $('#files').css("display", "block");
             $('#collapseFiles').collapse('show');
 
             var cancelBtn = $('<a/>')
@@ -353,7 +354,10 @@ ready = function () {
     var boxSelect = new BoxSelect();
     // Register a success callback handler
     boxSelect.success(function (response) {
-        console.log(response);
+        //console.log(response);
+
+        $('#files').css("display", "block");
+        $('#collapseFiles').collapse('show');
 
         $.each(response, function (i, boxItem) {
 
