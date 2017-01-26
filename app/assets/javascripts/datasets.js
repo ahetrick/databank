@@ -864,8 +864,13 @@ function handleKeywordKeyup(){
         }
     });
 
-    //console.log(keywordArr);
-    $('#keyword-label').html("Keywords (" + keyword_count +" -- semicolon separated)");
+    if (keyword_count > 0){
+        //console.log(keywordArr);
+        $('#keyword-label').html("Keywords (" + keyword_count +" -- semicolon separated)");
+    } else {
+        $('#keyword-label').html("Keywords");
+        $('#keyword-text').attr("placeholder", "[Semicolon separated list of keywords or phrases, e.g.: institutional repositories; file formats]")
+    }
 
 }
 
