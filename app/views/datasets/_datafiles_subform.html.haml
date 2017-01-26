@@ -76,7 +76,6 @@
                             =surround "(", ")" do
                               %span(id = "datafiles-count")
                                 = @dataset.datafiles.count
-
                   - @ordered_datafiles.each_with_index do |datafile, i|
                     = f.fields_for :datafiles, datafile do |df|
                       - if (datafile.binary && datafile.binary.file  && datafile.binary.size > 0 ) || (datafile.medusa_path && datafile.medusa_path != "")

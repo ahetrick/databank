@@ -344,7 +344,7 @@
                                   <span class="col-md-6">
                                     <% if @all_in_medusa || @total_files_size < @local_zip_max_size %>
                                       <label>
-                                        <input type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="<%= datafile.web_id %>"><%= datafile.bytestream_name %>
+                                        <input type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="<%= datafile.web_id %>" onchange="handleCheckFileGroupChange()"><%= datafile.bytestream_name %>
                                       </label>
                                     <% else %>
                                        <%= datafile.bytestream_name %>
