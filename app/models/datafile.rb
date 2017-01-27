@@ -127,7 +127,7 @@ class Datafile < ActiveRecord::Base
 
           when '7z'
 
-            entry_list_text = `7za -l "#{self.bytestream_path}"`
+            entry_list_text = `7za l "#{self.bytestream_path}"`
 
             Rails.logger.warn entry_list_text
 
@@ -140,7 +140,7 @@ class Datafile < ActiveRecord::Base
             entry_list_array.each_with_index do |raw_entry, index|
 
 
-              if index > 2  && index < (entry_list_array.length - 2) # first three lines are headers, last two lines are summary
+              if index > 19  && index < (entry_list_array.length - 2) # first three lines are headers, last two lines are summary
 
                 entry_array = raw_entry.strip.split " "
 
