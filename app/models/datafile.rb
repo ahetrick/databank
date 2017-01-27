@@ -125,6 +125,59 @@ class Datafile < ActiveRecord::Base
 
             return return_string
 
+          when '7z'
+
+            entry_list_text = `7za -l "#{self.bytestream_path}"`
+
+            Rails.logger.warn entry_list_text
+
+            entry_list_array = entry_list_text.split("\n")
+
+            return_string = '<span class="glyphicon glyphicon-folder-open"></span> '
+
+            return_string << self.bytestream_name
+
+            entry_list_array.each_with_index do |raw_entry, index|
+
+
+              if index > 2  && index < (entry_list_array.length - 2) # first three lines are headers, last two lines are summary
+
+                entry_array = raw_entry.strip.split " "
+
+                filepath = entry_array[-1]
+
+                if filepath
+
+                  name_arr = filepath.split("/")
+
+                  Rails.logger.warn name_arr.last
+
+                  name_arr.length.times do
+                    return_string << "<div class='indent'>"
+                  end
+
+                  if filepath[-1] == "/" # means directory
+                    return_string << '<span class="glyphicon glyphicon-folder-open"></span> '
+
+                  else
+                    return_string << '<span class="glyphicon glyphicon-file"></span> '
+                  end
+
+                  return_string << name_arr.last
+                  name_arr.length.times do
+                    return_string << "</div>"
+                  end
+
+
+                end
+
+
+              end
+
+
+            end
+
+            return return_string
 
           else
             return "no preview available"
@@ -147,7 +200,7 @@ class Datafile < ActiveRecord::Base
     else
       filename_split = self.bytestream_name.split(".")
       extension = filename_split.last
-      if ['txt', 'csv', 'tsv', 'rb', 'xml', 'json', 'zip'].include?(extension)
+      if ['txt', 'csv', 'tsv', 'rb', 'xml', 'json', 'zip', '7z'].include?(extension)
         return true
       else
         return false

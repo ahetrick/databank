@@ -1,9 +1,6 @@
 %div(id="datafiles-form")
   %input(type="hidden" name="datafile_index_max" id="datafile_index_max" value="#{@dataset.datafiles.count.to_i}" )
-  - if @dataset.datafiles.count > 0
-    .panel-group(id="files" role="tablist" aria-multiselectable="true")
-  -else
-    .panel-group(id="files" role="tablist" aria-multiselectable="true" style="display: none")
+    .panel-group(id="files" role="tablist" aria-multiselectable="true" style="display: #{@dataset.datafiles.count > 0 ? 'block' : 'none' }")
       .panel.panel-default
         .panel-heading(role="tab" id="filesHeading")
           %h4(class="panel-title")
