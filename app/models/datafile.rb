@@ -53,6 +53,20 @@ class Datafile < ActiveRecord::Base
 
   end
 
+  def file_extension
+    filename_split = self.bytestream_name.split(".")
+
+    if filename_split.count > 1 # otherwise cannot determine extension
+
+      return filename_split.last
+
+    else
+      return ""
+
+    end
+
+  end
+
   def bytestream_path
     if self.medusa_path.nil? || self.medusa_path.empty?
       self.binary.path

@@ -13,6 +13,25 @@ class Dataset < ActiveRecord::Base
   audited except: [:creator_text, :key, :complete, :is_test, :is_import, :updated_at, :embargo], allow_mass_assignment: true
   has_associated_audits
 
+  searchable do
+    text :title, :description, :keywords, :identifier, :funder_names_fulltext, :grant_numbers_fulltext, :creator_names_fulltext, :filenames_fulltext, :datafile_extensions_fulltext
+
+
+    string :license
+    string :depositor_email
+    string :publication_state
+    string :hold_state
+    string :dataset_version
+    string :funder_names, multiple: true
+    string :grant_numbers, multiple: true
+    string :creator_names, multiple: true
+    string :filenames, multiple: true
+    string :datafile_extensions, multiple: true
+    time :created_at
+    time :updated_at
+
+  end
+
   MIN_FILES = 1
   MAX_FILES = 10000
 
@@ -679,6 +698,59 @@ class Dataset < ActiveRecord::Base
     return "#{creator_list} (#{publication_year}): #{citationTitle}. #{publisher}. #{citation_id}"
   end
 
+  def funder_names
+    Funder.where(dataset_id: self.id).pluck(:name)
+  end
+
+  def funder_names_fulltext
+    self.funder_names.join(" ").to_s
+  end
+
+  def grant_numbers
+    Funder.where(dataset_id: self.id).pluck(:grant)
+  end
+
+  def grant_numbers_fulltext
+    self.grant_numbers.join(" ")
+  end
+
+  def creator_names
+    return_arr = Array.new
+    self.creators.each do |creator|
+      return_arr << creator.display_name
+    end
+    return_arr
+  end
+
+  def creator_names_fulltext
+    self.creator_names.join(" ")
+  end
+
+
+  def filenames
+    return_arr = Array.new
+    self.datafiles.each do |datafile|
+      return_arr << datafile.bytestream_name
+    end
+    return_arr
+  end
+
+  def filenames_fulltext
+    self.filenames.join(" ")
+  end
+
+  def datafile_extensions
+    return_arr = Array.new
+    self.datafiles.each do |datafile|
+      return_arr << datafile.file_extension
+    end
+    return_arr
+  end
+
+  def datafile_extensions_fulltext
+    self.datafile_extensions.join(" ")
+  end
+
   def set_key
     self.key ||= generate_key
   end
@@ -899,6 +971,10 @@ class Dataset < ActiveRecord::Base
     (self.identifier && !self.identifier.empty?) ? "https://doi.org/#{self.identifier}" : ""
   end
 
+  def license_class
+    self.license || "unselected"
+  end
+
   def stuctured_data
 
     if self.publication_state == Databank::PublicationState::RELEASED
@@ -996,6 +1072,13 @@ class Dataset < ActiveRecord::Base
 
   end
 
+  def mine_or_not_mine(email_address)
+    if email_address == depositor_email
+      return "mine"
+    else
+      return "not_mine"
+end
+  end
 
   def self.make_anvl(metadata)
     anvl = ""

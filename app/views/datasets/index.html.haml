@@ -1,22 +1,79 @@
--if params.has_key?('context')
-  .alert.alert-alert
-    -if params['context'] == 'exit_draft'
-      Your draft is saved. We'll save a draft dataset for at least six months.  When you're ready to continue, select your dataset and click 'Edit' to pick up where you left off.
-    -elsif params['context'] == 'exit_doi'
-      Your dataset is saved.
-- if params.has_key?('depositor') && current_user && current_user.role == 'depositor'
-  %h2 My Datasets
-  %button(type="button" class="btn btn-primary btn-block dataset-index-btn" onclick='window.location = "/datasets"')
-    Click this bar to list
-    %strong ALL
-    Datasets
-- elsif current_user && current_user.role == 'depositor'
-  %h2 All Datasets
-  %button(type="button" class="btn btn-primary btn-block dataset-index-btn" onclick='window.location = "/datasets?depositor=#{current_user.name}"')
-    Click this bar to list just
-    %strong MY
-    Datasets
-- else
-  %h1 Datasets
--if @datatable
-  = render_datatable(@datatable)
+.row
+  .col-md-3
+    %form(action="/datasets" id="searchForm" accept-charset="UTF-8" method="get" )
+
+      .input-group
+
+        -if params.has_key?('q')
+          %input(type="text" class="form-control q" name="q" aria-label="search input box" value="#{params['q']}" )
+        -else
+          %input(type="text" class="form-control q" name="q" aria-label="search input box" placeholder="search for datasets" )
+        %span(class="input-group-btn" )
+          %button(type="submit" class="btn btn-primary")
+            %span(class="glyphicon glyphicon-search" aria-hidden="true" )
+          %button(type="button" class="btn btn-danger" onclick="clearSearchTerm()" )
+            %span(class="glyphicon glyphicon-remove" aria-hidden="true" )
+
+      %br
+      %button(type="button" onclick="showAllSearchResults()" class="btn btn-success" )
+        Show Unfiltered Search Results
+      %br
+      .facets
+        -if current_user && ['admin','depositor'].include?(current_user.role)
+          Depositor
+          .indent
+            .facet
+              %input(type="checkbox" class="checkFacet checkFacetGroup mine_or_not_mine" name="mine_or_not[]" value="mine" onchange="handleFilterChange()" checked=true )
+                me
+            .facet
+              %input(type="checkbox" class="checkFacet checkFacetGroup mine_or_not_not_mine" name="mine_or_not[]" value="not_mine" onchange="handleFilterChange()" checked=true )
+                not me
+        Publication State
+        .indent
+          -for row in @search.facet(:publication_state).rows
+            -row.value.gsub!(' ','_')
+            .facet
+              - if params.has_key?('publication_state')
+
+                - if params['publication_state'].include?(row.value)
+
+                  %input(type="checkbox" class="checkFacet checkFacetGroup pubstate_#{row.value}" name="publication_state[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                    = row.value
+                    ="(#{row.count})"
+                -else
+
+                  %input(type="checkbox" class="checkFacet checkFacetGroup pubstate_#{row.value} " name="publication_state[]" value="#{row.value}" onchange="handleFilterChange()")
+                    = row.value
+                    ="(#{row.count})"
+
+              -else
+                %input(type="checkbox" class="checkFacet checkFacetGroup pubstate_#{row.value}" name="publication_state[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                  = row.value
+                  ="(#{row.count})"
+        License
+        .indent
+          -for row in @search.facet(:license).rows
+            -row.value.gsub!(' ','_')
+            .facet
+              - if params.has_key?('license')
+
+                - if params['license'].include?(row.value)
+                  %input(type="checkbox" class="checkFacet checkFacetGroup license_facet license_#{row.value}" name="license[]" value="#{row.value}" onchange="handleFilterChange()" checked=true )
+                    = row.value
+                    ="(#{row.count})"
+                -else
+                  %input(type="checkbox" class="checkFacet checkFacetGroup license_facet license_#{row.value}" name="license[]" value="#{row.value}" onchange="handleFilterChange()" )
+                    = row.value
+                    ="(#{row.count})"
+
+              -else
+
+                %input(type="checkbox" class="checkFacet checkFacetGroup license_facet license_#{row.value}" name="license[]" value="#{row.value}" onchange="handleFilterChange()" checked=true )
+                  = row.value
+                  ="(#{row.count})"
+
+  .col-md-9
+    %h1 Datasets
+    -@search.each_hit_with_result do |hit, dataset|
+
+      = render partial: 'brief_record', locals: {dataset: dataset}

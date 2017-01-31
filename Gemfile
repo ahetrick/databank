@@ -73,6 +73,11 @@ gem 'nokogiri'
 gem 'nokogiri-diff'
 gem 'equivalent-xml'
 
+# use solr for searching
+gem 'sunspot_rails'
+gem 'sunspot_solr'
+gem 'progress_bar'
+
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
 
