@@ -1,6 +1,11 @@
 -if((can? :maange, dataset) || (can? :edit, dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::TempSuppress::FILE, Databank::PublicationState::Embargo::FILE].include?(dataset.publication_state) ) )
 
-  .record(class= "hit #{dataset.publication_state.gsub(' ','_')} #{dataset.license_class} #{dataset.mine_or_not_mine(current_user.email)}")
+  -if current_user
+    -current_email = current_user.email
+  -else
+    -current_email = 'placeholder@mailinator.com'
+
+  .record(class= "hit #{dataset.publication_state.gsub(' ','_')} #{dataset.license_class} #{dataset.mine_or_not_mine(current_email)}")
 
     -if(can? :manage, dataset)
 
