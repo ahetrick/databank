@@ -23,7 +23,7 @@
         =dataset.created_at.iso8601
       &nbsp;
 
-    -if dataset.publication_state != Databank::PublicationState::DRAFT
+    -if dataset.publication_state != Databank::PublicationState::DRAFT && dataset.release_date
       .label.label-info
         -if dataset.release_date > Time.now()
           planned publication date:
