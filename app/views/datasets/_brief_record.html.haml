@@ -32,7 +32,7 @@
         =dataset.release_date.iso8601
       &nbsp;
 
-    -if dataset.publication_state == Databank::PublicationState::DRAFT || (dataset.publication_state != Databank::PublicationState::DRAFT && dataset.updated_at > dataset.release_date)
+    -if dataset.publication_state == Databank::PublicationState::DRAFT || ((dataset.release_date) && (dataset.publication_state != Databank::PublicationState::DRAFT && dataset.updated_at > dataset.release_date))
       .label.label-success
         updated:
         =dataset.updated_at.iso8601
