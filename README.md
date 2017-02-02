@@ -57,9 +57,14 @@ Edit these as necessary.
 `$ bundle exec rake db:setup`
 
 
+#### Solr / Sunspot for search
+* Adjust config/sunspot.yml for actual solr implementation
+
+
 #### Run using passenger standalone on nix system 
 
 `$ ./idb_start.sh`
+
 
 ## Integration with digital preservation repository @Illinois (Medusa)
 
