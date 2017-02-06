@@ -19,15 +19,51 @@
         Show Unfiltered Search Results
       %br
       .facets
-        -if current_user && ['admin','depositor'].include?(current_user.role)
+        -if current_user && current_user.role == 'depositor'
           Depositor
           .indent
             .facet
-              %input(type="checkbox" class="checkFacet checkFacetGroup mine_or_not_mine" name="mine_or_not[]" value="mine" onchange="handleFilterChange()" checked=true )
-                me
-            .facet
-              %input(type="checkbox" class="checkFacet checkFacetGroup mine_or_not_not_mine" name="mine_or_not[]" value="not_mine" onchange="handleFilterChange()" checked=true )
-                not me
+              - if params.has_key('mine_or_not')
+                - if params['mine_or_not'].include?('mine')
+                  %input(type="checkbox" class="checkFacet checkFacetGroup mine_or_not_mine" name="mine_or_not[]" value="mine" onchange="handleFilterChange()" checked=true )
+                    me
+                -else
+                  %input(type="checkbox" class="checkFacet checkFacetGroup mine_or_not_mine" name="mine_or_not[]" value="mine" onchange="handleFilterChange()" checked=false )
+                    me
+                - if params['mine_or_not'].include?('not_mine')
+                  %input(type="checkbox" class="checkFacet checkFacetGroup mine_or_not_not_mine" name="mine_or_not[]" value="not_mine" onchange="handleFilterChange()" checked=true )
+                  not me
+                -else
+                  %input(type="checkbox" class="checkFacet checkFacetGroup mine_or_not_not_mine" name="mine_or_not[]" value="not_mine" onchange="handleFilterChange()" checked=false )
+                  not me
+              -else
+                .indent
+                  .facet
+                    %input(type="checkbox" class="checkFacet checkFacetGroup mine_or_not_mine" name="mine_or_not[]" value="mine" onchange="handleFilterChange()" checked=true )
+                      me
+                  .facet
+                    %input(type="checkbox" class="checkFacet checkFacetGroup mine_or_not_not_mine" name="mine_or_not[]" value="not_mine" onchange="handleFilterChange()" checked=true )
+                      not me
+        -elsif current_user && current_user.role == 'admin'
+          Depositor
+          .indent
+            -for row in @search.facet(:depositor).rows
+              -row.value.gsub!(' ','_')
+              .facet
+                -if params.has_key?('depositor')
+                  -if params['depositor'].include?(row.value)
+                    %input(type="checkbox" class="checkFacet checkFacetGroup depositor_#{row.value}" name="depositor[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                    = User.user_info_string(row.value)
+                    ="(#{row.count})"
+                  -else
+                    %input(type="checkbox" class="checkFacet checkFacetGroup pubstate_#{row.value} " name="depositor[]" value="#{row.value}" onchange="handleFilterChange()")
+                      = row.value
+                      ="(#{row.count})"
+                -else
+                  %input(type="checkbox" class="checkFacet checkFacetGroup pubstate_#{row.value}" name="depositor[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                    = row.value
+                    ="(#{row.count})"
+
         Publication State
         .indent
           -for row in @search.facet(:publication_state).rows

@@ -18,7 +18,7 @@ class Dataset < ActiveRecord::Base
 
 
     string :license
-    string :depositor_email
+    string :depositor
     string :publication_state
     string :hold_state
     string :dataset_version
@@ -973,6 +973,10 @@ class Dataset < ActiveRecord::Base
 
   def license_class
     self.license || "unselected"
+  end
+
+  def depositor
+    self.depositor_email.split('@')[0]
   end
 
   def stuctured_data

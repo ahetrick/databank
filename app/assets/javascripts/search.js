@@ -27,6 +27,8 @@ search_ready = function () {
                         selectedMineOrNot.push(queryElement[1]);
 
                 }
+            } else {
+                console.log(queryElementSplit[0]);
             }
         });
     }
@@ -88,9 +90,6 @@ function handleFilterChange(){
     $(".license_facet:not(:checked)").each(function() {
         $( ".unselected" ).hide();
     });
-
-
-
 
 }
 

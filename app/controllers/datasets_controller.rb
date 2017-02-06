@@ -49,12 +49,14 @@ class DatasetsController < ApplicationController
       fulltext(params[:q])
       order_by :updated_at, :desc
       facet(:license)
-      facet(:depositor_email)
+      facet(:depositor)
       facet(:publication_state)
       facet(:hold_state)
       facet(:datafile_extensions)
 
     end
+
+
 
     if current_user && current_user.role
       case current_user.role
@@ -64,7 +66,7 @@ class DatasetsController < ApplicationController
             fulltext(params[:q])
             order_by :updated_at, :desc
             facet(:license)
-            facet(:depositor_email)
+            facet(:depositor)
             facet(:publication_state)
             facet(:hold_state)
             facet(:datafile_extensions)
@@ -84,7 +86,7 @@ class DatasetsController < ApplicationController
             fulltext(params[:q])
             order_by :updated_at, :desc
             facet(:license)
-            facet(:depositor_email)
+            facet(:depositor)
             facet(:publication_state)
             facet(:hold_state)
             facet(:datafile_extensions)
@@ -103,7 +105,7 @@ class DatasetsController < ApplicationController
         fulltext(params[:q])
         order_by :updated_at, :desc
         facet(:license)
-        facet(:depositor_email)
+        facet(:depositor)
         facet(:publication_state)
         facet(:hold_state)
         facet(:datafile_extensions)

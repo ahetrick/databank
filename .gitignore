@@ -27,7 +27,7 @@ mock_medusa
 mock_bk
 /scripts
 features/support/login_data.yml
-solr/data
+solr/*
 
 
 idb_stop.sh

@@ -5,7 +5,7 @@
   -else
     -current_email = 'placeholder@mailinator.com'
 
-  .record(class= "hit #{dataset.publication_state.gsub(' ','_')} #{dataset.license_class} #{dataset.mine_or_not_mine(current_email)}")
+  .record(class= "hit #{dataset.publication_state.gsub(' ','_')} #{dataset.license_class} #{dataset.mine_or_not_mine(current_email)} #{dataset.depositor}")
 
     -if(can? :manage, dataset)
 
