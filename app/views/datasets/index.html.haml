@@ -14,100 +14,92 @@
           %button(type="button" class="btn btn-danger" onclick="clearSearchTerm()" )
             %span(class="glyphicon glyphicon-remove" aria-hidden="true" )
 
-      %br
-      %button(type="button" onclick="showAllSearchResults()" class="btn btn-success" )
-        Show Unfiltered Search Results
-      %br
-      .facets
-        -if current_user && current_user.role == 'depositor'
-          Depositor
-          .indent
-            .facet
-              - if params.has_key('mine_or_not')
-                - if params['mine_or_not'].include?('mine')
-                  %input(type="checkbox" class="checkFacet checkFacetGroup mine_or_not_mine" name="mine_or_not[]" value="mine" onchange="handleFilterChange()" checked=true )
-                    me
-                -else
-                  %input(type="checkbox" class="checkFacet checkFacetGroup mine_or_not_mine" name="mine_or_not[]" value="mine" onchange="handleFilterChange()" checked=false )
-                    me
-                - if params['mine_or_not'].include?('not_mine')
-                  %input(type="checkbox" class="checkFacet checkFacetGroup mine_or_not_not_mine" name="mine_or_not[]" value="not_mine" onchange="handleFilterChange()" checked=true )
-                  not me
-                -else
-                  %input(type="checkbox" class="checkFacet checkFacetGroup mine_or_not_not_mine" name="mine_or_not[]" value="not_mine" onchange="handleFilterChange()" checked=false )
-                  not me
-              -else
+      -if @search.total > 0
+        %br
+        %button(type="button" onclick="clearFilters()" class="btn btn-success" )
+          Clear Filters
+
+        -if current_user && ['depositor', 'admin'].include?(current_user.role)
+
+          .panel-group
+            .panel.panel-default
+              .panel-heading
+                %h4(class="panel-title")
+                  Depositor
+              .panel-body
                 .indent
+                  -if params.has_key?('just_mine') && params['just_mine']=='true'
+                    %input(type="checkbox" class="checkFacet checkFacetGroup just_mine" name="just_mine" value="true" onchange="handleFilterChange()" checked=true )
+                      Just My Datasets
+                  -else
+                    %input(type="checkbox" class="checkFacet checkFacetGroup just_mine" name="just_mine" value="true" onchange="handleFilterChange()" checked=false )
+                      Just My Datasets
+
+              -if current_user && current_user.role == 'admin'
+                %hr
+                -for row in @search.facet(:depositor).rows
                   .facet
-                    %input(type="checkbox" class="checkFacet checkFacetGroup mine_or_not_mine" name="mine_or_not[]" value="mine" onchange="handleFilterChange()" checked=true )
-                      me
-                  .facet
-                    %input(type="checkbox" class="checkFacet checkFacetGroup mine_or_not_not_mine" name="mine_or_not[]" value="not_mine" onchange="handleFilterChange()" checked=true )
-                      not me
-        -elsif current_user && current_user.role == 'admin'
-          Depositor
-          .indent
-            -for row in @search.facet(:depositor).rows
-              -row.value.gsub!(' ','_')
-              .facet
-                -if params.has_key?('depositor')
-                  -if params['depositor'].include?(row.value)
-                    %input(type="checkbox" class="checkFacet checkFacetGroup depositor_#{row.value}" name="depositor[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
-                    = User.user_info_string(row.value)
+                    %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                      = User.user_info_string(row.value)
+                      ="(#{row.count})"
+
+
+
+
+        .panel-group
+          .panel.panel-default
+            .panel-heading
+              %h4(class="panel-title")
+                Visibility
+            .panel-body
+              -for row in @search.facet(:visibility_code).rows
+                .facet
+                  -if params.has_key?('visibility_codes') && params['visibility_codes'].include?(row.value)
+                    %input(type="checkbox" class="checkFacet checkFacetGroup publication_state_facet" name="visibility_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                    = Search.visibility_name_from_code(row.value)
                     ="(#{row.count})"
                   -else
-                    %input(type="checkbox" class="checkFacet checkFacetGroup pubstate_#{row.value} " name="depositor[]" value="#{row.value}" onchange="handleFilterChange()")
-                      = row.value
+                    %input(type="checkbox" class="checkFacet checkFacetGroup publication_state_facet" name="visibility_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                      = Search.visibility_name_from_code(row.value)
                       ="(#{row.count})"
-                -else
-                  %input(type="checkbox" class="checkFacet checkFacetGroup pubstate_#{row.value}" name="depositor[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
-                    = row.value
-                    ="(#{row.count})"
 
-        Publication State
+        .panel-group
+          .panel.panel-default
+            .panel-heading
+              %h4(class="panel-title")
+                Funder
+            .panel-body
+              -for row in @search.facet(:funder_codes).rows
+                .facet
+                  -if params.has_key?('funder_codes') && params['funder_codes'].include?(row.value)
+                    %input(type="checkbox" class="checkFacet checkFacetGroup funder_facet" name="funder_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                      = Search.funder_name_from_code(row.value)
+                      ="(#{row.count})"
+                  -else
+                    %input(type="checkbox" class="checkFacet checkFacetGroup funder_facet" name="funder_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                      = Search.funder_name_from_code(row.value)
+                      ="(#{row.count})"
+
+        .panel-group
+          .panel.panel-default
+            .panel-heading
+              %h4(class="panel-title")
+                License
+            .panel-body
+              -for row in @search.facet(:license_code).rows
+                .facet
+                  -if params.has_key?('license_codes') && params['license_codes'].include?(row.value)
+                    %input(type="checkbox" class="checkFacet checkFacetGroup license_facet" name="license_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                      = Search.license_name_from_code(row.value)
+                      ="(#{row.count})"
+                  -else
+                    %input(type="checkbox" class="checkFacet checkFacetGroup license_facet" name="license_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                      = Search.license_name_from_code(row.value)
+                      ="(#{row.count})"
+
+      -else
         .indent
-          -for row in @search.facet(:publication_state).rows
-            -row.value.gsub!(' ','_')
-            .facet
-              - if params.has_key?('publication_state')
-
-                - if params['publication_state'].include?(row.value)
-
-                  %input(type="checkbox" class="checkFacet checkFacetGroup pubstate_#{row.value}" name="publication_state[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
-                    = row.value
-                    ="(#{row.count})"
-                -else
-
-                  %input(type="checkbox" class="checkFacet checkFacetGroup pubstate_#{row.value} " name="publication_state[]" value="#{row.value}" onchange="handleFilterChange()")
-                    = row.value
-                    ="(#{row.count})"
-
-              -else
-                %input(type="checkbox" class="checkFacet checkFacetGroup pubstate_#{row.value}" name="publication_state[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
-                  = row.value
-                  ="(#{row.count})"
-        License
-        .indent
-          -for row in @search.facet(:license).rows
-            -row.value.gsub!(' ','_')
-            .facet
-              - if params.has_key?('license')
-
-                - if params['license'].include?(row.value)
-                  %input(type="checkbox" class="checkFacet checkFacetGroup license_facet license_#{row.value}" name="license[]" value="#{row.value}" onchange="handleFilterChange()" checked=true )
-                    = row.value
-                    ="(#{row.count})"
-                -else
-                  %input(type="checkbox" class="checkFacet checkFacetGroup license_facet license_#{row.value}" name="license[]" value="#{row.value}" onchange="handleFilterChange()" )
-                    = row.value
-                    ="(#{row.count})"
-
-              -else
-
-                %input(type="checkbox" class="checkFacet checkFacetGroup license_facet license_#{row.value}" name="license[]" value="#{row.value}" onchange="handleFilterChange()" checked=true )
-                  = row.value
-                  ="(#{row.count})"
-
+          %em no results found
   .col-md-9
     %h1 Datasets
     -@search.each_hit_with_result do |hit, dataset|

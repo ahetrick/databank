@@ -5,23 +5,18 @@
   -else
     -current_email = 'placeholder@mailinator.com'
 
-  .record(class= "hit #{dataset.publication_state.gsub(' ','_')} #{dataset.license_class} #{dataset.mine_or_not_mine(current_email)} #{dataset.depositor}")
+  .record(class= "hit #{dataset.publication_state.gsub(' ','_')} #{dataset.license_code} #{dataset.mine_or_not_mine(current_email)} #{dataset.depositor}")
 
     -if(can? :manage, dataset)
 
       .label.label-default
-        =dataset.publication_state
+        =dataset.visibility
       &nbsp;
 
       -if dataset.hold_state != 'none'
         .label.label-danger
           =dataset.hold_state
         &nbsp;
-
-      .label.label-primary
-        created:
-        =dataset.created_at.iso8601
-      &nbsp;
 
     -if dataset.publication_state != Databank::PublicationState::DRAFT && dataset.release_date
       .label.label-info
@@ -31,11 +26,6 @@
           published:
         =dataset.release_date.iso8601
       &nbsp;
-
-    -if dataset.publication_state == Databank::PublicationState::DRAFT || ((dataset.release_date) && (dataset.publication_state != Databank::PublicationState::DRAFT && dataset.updated_at > dataset.release_date))
-      .label.label-success
-        updated:
-        =dataset.updated_at.iso8601
 
     .record_citation
       %a(href="/datasets/#{dataset.key}" )
@@ -48,21 +38,16 @@
           =dataset.description
 
     -if dataset.keywords && dataset.keywords != ""
-      keywords:
-      %em
-        =dataset.keywords
+      .keyword_display
+        keywords:
+        %em
+          =dataset.keywords
 
     -if(can? :manage, dataset)
-      .curator-only
+      .depositor_display
         %span(class="metadata-label" ) Depositor:
-        = dataset.depositor_name
-        = ":"
+        = "#{dataset.depositor_name},"
         = dataset.depositor_email
-        %br
-        -#%span(class="metadata-label" ) Corresponding Creator:
-        -#= (!dataset.corresponding_creator_name || dataset.corresponding_creator_name.empty?) ? "[corresponding creator name not yet provided]" : dataset.corresponding_creator_name
-        -#=":"
-        -#= (!dataset.corresponding_creator_email || dataset.corresponding_creator_email.empty?) ? "[corresponding creator email not yet provided]" : dataset.corresponding_creator_email
 
 
 

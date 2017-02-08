@@ -44,19 +44,25 @@ class DatasetsController < ApplicationController
     @datasets = nil #used for json response
     @datatable = nil
 
+    # @just_mine = false
+    # @selected_depositors = Array.new
+    # @selected_funders = Array.new
+    # @selected_licenses = Array.new
+    # @selected_states = Array.new
+
     @search = Dataset.search do
 
       fulltext(params[:q])
       order_by :updated_at, :desc
-      facet(:license)
+      facet(:license_code)
+      facet(:funder_codes)
+      facet(:creator_names)
       facet(:depositor)
-      facet(:publication_state)
+      facet(:visibility_code)
       facet(:hold_state)
       facet(:datafile_extensions)
 
     end
-
-
 
     if current_user && current_user.role
       case current_user.role
@@ -65,9 +71,11 @@ class DatasetsController < ApplicationController
 
             fulltext(params[:q])
             order_by :updated_at, :desc
-            facet(:license)
+            facet(:license_code)
+            facet(:funder_codes)
+            facet(:creator_names)
             facet(:depositor)
-            facet(:publication_state)
+            facet(:visibility_code)
             facet(:hold_state)
             facet(:datafile_extensions)
 
@@ -85,9 +93,9 @@ class DatasetsController < ApplicationController
             end
             fulltext(params[:q])
             order_by :updated_at, :desc
-            facet(:license)
-            facet(:depositor)
-            facet(:publication_state)
+            facet(:license_code)
+            facet(:funder_codes)
+            facet(:visibility_code)
             facet(:hold_state)
             facet(:datafile_extensions)
 
@@ -104,10 +112,9 @@ class DatasetsController < ApplicationController
         end
         fulltext(params[:q])
         order_by :updated_at, :desc
-        facet(:license)
-        facet(:depositor)
-        facet(:publication_state)
-        facet(:hold_state)
+        facet(:license_code)
+        facet(:funder_codes)
+        facet(:visibility_code)
         facet(:datafile_extensions)
 
       end

@@ -3,30 +3,35 @@ require 'date'
 require 'open-uri'
 require 'net/http'
 require 'securerandom'
+require 'concerns/dataset/search'
 
 class Dataset < ActiveRecord::Base
+  extend Search
   include ActiveModel::Serialization
   include Datacite
   include Recovery
   include MessageText
+  include Search
 
   audited except: [:creator_text, :key, :complete, :is_test, :is_import, :updated_at, :embargo], allow_mass_assignment: true
   has_associated_audits
 
   searchable do
-    text :title, :description, :keywords, :identifier, :funder_names_fulltext, :grant_numbers_fulltext, :creator_names_fulltext, :filenames_fulltext, :datafile_extensions_fulltext
+    text :title, :description, :keywords, :identifier, :funder_names_fulltext, :grant_numbers_fulltext, :creator_names_fulltext, :filenames_fulltext, :datafile_extensions_fulltext, :publication_year
 
-
-    string :license
+    string :publication_year
+    string :license_code
     string :depositor
-    string :publication_state
-    string :hold_state
+    string :visibility_code
     string :dataset_version
-    string :funder_names, multiple: true
+    string :funder_codes, multiple: true
     string :grant_numbers, multiple: true
     string :creator_names, multiple: true
     string :filenames, multiple: true
     string :datafile_extensions, multiple: true
+    string :hold_state
+    string :publication_state
+
     time :created_at
     time :updated_at
 
@@ -609,53 +614,7 @@ class Dataset < ActiveRecord::Base
     doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
   end
 
-  def visibility
-    return_string = ""
-    case self.hold_state
-      when Databank::PublicationState::TempSuppress::METADATA
-        return_string = "Metadata and Files Temporarily Suppressed"
-      when Databank::PublicationState::TempSuppress::FILE
-        case self.publication_state
-          when Databank::PublicationState::DRAFT
-            return_string = "Draft"
-          when Databank::PublicationState::Embargo::FILE
-            return_string = "Metadata Published, Files Publication Delayed (Embargoed)"
-          when Databank::PublicationState::Embargo::METADATA
-            return_string = "Metadata and Files Publication Delayed (Embargoed)"
-          when Databank::PublicationState::PermSuppress::FILE
-            return_string = "Metadata Published, Files Withdrawn"
-          when Databank::PublicationState::PermSuppress::METADATA
-            return_string = "Metadata and Files Withdrawn"
-          else
-            return_string = "Metadata Published, Files Temporarily Suppressed"
-        end
 
-      else
-        case self.publication_state
-          when Databank::PublicationState::DRAFT
-            return_string = "Draft"
-          when Databank::PublicationState::RELEASED
-            return_string = "Metadata and Files Published"
-          when Databank::PublicationState::Embargo::FILE
-            return_string = "Metadata Published, Files Publication Delayed (Embargoed)"
-          when Databank::PublicationState::Embargo::METADATA
-            return_string = "Metadata and Files Publication Delayed (Embargoed)"
-          when Databank::PublicationState::PermSuppress::FILE
-            return_string = "Metadata Published, Files Withdrawn"
-          when Databank::PublicationState::PermSuppress::METADATA
-            return_string = "Metadata and Files Withdrawn"
-          else
-            #should never get here
-            return_string = "Unknown, please contact the Research Data Service"
-        end
-    end
-
-    if self.new_record?
-      return_string = "Unsaved Draft"
-    end
-
-    return_string
-  end
 
   def creator_list
     return_list = ""
@@ -698,58 +657,6 @@ class Dataset < ActiveRecord::Base
     return "#{creator_list} (#{publication_year}): #{citationTitle}. #{publisher}. #{citation_id}"
   end
 
-  def funder_names
-    Funder.where(dataset_id: self.id).pluck(:name)
-  end
-
-  def funder_names_fulltext
-    self.funder_names.join(" ").to_s
-  end
-
-  def grant_numbers
-    Funder.where(dataset_id: self.id).pluck(:grant)
-  end
-
-  def grant_numbers_fulltext
-    self.grant_numbers.join(" ")
-  end
-
-  def creator_names
-    return_arr = Array.new
-    self.creators.each do |creator|
-      return_arr << creator.display_name
-    end
-    return_arr
-  end
-
-  def creator_names_fulltext
-    self.creator_names.join(" ")
-  end
-
-
-  def filenames
-    return_arr = Array.new
-    self.datafiles.each do |datafile|
-      return_arr << datafile.bytestream_name
-    end
-    return_arr
-  end
-
-  def filenames_fulltext
-    self.filenames.join(" ")
-  end
-
-  def datafile_extensions
-    return_arr = Array.new
-    self.datafiles.each do |datafile|
-      return_arr << datafile.file_extension
-    end
-    return_arr
-  end
-
-  def datafile_extensions_fulltext
-    self.datafile_extensions.join(" ")
-  end
 
   def set_key
     self.key ||= generate_key
@@ -971,7 +878,7 @@ class Dataset < ActiveRecord::Base
     (self.identifier && !self.identifier.empty?) ? "https://doi.org/#{self.identifier}" : ""
   end
 
-  def license_class
+  def license_code
     self.license || "unselected"
   end
 
