@@ -28,6 +28,7 @@ mock_bk
 /scripts
 features/support/login_data.yml
 solr/*
+solr
 
 
 idb_stop.sh
