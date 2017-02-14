@@ -127,9 +127,9 @@ module Search
 
 
   def self.license_name_from_code(code)
-    license = LICENSE_INFO_ARR.select{|license| license.code == code}
-    if license
-      return license[0].name
+    licenses = LICENSE_INFO_ARR.select{|license| license.code == code}
+    if licenses && licenses.length > 0
+      return licenses[0].name
     else
       return 'license not found'
     end
@@ -137,9 +137,9 @@ module Search
 
   def self.funder_name_from_code(code)
 
-    funder = FUNDER_INFO_ARR.select{|funder| funder.code == code}
-    if funder
-      return funder[0].name
+    funders = FUNDER_INFO_ARR.select{|funder| funder.code == code}
+    if funders && funders.length > 0
+      return funders[0].name
     else
       return 'funder not found'
     end
