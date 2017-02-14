@@ -225,6 +225,7 @@ ready = function () {
         $.getJSON("/datasets/" + dataset_key + "/get_current_token", function (data) {
             //console.log(data);
             if (data.token && data.expires && data.token != "none"){
+                $('#token-header').text('Here is your token:');
                 setTokenExamples(data.token, data.expires);
 
             } else {
@@ -796,6 +797,7 @@ function getNewToken() {
     $.getJSON("/datasets/" + dataset_key + "/get_new_token", function (data) {
         //console.log(data);
         window.has_current_token = true;
+        $('#token-header').text('Here is your new token:');
         setTokenExamples(data.token, data.expires);
     });
 }
@@ -807,6 +809,7 @@ function setTokenExamples(upload_token, token_expiration){
 
 
     $('.current-token').html("<p><strong>Current HTTP Authentication Token: </strong>" + upload_token + "<br/><strong>Expires:</strong> " + (new Date(token_expiration)).toISOString() + "</p>");
+    $('#token-button-text').text('View token for command line tools');
     
     if(window.location.href.indexOf("dev") > -1) {
 
