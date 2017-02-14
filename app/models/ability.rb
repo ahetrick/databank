@@ -44,6 +44,7 @@ class Ability
       can :review_deposit_agreement, Dataset
       can :pre_deposit, Dataset
       can :validiate_change2published, :all
+      can :search, Dataset
 
     else
       can :read, :all
@@ -58,6 +59,7 @@ class Ability
       can :splash_url, Dataset
       can :pre_deposit, Dataset
       can :validiate_change2published, :all
+      can :search, Dataset
 
     end
     #

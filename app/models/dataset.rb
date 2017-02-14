@@ -3,15 +3,39 @@ require 'date'
 require 'open-uri'
 require 'net/http'
 require 'securerandom'
+require 'concerns/dataset/search'
 
 class Dataset < ActiveRecord::Base
+  extend Search
   include ActiveModel::Serialization
   include Datacite
   include Recovery
   include MessageText
+  include Search
 
   audited except: [:creator_text, :key, :complete, :is_test, :is_import, :updated_at, :embargo], allow_mass_assignment: true
   has_associated_audits
+
+  searchable do
+    text :title, :description, :keywords, :identifier, :funder_names_fulltext, :grant_numbers_fulltext, :creator_names_fulltext, :filenames_fulltext, :datafile_extensions_fulltext, :publication_year
+
+    string :publication_year
+    string :license_code
+    string :depositor
+    string :visibility_code
+    string :dataset_version
+    string :funder_codes, multiple: true
+    string :grant_numbers, multiple: true
+    string :creator_names, multiple: true
+    string :filenames, multiple: true
+    string :datafile_extensions, multiple: true
+    string :hold_state
+    string :publication_state
+
+    time :created_at
+    time :updated_at
+
+  end
 
   MIN_FILES = 1
   MAX_FILES = 10000
@@ -590,53 +614,7 @@ class Dataset < ActiveRecord::Base
     doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
   end
 
-  def visibility
-    return_string = ""
-    case self.hold_state
-      when Databank::PublicationState::TempSuppress::METADATA
-        return_string = "Metadata and Files Temporarily Suppressed"
-      when Databank::PublicationState::TempSuppress::FILE
-        case self.publication_state
-          when Databank::PublicationState::DRAFT
-            return_string = "Draft"
-          when Databank::PublicationState::Embargo::FILE
-            return_string = "Metadata Published, Files Publication Delayed (Embargoed)"
-          when Databank::PublicationState::Embargo::METADATA
-            return_string = "Metadata and Files Publication Delayed (Embargoed)"
-          when Databank::PublicationState::PermSuppress::FILE
-            return_string = "Metadata Published, Files Withdrawn"
-          when Databank::PublicationState::PermSuppress::METADATA
-            return_string = "Metadata and Files Withdrawn"
-          else
-            return_string = "Metadata Published, Files Temporarily Suppressed"
-        end
 
-      else
-        case self.publication_state
-          when Databank::PublicationState::DRAFT
-            return_string = "Draft"
-          when Databank::PublicationState::RELEASED
-            return_string = "Metadata and Files Published"
-          when Databank::PublicationState::Embargo::FILE
-            return_string = "Metadata Published, Files Publication Delayed (Embargoed)"
-          when Databank::PublicationState::Embargo::METADATA
-            return_string = "Metadata and Files Publication Delayed (Embargoed)"
-          when Databank::PublicationState::PermSuppress::FILE
-            return_string = "Metadata Published, Files Withdrawn"
-          when Databank::PublicationState::PermSuppress::METADATA
-            return_string = "Metadata and Files Withdrawn"
-          else
-            #should never get here
-            return_string = "Unknown, please contact the Research Data Service"
-        end
-    end
-
-    if self.new_record?
-      return_string = "Unsaved Draft"
-    end
-
-    return_string
-  end
 
   def creator_list
     return_list = ""
@@ -678,6 +656,7 @@ class Dataset < ActiveRecord::Base
 
     return "#{creator_list} (#{publication_year}): #{citationTitle}. #{publisher}. #{citation_id}"
   end
+
 
   def set_key
     self.key ||= generate_key
@@ -899,6 +878,14 @@ class Dataset < ActiveRecord::Base
     (self.identifier && !self.identifier.empty?) ? "https://doi.org/#{self.identifier}" : ""
   end
 
+  def license_code
+    self.license || "unselected"
+  end
+
+  def depositor
+    self.depositor_email.split('@')[0]
+  end
+
   def stuctured_data
 
     if self.publication_state == Databank::PublicationState::RELEASED
@@ -996,6 +983,13 @@ class Dataset < ActiveRecord::Base
 
   end
 
+  def mine_or_not_mine(email_address)
+    if email_address == depositor_email
+      return "mine"
+    else
+      return "not_mine"
+end
+  end
 
   def self.make_anvl(metadata)
     anvl = ""

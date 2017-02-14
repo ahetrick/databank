@@ -1,0 +1,53 @@
+-if((can? :maange, dataset) || (can? :edit, dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::TempSuppress::FILE, Databank::PublicationState::Embargo::FILE].include?(dataset.publication_state) ) )
+
+  -if current_user
+    -current_email = current_user.email
+  -else
+    -current_email = 'placeholder@mailinator.com'
+
+  .record(class= "hit #{dataset.publication_state.gsub(' ','_')} #{dataset.license_code} #{dataset.mine_or_not_mine(current_email)} #{dataset.depositor}")
+
+    -if(can? :manage, dataset)
+
+      .label.label-default
+        =dataset.visibility
+      &nbsp;
+
+      -if dataset.hold_state != 'none'
+        .label.label-danger
+          =dataset.hold_state
+        &nbsp;
+
+    -if dataset.publication_state != Databank::PublicationState::DRAFT && dataset.release_date
+      .label.label-info
+        -if dataset.release_date > Time.now()
+          planned publication date:
+        -else
+          published:
+        =dataset.release_date.iso8601
+      &nbsp;
+
+    .record_citation
+      %a(href="/datasets/#{dataset.key}" )
+        %strong
+          =dataset.plain_text_citation
+
+    -if dataset.description && dataset.description != ""
+      %em
+        .more
+          =dataset.description
+
+    -if dataset.keywords && dataset.keywords != ""
+      .keyword_display
+        keywords:
+        %em
+          =dataset.keywords
+
+    -if(can? :manage, dataset)
+      .depositor_display
+        %span(class="metadata-label" ) Depositor:
+        = "#{dataset.depositor_name},"
+        = dataset.depositor_email
+
+
+

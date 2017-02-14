@@ -384,3 +384,19 @@ legend.metadata-border {
 //div#box-select{
 //  top: 15px !important;
 //}
+
+a.morelink {
+  text-decoration:none;
+  outline: none;
+}
+.morecontent span {
+  display: none;
+}
+
+.record {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 5px;
+  border-left: 3px solid $color__light-grey;
+
+}

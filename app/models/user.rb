@@ -183,5 +183,16 @@ class User < ActiveRecord::Base
 
   end
 
+  def self.user_info_string(netid)
+    response = open("http://quest.grainger.uiuc.edu/directory/ed/person/#{netid}").read
+    xml_doc = Nokogiri::XML(response)
+    xml_doc.remove_namespaces!
+    display_name = xml_doc.xpath("//attr[@name='displayname']").text()
+    display_name.strip!
+
+    return("#{display_name}, #{netid}@illinois.edu")
+
+  end
+
 
 end

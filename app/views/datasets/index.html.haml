@@ -1,22 +1,107 @@
--if params.has_key?('context')
-  .alert.alert-alert
-    -if params['context'] == 'exit_draft'
-      Your draft is saved. We'll save a draft dataset for at least six months.  When you're ready to continue, select your dataset and click 'Edit' to pick up where you left off.
-    -elsif params['context'] == 'exit_doi'
-      Your dataset is saved.
-- if params.has_key?('depositor') && current_user && current_user.role == 'depositor'
-  %h2 My Datasets
-  %button(type="button" class="btn btn-primary btn-block dataset-index-btn" onclick='window.location = "/datasets"')
-    Click this bar to list
-    %strong ALL
-    Datasets
-- elsif current_user && current_user.role == 'depositor'
-  %h2 All Datasets
-  %button(type="button" class="btn btn-primary btn-block dataset-index-btn" onclick='window.location = "/datasets?depositor=#{current_user.name}"')
-    Click this bar to list just
-    %strong MY
-    Datasets
-- else
-  %h1 Datasets
--if @datatable
-  = render_datatable(@datatable)
+.row
+  .col-md-3
+    %form(action="/datasets" id="searchForm" accept-charset="UTF-8" method="get" )
+
+      .input-group
+
+        -if params.has_key?('q')
+          %input(type="text" class="form-control q" name="q" aria-label="search input box" value="#{params['q']}" )
+        -else
+          %input(type="text" class="form-control q" name="q" aria-label="search input box" placeholder="search for datasets" )
+        %span(class="input-group-btn" )
+          %button(type="submit" class="btn btn-primary")
+            %span(class="glyphicon glyphicon-search" aria-hidden="true" )
+          %button(type="button" class="btn btn-danger" onclick="clearSearchTerm()" )
+            %span(class="glyphicon glyphicon-remove" aria-hidden="true" )
+
+      -if @search.total > 0
+        %br
+        %button(type="button" onclick="clearFilters()" class="btn btn-success" )
+          Clear Filters
+
+        -if current_user && ['depositor', 'admin'].include?(current_user.role)
+
+          .panel-group
+            .panel.panel-default
+              .panel-heading
+                %h4(class="panel-title")
+                  Depositor
+              .panel-body
+                .indent
+                  -if params.has_key?('just_mine') && params['just_mine']=='true'
+                    %input(type="checkbox" class="checkFacet checkFacetGroup just_mine" name="just_mine" value="true" onchange="handleFilterChange()" checked=true )
+                      Just My Datasets
+                  -else
+                    %input(type="checkbox" class="checkFacet checkFacetGroup just_mine" name="just_mine" value="true" onchange="handleFilterChange()" checked=false )
+                      Just My Datasets
+
+              -if current_user && current_user.role == 'admin'
+                %hr
+                -for row in @search.facet(:depositor).rows
+                  .facet
+                    %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                      = User.user_info_string(row.value)
+                      ="(#{row.count})"
+
+
+
+
+        .panel-group
+          .panel.panel-default
+            .panel-heading
+              %h4(class="panel-title")
+                Visibility
+            .panel-body
+              -for row in @search.facet(:visibility_code).rows
+                .facet
+                  -if params.has_key?('visibility_codes') && params['visibility_codes'].include?(row.value)
+                    %input(type="checkbox" class="checkFacet checkFacetGroup publication_state_facet" name="visibility_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                    = Search.visibility_name_from_code(row.value)
+                    ="(#{row.count})"
+                  -else
+                    %input(type="checkbox" class="checkFacet checkFacetGroup publication_state_facet" name="visibility_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                      = Search.visibility_name_from_code(row.value)
+                      ="(#{row.count})"
+
+        .panel-group
+          .panel.panel-default
+            .panel-heading
+              %h4(class="panel-title")
+                Funder
+            .panel-body
+              -for row in @search.facet(:funder_codes).rows
+                .facet
+                  -if params.has_key?('funder_codes') && params['funder_codes'].include?(row.value)
+                    %input(type="checkbox" class="checkFacet checkFacetGroup funder_facet" name="funder_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                      = Search.funder_name_from_code(row.value)
+                      ="(#{row.count})"
+                  -else
+                    %input(type="checkbox" class="checkFacet checkFacetGroup funder_facet" name="funder_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                      = Search.funder_name_from_code(row.value)
+                      ="(#{row.count})"
+
+        .panel-group
+          .panel.panel-default
+            .panel-heading
+              %h4(class="panel-title")
+                License
+            .panel-body
+              -for row in @search.facet(:license_code).rows
+                .facet
+                  -if params.has_key?('license_codes') && params['license_codes'].include?(row.value)
+                    %input(type="checkbox" class="checkFacet checkFacetGroup license_facet" name="license_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                      = Search.license_name_from_code(row.value)
+                      ="(#{row.count})"
+                  -else
+                    %input(type="checkbox" class="checkFacet checkFacetGroup license_facet" name="license_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                      = Search.license_name_from_code(row.value)
+                      ="(#{row.count})"
+
+      -else
+        .indent
+          %em no results found
+  .col-md-9
+    %h1 Datasets
+    -@search.each_hit_with_result do |hit, dataset|
+
+      = render partial: 'brief_record', locals: {dataset: dataset}

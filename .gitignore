@@ -20,13 +20,16 @@ config/databank.yml
 config/secrets.yml
 config/shibboleth.yml
 public/uploads
-config/unicorn.rb
+config/sunspot.yml
 config/medusa_downloader.yml
 nginx.conf.erb
 mock_medusa
 mock_bk
 /scripts
 features/support/login_data.yml
+solr/*
+solr
+
 
 idb_stop.sh
 idb_start.sh

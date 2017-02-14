@@ -14,4 +14,16 @@ class Creator < ActiveRecord::Base
     super(:only => [:family_name, :given_name, :identifier, :is_contact, :row_position, :created_at, :updated_at])
   end
 
+  def display_name
+
+    return_text = "placeholder name"
+
+    if self.type_of == :institution
+      return_text = "#{self.given_name} #{self.family_name}"
+    else
+      return_text = "#{self.institution_name}"
+    end
+
+  end
+
 end

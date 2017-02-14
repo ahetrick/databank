@@ -44,28 +44,83 @@ class DatasetsController < ApplicationController
     @datasets = nil #used for json response
     @datatable = nil
 
+    # @just_mine = false
+    # @selected_depositors = Array.new
+    # @selected_funders = Array.new
+    # @selected_licenses = Array.new
+    # @selected_states = Array.new
+
+    @search = Dataset.search do
+
+      fulltext(params[:q])
+      order_by :updated_at, :desc
+      facet(:license_code)
+      facet(:funder_codes)
+      facet(:creator_names)
+      facet(:depositor)
+      facet(:visibility_code)
+      facet(:hold_state)
+      facet(:datafile_extensions)
+
+    end
+
     if current_user && current_user.role
       case current_user.role
         when "admin"
-          @datasets = Dataset.order(updated_at: :desc)
-          @datatable = Effective::Datatables::CuratorDatasets.new
-        when "depositor"
-          if params.has_key?('depositor')
-            @datasets = Dataset.where.not(publication_state: Databank::PublicationState::PermSuppress::METADATA).where("depositor_email = ?", current_user.email).order(updated_at: :desc)
-            @datatable = Effective::Datatables::MyDatasets.new(current_email: current_user.email)
-          else
-            @datasets = Dataset.where.not(publication_state: Databank::PublicationState::PermSuppress::METADATA).where("publication_state = ? OR publication_state = ? OR depositor_email = ?", Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED, current_user.email).order(updated_at: :desc)
-            @datatable = Effective::Datatables::DepositorDatasets.new(current_email: current_user.email, current_name: current_user.name)
+          @search = Dataset.search do
+
+            fulltext(params[:q])
+            order_by :updated_at, :desc
+            facet(:license_code)
+            facet(:funder_codes)
+            facet(:creator_names)
+            facet(:depositor)
+            facet(:visibility_code)
+            facet(:hold_state)
+            facet(:datafile_extensions)
+
           end
-        else
-          @datasets = Dataset.where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE]).order(updated_at: :desc)
-          @datatable = Effective::Datatables::GuestDatasets.new
+
+        when "depositor"
+
+          @search = Dataset.search do
+
+            any_of do
+              with :depositor_email, current_user.email
+              with :publication_state, Databank::PublicationState::RELEASED
+              with :publication_state, Databank::PublicationState::Embargo::FILE
+              with :publication_state, Databank::PublicationState::TempSuppress::FILE
+            end
+            fulltext(params[:q])
+            order_by :updated_at, :desc
+            facet(:license_code)
+            facet(:funder_codes)
+            facet(:visibility_code)
+            facet(:hold_state)
+            facet(:datafile_extensions)
+
+          end
+
       end
     else
-      @datasets = Dataset.where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE]).order(updated_at: :desc)
-      @datatable = Effective::Datatables::GuestDatasets.new
+      @search = Dataset.search do
+
+        any_of do
+          with :publication_state, Databank::PublicationState::RELEASED
+          with :publication_state, Databank::PublicationState::Embargo::FILE
+          with :publication_state, Databank::PublicationState::TempSuppress::FILE
+        end
+        fulltext(params[:q])
+        order_by :updated_at, :desc
+        facet(:license_code)
+        facet(:funder_codes)
+        facet(:visibility_code)
+        facet(:datafile_extensions)
+
+      end
 
     end
+
 
   end
 
