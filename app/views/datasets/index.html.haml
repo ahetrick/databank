@@ -1,5 +1,5 @@
 .row
-  .col-md-3
+  .col-md-5
     %form(action="/datasets" id="searchForm" accept-charset="UTF-8" method="get" )
 
       .input-group
@@ -37,14 +37,12 @@
 
               -if current_user && current_user.role == 'admin'
                 %hr
-                -for row in @search.facet(:depositor).rows
-                  .facet
-                    %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
-                      = User.user_info_string(row.value)
-                      ="(#{row.count})"
-
-
-
+                .indent
+                  -for row in @search.facet(:depositor).rows
+                    .facet
+                      %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                        = User.user_info_string(row.value)
+                        ="(#{row.count})"
 
         .panel-group
           .panel.panel-default
@@ -100,7 +98,7 @@
       -else
         .indent
           %em no results found
-  .col-md-9
+  .col-md-7
     %h1 Datasets
     -@search.each_hit_with_result do |hit, dataset|
 
