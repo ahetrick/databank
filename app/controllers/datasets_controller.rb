@@ -52,19 +52,7 @@ class DatasetsController < ApplicationController
     # @selected_licenses = Array.new
     # @selected_states = Array.new
 
-    @search = Dataset.search do
-
-      keywords (params[:q])
-      order_by :updated_at, :desc
-      facet(:license_code)
-      facet(:funder_codes)
-      facet(:creator_names)
-      facet(:depositor)
-      facet(:visibility_code)
-      facet(:hold_state)
-      facet(:datafile_extensions)
-
-    end
+    @search = nil
 
     if current_user && current_user.role
 
@@ -107,7 +95,24 @@ class DatasetsController < ApplicationController
             facet(:datafile_extensions)
 
           end
+        else
+          @search = Dataset.search do
+
+            any_of do
+              with :publication_state, Databank::PublicationState::RELEASED
+              with :publication_state, Databank::PublicationState::Embargo::FILE
+              with :publication_state, Databank::PublicationState::TempSuppress::FILE
+            end
+            keywords (params[:q])
+            order_by :updated_at, :desc
+            facet(:license_code)
+            facet(:funder_codes)
+            facet(:visibility_code)
+            facet(:datafile_extensions)
+
+          end
       end
+
     else
       @search = Dataset.search do
 

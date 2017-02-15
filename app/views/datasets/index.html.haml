@@ -28,11 +28,11 @@
                   My Datasets
               .panel-body
                 -if params.has_key?('just_mine') && params['just_mine']=='true'
-                  %input(type="checkbox" class="checkFacet checkFacetGroup just_mine" name="just_mine" value="true" onchange="handleFilterChange()" checked=true )
+                  %input(type="checkbox" class="checkFacet checkFacetGroup just_mine" name="just_mine" value="#{current_user.email.split('@').first}" onchange="handleFilterChange()" checked=true )
                     Just My Datasets
                     ="(#{@my_datasets_count})"
                 -else
-                  %input(type="checkbox" class="checkFacet checkFacetGroup just_mine" name="just_mine" value="true" onchange="handleFilterChange()" checked=false )
+                  %input(type="checkbox" class="checkFacet checkFacetGroup just_mine" name="just_mine" value="#{current_user.email.split('@').first}" onchange="handleFilterChange()" checked=false )
                     Just My Datasets
                     ="(#{@my_datasets_count})"
 

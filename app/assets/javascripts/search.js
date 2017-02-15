@@ -17,12 +17,24 @@ function handleFilterChange(){
     $('.hit').show();
 
     // just me
-
-
-    // depositor
-
-    // visbility
+    if ( $('input[name="just_mine"]').is(':checked') ) {
+        $('.hit').hide();
+        $('.'+ $('input[name="just_mine"]').val()).show();
+    }
     
+    // depositor
+    var depositor_checked = []
+    $("input[name='depositors']:checkbox:checked").each(function(){
+        depositor_checked.push($(this).val());
+    });
+    var has_depositor_filter = (depositor_checked && (depositor_checked.length > 0));
+    if (has_depositor_filter){
+        $("input[name='depositors']:checkbox:not(:checked)").each(function () {
+            $('.'+ $(this).val() ).hide();
+        });
+    }
+    
+    // visbility
     var visibility_checked = []
     $("input[name='visibility_codes[]']:checkbox:checked").each(function(){
       visibility_checked.push($(this).val());
@@ -41,6 +53,9 @@ function handleFilterChange(){
     });
     var has_funder_filter = (funder_checked && (funder_checked.length > 0));
     if (has_funder_filter){
+    
+        $('')
+    
         $("input[name='funder_codes[]']:checkbox:not(:checked)").each(function () {
             $('.'+ $(this).val() ).hide();
         });

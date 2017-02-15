@@ -892,7 +892,7 @@ class Dataset < ActiveRecord::Base
   end
 
   def depositor
-    self.depositor_email.split('@')[0]
+    self.depositor_email.split('@').first
   end
 
   def stuctured_data
