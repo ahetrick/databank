@@ -52,7 +52,7 @@ class DatasetsController < ApplicationController
 
     @search = Dataset.search do
 
-      fulltext(params[:q])
+      keywords (params[:q])
       order_by :updated_at, :desc
       facet(:license_code)
       facet(:funder_codes)
@@ -69,7 +69,9 @@ class DatasetsController < ApplicationController
         when "admin"
           @search = Dataset.search do
 
-            fulltext(params[:q])
+            Rails.logger.warn('params q')
+            Rails.logger.warn(params[:q])
+            keywords (params[:q])
             order_by :updated_at, :desc
             facet(:license_code)
             facet(:funder_codes)
@@ -91,7 +93,7 @@ class DatasetsController < ApplicationController
               with :publication_state, Databank::PublicationState::Embargo::FILE
               with :publication_state, Databank::PublicationState::TempSuppress::FILE
             end
-            fulltext(params[:q])
+            keywords (params[:q])
             order_by :updated_at, :desc
             facet(:license_code)
             facet(:funder_codes)
@@ -110,7 +112,7 @@ class DatasetsController < ApplicationController
           with :publication_state, Databank::PublicationState::Embargo::FILE
           with :publication_state, Databank::PublicationState::TempSuppress::FILE
         end
-        fulltext(params[:q])
+        keywords (params[:q])
         order_by :updated_at, :desc
         facet(:license_code)
         facet(:funder_codes)
