@@ -18,8 +18,7 @@ function handleFilterChange(){
 
     // just me
     if ( $('input[name="just_mine"]').is(':checked') ) {
-        $('.hit').hide();
-        $('.'+ $('input[name="just_mine"]').val()).show();
+        $('.not_mine').hide();
     }
     
     // depositor
