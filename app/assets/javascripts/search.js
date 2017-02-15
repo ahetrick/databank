@@ -23,12 +23,12 @@ function handleFilterChange(){
     
     // depositor
     var depositor_checked = []
-    $("input[name='depositors']:checkbox:checked").each(function(){
+    $("input[name='depositors[]']:checkbox:checked").each(function(){
         depositor_checked.push($(this).val());
     });
     var has_depositor_filter = (depositor_checked && (depositor_checked.length > 0));
     if (has_depositor_filter){
-        $("input[name='depositors']:checkbox:not(:checked)").each(function () {
+        $("input[name='depositors[]']:checkbox:not(:checked)").each(function () {
             $('.'+ $(this).val() ).hide();
         });
     }
@@ -51,10 +51,9 @@ function handleFilterChange(){
         funder_checked.push($(this).val());
     });
     var has_funder_filter = (funder_checked && (funder_checked.length > 0));
+
     if (has_funder_filter){
-    
-        $('')
-    
+        $('.no_funder').hide();
         $("input[name='funder_codes[]']:checkbox:not(:checked)").each(function () {
             $('.'+ $(this).val() ).hide();
         });

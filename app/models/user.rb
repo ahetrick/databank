@@ -190,7 +190,7 @@ class User < ActiveRecord::Base
     display_name = xml_doc.xpath("//attr[@name='displayname']").text()
     display_name.strip!
 
-    return("#{display_name}, #{netid}@illinois.edu")
+    return("#{display_name} | #{netid}@illinois.edu")
 
   end
 
