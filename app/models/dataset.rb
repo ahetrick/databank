@@ -879,7 +879,16 @@ class Dataset < ActiveRecord::Base
   end
 
   def license_code
-    self.license || "unselected"
+
+    if self.license
+      if self.license.include?('.txt')
+        return 'license_txt'
+      else
+        return self.license
+      end
+    else
+      return "unselected"
+    end
   end
 
   def depositor

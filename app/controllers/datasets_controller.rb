@@ -42,7 +42,9 @@ class DatasetsController < ApplicationController
   def index
 
     @datasets = nil #used for json response
-    @datatable = nil
+    # @datatable = nil
+
+    @my_datasets_count = 0
 
     # @just_mine = false
     # @selected_depositors = Array.new
@@ -65,6 +67,9 @@ class DatasetsController < ApplicationController
     end
 
     if current_user && current_user.role
+
+      @my_datasets_count = Dataset.where(depositor_email: current_user.email).count
+
       case current_user.role
         when "admin"
           @search = Dataset.search do
@@ -102,7 +107,6 @@ class DatasetsController < ApplicationController
             facet(:datafile_extensions)
 
           end
-
       end
     else
       @search = Dataset.search do

@@ -127,12 +127,24 @@ module Search
 
 
   def self.license_name_from_code(code)
-    licenses = LICENSE_INFO_ARR.select{|license| license.code == code}
-    if licenses && licenses.length > 0
-      return licenses[0].name
+
+    if code == 'unselected'
+      return code
+    elsif
+      code.include?('txt')
+      return 'see license.txt in dataset'
+
     else
-      return 'license not found'
+      licenses = LICENSE_INFO_ARR.select{|license| license.code == code}
+      if licenses && licenses.length > 0
+        return licenses[0].name
+      else
+        return 'license not found'
+      end
+
     end
+
+
   end
 
   def self.funder_name_from_code(code)

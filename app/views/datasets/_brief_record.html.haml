@@ -5,13 +5,15 @@
   -else
     -current_email = 'placeholder@mailinator.com'
 
-  .record(class= "hit #{dataset.publication_state.gsub(' ','_')} #{dataset.license_code} #{dataset.mine_or_not_mine(current_email)} #{dataset.depositor}")
+  .record(class= "hit #{dataset.publication_state.gsub(' ','_')} #{dataset.license_code} #{dataset.mine_or_not_mine(current_email)} #{dataset.depositor} #{dataset.visibility_code} #{dataset.funder_codes.join(' ')}")
 
     -if(can? :manage, dataset)
 
       .label.label-default
-        =dataset.visibility
+        =Search.visibility_name_from_code(dataset.visibility_code)
       &nbsp;
+
+      -#TODO: embargo warning
 
       -if dataset.hold_state != 'none'
         .label.label-danger

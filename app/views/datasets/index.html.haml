@@ -4,7 +4,7 @@
 
       .input-group
 
-        -if params.has_key?('q')
+        -if params.has_key?('q') && params['q'].length > 0
           %input(type="text" class="form-control q" name="q" aria-label="search input box" value="#{params['q']}" )
         -else
           %input(type="text" class="form-control q" name="q" aria-label="search input box" placeholder="search for datasets" )
@@ -25,24 +25,30 @@
             .panel.panel-default
               .panel-heading
                 %h4(class="panel-title")
+                  My Datasets
+              .panel-body
+                -if params.has_key?('just_mine') && params['just_mine']=='true'
+                  %input(type="checkbox" class="checkFacet checkFacetGroup just_mine" name="just_mine" value="true" onchange="handleFilterChange()" checked=true )
+                    Just My Datasets
+                    ="(#{@my_datasets_count})"
+                -else
+                  %input(type="checkbox" class="checkFacet checkFacetGroup just_mine" name="just_mine" value="true" onchange="handleFilterChange()" checked=false )
+                    Just My Datasets
+                    ="(#{@my_datasets_count})"
+
+        -if current_user && current_user.role == 'admin'
+
+          .panel-group
+            .panel.panel-default
+              .panel-heading
+                %h4(class="panel-title")
                   Depositor
               .panel-body
-                .indent
-                  -if params.has_key?('just_mine') && params['just_mine']=='true'
-                    %input(type="checkbox" class="checkFacet checkFacetGroup just_mine" name="just_mine" value="true" onchange="handleFilterChange()" checked=true )
-                      Just My Datasets
-                  -else
-                    %input(type="checkbox" class="checkFacet checkFacetGroup just_mine" name="just_mine" value="true" onchange="handleFilterChange()" checked=false )
-                      Just My Datasets
-
-              -if current_user && current_user.role == 'admin'
-                %hr
-                .indent
-                  -for row in @search.facet(:depositor).rows
-                    .facet
-                      %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
-                        = User.user_info_string(row.value)
-                        ="(#{row.count})"
+                -for row in @search.facet(:depositor).rows
+                  .facet
+                    %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                      = User.user_info_string(row.value)
+                      ="(#{row.count})"
 
         .panel-group
           .panel.panel-default

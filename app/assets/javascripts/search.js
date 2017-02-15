@@ -10,15 +10,57 @@ search_ready = function () {
 function clearFilters(){
     $(".checkFacetGroup").prop("checked",false);
     $("#searchForm").submit();
-    //$(".hit").show();
 }
 
 function handleFilterChange(){
-    
+
     $('.hit').show();
 
-    //TODO: hide things that should be hidden
+    // just me
 
+
+    // depositor
+
+    // visbility
+    
+    var visibility_checked = []
+    $("input[name='visibility_codes[]']:checkbox:checked").each(function(){
+      visibility_checked.push($(this).val());
+    });
+    var has_visibility_filter = (visibility_checked && (visibility_checked.length > 0));
+    if (has_visibility_filter){
+        $("input[name='visibility_codes[]']:checkbox:not(:checked)").each(function () {
+            $('.'+ $(this).val() ).hide();
+        });
+    }
+
+    // funder
+    var funder_checked = []
+    $("input[name='funder_codes[]']:checkbox:checked").each(function(){
+        funder_checked.push($(this).val());
+    });
+    var has_funder_filter = (funder_checked && (funder_checked.length > 0));
+    if (has_funder_filter){
+        $("input[name='funder_codes[]']:checkbox:not(:checked)").each(function () {
+            $('.'+ $(this).val() ).hide();
+        });
+        //extra step because a dataset may have multiple funders
+        $("input[name='funder_codes[]']:checkbox:checked").each(function(){
+            $('.'+ $(this).val() ).show();
+        });
+    }
+
+    // license
+    var license_checked = []
+    $("input[name='license_codes[]']:checkbox:checked").each(function(){
+        license_checked.push($(this).val());
+    });
+    var has_license_filter = (license_checked && (license_checked.length > 0));
+    if (has_license_filter){
+        $("input[name='license_codes[]']:checkbox:not(:checked)").each(function () {
+            $('.'+ $(this).val() ).hide();
+        });
+    }
 
 }
 
