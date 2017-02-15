@@ -31,7 +31,7 @@ class Dataset < ActiveRecord::Base
     string :datafile_extensions, multiple: true
     string :hold_state
     string :publication_state
-
+./
     time :created_at
     time :updated_at
 
@@ -892,7 +892,12 @@ class Dataset < ActiveRecord::Base
   end
 
   def depositor
-    self.depositor_email.split('@').first
+    if self.depositor_email
+      return self.depositor_email.split('@').first
+    else
+      return 'error'
+    end
+
   end
 
   def stuctured_data

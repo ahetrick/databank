@@ -62,8 +62,7 @@ class DatasetsController < ApplicationController
         when "admin"
           @search = Dataset.search do
 
-            Rails.logger.warn('params q')
-            Rails.logger.warn(params[:q])
+            without(:depositor, 'error')
             keywords (params[:q])
             order_by :updated_at, :desc
             facet(:license_code)
