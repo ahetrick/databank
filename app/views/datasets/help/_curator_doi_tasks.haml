@@ -1,0 +1,37 @@
+%h3 Specified DOI
+.indent
+
+  %p If you specify a DOI in this box, Illinois Data Bank will try to use it for the dataset.  This leads to creating or updating a record with this identifer, depending whether the imported DOI checkbox is checked. If the imported DOI checkbox is checked, then in the confirm/publish step Illinois Data Bank will try to update the record. If the imported DOI checkbox is not checked, Illinois Data Bank will try to create a record. It must be within our registered shoulders.
+
+  %p To use this in versioning, copy and paste the identifier from the previous version, and then just change the last number.
+
+  %p Use just the part that starts with 10.xxx.  If you put in the http part, it will not be a valid identifier, and an error will prevent publication.
+
+  %p For new versions, copy the identifier of the old version, and just change the last integer.
+
+  %p The DOI will always be displayed here after publication, even if it was not a version or import situation. Except for drafts, this field is read-only. If we want to do something super tricky with modifying this for a published dataset, we should probably convene the whole coven in front a whiteboard.
+
+%h3 Imported DOI checkbox
+
+.indent
+
+  %p This is used to indicate whether this dataset is an imported DOI, which means that the EZID/DataCite record already exists and should be updated rather than created upon confirmation of publication.
+
+%h3 Test DOI checkbox
+
+.indent
+
+  %p This is used to indicate whether this dataset is a test dataset. This is important for production, because it will not be displayed to guests and depositors. A test DOI will we generated, which will only work for a couple weeks.
+
+  %p It is not necessary to use this on rds-dev, except to test this feature, because all the DOIs are in the two-week-only test shoulder, and all the datasets on rds-dev are tests or examples on some level.
+
+%h3 Version
+
+.indent
+
+  %p The integer number of this dataset version, defaults to 1. This is used in DataCite metadata in the version field.
+
+%h3 Version Comment
+
+.indent
+  %p The comment regarding versioning for this dataset. This is only used in Illinois Data Bank, for the version table on the splash page.

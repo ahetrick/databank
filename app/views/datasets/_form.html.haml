@@ -132,8 +132,11 @@
                   .row
                     .col-md-6.form-group
                       = f.label :identifier, "Specified DOI for version OR import -- just the 10.xx part", :class => "control-label"
-                      %br
-                      = f.text_field :identifier, :class => "dataset form-control", :placeholder => "Leave blank for auto-generate."
+                      - if @dataset.publication_state == Databank::PublicationState::DRAFT
+                        = f.text_field :identifier, :class => "dataset form-control", :placeholder => "Leave blank for auto-generate."
+                      -else
+                        = f.text_field :identifier, :class => "dataset form-control", :placeholder => "Leave blank for auto-generate.", readonly: true
+
                     .col-md-3
                       =f.check_box :is_import, :class => "dataset"
                       Imported DOI
@@ -160,6 +163,18 @@
                         %br
                         =f.text_area :version_comment, :rows => 1, class: "form-control dataset"
 
+
+      - if can? :manage, @dataset
+
+        .panel-group(id="curatorHelp" role="tablist" aria-multiselectable="true" class="curator-only")
+          .panel.panel-default
+            .panel-heading(role="tab" id="curatorHelpHeading")
+              %h4(class="panel-title")
+                %a( role="button" data-toggle="collapse" data-parent="#funder" href="#curatorHelpPanel" aria-expanded="false" aria-controls="curatorHelpPanel" class="accordion-toggle collapsed" )
+                  %span( class="metadata-label" ) Curator-only form elements help
+            .panel-collapse.collapse(id="curatorHelpPanel" role="tabpanel" aria-labelledby="curatorHelpHeading" )
+              .panel-body
+                = render partial: 'datasets/help/curator_doi_tasks'
 
       .panel-group(id="funder" role="tablist" aria-multiselectable="true")
         .panel.panel-default
