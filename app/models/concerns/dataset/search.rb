@@ -87,7 +87,7 @@ module Search
           when Databank::PublicationState::DRAFT
             return_string = 'draft'
           when Databank::PublicationState::Embargo::FILE
-            return_string = 'embargoed_mf'
+            return_string = 'embargoed_f'
           when Databank::PublicationState::Embargo::METADATA
             return_string = 'embargoed_mf'
           when Databank::PublicationState::PermSuppress::FILE
@@ -107,7 +107,7 @@ module Search
           when Databank::PublicationState::Embargo::FILE
             return_string = 'embargoed_f'
           when Databank::PublicationState::Embargo::METADATA
-            return_string = 'Metadata and Files Publication Delayed (Embargoed)'
+            return_string = 'embargoed_mf'
           when Databank::PublicationState::PermSuppress::FILE
             return_string = 'withdrawn_f'
           when Databank::PublicationState::PermSuppress::METADATA

@@ -378,3 +378,26 @@ table.deposit-agreement-selection-warning > tbody > tr > td {
   padding: 3px;
   border-radius: 3px;
 }
+
+.example-site{
+  background-color: $color__highlight-orange;
+}
+.example-person{
+  background-color: $color__highlight-green;
+}
+
+.example.db-inner{
+  border: 2px solid $color__navy;
+  margin: 5px;
+}
+
+.db-inner{
+  border: 2px solid $color__burnt-orange;
+  margin: 10px;
+  padding: 10px;
+}
+
+.db-outer{
+  border: 2px solid $color__navy;
+  margin: 10px;
+}

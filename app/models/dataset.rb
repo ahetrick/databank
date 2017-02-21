@@ -63,6 +63,10 @@ class Dataset < ActiveRecord::Base
     self.key
   end
 
+  def version_group
+    version_related_materials = self.related_materials.where(:material_type == Databank::MaterialType::DATASET)
+  end
+
   def publication_year
     if self.release_date
       self.release_date.year || Time.now.year

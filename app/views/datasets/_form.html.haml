@@ -124,34 +124,41 @@
 
               = f.hidden_field :depositor_name, :class => "form-control", :id => "depositor_name"
 
-              - if can? :manage, @dataset
-                .row
-                  %span(class="col-md-2" )
-                    .form-group.curator-only
-                      =f.label :is_import, "imported DOI", :class => "control-label"
-                      %br
-                      =f.check_box :is_import, :class => "form-control dataset"
-                  %span(class="col-md-2" )
-                    .form-group.curator-only
+              =f.hidden_field :identifier
 
-                      =f.label :is_test, "test DOI", :class => "control-label"
+              - if can? :manage, @dataset
+
+                .curator-only
+                  .row
+                    .col-md-6.form-group
+                      = f.label :identifier, "Specified DOI for version OR import", :class => "control-label"
                       %br
+                      = f.text_field :identifier, :class => "dataset form-control", :placeholder => "Leave blank for auto-generate."
+                    .col-md-3
+                      =f.check_box :is_import, :class => "dataset"
+                      Imported DOI
+                    .col-md-3
                       - if @dataset.publication_state == Databank::PublicationState::DRAFT
-                        =f.check_box :is_test, class: "form-control dataset"
+                        =f.check_box :is_import, :class => "dataset"
                       -else
-                        =f.check_box :is_test, class: "form-control dataset", readonly: true
-                  %span(class="col-md-4" )
-                    .form-group.curator-only
-                      = f.label :identifier, "DOI", :class => "control-label"
-                      %br
-                      = f.text_field :identifier, :class => "form-control dataset", :placeholder => "[Leave blank if requesting a DOI.]"
-                  %span(class="col-md-2" )
-                    .form-group.curator-only
-                      =f.label :dataset_version, "Version", class: "control-label"
-                      %br
-                      =f.text_field :dataset_version, class: "form-control dataset"
-              -else
-                =f.hidden_field :identifier
+                        =f.check_box :is_test, class: "dataset", readonly: true
+                      Test DOI
+
+
+
+                  .row
+                    %span(class="col-md-1" )
+                      .form-group
+                        =f.label :dataset_version, "Version", class: "control-label"
+                        %br
+                        =f.text_field :dataset_version, class: "form-control dataset"
+                    %span(class="col-md-3" )
+
+                    %span(class="col-md-11" )
+                      .form-group
+                        =f.label :version_comment, "Version Comment", class: "control-label"
+                        %br
+                        =f.text_area :version_comment, :rows => 2, class: "form-control dataset"
 
 
       .panel-group(id="funder" role="tablist" aria-multiselectable="true")
