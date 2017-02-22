@@ -22,6 +22,7 @@ class Dataset < ActiveRecord::Base
     string :publication_year
     string :license_code
     string :depositor
+    string :depositor_email
     string :visibility_code
     string :dataset_version
     string :funder_codes, multiple: true

@@ -15,6 +15,10 @@
 
 <div id="main-show-div">
 
+  <% if (can? :manage, @dataset) %>
+    <%= render partial: 'curator_top_alerts' %>
+  <% end %>
+
   <% if ((!can? :manage, @dataset) && (@dataset.publication_state == Databank::PublicationState::PermSuppress::METADATA)) %>
     <br/>
 
