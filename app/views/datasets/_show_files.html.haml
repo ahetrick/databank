@@ -1,0 +1,113 @@
+<div class="dataset-files">
+  <div class="panel-group" id="files" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-default">
+      <div class="panel-heading" role="tab" id="headingOne">
+        <h4 class="panel-title">
+          <a role="button" data-toggle="collapse" data-parent="#files" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="accordion-toggle">
+            <span class="metadata-label">Files</span>
+          </a>
+        </h4>
+      </div>
+      <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+        <div class="panel-body">
+          <% if ((can? :manage, @dataset) || ((can? :edit, @dataset) && (@dataset.publication_state != Databank::PublicationState::PermSuppress::FILE)) || ((@dataset.publication_state == Databank::PublicationState::RELEASED) && (@dataset.hold_state != Databank::PublicationState::TempSuppress::FILE))) %>
+            <form role="form" id="select-files-form">
+              <div class="form-group" id="select-files-form-group">
+                <table id="show-files-table" class="table table-striped">
+                  <tbody>
+                  <% if @all_in_medusa || (@total_files_size && (@total_files_size < @local_zip_max_size)) %>
+                    <tr class="row">
+                      <td>
+                        <div class="row">
+                          <span class="col-md-4">
+                            <% if @all_in_medusa %>
+                              <button class="btn btn-primary" type="button" onclick="offerDownloadLink()">
+                                <span class="glyphicon glyphicon-download"></span> Get Custom Zip and Download Link
+                                for Selected
+                                (<span id="checkFileSelectedCount"></span>)
+                              </button>
+                            <% else %>
+                              <button class="btn btn-primary" type="submit">
+                                <span class="glyphicon glyphicon-download"></span> Zip and Download Selected
+                                (<span id="checkFileSelectedCount"></span>)
+                              </button>
+                            <% end %>
+                          </span>
+                        </div>
+                        <div class="row">
+                          <span class=" checkbox col-md-4">
+                            <label><input type="checkbox" id="checkAllFiles" value="checkAllFiles">Select all
+                              (<%= @dataset.datafiles.count %>) </label>
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  <% end %>
+
+                  <% if @ordered_datafiles %>
+
+                    <% @ordered_datafiles.each do |datafile| %>
+                      <% if ((datafile.bytestream_size > 0) && (datafile.job_status == :complete) && ((datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != ""))) %>
+                        <tr class="row">
+                          <td>
+
+                            <div class="row checkbox">
+
+                              <span class="col-md-6">
+                                <% if @all_in_medusa || @total_files_size < @local_zip_max_size %>
+                                  <label>
+                                    <input type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="<%= datafile.web_id %>" onchange="handleCheckFileGroupChange()"><%= datafile.bytestream_name %>
+                                  </label>
+                                <% else %>
+                                  <%= datafile.bytestream_name %>
+                                <% end %>
+
+                              </span>
+                              <span class="col-md-2"><%= number_to_human_size(datafile.bytestream_size) %></span>
+
+                              <span class="col-md-2">
+                                <% if datafile.has_preview? %>
+                                  <span id="preview_btn_<%= datafile.web_id %>">
+                                    <button type='button' class='btn btn-sm btn-success' onclick='preview("<%= datafile.web_id %>")'>
+                                      <span class='glyphicon glyphicon-eye-open'></span> View
+                                    </button>
+                                  </span>
+                                <% elsif datafile.is_image? %>
+                                  <span id="preview_img_btn_<%= datafile.web_id %>">
+                                    <button type='button' class='btn btn-sm btn-success' onclick='preview_image("<%= datafile.web_id %>")'>
+                                      <span class='glyphicon glyphicon-eye-open'></span> View
+                                    </button>
+                                  </span>
+                                <% elsif datafile.mime_type && datafile.mime_type == 'application/pdf' %>
+                                  <span id="preview_btn_<%= datafile.web_id %>">
+                                    <a href="/datafiles/<%= datafile.web_id %>/display" target="_blank" class="btn btn-sm btn-success idb">
+                                      <span class='glyphicon glyphicon-eye-open'></span> View
+                                    </a>
+                                  </span>
+                                <% elsif datafile.is_microsoft? %>
+                                  <span id="preview_btn_<%= datafile.web_id %>">
+                                    <a href="<%= datafile.microsoft_preview_url %>/display" target="_blank" class="btn btn-sm btn-success idb">
+                                      <span class='glyphicon glyphicon-eye-open'></span> View
+                                    </a>
+                                  </span>
+                                <% end %>
+
+                              </span>
+                                <span class="col-md-2">
+                                <a href="#" onclick='window.location = "/datafiles/<%= datafile.web_id %>/download"' class=" idb btn btn-primary btn-sm" role="button">
+                                  <span class="glyphicon glyphicon-download"></span> File
+                                </a>
+                              </span>
+
+                            </div>
+                            <span class="preview col-md-12" id="preview_<%=datafile.web_id %>"></span>
+                          </td>
+                        </tr>
+                      <% end %>
+                    <% end %>
+                  <% end %>
+                  </tbody>
+                </table>
+              </div>
+              <!-- end select-files-form-group -->
+            </form>

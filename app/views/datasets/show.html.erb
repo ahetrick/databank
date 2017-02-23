@@ -15,439 +15,40 @@
 
 <div id="main-show-div">
 
-  <% if (can? :manage, @dataset) %>
-    <%= render partial: 'curator_top_alerts' %>
+  <!-- BEGIN metadata section-->
+
+  <%= render partial: 'metadata_restriction_alert', locals: {dataset: @dataset}%>
+
+  <!--- show metadata section if curator OR published and not held OR depositor and not permenantly suppressed --->
+  <!--- inefficiently verbose consditional for readabilty  --->
+
+  <% if (can? :manage, @dataset)  %>
+    <%= render partial: 'show_metadata', locals: {dataset: @dataset} %>
+
+  <% elsif ([Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE].include? @dataset.publication_state) &&
+      (@dataset.hold_state != Databank::PublicationState::TempSuppress::METADATA)%>
+    <%= render partial: 'show_metadata', locals: {dataset: @dataset} %>
+
+  <%= elsif (can? :edit, @dataset) && (@dataset.publication_state != Databank::PublicationState::PermSuppress::METADATA) %>
+
+    <%= render partial: 'show_metadata', locals: {dataset: @dataset, license_name: @license_name} %>
+
   <% end %>
 
-  <% if ((!can? :manage, @dataset) && (@dataset.publication_state == Databank::PublicationState::PermSuppress::METADATA)) %>
-    <br/>
-
-    <div class="embargo-placeholder">
-      This dataset is not available.
-      <a href="/help?context=destroyed&key=<%= @dataset.key %>">Contact the Research Data Service</a> with any
-      questions.
-    </div>
-
-  <% elsif ((!can? :edit, @dataset) && (@dataset.hold_state == Databank::PublicationState::TempSuppress::METADATA)) %>
-    <br/>
-
-    <div class="embargo-placeholder">
-      This dataset is under curator review.
-      <a href="/help?context=hold&key=<%= @dataset.key %>">Contact the Research Data Service</a> with any questions.
-    </div>
-
-  <% elsif ((!can? :edit, @dataset) && (@dataset.publication_state == Databank::PublicationState::Embargo::METADATA)) %>
-    <br/>
-
-    <div class="embargo-placeholder">
-      This dataset will be available <%= @dataset.release_date %>.
-      <a href="/help?context=embargo&key=<%= @dataset.key %>">Contact the Research Data Service</a> with any
-      questions.
-    </div>
-
-  <% elsif ((can? :manage, @dataset) ||
-      (([Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE].include? @dataset.publication_state) &&
-          (@dataset.hold_state != Databank::PublicationState::TempSuppress::METADATA)) ||
-      ((can? :edit, @dataset) &&
-          (@dataset.publication_state != Databank::PublicationState::PermSuppress::METADATA))
-  ) %>
-    <!-- BEGIN metadata section-->
-    <div class="panel panel-default">
-      <div class="splash-metadata panel-body">
-
-        <span class="dataset-title"><%= (!@dataset.title || @dataset.title.empty?) ? "[Title not provided]" : @dataset.title %></span>
-
-        <div id="citation-block">
-
-          <div id="citation">
-            <span class="metadata-label">Citation: </span><br/>
-            <div id="citation-example">
-              <%= @dataset.plain_text_citation %>
-            </div>
-          </div>
-
-          <div id="citation-suggestion">
-          <span id="citation-download">
-            <span class="dropdown">
-              <button type="button" id="downloadCitation" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                <span class="glyphicon glyphicon-list"></span> Export Citation <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu pull-right text-left" role="menu">
-                <li>
-                  <a id="datasetForm:endNoteLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_endNote_XML"'>
-                    EndNote XML
-                  </a>
-                </li>
-                <li>
-                  <a id="datasetForm:risLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_RIS"'>
-                    RIS Format
-                  </a>
-                </li>
-                <li>
-                  <a id="datasetForm:BibTeXLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_BibTeX"'>
-                    BibTeX Format
-                  </a>
-                </li>
-                <li>
-                  <a id="datasetForm:plainTextCitationLink" href="#" onclick='window.location = "/datasets/<%=@dataset.key%>/download_plaintext_citation"'>
-                    Plain Text
-                  </a>
-                </li>
-              </ul>
-            </span>
-          </span>
-          <span id="citation-standards">
-            &nbsp;&nbsp;If you use this dataset, please cite it.
-          </span>
-          </div>
-
-          <% if @dataset.publication_state != Databank::PublicationState::DRAFT %>
-            <div id="copy-persistent-link">
-
-              <button class='copy-btn btn btn-default' data-clipboard-target='doi_link_text' data-clipboard-text="https://doi.org/<%= @dataset.identifier %>" title='Click me to copy to clipboard.'>
-                <span class="glyphicon glyphicon-copy"></span>
-                Copy persistent link to clipboard...
-              </button>
-              &nbsp;&nbsp;Persistent link for this item:
-              <a href="https://doi.org/<%= @dataset.identifier %>">https://doi.org/<%= @dataset.identifier %></a>
-              <input type="hidden" value="https://doi.org/<%= @dataset.identifier %>" name="doi_link_text" id="doi_link_text">
-
-            </div>
-          <% end %>
-        </div>
-        <tr class="metadata-block">
-          <table class="table borderless">
-            <thead>
-            <tr class="row">
-              <th class="col-lg-2 col-md-3 col-sm-4"></th>
-              <th class="col-lg-10 col-md-9 col-sm-8"></th>
-            </tr>
-            </thead>
-            <tbody>
-            <% if @dataset.related_materials.count > 0 %>
-              <% @dataset.related_materials.each do |material| %>
-
-                <% if material.relationship_arr.include?(Databank::Relationship::PREVIOUS_VERSION_OF) && material.uri %>
-                  <tr class="row">
-                    <td>
-                      <span class="metadata-label">Related Dataset:</span>
-                    </td>
-                    <td>
-                      This is an old version of
-                      <a href="<%= material.link %>" target="_blank"> <%= material.uri_type %>:<%= material.uri %></a>.
-                    </td>
-                  </tr>
-
-                <% elsif material.relationship_arr.include?(Databank::Relationship::NEW_VERSION_OF) && material.uri %>
-                  <tr class="row">
-                    <td>
-                      <span class="metadata-label">Related Dataset:</span>
-                    </td>
-                    <td>
-                      This is an updated version of
-                      <a href="<%= material.link %>" target="_blank"> <%= material.uri_type %>:<%= material.uri %></a>.
-                    </td>
-                  </tr>
-
-                <% else %>
-                  <tr class="row">
-                    <td>
-                      <span class="metadata-label">Related
-                        <%= (material.material_type && material.material_type != "") ? material.material_type : "Material" %>
-                        :</span>
-                    </td>
-                    <td>
-                      <% if material.link && material.link != '' %>
-                        <a href="<%= material.link %>">
-                          <% if material.citation && material.citation != '' %>
-                            <%= material.citation %>
-                          <% else %>
-                            <%= material.link %>
-                          <% end %>
-                        </a>
-
-                      <% elsif material.citation && material.citation != '' %>
-                        <%= material.citation %>
-                      <% else %>
-                        [Details not provided.]
-                      <% end %>
-                    </td>
-                  </tr>
-                <% end %>
-              <% end %>
-            <% end %>
-
-            <% if @dataset.description && @dataset.description != '' %>
-              <tr class="row">
-                <td>
-                  <span class="metadata-label">Dataset Description: </span>
-                </td>
-                <td>
-                  <%= simple_format(@dataset.description) %>
-                </td>
-              </tr>
-            <% end %>
-
-            <% if @dataset.keywords && !@dataset.keywords.empty? %>
-              <tr class="row">
-                <td>
-                  <span class="metadata-label">Keywords: </span>
-                </td>
-                <td>
-                  <%= @dataset.keywords %>
-                </td>
-              </tr>
-            <% end %>
-            <tr class="row">
-              <td>
-                <span class="metadata-label">License:</span>
-              </td>
-              <td>
-                <%= @license_name %>
-              </td>
-            </tr>
-
-            <% if [Databank::PublicationState::Embargo::METADATA, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state) || (@dataset.publication_state == Databank::PublicationState::DRAFT && @dataset.release_date && @dataset.release_date > Date.current()) %>
-              <tr class="row">
-                <td>
-                  <span class="metadata-label">Release Date:</span>
-                </td>
-                <td>
-                  <%= @dataset.release_date %>
-                </td>
-              </tr>
-            <% end %>
-
-            <% @dataset.funders.each do |funder| %>
-              <tr class="row">
-                <td>
-                  <span class="metadata-label">Funder:</span>
-                </td>
-                <td>
-                  <%= funder.name %>
-                  <% if funder.grant && funder.grant != "" %>
-                    -
-                    <span class="metadata-label">Grant:</span>
-                    <%= funder.grant %>
-                  <% end %>
-                </td>
-              </tr>
-            <% end %>
-
-            <tr class="row">
-              <td>
-                <span class="metadata-label">Corresponding Creator: </span>
-              </td>
-              <td>
-                <%= (!@dataset.corresponding_creator_name || @dataset.corresponding_creator_name.empty?) ? "[corresponding creator name not provided]" : @dataset.corresponding_creator_name %>
-              </td>
-            </tr>
-            <% if can? :manage, @dataset %>
-              <tr class="row">
-                <td>
-                  <span class="metadata-label">Depositor:</span>
-                </td>
-                <td>
-                  <%= @dataset.depositor_name %>
-                </td>
-              </tr>
-            <% end %>
-
-            <% if can? :manage, @dataset %>
-              <tr class="row">
-                <td>
-                  <span class="metadata-label">Corresponding Creator Email: </span>
-                </td>
-                <td>
-                  <%= (!@dataset.corresponding_creator_email || @dataset.corresponding_creator_email.empty?) ? "[corresponding creator email not provided]" : @dataset.corresponding_creator_email %>
-                </td>
-              </tr>
-              <tr class="row">
-                <td>
-                  <span class="metadata-label">Depositor Email:</span>
-                </td>
-                <td>
-                  <%= @dataset.depositor_email %>
-                </td>
-              </tr>
-            <% end %>
-            <% if @dataset.total_downloads > 0 %>
-              <tr class="row">
-                <td>
-                  <span class="metadata-label">Downloaded:</span>
-                </td>
-                <td>
-                  <%= pluralize(@dataset.total_downloads, 'time') %>
-                </td>
-              </tr>
-            <% end %>
-            </tbody>
-          </table>
-      </div>
-
-    </div>
+  <!-- END metadata section-->
 
 
-    <div class="panel-group" id="versionGroup" role="tablist" aria-multiselectable="true">
-      <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="versionGroupHeading">
-          <h4 class="panel-title">
-            <a role="button" data-toggle="collapse" data-parent="#funder" href="#versionGroupPanel" aria-expanded="false" aria-controls="funderPanel" class="accordion-toggle collapsed">
-              <span class="metadata-label">Versions</span>
-            </a>
-          </h4>
-        </div>
-        <div class="panel-collapse collapse" id="versionGroupPanel" role="tabpanel" aria-labelledby="changelogHeading">
-          <div class="panel-body">
+  <!-- BEGIN file section -->
 
-          </div>
-        </div>
-      </div>
-    </div>
+  <%= render partial: 'files_restriction_alert', locals: {dataset: @dataset}%>
 
-    <!-- END metadata section-->
+  <% if ((can? :manage, @dataset) || ((can? :edit, @dataset) && (@dataset.publication_state != Databank::PublicationState::PermSuppress::FILE)) || ((@dataset.publication_state == Databank::PublicationState::RELEASED) && (@dataset.hold_state != Databank::PublicationState::TempSuppress::FILE))) %>
 
-    <!-- BEGIN file section -->
+    <% render partial: 'show_files', locals: {dataset: @dataset} %>
 
-    <div class="dataset-files">
-      <div class="panel-group" id="files" role="tablist" aria-multiselectable="true">
-        <div class="panel panel-default">
-          <div class="panel-heading" role="tab" id="headingOne">
-            <h4 class="panel-title">
-              <a role="button" data-toggle="collapse" data-parent="#files" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="accordion-toggle">
-                <span class="metadata-label">Files</span>
-              </a>
-            </h4>
-          </div>
-          <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-            <div class="panel-body">
-              <% if ((can? :manage, @dataset) || ((can? :edit, @dataset) && (@dataset.publication_state != Databank::PublicationState::PermSuppress::FILE)) || ((@dataset.publication_state == Databank::PublicationState::RELEASED) && (@dataset.hold_state != Databank::PublicationState::TempSuppress::FILE))) %>
-                <form role="form" id="select-files-form">
-                  <div class="form-group" id="select-files-form-group">
-                    <table id="show-files-table" class="table table-striped">
-                      <tbody>
-                      <% if @all_in_medusa || (@total_files_size && (@total_files_size < @local_zip_max_size)) %>
-                        <tr class="row">
-                          <td>
-                            <div class="row">
-                              <span class="col-md-4">
-                                <% if @all_in_medusa %>
-                                  <button class="btn btn-primary" type="button" onclick="offerDownloadLink()">
-                                    <span class="glyphicon glyphicon-download"></span> Get Custom Zip and Download Link
-                                    for Selected
-                                    (<span id="checkFileSelectedCount"></span>)
-                                  </button>
-                                <% else %>
-                                  <button class="btn btn-primary" type="submit">
-                                    <span class="glyphicon glyphicon-download"></span> Zip and Download Selected
-                                    (<span id="checkFileSelectedCount"></span>)
-                                  </button>
-                                <% end %>
-                              </span>
-                            </div>
-                            <div class="row">
-                              <span class=" checkbox col-md-4">
-                                <label><input type="checkbox" id="checkAllFiles" value="checkAllFiles">Select all
-                                  (<%= @dataset.datafiles.count %>) </label>
-                              </span>
-                            </div>
-                          </td>
-                        </tr>
-                      <% end %>
-
-                      <% if @ordered_datafiles %>
-
-                        <% @ordered_datafiles.each do |datafile| %>
-                          <% if ((datafile.bytestream_size > 0) && (datafile.job_status == :complete) && ((datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != ""))) %>
-                            <tr class="row">
-                              <td>
-
-                                <div class="row checkbox">
-
-                                  <span class="col-md-6">
-                                    <% if @all_in_medusa || @total_files_size < @local_zip_max_size %>
-                                      <label>
-                                        <input type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="<%= datafile.web_id %>" onchange="handleCheckFileGroupChange()"><%= datafile.bytestream_name %>
-                                      </label>
-                                    <% else %>
-                                       <%= datafile.bytestream_name %>
-                                    <% end %>
-
-                                  </span>
-                                  <span class="col-md-2"><%= number_to_human_size(datafile.bytestream_size) %></span>
-
-                                  <span class="col-md-2">
-                                    <% if datafile.has_preview? %>
-                                      <span id="preview_btn_<%= datafile.web_id %>">
-                                        <button type='button' class='btn btn-sm btn-success' onclick='preview("<%= datafile.web_id %>")'>
-                                          <span class='glyphicon glyphicon-eye-open'></span> View
-                                        </button>
-                                      </span>
-                                    <% elsif datafile.is_image? %>
-                                      <span id="preview_img_btn_<%= datafile.web_id %>">
-                                          <button type='button' class='btn btn-sm btn-success' onclick='preview_image("<%= datafile.web_id %>")'>
-                                            <span class='glyphicon glyphicon-eye-open'></span> View
-                                          </button>
-                                      </span>
-                                    <% elsif datafile.mime_type && datafile.mime_type == 'application/pdf' %>
-                                      <span id="preview_btn_<%= datafile.web_id %>">
-                                          <a href="/datafiles/<%= datafile.web_id %>/display" target="_blank" class="btn btn-sm btn-success idb">
-                                            <span class='glyphicon glyphicon-eye-open'></span> View
-                                          </a>
-                                      </span>
-                                    <% elsif datafile.is_microsoft? %>
-                                      <span id="preview_btn_<%= datafile.web_id %>">
-                                          <a href="<%= datafile.microsoft_preview_url %>/display" target="_blank" class="btn btn-sm btn-success idb">
-                                            <span class='glyphicon glyphicon-eye-open'></span> View
-                                          </a>
-                                      </span>
-                                    <% end %>
-
-                                  </span>
-                                    <span class="col-md-2">
-                                    <a href="#" onclick='window.location = "/datafiles/<%= datafile.web_id %>/download"' class=" idb btn btn-primary btn-sm" role="button">
-                                      <span class="glyphicon glyphicon-download"></span> File
-                                    </a>
-                                  </span>
-
-                                </div>
-                                <span class="preview col-md-12" id="preview_<%=datafile.web_id %>"></span>
-                              </td>
-                            </tr>
-                          <% end %>
-                        <% end %>
-                      <% end %>
-                      </tbody>
-                    </table>
-                  </div>
-                  <!-- end select-files-form-group -->
-                </form>
-              <% elsif @dataset.publication_state == Databank::PublicationState::PermSuppress::FILE %>
-                <div class="embargo-placeholder">
-                  Files associated with this dataset are not available.
-                  <a href="/help?context=embargo&key=<%= @dataset.key %>">Contact the Research Data Service</a> with any
-                  questions.
-                </div>
-              <% elsif @dataset.hold_state == Databank::PublicationState::TempSuppress::FILE %>
-                <div class="embargo-placeholder">
-                  Files associated with this dataset are under curator review.
-                  <a href="/help?context=embargo&key=<%= @dataset.key %>">Contact the Research Data Service</a> with any
-                  questions.
-                </div>
-              <% elsif @dataset.publication_state == Databank::PublicationState::Embargo::FILE %>
-                <div class="embargo-placeholder">
-                  Files associated with this dataset will be made available <%= @dataset.release_date %>.
-                  <a href="/help?context=embargo&key=<%= @dataset.key %>">Contact the Research Data Service</a> with any
-                  questions.
-                </div>
-              <% end %>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- END file section -->
   <% end %>
+
+  <!-- END file section -->
 
   <% if @changetable && ((can? :manage, @dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::PermSuppress::FILE, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state) && @dataset.hold_state != Databank::PublicationState::TempSuppress::METADATA && !@dataset.suppress_changelog)) %>
     <div class="panel-group" id="changelog" role="tablist" aria-multiselectable="true">
@@ -474,6 +75,23 @@
     <% end %>
   <% end %>
 
+</div>
+
+<div class="panel-group" id="versionGroup" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="versionGroupHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#funder" href="#versionGroupPanel" aria-expanded="false" aria-controls="funderPanel" class="accordion-toggle collapsed">
+          <span class="metadata-label">Versions</span>
+        </a>
+      </h4>
+    </div>
+    <div class="panel-collapse collapse" id="versionGroupPanel" role="tabpanel" aria-labelledby="changelogHeading">
+      <div class="panel-body">
+
+      </div>
+    </div>
+  </div>
 </div>
 
 <% if can? :manage, @dataset && @dataset.publication_state != Databank::PublicationState::DRAFT %>
