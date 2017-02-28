@@ -7,6 +7,7 @@ require 'json'
 require 'pathname'
 
 class DatasetsController < ApplicationController
+
   protect_from_forgery except: [:cancel_box_upload, :validate_change2published]
   skip_before_filter :verify_authenticity_token, :only => :validate_change2published
 
@@ -161,36 +162,9 @@ class DatasetsController < ApplicationController
       end
     end
 
-
-    @all_in_medusa = true
-    @total_files_size = 0
-    @local_zip_max_size = 750000000
-    @single_download_ok = true
     @completion_check = Dataset.completion_check(@dataset, current_user)
 
-    @dataset.datafiles.each do |df|
 
-      if df.bytestream_size == 0
-        @dataset.save
-        df.destroy
-        @dataset.save
-      else
-
-        if df.bytestream_size > 500000000
-          @single_download_ok = false
-        end
-
-        @total_files_size = @total_files_size + df.bytestream_size
-        if !df.medusa_path || df.medusa_path == ""
-          # Rails.logger.warn "no path found for #{df.to_yaml}"
-          @all_in_medusa = false
-        end
-      end
-
-
-    end
-
-    @ordered_datafiles = @dataset.datafiles.sort_by { |obj| obj.bytestream_name }
 
     set_file_mode
 
@@ -204,10 +178,6 @@ class DatasetsController < ApplicationController
     end
 
     # Rails.logger.warn "changetable: #{@changetable.to_yaml}"
-
-    @publish_modal_msg = Dataset.publish_modal_msg(@dataset)
-
-    set_license(@dataset)
 
   end
 
@@ -1138,18 +1108,6 @@ class DatasetsController < ApplicationController
       @dataset = Dataset.find(params[:dataset_id])
     end
     raise ActiveRecord::RecordNotFound unless @dataset
-  end
-
-  def set_license(dataset)
-
-    @license_name = "License not selected"
-
-    LICENSE_INFO_ARR.each do |license_info|
-      if (license_info.code == dataset.license) && (dataset.license !='license.txt')
-        @license_name = license_info.name
-      end
-    end
-
   end
 
   def set_file_mode

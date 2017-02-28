@@ -32,6 +32,15 @@ class Ability
         dataset.try(:depositor_email) == user.email
       end
 
+      can :get_new_token, Dataset do |dataset|
+        dataset.try(:depositor_email) == user.email
+      end
+
+      can :get_current_token, Dataset do |dataset|
+        dataset.try(:depositor_email) == user.email
+      end
+
+
       can :download_link, Dataset
       can :stream_file, Dataset
       can :download_datafiles, Dataset

@@ -15,7 +15,7 @@ Given(/^Published datasets exist titled:$/) do |table|
 end
 
 Given(/^I enter search phrase: (.*)$/) do |search_string|
-  fill_in("Search", with: search_string)
+  fill_in("Indexable", with: search_string)
 end
 
 Given(/^Draft datasets by someone else exist titled:$/) do |table|

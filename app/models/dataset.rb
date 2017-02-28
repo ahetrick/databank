@@ -3,15 +3,14 @@ require 'date'
 require 'open-uri'
 require 'net/http'
 require 'securerandom'
-require 'concerns/dataset/search'
+require 'concerns/dataset/indexable'
 
 class Dataset < ActiveRecord::Base
-  extend Search
   include ActiveModel::Serialization
   include Datacite
   include Recovery
   include MessageText
-  include Search
+  include Indexable
 
   audited except: [:creator_text, :key, :complete, :is_test, :is_import, :updated_at, :embargo], allow_mass_assignment: true
   has_associated_audits
@@ -753,7 +752,7 @@ class Dataset < ActiveRecord::Base
         datafile.destroy unless ( (datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != "") )
       end
     rescue StandardError => ex
-      # sigh
+      Rails.logger.warn "unable to remove invalid datafile #{datafile.id}"
     end
   end
 
@@ -794,6 +793,44 @@ class Dataset < ActiveRecord::Base
     end
 
     return returnfile
+
+  end
+
+  def total_filesize
+
+    total = 0
+
+    self.datafiles.each do |datafile|
+      total += datafile.bytestream_size
+    end
+
+    total
+
+  end
+
+  def self.local_zip_max_size
+    750000000
+  end
+
+  def ordered_datafiles
+    self.datafiles.sort_by { |obj| obj.bytestream_name }
+  end
+
+  def fileset_preserved?
+
+    # assume all are preserved unless a file is found that is not preserved
+
+    fileset_preserved = true
+
+    self.datafiles.each do |df|
+
+      if !df.medusa_path || df.medusa_path == ""
+        # Rails.logger.warn "no path found for #{df.to_yaml}"
+        fileset_preserved = false
+      end
+    end
+
+    fileset_preserved
 
   end
 
@@ -904,7 +941,7 @@ class Dataset < ActiveRecord::Base
 
   end
 
-  def stuctured_data
+  def structured_data
 
     if self.publication_state == Databank::PublicationState::RELEASED
 

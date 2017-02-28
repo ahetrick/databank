@@ -14,7 +14,7 @@ module Effective
           end
         end
 
-        array_column :citation, label: 'Search', sortable: false, filter: {fuzzy: true} do |dataset|
+        array_column :citation, label: 'Indexable', sortable: false, filter: {fuzzy: true} do |dataset|
           table_description = nil
           if dataset.description && !dataset.description.empty?
             table_description = dataset.description.first(230)

@@ -10,7 +10,7 @@
     -if(can? :manage, dataset)
 
       .label.label-default
-        =Search.visibility_name_from_code(dataset.visibility_code)
+        =Indexable.visibility_name_from_code(dataset.visibility_code)
       &nbsp;
 
       -#TODO: embargo warning

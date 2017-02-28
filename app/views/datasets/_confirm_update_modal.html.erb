@@ -8,9 +8,9 @@
           &times;
         </button>
         <div class="publish-msg">
-          <% if @publish_modal_msg %>
-            <p class="ds-paragraph"><%= @publish_modal_msg.html_safe %></p>
-          <% end %>
+
+          <p class="ds-paragraph"><%= Dataset.publish_modal_msg(@dataset).html_safe %></p>
+
         </div>
       </div>
 

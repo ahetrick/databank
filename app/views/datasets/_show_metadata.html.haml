@@ -8,7 +8,7 @@
         .metadata-label
           Citation:
         .citation-example
-          dataset.plain_text_citation
+          =dataset.plain_text_citation
 
       .citation-suggestion
         %span(class="citation-download")
@@ -74,7 +74,7 @@
                     = "#{material.uri_type} : #{material.uri}."
 
             -else
-              %tr.class="row"
+              %tr.row
                 %td
                   %span.metadata-label
                     Related
@@ -113,7 +113,7 @@
           %td
             %span.metadata-label License:
           %td
-            = license_name
+            = dataset.license_name
         - if [Databank::PublicationState::Embargo::METADATA, Databank::PublicationState::Embargo::FILE].include?(dataset.publication_state) || (dataset.publication_state == Databank::PublicationState::DRAFT && dataset.release_date && dataset.release_date > Date.current())
           %tr.row
             %td

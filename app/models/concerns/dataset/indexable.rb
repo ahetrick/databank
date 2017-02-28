@@ -1,4 +1,4 @@
-module Search
+module Indexable
   extend ActiveSupport::Concern
 
   def visibility
@@ -223,5 +223,20 @@ module Search
   def datafile_extensions_fulltext
     self.datafile_extensions.join(" ")
   end
+
+  def license_name
+    license_name = "License not selected"
+
+    LICENSE_INFO_ARR.each do |license_info|
+      if (license_info.code == self.license) && (self.license !='license.txt')
+        license_name = license_info.name
+      end
+    end
+
+    license_name
+
+  end
+
+
 
 end
