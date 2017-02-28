@@ -8,7 +8,7 @@
       %div(class="panel-collapse.collapse.in" id="collapseOne" role="tabpanel" aria-labelledby="headingOne")
         .panel-body
 
-          -if ((can? :manage, dataset) || ((can? :edit, dataset) && (dataset.publication_state != Databank::PublicationState::PermSuppress::FILE)) || ((dataset.publication_state == Databank::PublicationState::RELEASED) && (dataset.hold_state != Databank::PublicationState::TempSuppress::FILE)))
+          -if (can? :manage, dataset) || ((can? :edit, dataset) && (dataset.publication_state != Databank::PublicationState::PermSuppress::FILE)) || ((dataset.publication_state == Databank::PublicationState::RELEASED) && (dataset.hold_state != Databank::PublicationState::TempSuppress::FILE))
             %form(role="form" id="select-files-form")
               .form-group(id="select-files-form-group")
                 %table(id="show-files-table" class="table table-striped")
@@ -22,19 +22,17 @@
                                 %button(class="btn btn-primary" type="button" onclick="offerDownloadLink()")
                                   %span.glyphicon.glyphicon-download
                                   Get Custom Zip and Download Link for Selected
-                                  =surround('(',')')
-                                    %span(id="checkFileSelectedCount")
+                                  %span.checkFileSelectedCount
 
                               -else
                                 %button(class="btn btn-primary" type="submit")
                                   %span.glyphicon.glyphicon-download
                                   Zip and Download Selected
-                                  =surround('(',')')
-                                    %span(id="checkFileSelectedCount")
+                                  %span.checkFileSelectedCount
 
                           .row
-                            %span.checkbox.col-md-4
-                              .label
+                            .checkbox.col-md-4
+                              %label
                                 %input(type="checkbox" id="checkAllFiles" value="checkAllFiles")
                                 Select all
                                 ="(#{dataset.datafiles.count})"

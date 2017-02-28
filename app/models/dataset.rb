@@ -64,7 +64,10 @@ class Dataset < ActiveRecord::Base
   end
 
   def version_group
-    version_related_materials = self.related_materials.where(:material_type == Databank::MaterialType::DATASET)
+    related_datasets = self.related_materials.where(:material_type == Databank::MaterialType::DATASET)
+    previous_dataset =  related_datasets.where()
+
+
   end
 
   def publication_year

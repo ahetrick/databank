@@ -93,11 +93,11 @@ ready = function () {
         title: "<table class='upload-key'><tr> <td> <span class='fa upload-guide fa-circle'></span></td> <td> consistent </td><td> Reliable performance for a variety of connection speeds and configurations. </td> </tr> <tr> <td> <span class='fa upload-guide fa-adjust'></span> <td>inconsistent</td> </td> <td> Depends for reliability on connection strength and speed. Works well on campus, but home and coffee-shop environments vary. </td> </tr> <tr class='highlight-background'> <td> <span class='fa upload-guide fa-circle-o'></span> <td>unavailable</td> </td> <td> Either does not work at all, or is so unreliable as to be inadvisable. </td> </tr> </table> </table>"
     });
 
-    $("#checkFileSelectedCount").html('0');
+    $(".checkFileSelectedCount").html('(0)');
 
     $("#checkAllFiles").click(function () {
         $(".checkFileGroup").prop('checked', $(this).prop('checked'));
-        $("#checkFileSelectedCount").html($('.checkFile:checked').size());
+        $(".checkFileSelectedCount").html($('('+'.checkFile:checked').size() + ')');
     });
 
     $('#term-supports').tooltip();
@@ -874,8 +874,8 @@ function deleteSelected() {
     
     if (window.confirm("Are you sure?")) {
 
-        console.log($('#checkFileSelectedCount').html());
-        $('#checkFileSelectedCount').html('0');
+        //console.log($('#checkFileSelectedCount').html());
+        $('.checkFileSelectedCount').html('(0)');
         $('#checkAllFiles').prop('checked', false);
 
         $.each($("input[name='selected_files[]']:checked"), function () {
@@ -885,7 +885,7 @@ function deleteSelected() {
 }
 
 function handleCheckFileGroupChange(){
-    $("#checkFileSelectedCount").html($('.checkFile:checked').size());
+    $(".checkFileSelectedCount").html($('('+'.checkFile:checked').size() + ')');
     $('#checkAllFiles').prop('checked', false);
 }
 
