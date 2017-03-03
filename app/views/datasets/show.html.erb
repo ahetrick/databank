@@ -99,7 +99,7 @@
             <thead>
               <tr>
                 <th></th>
-                <th>Version</th>
+                <th class="text-center" >Version</th>
                 <th>DOI</th>
                 <th>Comment</th>
                 <th>Publication Date</th>
@@ -113,8 +113,8 @@
                 <td>
                   <% if entry[:selected] %> You are here.<% end %>
                 </td>
-                <td><%= entry[:version] %></td>
-                <td><a href="https://doi.org/#{entry[:doi]}"><%= entry[:doi] %></a></td>
+                <td class="text-center"><%= entry[:version] %></td>
+                <td><a href="https://doi.org/<%= entry[:doi]%>"><%= entry[:doi] %></a></td>
                 <td><%= entry[:version_comment]%></td>
                 <td><%= entry[:publication_date] %></td>
               </tr>
