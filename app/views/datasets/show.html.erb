@@ -90,7 +90,6 @@
     </div>
     <div class="panel-collapse collapse" id="versionGroupPanel" role="tabpanel" aria-labelledby="changelogHeading">
       <div class="panel-body">
-        <%=debug(@dataset.version_group) %>
 
         <% if @dataset.version_group[:status] == 'error' %>
           <%= @dataset.version_group[:error] %>
@@ -109,13 +108,14 @@
             <tbody>
 
             <% @dataset.version_group[:entries].each do |entry| %>
-              <tr <% entry[:selected]? 'class=seleced_version' : '' %> >
+
+              <tr<% if entry[:selected] %> class="seleced-version"<% end %> >
                 <td>
-                  <% entry[:selected]? 'You are here.' : '' %>
+                  <% if entry[:selected] %> You are here.<% end %>
                 </td>
                 <td><%= entry[:version] %></td>
                 <td><a href="https://doi.org/#{entry[:doi]}"><%= entry[:doi] %></a></td>
-                <td><%= entry[:comment]%></td>
+                <td><%= entry[:version_comment]%></td>
                 <td><%= entry[:publication_date] %></td>
               </tr>
 
