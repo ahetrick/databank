@@ -145,7 +145,7 @@ class Dataset < ActiveRecord::Base
     next_version_related_material = self.related_materials.find_by_datacite_list(Databank::Relationship::PREVIOUS_VERSION_OF)
 
     if next_version_related_material && next_version_related_material.uri
-      next_idb_dataset = Dataset.find_by_identifier(uri)
+      next_idb_dataset = Dataset.find_by_identifier(next_version_related_material.uri)
       return next_idb_dataset
     else
       return nil
