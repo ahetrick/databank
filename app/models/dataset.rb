@@ -102,7 +102,7 @@ class Dataset < ActiveRecord::Base
       next_dataset = current_dataset.next_idb_dataset
 
       if next_dataset
-        version_group_response << next_dataset.related_version_entry_hash
+        version_group_response[:entries] << next_dataset.related_version_entry_hash
 
       end
 
