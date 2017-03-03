@@ -36,7 +36,62 @@
   <% end %>
 
   <!-- END metadata section-->
+  <div class="panel-group" id="versionGroup" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-default">
+      <div class="panel-heading" role="tab" id="versionGroupHeading">
+        <% version_group = @dataset.version_group %>
+        
+        <h4 class="panel-title">
 
+          <% if version_group && version_group[:entries] && version_group[:entries].length > 1 %>
+            <a role="button" data-toggle="collapse" data-parent="#versionGroup" href="#versionGroupPanel" aria-expanded="true" aria-controls="versionGroupPanel" class="accordion-toggle">
+              <span class="metadata-label">Versions</span>
+            </a>
+          <% else %>
+            <a role="button" data-toggle="collapse" data-parent="#versionGroup" href="#versionGroupPanel" aria-expanded="false" aria-controls="versionGroupPanel" class="accordion-toggle collapsed">
+              <span class="metadata-label">Versions</span>
+            </a>
+          <% end %>
+        </h4>
+      </div>
+      <div class="panel-collapse collapse<%if version_group && version_group[:entries] && version_group[:entries].length > 1 %> in<% end %>" id="versionGroupPanel" role="tabpanel" aria-labelledby="changelogHeading">
+        <div class="panel-body">
+
+          <% if version_group[:status] == 'error' %>
+            <%= version_group[:error] %>
+          <% else %>
+
+            <table class="table table-striped" >
+              <thead>
+              <tr>
+                <th class="text-center" >Version</th>
+                <th>DOI</th>
+                <th>Comment</th>
+                <th>Publication Date</th>
+              </tr>
+              </thead>
+              <tbody>
+
+              <% version_group[:entries].each do |entry| %>
+
+                <tr<% if entry[:selected] %> class="seleced-version"<% end %> >
+                  <td class="text-center"><%= entry[:version] %></td>
+                  <td><a href="https://doi.org/<%= entry[:doi]%>"><%= entry[:doi] %></a></td>
+                  <td><%= entry[:version_comment]%></td>
+                  <td><%= entry[:publication_date] %></td>
+                </tr>
+
+
+              <% end %>
+              </tbody>
+            </table>
+
+          <% end %>
+
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- BEGIN file section -->
 
@@ -73,63 +128,7 @@
 
 </div>
 
-<div class="panel-group" id="versionGroup" role="tablist" aria-multiselectable="true">
-  <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="versionGroupHeading">
-      <h4 class="panel-title">
-        <% if @dataset.version_group && @dataset.version_group.length > 1 %>
-          <a role="button" data-toggle="collapse" data-parent="#versionGroup" href="#versionGroupPanel" aria-expanded="false" aria-controls="versionGroupPanel" class="accordion-toggle collapsed">
-            <span class="metadata-label">Versions</span>
-          </a>
-        <% else %>
-          <a role="button" data-toggle="collapse" data-parent="#versionGroup" href="#versionGroupPanel" aria-expanded="false" aria-controls="versionGroupPanel" class="accordion-toggle">
-            <span class="metadata-label">Versions</span>
-          </a>
-        <% end %>
-      </h4>
-    </div>
-    <div class="panel-collapse collapse" id="versionGroupPanel" role="tabpanel" aria-labelledby="changelogHeading">
-      <div class="panel-body">
 
-        <% if @dataset.version_group[:status] == 'error' %>
-          <%= @dataset.version_group[:error] %>
-        <% else %>
-
-          <table class="table table-striped" >
-            <thead>
-              <tr>
-                <th></th>
-                <th class="text-center" >Version</th>
-                <th>DOI</th>
-                <th>Comment</th>
-                <th>Publication Date</th>
-              </tr>
-            </thead>
-            <tbody>
-
-            <% @dataset.version_group[:entries].each do |entry| %>
-
-              <tr<% if entry[:selected] %> class="seleced-version"<% end %> >
-                <td>
-                  <% if entry[:selected] %> You are here.<% end %>
-                </td>
-                <td class="text-center"><%= entry[:version] %></td>
-                <td><a href="https://doi.org/<%= entry[:doi]%>"><%= entry[:doi] %></a></td>
-                <td><%= entry[:version_comment]%></td>
-                <td><%= entry[:publication_date] %></td>
-              </tr>
-
-
-            <% end %>
-            </tbody>
-          </table>
-
-        <% end %>
-
-      </div>
-    </div>
-  </div>
-</div>
 
 <% if can? :manage, @dataset && @dataset.publication_state != Databank::PublicationState::DRAFT %>
   <div class="container-fluid">

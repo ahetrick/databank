@@ -286,7 +286,7 @@ div.row.checkbox {
   margin-bottom: 0;
   padding-bottom: 0;
 }
-.borderless > tbody > tr > td, .borderless > thead > tr > th {
+.borderless * {
   border: none !important;
 }
 #feedback-header-link{

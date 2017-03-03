@@ -24,7 +24,7 @@ class DatabankMailer < ActionMailer::Base
 
   def confirm_deposit_update(dataset_key)
 
-    subject = prepend_system_code('Illinois Data Bank] Dataset successfully updated')
+    subject = prepend_system_code("Illinois Data Bank] Dataset successfully updated (#{@dataset.identifier})")
 
 
     @dataset = Dataset.where(key: dataset_key).first
