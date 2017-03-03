@@ -64,11 +64,128 @@ class Dataset < ActiveRecord::Base
   end
 
   def version_group
-    related_datasets = self.related_materials.where(:material_type == Databank::MaterialType::DATASET)
-    previous_dataset =  related_datasets.where()
 
+    # version group is an array of hashes
+    self_version = self.dataset_version.to_i
+
+    if !self_version || self_version < 1
+      self_version = 1
+    end
+
+    self_version_entry = self.related_version_entry_hash
+    self_version_entry[:selected] = true
+
+    version_group_response = {:status=> 'ok', :entries=> [self_version_entry]}
+
+    # follow daisy chain of previous versions
+    current_dataset = self
+
+    while current_dataset
+
+      previous_dataset = current_dataset.previous_idb_dataset
+      Rails.logger.warn "previous_dataset #{previous_dataset}"
+
+      if previous_dataset
+        version_group_response[:entries] << previous_dataset.related_version_entry_hash
+      end
+
+      # go to next, if it exists, else set control to nil and break
+      current_dataset = previous_dataset
+
+    end
+
+    #reset pointer for chain of next versions
+    current_dataset = self
+
+    while current_dataset
+
+      next_dataset = current_dataset.next_idb_dataset
+
+      if next_dataset
+        version_group_response << next_dataset.related_version_entry_hash
+
+      end
+
+      # go to next, if it exists, else set control to nil and break
+      current_dataset = next_dataset
+
+    end
+
+    (version_group_response[:entries].sort_by! { |k| k[:version] }).reverse!
+    version_group_response
 
   end
+
+
+  def related_version_entry_hash
+    # version group is an array of hashes
+    self_version = self.dataset_version.to_i
+
+    if !self_version || self_version < 1
+      self_version = 1
+    end
+
+    {version: self_version, selected: false, doi: self.identifier || "not yet set", version_comment: self.version_comment || "", publication_date: self.release_date ? self.release_date.iso8601 : "not yet set"}
+  end
+
+
+  def previous_idb_dataset
+    previous_version_related_material = self.related_materials.find_by_datacite_list(Databank::Relationship::NEW_VERSION_OF)
+
+    if previous_version_related_material && previous_version_related_material.uri
+      previous_idb_dataset = Dataset.find_by_identifier(previous_version_related_material.uri)
+      return previous_idb_dataset
+    else
+      return nil
+    end
+
+  end
+
+  def next_idb_dataset
+    next_version_related_material = self.related_materials.find_by_datacite_list(Databank::Relationship::PREVIOUS_VERSION_OF)
+
+    if next_version_related_material && next_version_related_material.uri
+      next_idb_dataset = Dataset.find_by_identifier(uri)
+      return next_idb_dataset
+    else
+      return nil
+    end
+
+  end
+
+
+
+  # # returns an array of hashes
+  # def self.related_datasets
+  #   datasets_in_version_relationships = RelatedMaterial.where('datacite_list like?', '%Version')
+  #   return {} unless datasets_in_version_relationships.count > 0
+  #
+  #   related_datasets_array = []
+  #
+  #   # build related datasets array
+  #
+  #   datasets_in_version_relationships.each do |material|
+  #     if material.uri
+  #       idb_dataset = Dataset.find_by_identifier(material.uri)
+  #
+  #       if idb_dataset
+  #         child_related_datasets = idb_dataset.related_materials.where('datacite_list like?', '%Version')
+  #         if child_related_datasets.count > 0
+  #           child_related_datasets.each do |child|
+  #             related_datasets_array << {idb_dataset.id => child.id}
+  #             related_datasets_array << {child.id => idb_dataset.id}
+  #           end
+  #         end
+  #       end
+  #     end
+  #   end
+  #
+  #   #remove duplicates
+  #
+  #   related_datasets_array.uniq!
+  #
+  # end
+
 
   def publication_year
     if self.release_date
@@ -400,7 +517,7 @@ class Dataset < ActiveRecord::Base
         #check to see if netid is found, to prevent email system errors
         begin
 
-        creator_record = open("http://quest.grainger.uiuc.edu/directory/ed/person/#{netid}").read
+          creator_record = open("http://quest.grainger.uiuc.edu/directory/ed/person/#{netid}").read
 
         rescue OpenURI::HTTPError => err
           validation_error_messages << "a valid email address for #{creator.given_name} #{creator.family_name} (please check and correct the netid)"
@@ -463,7 +580,7 @@ class Dataset < ActiveRecord::Base
         datafilesArr << datafile.bytestream_name
       end
 
-      firstDup = datafilesArr.detect{ |e| datafilesArr.count(e) > 1 }
+      firstDup = datafilesArr.detect { |e| datafilesArr.count(e) > 1 }
 
       if firstDup
         validation_error_messages << "no duplicate filenames (#{firstDup})"
@@ -621,7 +738,6 @@ class Dataset < ActiveRecord::Base
   end
 
 
-
   def creator_list
     return_list = ""
 
@@ -705,8 +821,8 @@ class Dataset < ActiveRecord::Base
     if tokens.count == 1
       return tokens.first
     elsif tokens.count > 1
-        tokens.destroy_all
-        Rail.logger.warn "unexpected error: more than one current token for dataset #{self.key}"
+      tokens.destroy_all
+      Rail.logger.warn "unexpected error: more than one current token for dataset #{self.key}"
     else
       return "token"
     end
@@ -734,7 +850,7 @@ class Dataset < ActiveRecord::Base
     if current_token && current_token != "token"
       current_token.destroy
     end
-    return Token.create(dataset_key: self.key, identifier: generate_auth_token, expires: (Time.now + 3.days) )
+    return Token.create(dataset_key: self.key, identifier: generate_auth_token, expires: (Time.now + 3.days))
   end
 
   def set_primary_contact
@@ -752,7 +868,7 @@ class Dataset < ActiveRecord::Base
   def remove_invalid_datafiles
     begin
       self.datafiles.each do |datafile|
-        datafile.destroy unless ( (datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != "") )
+        datafile.destroy unless ((datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != ""))
       end
     rescue StandardError => ex
       Rails.logger.warn "unable to remove invalid datafile #{datafile.id}"
@@ -971,22 +1087,22 @@ class Dataset < ActiveRecord::Base
 
         keywordArr = self.keywords.split(";")
 
-          if keywordArr.length > 0
+        if keywordArr.length > 0
 
-            keyword_commas = ""
+          keyword_commas = ""
 
-            keywordArr.each_with_index do |keyword, i|
-              if i != 0
-                keyword_commas << ", "
-              end
-              keyword_commas << keyword.strip
+          keywordArr.each_with_index do |keyword, i|
+            if i != 0
+              keyword_commas << ", "
             end
-
-            return_string << %Q[, "keywords": "#{keyword_commas}" ]
-
-          else
-            return_string << %Q[, "keywords": "#{keywordArr[0]}" ]
+            keyword_commas << keyword.strip
           end
+
+          return_string << %Q[, "keywords": "#{keyword_commas}" ]
+
+        else
+          return_string << %Q[, "keywords": "#{keywordArr[0]}" ]
+        end
 
       end
 
@@ -1004,7 +1120,7 @@ class Dataset < ActiveRecord::Base
 
         return_string << %Q(, "funder": [)
 
-        self.funders.each_with_index  do |funder, index|
+        self.funders.each_with_index do |funder, index|
           return_string << ", " if index > 0
           return_string << %Q[{"@type": "Organization", "name":"#{funder.name}", "url":"https://doi.org/#{funder.identifier}"}]
         end
@@ -1046,7 +1162,7 @@ class Dataset < ActiveRecord::Base
       return "mine"
     else
       return "not_mine"
-end
+    end
   end
 
   def self.make_anvl(metadata)
@@ -1069,7 +1185,7 @@ end
   private
 
   def generate_auth_token
-    SecureRandom.uuid.gsub(/\-/,'')
+    SecureRandom.uuid.gsub(/\-/, '')
   end
 
   def destroy_audit

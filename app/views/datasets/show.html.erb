@@ -77,14 +77,55 @@
   <div class="panel panel-default">
     <div class="panel-heading" role="tab" id="versionGroupHeading">
       <h4 class="panel-title">
-        <a role="button" data-toggle="collapse" data-parent="#funder" href="#versionGroupPanel" aria-expanded="false" aria-controls="funderPanel" class="accordion-toggle collapsed">
-          <span class="metadata-label">Versions</span>
-        </a>
+        <% if @dataset.version_group && @dataset.version_group.length > 1 %>
+          <a role="button" data-toggle="collapse" data-parent="#versionGroup" href="#versionGroupPanel" aria-expanded="false" aria-controls="versionGroupPanel" class="accordion-toggle collapsed">
+            <span class="metadata-label">Versions</span>
+          </a>
+        <% else %>
+          <a role="button" data-toggle="collapse" data-parent="#versionGroup" href="#versionGroupPanel" aria-expanded="false" aria-controls="versionGroupPanel" class="accordion-toggle">
+            <span class="metadata-label">Versions</span>
+          </a>
+        <% end %>
       </h4>
     </div>
     <div class="panel-collapse collapse" id="versionGroupPanel" role="tabpanel" aria-labelledby="changelogHeading">
       <div class="panel-body">
-        Version content placeholder
+        <%=debug(@dataset.version_group) %>
+
+        <% if @dataset.version_group[:status] == 'error' %>
+          <%= @dataset.version_group[:error] %>
+        <% else %>
+
+          <table class="table table-striped" >
+            <thead>
+              <tr>
+                <th></th>
+                <th>Version</th>
+                <th>DOI</th>
+                <th>Comment</th>
+                <th>Publication Date</th>
+              </tr>
+            </thead>
+            <tbody>
+
+            <% @dataset.version_group[:entries].each do |entry| %>
+              <tr <% entry[:selected]? 'class=seleced_version' : '' %> >
+                <td>
+                  <% entry[:selected]? 'You are here.' : '' %>
+                </td>
+                <td><%= entry[:version] %></td>
+                <td><a href="https://doi.org/#{entry[:doi]}"><%= entry[:doi] %></a></td>
+                <td><%= entry[:comment]%></td>
+                <td><%= entry[:publication_date] %></td>
+              </tr>
+
+
+            <% end %>
+            </tbody>
+          </table>
+
+        <% end %>
+
       </div>
     </div>
   </div>

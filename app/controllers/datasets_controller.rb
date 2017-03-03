@@ -276,7 +276,7 @@ class DatasetsController < ApplicationController
     @dataset.funders.build unless @dataset.funders.count > 0
     @dataset.related_materials.build unless @dataset.related_materials.count > 0
     @completion_check = Dataset.completion_check(@dataset, current_user)
-    set_license(@dataset)
+    #set_license(@dataset)
     @publish_modal_msg = Dataset.publish_modal_msg(@dataset)
     if @dataset.has_deck_content
       @dataset.deck_filepaths.each do |filepath|
