@@ -24,6 +24,7 @@ function handleMaterialChange(materialIndex) {
             break;
         case 'Other':
             $('#dataset_related_materials_attributes_' + materialIndex + '_material_type').val('');
+            $('.material_cell').html('<input class="form-control dataset material-text" type="text" name="dataset[related_materials_attributes][' + materialIndex + '][material_type]" id="dataset_related_materials_attributes_' + materialIndex+'_material_type" />');
             $('#dataset_related_materials_attributes_' + materialIndex + '_material_type').css("visibility", "visible");
 
             $('#dataset_related_materials_attributes_' + materialIndex + '_material_type').focus();
