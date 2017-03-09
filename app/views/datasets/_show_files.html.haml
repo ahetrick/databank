@@ -51,6 +51,8 @@
                                     %label
                                       %input(type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="#{datafile.web_id}" onchange="handleCheckFileGroupChange()")
                                       = datafile.bytestream_name
+                                  -else
+                                    = datafile.bytestream_name
 
                                 %span.col-md-2
                                   = number_to_human_size(datafile.bytestream_size)
