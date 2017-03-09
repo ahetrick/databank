@@ -632,12 +632,11 @@ function filename_isdup(proposed_name) {
         if (proposed_name == $(value).val()) {
             returnVal = true;
         }
-        if ($(value).text().indexOf(proposed_name) >= 0) {
+        if ($(value).text() == proposed_name) {
             returnVal = true;
         }
     });
-
-
+    
     return returnVal;
 }
 
