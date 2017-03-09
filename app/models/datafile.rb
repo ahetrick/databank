@@ -37,6 +37,10 @@ class Datafile < ActiveRecord::Base
       return_name = self.binary_name
     elsif self.binary && self.binary.file
       return_name = self.binary.file.filename
+    else
+      Rails.logger.warn "did not detect name"
+      Rails.logger.warn self.to_yaml
+      return "name not found for #{self.web_id}"
     end
     return_name
   end
