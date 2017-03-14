@@ -50,22 +50,6 @@
                       = User.user_info_string(row.value)
                       ="(#{row.count})"
 
-        .panel-group
-          .panel.panel-default
-            .panel-heading
-              %h4(class="panel-title")
-                Visibility
-            .panel-body
-              -for row in @search.facet(:visibility_code).rows
-                .facet
-                  -if params.has_key?('visibility_codes') && params['visibility_codes'].include?(row.value)
-                    %input(type="checkbox" class="checkFacet checkFacetGroup publication_state_facet" name="visibility_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
-                    = Indexable.visibility_name_from_code(row.value)
-                    ="(#{row.count})"
-                  -else
-                    %input(type="checkbox" class="checkFacet checkFacetGroup publication_state_facet" name="visibility_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
-                      = Indexable.visibility_name_from_code(row.value)
-                      ="(#{row.count})"
 
         .panel-group
           .panel.panel-default
@@ -100,6 +84,25 @@
                     %input(type="checkbox" class="checkFacet checkFacetGroup license_facet" name="license_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
                       = Indexable.license_name_from_code(row.value)
                       ="(#{row.count})"
+
+        -if current_user && ['depositor', 'admin'].include?(current_user.role)
+
+          .panel-group
+            .panel.panel-default
+              .panel-heading
+                %h4(class="panel-title")
+                  Visibility
+              .panel-body
+                -for row in @search.facet(:visibility_code).rows
+                  .facet
+                    -if params.has_key?('visibility_codes') && params['visibility_codes'].include?(row.value)
+                      %input(type="checkbox" class="checkFacet checkFacetGroup publication_state_facet" name="visibility_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                      = Indexable.visibility_name_from_code(row.value)
+                      ="(#{row.count})"
+                    -else
+                      %input(type="checkbox" class="checkFacet checkFacetGroup publication_state_facet" name="visibility_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                        = Indexable.visibility_name_from_code(row.value)
+                        ="(#{row.count})"
 
       -else
         .indent

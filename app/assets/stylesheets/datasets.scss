@@ -400,7 +400,12 @@ a.morelink {
   border-left: 3px solid $color__light-grey;
 
 }
-.seleced-version{
+.selected-version{
   background-color: $color__yellow-background !important;
   font-weight: bold;
+}
+.boxed-alert{
+  margin: 2px;
+  padding: 3px;
+  border: 1px solid $color__burnt-orange;
 }

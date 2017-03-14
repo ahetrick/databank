@@ -1,3 +1,5 @@
+<% version_group = @dataset.version_group %>
+
 <% if [Databank::PublicationState::RELEASED, Databank::PublicationState::TempSuppress::FILE, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state) %>
   <%= @dataset.structured_data.html_safe %>
 <% end %>
@@ -16,6 +18,13 @@
 <div id="main-show-div">
 
   <!-- BEGIN metadata section-->
+  <% if version_group && version_group[:entries] && version_group[:entries].length > 1 && @dataset.dataset_version.to_i > 0 && (version_group[:entries][0][:version]).to_i > @dataset.dataset_version.to_i  %>
+
+    <div class="selected-version boxed-alert">
+      A newer version of this dataset is available. <a href="https://doi.org/<%= version_group[:entries][0][:doi] %>">View the latest version.</a>
+    </div>
+
+  <% end %>
 
   <%= render partial: 'metadata_restriction_alert', locals: {dataset: @dataset}%>
 
@@ -39,13 +48,13 @@
   <div class="panel-group" id="versionGroup" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="versionGroupHeading">
-        <% version_group = @dataset.version_group %>
+
         
         <h4 class="panel-title">
 
           <% if version_group && version_group[:entries] && version_group[:entries].length > 1 %>
             <a role="button" data-toggle="collapse" data-parent="#versionGroup" href="#versionGroupPanel" aria-expanded="true" aria-controls="versionGroupPanel" class="accordion-toggle">
-              <span class="metadata-label">Versions</span>
+              <span class="metadata-label">Versions in Illinois Data Bank</span>
             </a>
           <% else %>
             <a role="button" data-toggle="collapse" data-parent="#versionGroup" href="#versionGroupPanel" aria-expanded="false" aria-controls="versionGroupPanel" class="accordion-toggle collapsed">
@@ -74,7 +83,7 @@
 
               <% version_group[:entries].each do |entry| %>
 
-                <tr<% if entry[:selected] %> class="seleced-version"<% end %> >
+                <tr<% if entry[:selected] %> class="selected-version"<% end %> >
                   <td class="text-center"><%= entry[:version] %></td>
                   <td><a href="https://doi.org/<%= entry[:doi]%>"><%= entry[:doi] %></a></td>
                   <td><%= entry[:version_comment]%></td>

@@ -54,25 +54,8 @@
         -if dataset.related_materials.count > 0
 
           -dataset.related_materials.each do |material|
-
-            -if material.relationship_arr.include?(Databank::Relationship::PREVIOUS_VERSION_OF) && material.uri
-              %tr.row
-                %td
-                  %span(class="metadata-label") Related Dataset:
-                %td
-                  This is an old version of
-                  %a(href="<%= material.link %>" target="_blank")
-                    = "#{material.uri_type} : #{material.uri}."
-
-            -elsif material.relationship_arr.include?(Databank::Relationship::NEW_VERSION_OF) && material.uri
-              %tr.row
-                %td
-                  %span.metadata-label Related Dataset:
-                %td
-                  This is an updated version of
-                  %a(href="#{material.link}" target="_blank")
-                    = "#{material.uri_type} : #{material.uri}."
-
+            -if material.uri && (material.relationship_arr.include?(Databank::Relationship::PREVIOUS_VERSION_OF) || material.relationship_arr.include?(Databank::Relationship::NEW_VERSION_OF) )
+              -# handled above
             -else
               %tr.row
                 %td
