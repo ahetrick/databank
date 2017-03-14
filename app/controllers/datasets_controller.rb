@@ -518,7 +518,7 @@ class DatasetsController < ApplicationController
     @dataset.destroy
     respond_to do |format|
       if current_user
-        format.html { redirect_to "/datasets?depositor=#{current_user.name}", notice: 'Dataset was successfully deleted.' }
+        format.html { redirect_to '/datasets?just_mine=true', notice: 'Dataset was successfully deleted.' }
       else
         format.html { redirect_to datasets_url, notice: 'Dataset was successfully deleted.' }
       end
