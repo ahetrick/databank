@@ -8,6 +8,8 @@
       %div(class="panel-collapse.collapse.in" id="collapseOne" role="tabpanel" aria-labelledby="headingOne")
         .panel-body
 
+          =render partial: 'file_restriction_alert', locals: {dataset: dataset}
+
           -if (can? :manage, dataset) || ((can? :edit, dataset) && (dataset.publication_state != Databank::PublicationState::PermSuppress::FILE)) || ((dataset.publication_state == Databank::PublicationState::RELEASED) && (dataset.hold_state != Databank::PublicationState::TempSuppress::FILE))
             %form(role="form" id="select-files-form")
               .form-group(id="select-files-form-group")
