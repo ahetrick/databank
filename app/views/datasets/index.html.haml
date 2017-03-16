@@ -46,9 +46,15 @@
               .panel-body
                 -for row in @search.facet(:depositor).rows
                   .facet
-                    %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
-                      = User.user_info_string(row.value)
-                      ="(#{row.count})"
+                    -if params.has_key?('depositors') && params['depositors'].include?(row.value)
+                      %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                        = User.user_info_string(row.value)
+                        ="(#{row.count})"
+                    -else
+                      %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                        = User.user_info_string(row.value)
+                        ="(#{row.count})"
+
 
 
         .panel-group
@@ -74,7 +80,8 @@
               %h4(class="panel-title")
                 License
             .panel-body
-              -for row in @search.facet(:license_code).rows
+              -@search.facet(:license_code).rows.each do |row|
+
                 .facet
                   -if params.has_key?('license_codes') && params['license_codes'].include?(row.value)
                     %input(type="checkbox" class="checkFacet checkFacetGroup license_facet" name="license_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
@@ -108,7 +115,9 @@
         .indent
           %em no results found
   .col-md-7
-    %h1 Datasets
+    %h1
+      Datasets
+      ="(#{@search.total})"
     -@search.each_hit_with_result do |hit, dataset|
 
       = render partial: 'brief_record', locals: {dataset: dataset}

@@ -3,7 +3,6 @@
 var search_ready;
 search_ready = function () {
 
-    handleFilterChange();
     // alert("search.js javascript working");
 }
 
@@ -12,6 +11,13 @@ function clearFilters(){
     $("#searchForm").submit();
 }
 
+
+function handleFilterChange() {
+    $("#searchForm").submit();
+}
+
+
+/*
 function handleFilterChange(){
 
     $('.hit').show();
@@ -76,6 +82,7 @@ function handleFilterChange(){
     }
 
 }
+*/
 
 function clearSearchTerm(){
     $("input[name='q']").val("");

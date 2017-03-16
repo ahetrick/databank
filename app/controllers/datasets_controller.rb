@@ -6,6 +6,8 @@ require 'zipline'
 require 'json'
 require 'pathname'
 
+Placeholder_FacetRow = Struct.new(:value, :count)
+
 class DatasetsController < ApplicationController
 
   protect_from_forgery except: [:cancel_box_upload, :validate_change2published]
@@ -54,6 +56,7 @@ class DatasetsController < ApplicationController
     # @selected_states = Array.new
 
     @search = nil
+    search_get_facets = nil
 
     if current_user && current_user.role
 
@@ -61,8 +64,8 @@ class DatasetsController < ApplicationController
 
       case current_user.role
         when "admin"
-          @search = Dataset.search do
 
+          search_get_facets = Dataset.search do
             without(:depositor, 'error')
             keywords (params[:q])
             order_by :updated_at, :desc
@@ -73,10 +76,93 @@ class DatasetsController < ApplicationController
             facet(:visibility_code)
             facet(:hold_state)
             facet(:datafile_extensions)
-
           end
 
+          @search = Dataset.search do
+
+            without(:depositor, 'error')
+
+            if params.has_key?('license_codes')
+              any_of do
+                params['license_codes'].each do |license_code|
+                  with :license_code, license_code
+                end
+              end
+            end
+
+            if params.has_key?('depositors')
+              any_of do
+                params['depositors'].each do |depositor|
+                  with :depositor, depositor
+                end
+              end
+            end
+
+            if params.has_key?('funder_codes')
+              any_of do
+                params['funder_codes'].each do |funder_code|
+                  with :funder_codes, funder_code
+                end
+              end
+            end
+
+            if params.has_key?('visibility_codes')
+              any_of do
+                params['visibility_codes'].each do |visibility_code|
+                  with :visibility_code, visibility_code
+                end
+              end
+            end
+
+            keywords (params[:q])
+            order_by :updated_at, :desc
+            facet(:license_code)
+            facet(:funder_codes)
+            facet(:creator_names)
+            facet(:depositor)
+            facet(:visibility_code)
+            facet(:hold_state)
+            facet(:datafile_extensions)
+          end
+
+          search_get_facets.facet(:visibility_code).rows.each do |outer_row|
+            has_this_row = false
+            @search.facet(:visibility_code).rows.each do |inner_row|
+              has_this_row = true if inner_row.value == outer_row.value
+            end
+            @search.facet(:visibility_code).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
+          end
+
+          search_get_facets.facet(:depositor).rows.each do |outer_row|
+            has_this_row = false
+            @search.facet(:depositor).rows.each do |inner_row|
+              has_this_row = true if inner_row.value == outer_row.value
+            end
+            @search.facet(:depositor).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
+          end
+
+
         when "depositor"
+
+          search_get_facets = Dataset.search do
+            without(:depositor, 'error')
+            any_of do
+              with :depositor_email, current_user.email
+              with :publication_state, Databank::PublicationState::RELEASED
+              with :publication_state, Databank::PublicationState::Embargo::FILE
+              with :publication_state, Databank::PublicationState::TempSuppress::FILE
+            end
+
+            keywords (params[:q])
+            order_by :updated_at, :desc
+            facet(:license_code)
+            facet(:funder_codes)
+            facet(:creator_names)
+            facet(:depositor)
+            facet(:visibility_code)
+            facet(:hold_state)
+            facet(:datafile_extensions)
+          end
 
           @search = Dataset.search do
 
@@ -86,6 +172,32 @@ class DatasetsController < ApplicationController
               with :publication_state, Databank::PublicationState::Embargo::FILE
               with :publication_state, Databank::PublicationState::TempSuppress::FILE
             end
+
+            if params.has_key?('license_codes')
+              any_of do
+                params['license_codes'].each do |license_code|
+                  with :license_code, license_code
+                end
+              end
+            end
+
+            if params.has_key?('funder_codes')
+              any_of do
+                params['funder_codes'].each do |funder_code|
+                  with :funder_codes, funder_code
+                end
+              end
+            end
+
+            if params.has_key?('visibility_codes')
+              any_of do
+                params['visibility_codes'].each do |visibility_code|
+                  with :visibility_code, visibility_code
+                end
+              end
+            end
+
+
             keywords (params[:q])
             order_by :updated_at, :desc
             facet(:license_code)
@@ -103,6 +215,23 @@ class DatasetsController < ApplicationController
               with :publication_state, Databank::PublicationState::Embargo::FILE
               with :publication_state, Databank::PublicationState::TempSuppress::FILE
             end
+
+            if params.has_key?('license_codes')
+              any_of do
+                params['license_codes'].each do |license_code|
+                  with :license_code, license_code
+                end
+              end
+            end
+
+            if params.has_key?('funder_codes')
+              any_of do
+                params['funder_codes'].each do |funder_code|
+                  with :funder_codes, funder_code
+                end
+              end
+            end
+
             keywords (params[:q])
             order_by :updated_at, :desc
             facet(:license_code)
@@ -114,6 +243,27 @@ class DatasetsController < ApplicationController
       end
 
     else
+
+      search_get_facets = Dataset.search do
+        without(:depositor, 'error')
+
+        any_of do
+          with :publication_state, Databank::PublicationState::RELEASED
+          with :publication_state, Databank::PublicationState::Embargo::FILE
+          with :publication_state, Databank::PublicationState::TempSuppress::FILE
+        end
+        
+        keywords (params[:q])
+        order_by :updated_at, :desc
+        facet(:license_code)
+        facet(:funder_codes)
+        facet(:creator_names)
+        facet(:depositor)
+        facet(:visibility_code)
+        facet(:hold_state)
+        facet(:datafile_extensions)
+      end
+
       @search = Dataset.search do
 
         any_of do
@@ -121,6 +271,23 @@ class DatasetsController < ApplicationController
           with :publication_state, Databank::PublicationState::Embargo::FILE
           with :publication_state, Databank::PublicationState::TempSuppress::FILE
         end
+
+        if params.has_key?('license_codes')
+          any_of do
+            params['license_codes'].each do |license_code|
+              with :license_code, license_code
+            end
+          end
+        end
+
+        if params.has_key?('funder_codes')
+          any_of do
+            params['funder_codes'].each do |funder_code|
+              with :funder_codes, funder_code
+            end
+          end
+        end
+
         keywords (params[:q])
         order_by :updated_at, :desc
         facet(:license_code)
@@ -132,6 +299,21 @@ class DatasetsController < ApplicationController
 
     end
 
+    search_get_facets.facet(:license_code).rows.each do |outer_row|
+      has_this_row = false
+      @search.facet(:license_code).rows.each do |inner_row|
+        has_this_row = true if inner_row.value == outer_row.value
+      end
+      @search.facet(:license_code).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
+    end
+
+    search_get_facets.facet(:funder_codes).rows.each do |outer_row|
+      has_this_row = false
+      @search.facet(:funder_codes).rows.each do |inner_row|
+        has_this_row = true if inner_row.value == outer_row.value
+      end
+      @search.facet(:funder_codes).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
+    end
 
   end
 
