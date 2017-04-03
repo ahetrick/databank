@@ -106,6 +106,8 @@
             .panel-body
               -@search.facet(:license_code).rows.each do |row|
 
+                =debug(row)
+
                 .facet
                   -if params.has_key?('license_codes') && params['license_codes'].include?(row.value)
                     %input(type="checkbox" class="checkFacet checkFacetGroup license_facet" name="license_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
