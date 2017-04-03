@@ -60,9 +60,7 @@ class DatasetsController < ApplicationController
 
     if current_user && current_user.role
 
-      @my_datasets_count = Dataset.where(depositor_email: current_user.email).count
-
-      case current_user.role
+        case current_user.role
         when "admin"
 
           search_get_facets = Dataset.search do
@@ -173,6 +171,15 @@ class DatasetsController < ApplicationController
               with :publication_state, Databank::PublicationState::TempSuppress::FILE
             end
 
+
+            if params.has_key?('depositors')
+              any_of do
+                params['depositors'].each do |depositor|
+                  with :depositor, depositor
+                end
+              end
+            end
+
             if params.has_key?('license_codes')
               any_of do
                 params['license_codes'].each do |license_code|
@@ -202,6 +209,7 @@ class DatasetsController < ApplicationController
             order_by :updated_at, :desc
             facet(:license_code)
             facet(:funder_codes)
+            facet(:depositor)
             facet(:visibility_code)
             facet(:hold_state)
             facet(:datafile_extensions)
