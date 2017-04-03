@@ -142,6 +142,23 @@ class DatasetsController < ApplicationController
 
         when "depositor"
 
+          search_get_my_facets = Dataset.search do
+
+            all_of do
+              with :depositor_email, current_user.email
+              any_of do
+                with :publication_state, Databank::PublicationState::DRAFT
+                with :publication_state, Databank::PublicationState::RELEASED
+                with :publication_state, Databank::PublicationState::Embargo::FILE
+                with :publication_state, Databank::PublicationState::TempSuppress::FILE
+                with :publication_state, Databank::PublicationState::TempSuppress::METADATA
+                with :publication_state, Databank::PublicationState::PermSuppress::FILE
+              end
+            end
+            keywords (params[:q])
+            facet(:visibility_code)
+          end
+
           search_get_facets = Dataset.search do
             without(:depositor, 'error')
             any_of do
@@ -149,10 +166,14 @@ class DatasetsController < ApplicationController
               with :publication_state, Databank::PublicationState::RELEASED
               with :publication_state, Databank::PublicationState::Embargo::FILE
               with :publication_state, Databank::PublicationState::TempSuppress::FILE
+              with :publication_state, Databank::PublicationState::PermSuppress::FILE
+              all_of do
+                with :depositor_email, current_user.email
+                with :publication_state, Databank::PublicationState::TempSuppress::METADATA
+              end
             end
 
             keywords (params[:q])
-            order_by :updated_at, :desc
             facet(:license_code)
             facet(:funder_codes)
             facet(:creator_names)
@@ -169,6 +190,7 @@ class DatasetsController < ApplicationController
               with :publication_state, Databank::PublicationState::RELEASED
               with :publication_state, Databank::PublicationState::Embargo::FILE
               with :publication_state, Databank::PublicationState::TempSuppress::FILE
+              with :publication_state, Databank::PublicationState::PermSuppress::FILE
             end
 
 
@@ -215,6 +237,15 @@ class DatasetsController < ApplicationController
             facet(:datafile_extensions)
 
           end
+
+          search_get_my_facets.facet(:visibility_code).rows.each do |outer_row|
+            has_this_row = false
+            @search.facet(:visibility_code).rows.each do |inner_row|
+              has_this_row = true if inner_row.value == outer_row.value
+            end
+            @search.facet(:visibility_code).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
+          end
+
         else
           @search = Dataset.search do
 
