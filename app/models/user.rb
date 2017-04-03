@@ -50,16 +50,11 @@ class User < ActiveRecord::Base
 
   def update_with_omniauth(auth)
 
-    netid = auth.email.split('@').first
-
-    authname = User.user_display_name(netid)
-
-
     self.provider = auth["provider"]
     self.uid = auth["uid"]
-    self.name = authname
     self.email = auth["info"]["email"]
     self.username = self.email.split('@').first
+    self.name = User.user_display_name(self.username)
 
     if IDB_CONFIG[:local_mode]
       # Rails.logger.info "inside local mode check #{IDB_CONFIG[:local_mode]}"
@@ -83,19 +78,14 @@ class User < ActiveRecord::Base
   end
 
   def self.create_with_omniauth(auth)
-
-    authname = auth["info"]["name"]
-
-    if ((auth["provider"] == "shibboleth") && (auth["extra"]["raw_info"]["nickname"]) && ((auth["extra"]["raw_info"]["nickname"]) != ""))
-      authname = "#{auth["extra"]["raw_info"]["nickname"]} #{auth["extra"]["raw_info"]["sn"]}"
-    end
-
+    
     create! do |user|
       user.provider = auth["provider"]
       user.uid = auth["uid"]
       user.name = authname
       user.email = auth["info"]["email"]
       user.username = user.email.split('@').first
+      user.name = User.user_display_name(self.username)
 
       if IDB_CONFIG[:local_mode]
         # Rails.logger.info "inside local mode check #{IDB_CONFIG[:local_mode]}"
@@ -184,7 +174,7 @@ class User < ActiveRecord::Base
   end
 
   def self.user_info_string(netid)
-    return("#{User.user_display_name(netid)} | #{netid}@illinois.edu")
+    return("#{self.user_display_name(netid)} | #{netid}@illinois.edu")
   end
 
   def self.user_display_name(netid)
