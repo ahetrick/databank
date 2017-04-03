@@ -29,16 +29,24 @@
                   My Datasets
 
               .panel-body
+                -current_user_facet_exists = false
                 -@search.facet(:depositor).rows.each do |row|
                   .facet
                     -if row.value == current_user.username && params.has_key?('depositors') && params['depositors'].include?(row.value)
                       %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
                         Just My Datasets
                         ="(#{row.count})"
+                        -current_user_facet_exists = true
                     -elsif row.value == current_user.username
                       %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
                         Just My Datasets
                         ="(#{row.count})"
+                        -current_user_facet_exists = true
+                - if current_user_facet_exists == false
+                  %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{current_user.username}" onchange="handleFilterChange()" checked=false disabled = true)
+                    Just My Datasets
+                    ="(0)"
+
 
           -if current_user && current_user.role == 'depositor' && params.has_key?('depositors') && params['depositors'].include?(current_user.username)
             .indent
