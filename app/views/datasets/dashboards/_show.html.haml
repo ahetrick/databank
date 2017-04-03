@@ -70,11 +70,11 @@
             %span(class="glyphicon glyphicon-edit")
             Edit
           -if @dataset.publication_state == Databank::PublicationState::DRAFT
-            %button(type="button" class="btn btn-info btn-block" name="cancel" onclick='window.location = "/datasets?depositor=#{current_user.name}&context=exit_draft"' )
+            %button(type="button" class="btn btn-info btn-block" name="cancel" onclick='window.location = "/datasets?q=depositors=%5B%5D=#{current_user.name}&context=exit_draft"' )
               %span(class="glyphicon glyphicon-pushpin" )
               Exit this Saved Dataset
           -else
-            %button(type="button" class="btn btn-info btn-block" name="cancel" onclick='window.location = "/datasets?depositor=#{current_user.name}&context=exit_doi"' )
+            %button(type="button" class="btn btn-info btn-block" name="cancel" onclick='window.location = "/datasets?q=depositors=%5B%5D==#{current_user.name}&context=exit_doi"' )
               %span(class="glyphicon glyphicon-pushpin" )
               Exit this Saved Dataset
           - if @dataset.publication_state == Databank::PublicationState::DRAFT

@@ -34,7 +34,7 @@
 
         <% if current_user %>
 
-          <li><a href="/datasets?depositor=<%= current_user.username %>"> <%= current_user.name %></a></li>
+          <li><a href="/datasets?q=<%= URI.encode('depositors[]') %>=<%= current_user.username %>"> <%= current_user.name %></a></li>
           <li><%= link_to "Log out", :logout %></li>
         <% else %>
 

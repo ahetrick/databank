@@ -574,9 +574,9 @@ class DatasetsController < ApplicationController
         if params.has_key?('context') && params['context'] == 'exit'
 
           if @dataset.publication_state == Databank::PublicationState::DRAFT
-            format.html { redirect_to "/datasets?depositor=#{current_user.name}&context=exit_draft" }
+            format.html { redirect_to "/datasets?q=&#{URI.encode('depositors[]')}=#{current_user.name}&context=exit_draft" }
           else
-            format.html { redirect_to "/datasets?depositor=#{current_user.name}&context=exit_doi" }
+            format.html { redirect_to "/datasets?q=&#{URI.encode('depositors[]')}=#{current_user.name}&context=exit_doi" }
           end
 
 
@@ -739,7 +739,7 @@ class DatasetsController < ApplicationController
     @dataset.destroy
     respond_to do |format|
       if current_user
-        format.html { redirect_to "/datasets?datasets=#{current_user.username}", notice: 'Dataset was successfully deleted.' }
+        format.html { redirect_to "/datasets?q=&#{URI.encode('depositors[]')}=#{current_user.username}", notice: 'Dataset was successfully deleted.' }
       else
         format.html { redirect_to datasets_url, notice: 'Dataset was successfully deleted.' }
       end

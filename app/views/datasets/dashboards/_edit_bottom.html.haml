@@ -22,6 +22,6 @@
           Confirm
           %span(class="glyphicon glyphicon-triangle-right" )
 
-        %button(type="button" class="btn btn-danger btn-block" name="cancel" onclick='window.location = "/datasets?depositor=#{current_user.name}"')
+        %button(type="button" class="btn btn-danger btn-block" name="cancel" onclick='window.location = "/datasets?q=&depositors%5B%5D=#{current_user.name}"')
           %span(class="glyphicon glyphicon-remove" )
           Cancel
