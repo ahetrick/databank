@@ -759,6 +759,21 @@ class Dataset < ActiveRecord::Base
 
   end
 
+  def license_name
+    license_name = "License not selected"
+
+    LICENSE_INFO_ARR.each do |license_info|
+      if (license_info.code == self.license) && (self.license !='license.txt')
+        license_name = license_info.name
+      elsif self.license == 'license.txt'
+        license_name = 'See license.txt file in dataset.'
+      end
+    end
+
+    license_name
+
+  end
+
   def plain_text_citation
 
     if self.creator_list == ""
@@ -1040,9 +1055,9 @@ class Dataset < ActiveRecord::Base
 
   def license_code
 
-    if self.license
+    if self.license && self.license != ''
       if self.license.include?('.txt')
-        return 'license_txt'
+        return 'custom'
       else
         return self.license
       end

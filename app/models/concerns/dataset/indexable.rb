@@ -128,18 +128,15 @@ module Indexable
 
   def self.license_name_from_code(code)
 
-    if code == 'unselected'
+    if ['unselected', 'custom'].include?(code)
       return code
-    elsif
-      code.include?('txt')
-      return 'see license.txt in dataset'
 
     else
       licenses = LICENSE_INFO_ARR.select{|license| license.code == code}
       if licenses && licenses.length > 0
         return licenses[0].name
       else
-        return 'license not found'
+        return code
       end
 
     end
@@ -224,18 +221,7 @@ module Indexable
     self.datafile_extensions.join(" ")
   end
 
-  def license_name
-    license_name = "License not selected"
 
-    LICENSE_INFO_ARR.each do |license_info|
-      if (license_info.code == self.license) && (self.license !='license.txt')
-        license_name = license_info.name
-      end
-    end
-
-    license_name
-
-  end
 
 
 

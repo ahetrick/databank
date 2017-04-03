@@ -106,17 +106,17 @@
             .panel-body
               -@search.facet(:license_code).rows.each do |row|
 
-                =debug(row)
+                - if row.value != ""
 
-                .facet
-                  -if params.has_key?('license_codes') && params['license_codes'].include?(row.value)
-                    %input(type="checkbox" class="checkFacet checkFacetGroup license_facet" name="license_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
-                      = Indexable.license_name_from_code(row.value)
-                      ="(#{row.count})"
-                  -else
-                    %input(type="checkbox" class="checkFacet checkFacetGroup license_facet" name="license_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
-                      = Indexable.license_name_from_code(row.value)
-                      ="(#{row.count})"
+                  .facet
+                    -if params.has_key?('license_codes') && params['license_codes'].include?(row.value)
+                      %input(type="checkbox" class="checkFacet checkFacetGroup license_facet" name="license_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                        = Indexable.license_name_from_code(row.value)
+                        ="(#{row.count})"
+                    -else
+                      %input(type="checkbox" class="checkFacet checkFacetGroup license_facet" name="license_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                        = Indexable.license_name_from_code(row.value)
+                        ="(#{row.count})"
 
 
         -if current_user && current_user.role == 'admin'
