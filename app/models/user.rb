@@ -49,6 +49,9 @@ class User < ActiveRecord::Base
   end
 
   def update_with_omniauth(auth)
+
+    Rails.logger.warn auth
+
     authname = auth["info"]["name"]
 
     if ((auth["provider"] == "shibboleth") && (auth["extra"]["raw_info"]["nickname"]) && ((auth["extra"]["raw_info"]["nickname"]) != ""))
