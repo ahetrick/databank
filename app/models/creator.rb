@@ -19,9 +19,9 @@ class Creator < ActiveRecord::Base
     return_text = "placeholder name"
 
     if self.type_of == :institution
-      return_text = "#{self.given_name} #{self.family_name}"
-    else
       return_text = "#{self.institution_name}"
+    else
+      return_text = "#{self.given_name} #{self.family_name}"
     end
 
   end
