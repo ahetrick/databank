@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # GNU General Public License https://www.gnu.org/licenses/gpl-3.0.txt
 #
