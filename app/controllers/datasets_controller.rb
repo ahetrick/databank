@@ -245,8 +245,27 @@ class DatasetsController < ApplicationController
             end
             @search.facet(:visibility_code).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
           end
-
         else
+
+          search_get_facets = Dataset.search do
+            without(:depositor, 'error')
+            any_of do
+              with :publication_state, Databank::PublicationState::RELEASED
+              with :publication_state, Databank::PublicationState::Embargo::FILE
+              with :publication_state, Databank::PublicationState::TempSuppress::FILE
+              with :publication_state, Databank::PublicationState::PermSuppress::FILE
+            end
+
+            keywords (params[:q])
+            facet(:license_code)
+            facet(:funder_codes)
+            facet(:creator_names)
+            facet(:depositor)
+            facet(:visibility_code)
+            facet(:hold_state)
+            facet(:datafile_extensions)
+          end
+
           @search = Dataset.search do
 
             any_of do
@@ -254,6 +273,16 @@ class DatasetsController < ApplicationController
               with :publication_state, Databank::PublicationState::Embargo::FILE
               with :publication_state, Databank::PublicationState::TempSuppress::FILE
             end
+
+
+            if params.has_key?('depositors')
+              any_of do
+                params['depositors'].each do |depositor|
+                  with :depositor, depositor
+                end
+              end
+            end
+
 
             if params.has_key?('license_codes')
               any_of do
@@ -275,7 +304,10 @@ class DatasetsController < ApplicationController
             order_by :updated_at, :desc
             facet(:license_code)
             facet(:funder_codes)
+            facet(:creator_names)
+            facet(:depositor)
             facet(:visibility_code)
+            facet(:hold_state)
             facet(:datafile_extensions)
 
           end
@@ -331,7 +363,10 @@ class DatasetsController < ApplicationController
         order_by :updated_at, :desc
         facet(:license_code)
         facet(:funder_codes)
+        facet(:creator_names)
+        facet(:depositor)
         facet(:visibility_code)
+        facet(:hold_state)
         facet(:datafile_extensions)
 
       end
