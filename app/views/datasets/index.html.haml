@@ -19,6 +19,8 @@
         %br
         %button(type="button" onclick="clearFilters()" class="btn btn-success" )
           Clear Filters
+        %button(type="button" onclick="generateReport()" class="btn btn-info" )
+          Generate Report from Search Results
 
 
         -if current_user && current_user.role == 'depositor'

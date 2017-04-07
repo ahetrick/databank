@@ -106,9 +106,8 @@
 
 
 
-  <% if (can? :manage, @dataset) || ((can? :edit, @dataset) && (@dataset.publication_state != Databank::PublicationState::PermSuppress::FILE)) || ((@dataset.publication_state == Databank::PublicationState::RELEASED) && (@dataset.hold_state != Databank::PublicationState::TempSuppress::FILE)) %>
-    <%= render partial: 'datasets/show_files', locals: {dataset: @dataset} %>
-  <% end %>
+
+  <%= render partial: 'datasets/show_files', locals: {dataset: @dataset} %>
 
   <!-- END file section -->
 
