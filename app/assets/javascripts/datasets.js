@@ -884,7 +884,15 @@ function deleteSelected() {
 }
 
 function handleCheckFileGroupChange(){
-    $(".checkFileSelectedCount").html($('('+'.checkFile:checked').size() + ')');
+
+    var numChecked = $('.checkFile:checked').size();
+
+    if (typeof numChecked === 'undefined' || isNaN(numChecked) || numChecked < 1 ){
+        numChecked = 0;
+    }
+
+
+    $(".checkFileSelectedCount").html( '(' + numChecked.toString()  + ')');
     $('#checkAllFiles').prop('checked', false);
 }
 
