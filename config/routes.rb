@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-
   get '/datasets/:dataset_id/datafiles/add', to: 'datafiles#add'
 
   resources :tokens
@@ -52,8 +51,9 @@ Rails.application.routes.draw do
   get '/datasets/:id/download_BibTeX', to: 'datasets#download_BibTeX'
   get '/datasets/:id/download_RIS', to: 'datasets#download_RIS'
   get '/datasets/:id/download_plaintext_citation', to: 'datasets#download_plaintext_citation'
+  get '/datasets/:id/download_plaintext_citation', to: 'datasets#download_plaintext_citation'
 
-  get '/datasets/:id/destroy_file/:web_id', to: 'datasets#destroy_file'
+
 
   get '/datasets/:id/download_box_file/:box_file_id', to: 'datasets#download_box_file'
 

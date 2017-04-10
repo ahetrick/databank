@@ -66,7 +66,6 @@ class DatasetsController < ApplicationController
           search_get_facets = Dataset.search do
             without(:depositor, 'error')
             keywords (params[:q])
-            order_by :updated_at, :desc
             facet(:license_code)
             facet(:funder_codes)
             facet(:creator_names)
@@ -113,7 +112,19 @@ class DatasetsController < ApplicationController
             end
 
             keywords (params[:q])
-            order_by :updated_at, :desc
+
+            if params.has_key?('sort_by')
+              if params['sort_by'] == 'sort_updated_asc'
+                order_by :updated_at, :asc
+              elsif params['sort_by']== 'sort_released_asc'
+                order_by :release_date, :asc
+              elsif params['sort_by'] == 'sort_released_desc'
+                order_by :release_date, :desc
+              else
+                order_by :updated_at, :desc
+              end
+            end
+
             facet(:license_code)
             facet(:funder_codes)
             facet(:creator_names)
@@ -228,7 +239,17 @@ class DatasetsController < ApplicationController
 
 
             keywords (params[:q])
-            order_by :updated_at, :desc
+            if params.has_key?('sort_by')
+              if params['sort_by'] == 'sort_updated_asc'
+                order_by :updated_at, :asc
+              elsif params['sort_by']== 'sort_released_asc'
+                order_by :release_date, :asc
+              elsif params['sort_by'] == 'sort_released_desc'
+                order_by :release_date, :desc
+              else
+                order_by :updated_at, :desc
+              end
+            end
             facet(:license_code)
             facet(:funder_codes)
             facet(:depositor)
@@ -301,7 +322,17 @@ class DatasetsController < ApplicationController
             end
 
             keywords (params[:q])
-            order_by :updated_at, :desc
+            if params.has_key?('sort_by')
+              if params['sort_by'] == 'sort_updated_asc'
+                order_by :updated_at, :asc
+              elsif params['sort_by']== 'sort_released_asc'
+                order_by :release_date, :asc
+              elsif params['sort_by'] == 'sort_released_desc'
+                order_by :release_date, :desc
+              else
+                order_by :updated_at, :desc
+              end
+            end
             facet(:license_code)
             facet(:funder_codes)
             facet(:creator_names)
@@ -325,7 +356,6 @@ class DatasetsController < ApplicationController
         end
         
         keywords (params[:q])
-        order_by :updated_at, :desc
         facet(:license_code)
         facet(:funder_codes)
         facet(:creator_names)
@@ -360,7 +390,17 @@ class DatasetsController < ApplicationController
         end
 
         keywords (params[:q])
-        order_by :updated_at, :desc
+        if params.has_key?('sort_by')
+          if params['sort_by'] == 'sort_updated_asc'
+            order_by :updated_at, :asc
+          elsif params['sort_by']== 'sort_released_asc'
+            order_by :release_date, :asc
+          elsif params['sort_by'] == 'sort_released_desc'
+            order_by :release_date, :desc
+          else
+            order_by :updated_at, :desc
+          end
+        end
         facet(:license_code)
         facet(:funder_codes)
         facet(:creator_names)
@@ -1352,6 +1392,10 @@ class DatasetsController < ApplicationController
   def download_deckfile
     # Rails.logger.warn params.to_yaml
     render :edit
+  end
+
+  def citation_report(params)
+
   end
 
   private

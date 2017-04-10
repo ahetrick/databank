@@ -31,6 +31,7 @@ class Dataset < ActiveRecord::Base
     string :datafile_extensions, multiple: true
     string :hold_state
     string :publication_state
+    time :release_date
     time :created_at
     time :updated_at
 
