@@ -146,13 +146,16 @@ module Indexable
 
   def self.funder_name_from_code(code)
 
-    funders = FUNDER_INFO_ARR.select{|funder| funder.code == code}
-    if funders && funders.length > 0
-      return funders[0].name
+    if code == 'other'
+      return "Other"
     else
-      return 'funder not found'
+      funders = FUNDER_INFO_ARR.select{|funder| funder.code == code}
+      if funders && funders.length > 0
+        return funders[0].name
+      else
+        return 'funder not found'
+      end
     end
-
 
   end
 
