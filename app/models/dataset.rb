@@ -1042,7 +1042,7 @@ class Dataset < ActiveRecord::Base
       end
     end
     # if we get here, there was no change from draft to another state
-    return DateTime.new(0,0,0)
+    return DateTime.new(1,1,1)
   end
 
   def full_changelog

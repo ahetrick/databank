@@ -225,10 +225,11 @@ module Indexable
   end
 
   def release_datetime
-    if self.release_date && self.release_date != ""
+    if self.release_date
+
       return DateTime.new(self.release_date.year, self.release_date.mon, self.release_date.mday)
     else
-      return DateTime.new(0,0,0)
+      return DateTime.new(1,1,1)
     end
 
   end
