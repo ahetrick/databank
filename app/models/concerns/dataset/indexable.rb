@@ -250,7 +250,7 @@ module Indexable
       report_text = report_text + "\n\n #{dataset.plain_text_citation}"
       if dataset.funders.count > 0
         dataset.funders.each do |funder|
-          report_text = report_text + "Funder: #{funder.name}"
+          report_text = report_text + "\nFunder: #{funder.name}"
           if funder.grant && funder.grant != ""
             report_text = report_text + ", Grant: #{funder.grant}"
           end
