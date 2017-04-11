@@ -11,17 +11,17 @@
 
       .curator-only
         .label.label-default
-          ="updated: #{@dataset.updated_at.to_date.iso8601}"
+          ="updated: #{dataset.updated_at.to_date.iso8601}"
         &nbsp;
         .label.label-default
-          ="ingest: #{@dataset.ingest_datetime.to_date.iso8601}"
+          ="ingest: #{dataset.ingest_datetime.to_date.iso8601}"
         &nbsp;
         .label.label-default
-          ="release: #{@dataset.release_datetime.to_date.iso8601}"
+          ="release: #{dataset.release_datetime.to_date.iso8601}"
         &nbsp;
         .label.label-default
           =Indexable.visibility_name_from_code(dataset.visibility_code)
-          
+
         -if dataset.hold_state != 'none'
           &nbsp;
           .label.label-danger
