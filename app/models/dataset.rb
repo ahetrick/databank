@@ -1045,6 +1045,38 @@ class Dataset < ActiveRecord::Base
     return DateTime.new(1,1,1)
   end
 
+  def display_changelog
+    changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', self.id, self.id)
+
+    medusaChangesArr = Array.new
+    publication = nil
+
+    changes.each do |change|
+
+      if (change.audited_changes.has_key?('medusa_path')) || (change.audited_changes.has_key?('binary_name')) || (change.audited_changes.has_key?('medusa_dataset_dir'))
+        medusaChangesArr << change.id
+      end
+      if (change.audited_changes.keys.include?("publication_state"))
+
+        pub_change = (change.audited_changes)["publication_state"]
+
+        if pub_change.class == Array && pub_change[0] == Databank::PublicationState::DRAFT
+          publication = change.created_at
+        end
+
+      end
+    end
+
+    if publication
+      changes = changes.where("created_at >= ?", publication).where.not(id: medusaChangesArr)
+    else
+      Rails.logger.warn "no changes found for dataset #{attributes[:dataset_id]}"
+      changes = Audited::Adapters::ActiveRecord::Audit.none
+    end
+    changes.reorder('created_at DESC')
+
+  end
+
   def full_changelog
     changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', self.id, self.id)
     changesArr = Array.new

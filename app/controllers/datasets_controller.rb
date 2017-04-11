@@ -486,14 +486,14 @@ class DatasetsController < ApplicationController
 
     set_file_mode
 
-    @changetable = nil
-
-    changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', @dataset.id, @dataset.id)
-    # Rails.logger.warn "changes: #{changes.to_yaml}"
-
-    if changes && changes.count > 0 && @dataset.publication_state != Databank::PublicationState::DRAFT
-      @changetable = Effective::Datatables::DatasetChanges.new(dataset_id: @dataset.id)
-    end
+    # @changetable = nil
+    #
+    # changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', @dataset.id, @dataset.id)
+    # # Rails.logger.warn "changes: #{changes.to_yaml}"
+    #
+    # if changes && changes.count > 0 && @dataset.publication_state != Databank::PublicationState::DRAFT
+    #   @changetable = Effective::Datatables::DatasetChanges.new(dataset_id: @dataset.id)
+    # end
 
     # Rails.logger.warn "changetable: #{@changetable.to_yaml}"
 

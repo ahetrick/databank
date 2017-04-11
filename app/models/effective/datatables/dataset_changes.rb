@@ -3,6 +3,8 @@ module Effective
     class DatasetChanges < Effective::Datatable
       datatable do
 
+        default_order :created_at, :desc
+
         # array_column :element  do |change|
         #   render text: change.audited_changes.keys.first
         # end
@@ -25,8 +27,8 @@ module Effective
 
         # table_column :audited_changes
 
-        table_column :created_at, label: "Timestamp", proc: Proc.new{|change| (change.created_at).iso8601}
-        default_order :created_at, :desc
+        table_column :created_at, sortable: true, label: "Timestamp", proc: Proc.new{|change| (change.created_at).iso8601}
+
 
       end
 
