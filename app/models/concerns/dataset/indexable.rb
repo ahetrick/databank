@@ -247,7 +247,7 @@ module Indexable
 
     search.each_hit_with_result do |hit, dataset|
 
-      report_text = report_text + "\n\n #{dataset.plain_text_citation}"
+      report_text = report_text + "\n\n#{dataset.plain_text_citation}"
       if dataset.funders.count > 0
         dataset.funders.each do |funder|
           report_text = report_text + "\nFunder: #{funder.name}"
