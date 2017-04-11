@@ -2,7 +2,7 @@
 %form(action="/datasets" id="searchForm" accept-charset="UTF-8" method="get" )
 
   .hide-when-printing
-    %button(type="submit" class="btn btn-info" )
+    %button(type="button" class="btn btn-info" onclick="backToSearch()" )
       %span(class="glyphicon glyphicon-triangle-left" )
       Go back to search
     %a(href="javascript:window.print()" class="btn btn-success idb" )

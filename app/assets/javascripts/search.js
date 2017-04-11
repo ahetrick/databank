@@ -17,6 +17,11 @@ function handleFilterChange() {
     $("#searchForm").submit();
 }
 
+function backToSearch() {
+  $("input[name='download']").remove();
+    $("#searchForm").submit();
+}
+
 function generateReport() {
 
     $("#searchForm").append("<input type='hidden' name='report' value='generate' />");
@@ -68,6 +73,8 @@ function sortResults(sort_criteria){
     $("input[name='sort_by']").val(sort_criteria);
     $("#searchForm").submit();
 }
+
+
 
 $(document).ready(search_ready);
 $(document).on('page:load', search_ready);
