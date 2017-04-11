@@ -14,10 +14,10 @@
           ="updated: #{dataset.updated_at.to_date.iso8601}"
         &nbsp;
         .label.label-default
-          ="ingest: #{dataset.ingest_datetime.to_date.iso8601}"
+          ="ingested: #{dataset.ingest_datetime.to_date.iso8601}"
         &nbsp;
         .label.label-default
-          ="release: #{dataset.release_datetime.to_date.iso8601}"
+          ="released: #{dataset.release_datetime.to_date.iso8601}"
         &nbsp;
         .label.label-default
           =Indexable.visibility_name_from_code(dataset.visibility_code)
