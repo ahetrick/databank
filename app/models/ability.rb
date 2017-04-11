@@ -10,9 +10,9 @@ class Ability
       can :manage, :all
     elsif user.is?(:depositor)
 
+      can :download_citation_report, :all
       can :read, :all
       can :create, :all
-      can :citation_report, :all
       can :confirmation_message, Dataset do |dataset|
         dataset.try(:depositor_email) == user.email
       end
@@ -57,7 +57,7 @@ class Ability
       can :search, Dataset
 
     else
-      can :citation_report, :all
+      can :download_citation_report, :all
       can :read, :all
       can :download_link, Dataset
       can :stream_file, Dataset

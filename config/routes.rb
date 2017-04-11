@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+
+  get 'datasets/download_citation_report', to: 'datasets#download_citation_report'
+
   get '/datasets/:dataset_id/datafiles/add', to: 'datafiles#add'
 
   resources :tokens

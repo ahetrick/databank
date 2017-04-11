@@ -23,6 +23,11 @@ function generateReport() {
     $("#searchForm").submit();
 }
 
+function downloadCitationReport(){
+    $("#searchForm").append("<input type='hidden' name='download' value='now' />");
+    $("#searchForm").submit();
+}
+
 function clearSearchTerm(){
     $("input[name='q']").val("");
     $("#searchForm").submit();

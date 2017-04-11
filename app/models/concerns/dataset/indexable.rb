@@ -222,7 +222,45 @@ module Indexable
   end
 
 
+  def self.citation_report(search, request_url, current_user)
 
+    report_text = ""
 
+    75.times do
+      report_text = report_text + "="
+    end
 
+    report_text = report_text + "\nCitation Report, generated #{Date.current.iso8601}"
+    if current_user && current_user.username
+      report_text = report_text + "by #{current_user}"
+    end
+    report_text = report_text + "\nQuery URL: #{request_url}\n"
+
+    75.times do
+      report_text = report_text + "="
+    end
+
+    report_text = report_text + "\n"
+
+    search.each_hit_with_result do |hit, dataset|
+
+      report_text = report_text + "\n\n #{dataset.plain_text_citation}"
+      if dataset.funders.count > 0
+        dataset.funders.each do |funder|
+          report_text = report_text + "Funder: #{funder.name}"
+          if funder.grant && funder.grant != ""
+            report_text = report_text + ", Grant: #{funder.grant}"
+          end
+
+        end
+      end
+      report_text = report_text + "\nDownloads: #{dataset.total_downloads}\n"
+      75.times do
+        report_text = report_text + "-"
+      end
+    end
+
+    report_text
+
+  end
 end
