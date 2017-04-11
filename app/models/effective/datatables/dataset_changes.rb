@@ -53,7 +53,7 @@ module Effective
         end
 
         if publication
-          changes = changes.where("created_at > ?", publication).where.not(id: medusaChangesArr)
+          changes = changes.where("created_at >= ?", publication).where.not(id: medusaChangesArr)
         else
           Rails.logger.warn "no changes found for dataset #{attributes[:dataset_id]}"
           changes = Audited::Adapters::ActiveRecord::Audit.none
