@@ -51,6 +51,13 @@ function setSortStyle(){
         case 'sort_released_desc':
             $('.released_desc').addClass('btn-current-sort');
             break;
+        case 'sort_ingested_asc':
+            $('.ingested_asc').addClass('btn-current-sort');
+            break;
+        case 'sort_ingested_desc':
+            $('.ingested_desc').addClass('btn-current-sort');
+            break;
+
         default:
             $('.updated_desc').addClass('btn-current-sort');
     }

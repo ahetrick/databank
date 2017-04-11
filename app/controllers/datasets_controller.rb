@@ -117,9 +117,13 @@ class DatasetsController < ApplicationController
               if params['sort_by'] == 'sort_updated_asc'
                 order_by :updated_at, :asc
               elsif params['sort_by']== 'sort_released_asc'
-                order_by :release_date, :asc
+                order_by :release_datetime, :asc
               elsif params['sort_by'] == 'sort_released_desc'
-                order_by :release_date, :desc
+                order_by :release_datetime, :desc
+              elsif params['sort_by'] == 'sort_ingested_asc'
+                order_by :ingest_datetime, :asc
+              elsif params['sort_by']==  'sort_ingested_desc'
+                order_by :ingest_datetime, :desc
               else
                 order_by :updated_at, :desc
               end
@@ -243,9 +247,13 @@ class DatasetsController < ApplicationController
               if params['sort_by'] == 'sort_updated_asc'
                 order_by :updated_at, :asc
               elsif params['sort_by']== 'sort_released_asc'
-                order_by :release_date, :asc
+                order_by :release_datetime, :asc
               elsif params['sort_by'] == 'sort_released_desc'
-                order_by :release_date, :desc
+                order_by :release_datetime, :desc
+              elsif params['sort_by'] == 'sort_ingested_asc'
+                order_by :ingest_datetime, :asc
+              elsif params['sort_by']==  'sort_ingested_desc'
+                order_by :ingest_datetime, :desc
               else
                 order_by :updated_at, :desc
               end
@@ -326,9 +334,13 @@ class DatasetsController < ApplicationController
               if params['sort_by'] == 'sort_updated_asc'
                 order_by :updated_at, :asc
               elsif params['sort_by']== 'sort_released_asc'
-                order_by :release_date, :asc
+                order_by :release_datetime, :asc
               elsif params['sort_by'] == 'sort_released_desc'
-                order_by :release_date, :desc
+                order_by :release_datetime, :desc
+              elsif params['sort_by'] == 'sort_ingested_asc'
+                order_by :ingest_datetime, :asc
+              elsif params['sort_by']==  'sort_ingested_desc'
+                order_by :ingest_datetime, :desc
               else
                 order_by :updated_at, :desc
               end
@@ -394,9 +406,13 @@ class DatasetsController < ApplicationController
           if params['sort_by'] == 'sort_updated_asc'
             order_by :updated_at, :asc
           elsif params['sort_by']== 'sort_released_asc'
-            order_by :release_date, :asc
+            order_by :release_datetime, :asc
           elsif params['sort_by'] == 'sort_released_desc'
-            order_by :release_date, :desc
+            order_by :release_datetime, :desc
+          elsif params['sort_by'] == 'sort_ingested_asc'
+            order_by :ingest_datetime, :asc
+          elsif params['sort_by']==  'sort_ingested_desc'
+            order_by :ingest_datetime, :desc
           else
             order_by :updated_at, :desc
           end

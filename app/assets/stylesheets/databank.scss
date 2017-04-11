@@ -409,7 +409,7 @@ table.deposit-agreement-selection-warning > tbody > tr > td {
 }
 
 @media print {
-  * { background: transparent !important; color: black !important; text-shadow: none !important; filter:none !important; -ms-filter: none !important; } /* Black prints faster: h5bp.com/s */
+  * { background: transparent !important; color: black !important; text-shadow: none !important; filter:none !important; -ms-filter: none !important; min-height: 0 !important;} /* Black prints faster: h5bp.com/s */
   .hide-when-printing {visibility: hidden;}
   a, a:visited { text-decoration: underline; }
   a[href]:after { content: " (" attr(href) ")"; }

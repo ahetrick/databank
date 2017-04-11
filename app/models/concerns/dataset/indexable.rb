@@ -224,6 +224,15 @@ module Indexable
     self.datafile_extensions.join(" ")
   end
 
+  def release_datetime
+    if self.release_date && self.release_date != ""
+      return DateTime.new(self.release_date.year, self.release_date.mon, self.release_date.mday)
+    else
+      return DateTime.new(0,0,0)
+    end
+
+  end
+
 
   def self.citation_report(search, request_url, current_user)
 

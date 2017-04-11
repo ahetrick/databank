@@ -31,7 +31,8 @@ class Dataset < ActiveRecord::Base
     string :datafile_extensions, multiple: true
     string :hold_state
     string :publication_state
-    time :release_date
+    time :ingest_datetime
+    time :release_datetime
     time :created_at
     time :updated_at
 
@@ -1025,6 +1026,24 @@ class Dataset < ActiveRecord::Base
     notification.deliver_now
   end
 
+  def ingest_datetime
+
+    changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) ", 'Dataset', self.id)
+    changes.each do |change|
+
+      if (change.audited_changes.keys.include?("publication_state"))
+
+        pub_change = (change.audited_changes)["publication_state"]
+
+        if pub_change.class == Array && pub_change[0] == Databank::PublicationState::DRAFT
+          return change.created_at
+        end
+
+      end
+    end
+    # if we get here, there was no change from draft to another state
+    return DateTime.new(0,0,0)
+  end
 
   def full_changelog
     changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', self.id, self.id)
