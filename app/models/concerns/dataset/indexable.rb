@@ -233,7 +233,7 @@ module Indexable
       report_text = report_text + "="
     end
 
-    report_text = report_text + "\nCitation Report, generated #{Date.current.iso8601}"
+    report_text = report_text + "\nIllinois Data Bank\nDatasets Report, generated #{Date.current.iso8601}"
     if current_user && current_user.username
       report_text = report_text + "by #{current_user}"
     end
