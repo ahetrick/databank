@@ -1041,8 +1041,16 @@ class Dataset < ActiveRecord::Base
 
       end
     end
-    # if we get here, there was no change from draft to another state
-    return DateTime.new(1,1,1)
+    # if we get here, there was no change in changelog from draft to another state
+
+    if self.publication_state == Databank::PublicationState::DRAFT
+      return DateTime.new(1,1,1)
+    elsif self.release_date && self.release_date > DateTime.new(1,1,1)
+      return self.release_datetime
+    else
+      return DateTime.new(1,1,1)
+    end
+
   end
 
   def display_changelog
