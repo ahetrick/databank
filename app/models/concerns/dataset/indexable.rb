@@ -226,8 +226,9 @@ module Indexable
 
   def release_datetime
     if self.release_date
-
       return DateTime.new(self.release_date.year, self.release_date.mon, self.release_date.mday)
+    elsif self.publication_state == Databank::PublicationState::RELEASED && self.ingest_datetime > DateTime.new(1,1,1)
+      return self.ingest_datetime
     else
       return DateTime.new(1,1,1)
     end
@@ -239,7 +240,7 @@ module Indexable
 
     report_text = ""
 
-    75.times do
+    15.times do
       report_text = report_text + "="
     end
 
@@ -249,7 +250,7 @@ module Indexable
     end
     report_text = report_text + "\nQuery URL: #{request_url}\n"
 
-    75.times do
+    15.times do
       report_text = report_text + "="
     end
 
@@ -267,8 +268,8 @@ module Indexable
 
         end
       end
-      report_text = report_text + "\nDownloads: #{dataset.total_downloads}\n"
-      75.times do
+      report_text = report_text + "\nDownloads: #{dataset.total_downloads} (#{dataset.release_datetime.to_date.iso8601} to #{Date.current.iso8601} )\n"
+      5.times do
         report_text = report_text + "-"
       end
     end
