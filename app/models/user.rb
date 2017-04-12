@@ -82,10 +82,9 @@ class User < ActiveRecord::Base
     create! do |user|
       user.provider = auth["provider"]
       user.uid = auth["uid"]
-      user.name = authname
       user.email = auth["info"]["email"]
-      user.username = user.email.split('@').first
-      user.name = User.user_display_name(self.username)
+      user.username = (auth["info"]["email"]).split('@').first
+      user.name = User.user_display_name((auth["info"]["email"]).split('@').first)
 
       if IDB_CONFIG[:local_mode]
         # Rails.logger.info "inside local mode check #{IDB_CONFIG[:local_mode]}"
