@@ -225,7 +225,10 @@ module Indexable
   end
 
   def release_datetime
-    if self.release_date
+
+    if self.publication_state == Databank::PublicationState::DRAFT
+      return DateTime.new(1,1,1)
+    elsif self.release_date
       return DateTime.new(self.release_date.year, self.release_date.mon, self.release_date.mday)
     elsif self.publication_state == Databank::PublicationState::RELEASED && self.ingest_datetime > DateTime.new(1,1,1)
       return self.ingest_datetime
