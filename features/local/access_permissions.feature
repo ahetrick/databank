@@ -10,7 +10,7 @@ Feature: Access Permissions
     And I click on 'Continue'
     And I agree to deposit agreement
     Then I see all of:
-      | imported DOI | test DOI |
+      | Imported DOI | Test DOI |
     And I see shaded background on curator elements
 
   Scenario: Deposit form looks right for depositor
@@ -21,7 +21,7 @@ Feature: Access Permissions
     And I click on 'Continue'
     And I agree to deposit agreement
     Then I see none of:
-      | imported DOI | test DOI |
+      | Imported DOI | Test DOI |
 
   Scenario: Deposit form unavailable for undergrad
     Given I am logged out
