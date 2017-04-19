@@ -162,6 +162,7 @@ class DatasetsController < ApplicationController
           search_get_my_facets = Dataset.search do
 
             all_of do
+              without(:depositor, 'error')
               with :depositor_email, current_user.email
               with :is_test, false
               any_of do
@@ -178,19 +179,23 @@ class DatasetsController < ApplicationController
           end
 
           search_get_facets = Dataset.search do
-            without(:depositor, 'error')
-            with(:is_test, false)
-            any_of do
-              with :depositor_email, current_user.email
-              with :publication_state, Databank::PublicationState::RELEASED
-              with :publication_state, Databank::PublicationState::Embargo::FILE
-              with :publication_state, Databank::PublicationState::TempSuppress::FILE
-              with :publication_state, Databank::PublicationState::PermSuppress::FILE
-              all_of do
+
+            all_of do
+              without(:depositor, 'error')
+              with(:is_test, false)
+              any_of do
                 with :depositor_email, current_user.email
-                with :publication_state, Databank::PublicationState::TempSuppress::METADATA
+                with :publication_state, Databank::PublicationState::RELEASED
+                with :publication_state, Databank::PublicationState::Embargo::FILE
+                with :publication_state, Databank::PublicationState::TempSuppress::FILE
+                with :publication_state, Databank::PublicationState::PermSuppress::FILE
+                all_of do
+                  with :depositor_email, current_user.email
+                  with :publication_state, Databank::PublicationState::TempSuppress::METADATA
+                end
               end
             end
+
 
             keywords (params[:q])
             facet(:license_code)
@@ -204,49 +209,52 @@ class DatasetsController < ApplicationController
 
           @search = Dataset.search do
 
-            without(:depositor, 'error')
-            with(:is_test, false)
-            any_of do
-              with :depositor_email, current_user.email
-              with :publication_state, Databank::PublicationState::RELEASED
-              with :publication_state, Databank::PublicationState::Embargo::FILE
-              with :publication_state, Databank::PublicationState::TempSuppress::FILE
-              with :publication_state, Databank::PublicationState::PermSuppress::FILE
-            end
-
-
-            if params.has_key?('depositors')
+            all_of do
+              without(:depositor, 'error')
+              with :is_test, false
               any_of do
-                params['depositors'].each do |depositor|
-                  with :depositor, depositor
+                with :depositor_email, current_user.email
+                with :publication_state, Databank::PublicationState::RELEASED
+                with :publication_state, Databank::PublicationState::Embargo::FILE
+                with :publication_state, Databank::PublicationState::TempSuppress::FILE
+                with :publication_state, Databank::PublicationState::PermSuppress::FILE
+              end
+
+
+
+              if params.has_key?('depositors')
+                any_of do
+                  params['depositors'].each do |depositor|
+                    with :depositor, depositor
+                  end
                 end
               end
-            end
 
-            if params.has_key?('license_codes')
-              any_of do
-                params['license_codes'].each do |license_code|
-                  with :license_code, license_code
+              if params.has_key?('license_codes')
+                any_of do
+                  params['license_codes'].each do |license_code|
+                    with :license_code, license_code
+                  end
                 end
               end
-            end
 
-            if params.has_key?('funder_codes')
-              any_of do
-                params['funder_codes'].each do |funder_code|
-                  with :funder_codes, funder_code
+              if params.has_key?('funder_codes')
+                any_of do
+                  params['funder_codes'].each do |funder_code|
+                    with :funder_codes, funder_code
+                  end
                 end
               end
-            end
 
-            if params.has_key?('visibility_codes')
-              any_of do
-                params['visibility_codes'].each do |visibility_code|
-                  with :visibility_code, visibility_code
+              if params.has_key?('visibility_codes')
+                any_of do
+                  params['visibility_codes'].each do |visibility_code|
+                    with :visibility_code, visibility_code
+                  end
                 end
               end
-            end
 
+            end
 
             keywords (params[:q])
             if params.has_key?('sort_by')
@@ -275,6 +283,7 @@ class DatasetsController < ApplicationController
 
           end
 
+
           search_get_my_facets.facet(:visibility_code).rows.each do |outer_row|
             has_this_row = false
             @search.facet(:visibility_code).rows.each do |inner_row|
@@ -285,13 +294,16 @@ class DatasetsController < ApplicationController
         else
 
           search_get_facets = Dataset.search do
-            without(:depositor, 'error')
-            with(:is_test, false)
-            any_of do
-              with :publication_state, Databank::PublicationState::RELEASED
-              with :publication_state, Databank::PublicationState::Embargo::FILE
-              with :publication_state, Databank::PublicationState::TempSuppress::FILE
-              with :publication_state, Databank::PublicationState::PermSuppress::FILE
+            all_of do
+              without(:depositor, 'error')
+              with :is_test, false
+              without :hold_state, Databank::PublicationState::TempSuppress::METADATA
+              any_of do
+                with :publication_state, Databank::PublicationState::RELEASED
+                with :publication_state, Databank::PublicationState::Embargo::FILE
+                with :publication_state, Databank::PublicationState::TempSuppress::FILE
+                with :publication_state, Databank::PublicationState::PermSuppress::FILE
+              end
             end
 
             keywords (params[:q])
@@ -306,37 +318,37 @@ class DatasetsController < ApplicationController
 
           @search = Dataset.search do
 
+            all_of do
 
-            without(:depositor, 'error')
-            with(:is_test, false)
-            any_of do
-              with :publication_state, Databank::PublicationState::RELEASED
-              with :publication_state, Databank::PublicationState::Embargo::FILE
-              with :publication_state, Databank::PublicationState::TempSuppress::FILE
-            end
-
-
-            if params.has_key?('depositors')
+              without(:depositor, 'error')
+              with(:is_test, false)
               any_of do
-                params['depositors'].each do |depositor|
-                  with :depositor, depositor
+                with :publication_state, Databank::PublicationState::RELEASED
+                with :publication_state, Databank::PublicationState::Embargo::FILE
+                with :publication_state, Databank::PublicationState::TempSuppress::FILE
+              end
+
+              if params.has_key?('depositors')
+                any_of do
+                  params['depositors'].each do |depositor|
+                    with :depositor, depositor
+                  end
                 end
               end
-            end
 
-
-            if params.has_key?('license_codes')
-              any_of do
-                params['license_codes'].each do |license_code|
-                  with :license_code, license_code
+              if params.has_key?('license_codes')
+                any_of do
+                  params['license_codes'].each do |license_code|
+                    with :license_code, license_code
+                  end
                 end
               end
-            end
 
-            if params.has_key?('funder_codes')
-              any_of do
-                params['funder_codes'].each do |funder_code|
-                  with :funder_codes, funder_code
+              if params.has_key?('funder_codes')
+                any_of do
+                  params['funder_codes'].each do |funder_code|
+                    with :funder_codes, funder_code
+                  end
                 end
               end
             end
@@ -373,13 +385,16 @@ class DatasetsController < ApplicationController
     else
 
       search_get_facets = Dataset.search do
-        without(:depositor, 'error')
-        with(:is_test, false)
 
-        any_of do
-          with :publication_state, Databank::PublicationState::RELEASED
-          with :publication_state, Databank::PublicationState::Embargo::FILE
-          with :publication_state, Databank::PublicationState::TempSuppress::FILE
+        all_of do
+          without(:depositor, 'error')
+          with :is_test, false
+          without :hold_state, Databank::PublicationState::TempSuppress::METADATA
+          any_of do
+            with :publication_state, Databank::PublicationState::RELEASED
+            with :publication_state, Databank::PublicationState::Embargo::FILE
+            with :publication_state, Databank::PublicationState::TempSuppress::FILE
+          end
         end
         
         keywords (params[:q])
@@ -394,24 +409,29 @@ class DatasetsController < ApplicationController
 
       @search = Dataset.search do
 
-        any_of do
-          with :publication_state, Databank::PublicationState::RELEASED
-          with :publication_state, Databank::PublicationState::Embargo::FILE
-          with :publication_state, Databank::PublicationState::TempSuppress::FILE
-        end
-
-        if params.has_key?('license_codes')
+        all_of do
+          without(:depositor, 'error')
+          with :is_test, false
+          without :hold_state, Databank::PublicationState::TempSuppress::METADATA
           any_of do
-            params['license_codes'].each do |license_code|
-              with :license_code, license_code
+            with :publication_state, Databank::PublicationState::RELEASED
+            with :publication_state, Databank::PublicationState::Embargo::FILE
+            with :publication_state, Databank::PublicationState::TempSuppress::FILE
+          end
+
+          if params.has_key?('license_codes')
+            any_of do
+              params['license_codes'].each do |license_code|
+                with :license_code, license_code
+              end
             end
           end
-        end
 
-        if params.has_key?('funder_codes')
-          any_of do
-            params['funder_codes'].each do |funder_code|
-              with :funder_codes, funder_code
+          if params.has_key?('funder_codes')
+            any_of do
+              params['funder_codes'].each do |funder_code|
+                with :funder_codes, funder_code
+              end
             end
           end
         end
