@@ -182,7 +182,7 @@ namespace :test do
         puts "Unexpected value for file storage mode flag: #{Databank::Application.file_mode}"
     end
     puts "***"
-    puts "configuration file is in /home/databank/shared/config/databank.yml}"
+    puts "configuration file is in /home/databank/shared/config/databank.yml"
     puts "relevant configuration entries are storage_mount, read_only_realpath, and read_write_realpath"
     puts "Storage mount: #{IDB_CONFIG[:storage_mount]}"
     puts "Current realpath of #{IDB_CONFIG[:storage_mount]}: #{mount_path}"
