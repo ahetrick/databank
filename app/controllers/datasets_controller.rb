@@ -78,6 +78,7 @@ class DatasetsController < ApplicationController
           @search = Dataset.search do
 
             without(:depositor, 'error')
+            with(:is_test, false)
 
             if params.has_key?('license_codes')
               any_of do
@@ -161,6 +162,7 @@ class DatasetsController < ApplicationController
 
             all_of do
               with :depositor_email, current_user.email
+              with :is_test, false
               any_of do
                 with :publication_state, Databank::PublicationState::DRAFT
                 with :publication_state, Databank::PublicationState::RELEASED
@@ -278,6 +280,7 @@ class DatasetsController < ApplicationController
 
           search_get_facets = Dataset.search do
             without(:depositor, 'error')
+            with(:is_test, false)
             any_of do
               with :publication_state, Databank::PublicationState::RELEASED
               with :publication_state, Databank::PublicationState::Embargo::FILE
@@ -360,6 +363,7 @@ class DatasetsController < ApplicationController
 
       search_get_facets = Dataset.search do
         without(:depositor, 'error')
+        with(:is_test, false)
 
         any_of do
           with :publication_state, Databank::PublicationState::RELEASED
