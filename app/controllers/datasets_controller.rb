@@ -78,7 +78,6 @@ class DatasetsController < ApplicationController
           @search = Dataset.search do
 
             without(:depositor, 'error')
-            with(:is_test, false)
 
             if params.has_key?('license_codes')
               any_of do
@@ -178,6 +177,7 @@ class DatasetsController < ApplicationController
 
           search_get_facets = Dataset.search do
             without(:depositor, 'error')
+            with(:is_test, false)
             any_of do
               with :depositor_email, current_user.email
               with :publication_state, Databank::PublicationState::RELEASED
