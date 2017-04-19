@@ -170,24 +170,77 @@ namespace :test do
     end
 
     puts "*******"
-    puts "File Storage Mode Report for Illinois Data Bank on #{IDB_CONFIG[:root_url_text]}"
+    puts "* STORAGE MODE REPORT for #{IDB_CONFIG[:root_url_text]} "
     puts "*******"
+    write_succeeded = false
+
+    # try to write
+    begin
+      file = File.open("#{mount_path}/testme.txt", "w")
+      write_succeeded = true if file
+    rescue Exception => ex
+      puts ex.class
+      puts ex.message
+      write_succeeded = false
+    ensure
+      file.close unless (file.nil? || file.closed?)
+      FileUtils.rm_f("#{mount_path}/testme.txt")
+    end
+
+    #try to read
+
+    datafile = Datafile.find_by_web_id("#{IDB_CONFIG[:sample_datafile]}")
+
+    unless datafile
+      puts "datafile #{IDB_CONFIG[:sample_datafile]} not found"
+      exit!
+    end
+
+    read_succeeded = false
+
+    if File.file?(datafile.bytestream_path)
+      read_string = IO.read(datafile.bytestream_path)
+      read_succeeded = read_string && read_string.length > 0
+    end
+
+    # if read-only mode, expect write to fail
+    # if read-write mode, expect write to succeed
+    # expect read to succeed
+
+
 
     case Databank::Application.file_mode
       when Databank::FileMode::READ_ONLY
-        puts "current file storage mode: read only"
+        puts "*  CURRENT MODE: read only"
+        if write_succeeded
+          puts "* WRITE ERROR: write succeeded, but it was not expected to"
+        else
+          puts "* WRITE OK: write did not succeed as expected"
+        end
       when Databank::FileMode::WRITE_READ
-        puts "current file storage mode: read and write"
+        puts "* CURRENT MODE: read and write"
+        if write_succeeded
+          puts "* WRITE OK: write succeed as expected"
+        else
+          puts "* WRITE ERROR: write did not succeed, but it was expected to"
+        end
       else
-        puts "Unexpected value for file storage mode flag: #{Databank::Application.file_mode}"
+        puts "* Unexpected value for file storage mode flag: #{Databank::Application.file_mode}"
     end
-    puts "***"
-    puts "configuration file is in /home/databank/shared/config/databank.yml"
-    puts "relevant configuration entries are storage_mount, read_only_realpath, and read_write_realpath"
-    puts "Storage mount: #{IDB_CONFIG[:storage_mount]}"
-    puts "Current realpath of #{IDB_CONFIG[:storage_mount]}: #{mount_path}"
-    puts "Realpath to compare for read only: #{read_only_path}"
-    puts "Realpath to compare for read and write: #{read_write_path}"
+    if read_succeeded
+      puts "* READ OK: read succeed as expected"
+    else
+      puts "* READ ERROR: read did not succeed, but it was expected to"
+    end
+    puts "*"
+    puts "* configuration details:"
+    puts "*"
+    puts "* configuration file is in /home/databank/shared/config/databank.yml"
+    puts "* relevant configuration entries are storage_mount, read_only_realpath, and read_write_realpath"
+    puts "* Storage mount => #{IDB_CONFIG[:storage_mount]}"
+    puts "* Current realpath of #{IDB_CONFIG[:storage_mount]} => #{mount_path}"
+    puts "* Realpath to compare for read only => #{read_only_path}"
+    puts "* Realpath to compare for read and write => #{read_write_path}"
     puts "*******"
 
   end
