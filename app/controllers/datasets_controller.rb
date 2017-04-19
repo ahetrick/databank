@@ -127,6 +127,8 @@ class DatasetsController < ApplicationController
               else
                 order_by :updated_at, :desc
               end
+            else
+              order_by :updated_at, :desc
             end
 
             facet(:license_code)
@@ -261,6 +263,8 @@ class DatasetsController < ApplicationController
               else
                 order_by :updated_at, :desc
               end
+            else
+              order_by :updated_at, :desc
             end
             facet(:license_code)
             facet(:funder_codes)
@@ -352,6 +356,8 @@ class DatasetsController < ApplicationController
               else
                 order_by :updated_at, :desc
               end
+            else
+              order_by :updated_at, :desc
             end
             facet(:license_code)
             facet(:funder_codes)
@@ -425,6 +431,8 @@ class DatasetsController < ApplicationController
           else
             order_by :updated_at, :desc
           end
+        else
+          order_by :updated_at, :desc
         end
         facet(:license_code)
         facet(:funder_codes)
