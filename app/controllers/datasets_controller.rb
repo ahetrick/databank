@@ -1474,7 +1474,6 @@ class DatasetsController < ApplicationController
     if (mount_path.casecmp(read_only_path) == 0)
       Databank::Application.file_mode = Databank::FileMode::READ_ONLY
     end
-
   end
 
   def remove_empty_datafiles

@@ -147,22 +147,48 @@ namespace :test do
 
   end
 
-  desc 'delete specified datasets'
-  task :delete_specified_datasets => :environment do
-
-    datasets_to_delete = Dataset.where(:key => ["idbdev-8493465", "idbdev-3240151", "idbdev-1809639"])
-
-    datasets_to_delete.each do |dataset|
-      dataset.destroy
-    end
-
-  end
-
-  desc 'expose license and funder info'
+  desc 'expose license info array'
   task :list_info => :environment do
     LICENSE_INFO_ARR.each do |info|
       puts info.to_yaml
     end
+  end
+
+  desc 'report storage mode status'
+  task :report_storage_mode => :environment do
+
+    Databank::Application.file_mode = 'error'
+
+    mount_path = (Pathname.new(IDB_CONFIG[:storage_mount]).realpath).to_s.strip
+    read_only_path = (IDB_CONFIG[:read_only_realpath]).to_s.strip
+    read_write_path = (IDB_CONFIG[:read_write_realpath]).to_s.strip
+
+    if (mount_path.casecmp(read_only_path) == 0)
+      Databank::Application.file_mode = Databank::FileMode::READ_ONLY
+    elsif(mount_path.casecmp(read_write_path) == 0)
+      Databank::Application.file_mode = Databank::FileMode::WRITE_READ
+    end
+
+    puts "*******"
+    puts "File Storage Mode Report for Illinois Data Bank on #{IDB_CONFIG[:root_url_text]}"
+    puts "*******"
+
+    case Databank::Application.file_mode
+      when Databank::FileMode::READ_ONLY
+        puts "current file storage mode: read only"
+      when Databank::FileMode::WRITE_READ
+        puts "current file storage mode: read and write"
+      else
+        puts "Unexpected value for file storage mode flag: #{Databank::Application.file_mode}"
+    end
+    puts "***"
+    puts "configuration file is in #{Rails.root.join('config', 'databank.yml')}"
+    puts "relevant configuration entries are storage_mount, read_only_realpath, and read_write_realpath"
+    puts "Current realpath of #{IDB_CONFIG[:storage_mount]}: #{mount_path}"
+    puts "Realpath to compare for read only: #{read_write_path}"
+    puts "Realpath to compare for read and write: #{read_only_path}"
+    puts "*******"
+
   end
 
 end
