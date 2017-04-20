@@ -173,7 +173,17 @@ class User < ActiveRecord::Base
   end
 
   def self.user_info_string(netid)
-    return("#{self.user_display_name(netid)} | #{netid}@illinois.edu")
+
+    begin
+
+      return("#{self.user_display_name(netid)} | #{netid}@illinois.edu")
+
+    rescue StandardError
+
+      return netid
+
+    end
+
   end
 
   def self.user_display_name(netid)

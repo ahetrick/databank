@@ -17,3 +17,7 @@ end
 When(/^I check the box: (.*)$/) do |checkbox_identifier|
   check(checkbox_identifier)
 end
+
+Then(/^I uncheck the box: (.*)$/) do |checkbox_identifier|
+  uncheck(checkbox_identifier)
+end

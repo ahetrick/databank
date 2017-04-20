@@ -13,7 +13,7 @@
         -else
           %input(type="text" class="form-control q" name="q" aria-label="search input box" placeholder="search for datasets" )
         %span(class="input-group-btn" )
-          %button(type="submit" class="btn btn-primary")
+          %button(type="submit" class="btn btn-primary" id="submitSearch")
             %span(class="glyphicon glyphicon-search" aria-hidden="true" )
           %button(type="button" class="btn btn-danger" onclick="clearSearchTerm()" )
             %span(class="glyphicon glyphicon-remove" aria-hidden="true" )
@@ -76,12 +76,12 @@
                 -@search.facet(:depositor).rows.each do |row|
                   .facet
                     -if row.value == current_user.username && params.has_key?('depositors') && params['depositors'].include?(row.value)
-                      %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                      %input(id="justMine" type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
                         Just My Datasets
                         ="(#{row.count})"
                         -current_user_facet_exists = true
                     -elsif row.value == current_user.username
-                      %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                      %input(id="justMine" type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
                         Just My Datasets
                         ="(#{row.count})"
                         -current_user_facet_exists = true
