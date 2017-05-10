@@ -186,6 +186,8 @@ module Datacite
 
       return nil unless response
 
+      #Rails.logger.warn response.to_yaml
+
       response_hash = Hash.new
       response_body_hash = Hash.new
       response_lines = response.body.to_s.split("\n")
@@ -193,6 +195,8 @@ module Datacite
         split_line = line.split(": ")
         response_body_hash["#{split_line[0]}"] = "#{split_line[1]}"
       end
+
+      return nil unless response_body_hash["_created"]
 
       response_hash["target"] = response_body_hash["_target"]
       response_hash["created"]= (Time.at(Integer(response_body_hash["_created"])).to_datetime).strftime("%Y-%m-%d at %I:%M%p")
@@ -220,7 +224,7 @@ module Datacite
 
       begin
 
-        uri = URI.parse("http://#{host}/id/doi:#{dataset.identifier}")
+        uri = URI.parse("htggtps://#{host}/id/doi:#{dataset.identifier}")
         response = Net::HTTP.get_response(uri)
 
         case response

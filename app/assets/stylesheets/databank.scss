@@ -379,6 +379,15 @@ table.deposit-agreement-selection-warning > tbody > tr > td {
   border-radius: 3px;
 }
 
+.featured-datasaet{
+  border: 1px solid $color__highlight-orange;
+  padding-right: 15px;
+  padding-left: 15px;
+  padding-bottom: 15px;
+  margin-top: 30px;
+  background-color: $color__gray-background;
+}
+
 .example-site{
   background-color: $color__highlight-orange;
 }

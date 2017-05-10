@@ -3,41 +3,6 @@ Feature: Search
   As a curator, depositor, undergrad, or guest
   I want to be able to enter search terms and find datasets
 
-#  Scenario: As guest, view page and looks right
-#    Given I am logged out
-#    When I visit the find page
-#    Then I see all of:
-#      | Datasets  | Log in | Funder | License |
-#
-#  Scenario: As curator, view page and looks right
-#    Given I am logged out
-#    When I log in
-#    And I visit the find page
-#    Then I see all of:
-#      | Datasets | Depositor  | Funder | License | Visibility |
-#
-#  Scenario: As depositor, view page and looks right
-#    Given I am logged out
-#    When I log in
-#    And I visit the home page
-#    And I switch role to depositor
-#    And I visit the find page
-#    Then I see all of:
-#      | Datasets  | Log in | Funder | License | Just My Datasets |
-#    And I see none of:
-#      | Visibility | Depositor |
-#
-#  Scenario: As an undergrad, view page and looks right
-#    Given I am logged out
-#    When I log in
-#    And I visit the home page
-#    And I switch role to undergrad
-#    And I visit the find page
-#    Then I see all of:
-#      | Datasets  | Funder | License |
-#    And I see none of:
-#      | Visibility | Depositor |
-
   # curator
   Scenario: Search for datasets
     Given I am logged out

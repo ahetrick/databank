@@ -27,6 +27,10 @@ class MedusaIngest < ActiveRecord::Base
 
   def self.send_dataset_to_medusa(dataset, old_publication_state)
 
+    if Rails.env.test?
+      return true
+    end
+
     # create or confirm dataset_staging directory for dataset
     dataset_dirname = "DOI-#{(dataset.identifier).parameterize}"
     staging_dir = "#{IDB_CONFIG[:staging_root]}/#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}"

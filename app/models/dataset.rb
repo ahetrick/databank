@@ -86,7 +86,7 @@ class Dataset < ActiveRecord::Base
     while current_dataset
 
       previous_dataset = current_dataset.previous_idb_dataset
-      Rails.logger.warn "previous_dataset #{previous_dataset}"
+      #Rails.logger.warn "previous_dataset #{previous_dataset}"
 
       if previous_dataset
         version_group_response[:entries] << previous_dataset.related_version_entry_hash
