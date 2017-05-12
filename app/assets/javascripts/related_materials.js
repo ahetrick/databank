@@ -108,7 +108,7 @@ function add_material_row() {
             '<option value="LSID">LSID</option>' +
             '<option value="PMID">PMID</option>' +
             '<option value="PURL">PURL</option>' +
-            '<option value="UPC">UPC</option>' +cur 
+            '<option value="UPC">UPC</option>' +
             '<option value="URL">URL</option>' +
             '<option value="URN">URN</option>' +
             '</select>' +
