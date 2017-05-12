@@ -224,7 +224,7 @@ module Datacite
 
       begin
 
-        uri = URI.parse("htggtps://#{host}/id/doi:#{dataset.identifier}")
+        uri = URI.parse("https://#{host}/id/doi:#{dataset.identifier}")
         response = Net::HTTP.get_response(uri)
 
         case response

@@ -108,7 +108,7 @@ function add_material_row() {
             '<option value="LSID">LSID</option>' +
             '<option value="PMID">PMID</option>' +
             '<option value="PURL">PURL</option>' +
-            '<option value="UPC">UPC</option>' +
+            '<option value="UPC">UPC</option>' +cur 
             '<option value="URL">URL</option>' +
             '<option value="URN">URN</option>' +
             '</select>' +
@@ -116,6 +116,8 @@ function add_material_row() {
             '<div class="form-group curator-only">' +
             '<input type="hidden" name="dataset[related_materials_attributes][' + newId + '][datacite_list]" id="dataset_related_materials_attributes_' + newId + '_datacite_list" />' +
             '<input name="datacite_relation" type="checkbox" value="IsSupplementTo" class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsSupplementTo </input>' +
+            '<br/>' +
+            '<input name="datacite_relation" type="checkbox" value="IsSupplementedBy " class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsSupplementedBy  </input>' +
             '<br/>' +
             '<input name="datacite_relation" type="checkbox" value="IsCitedBy" class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsCitedBy </input>' +
             '<br/>' +
