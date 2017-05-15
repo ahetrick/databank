@@ -956,7 +956,7 @@ class DatasetsController < ApplicationController
   end
 
   def unsuppress
-    @dataset.hold_state = nil
+    @dataset.hold_state = 'none'
 
     respond_to do |format|
 
