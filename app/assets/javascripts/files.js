@@ -298,7 +298,7 @@ function hide_preview(web_id){
     $("#preview_" + web_id).hide();
 }
 
-function preview_image(web_id){
+function preview_image(iiif_root, web_id){
     
     $("#preview_" + web_id).show();
     if ($("#preview_" + web_id).is(':empty')){

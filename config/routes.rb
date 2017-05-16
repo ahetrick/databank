@@ -26,6 +26,7 @@ Rails.application.routes.draw do
         get 'reset_upload', to: 'datafiles#reset_upload'
         get 'preview', to: 'datafiles#preview'
         get 'display', to: 'datafiles#display'
+        get 'filepath', to: 'datafiles#filepath', defaults: {format: 'json'}
       end
     end
     resources :creators
@@ -42,6 +43,8 @@ Rails.application.routes.draw do
 
 
   get '/', to: 'welcome#index'
+
+
 
   get '/restoration_events', to: 'restoration_events#index'
 
@@ -97,6 +100,9 @@ Rails.application.routes.draw do
 
   # direct display
   get '/datafiles/:id/display', to: "datafiles#display"
+
+  # filepath
+  get '/datafiles/:id/filepath', to: "datafiles#filepath", defaults: {format: 'json'}
 
   # create from box file select widget
   post "/datafiles/create_from_url", to: 'datafiles#create_from_url'
