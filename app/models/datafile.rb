@@ -232,7 +232,7 @@ class Datafile < ActiveRecord::Base
     else
       filename_split = self.bytestream_name.split(".")
       extension = filename_split.last
-      if ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'jpg2', 'tif', 'tiff', 'avi', 'dcm', 'gif', 'mov', 'webm', 'webp', 'mp4', 'avi'].include?(extension)
+      if ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'jpg2', 'tif', 'tiff'].include?(extension)
         return true
       else
         return false
