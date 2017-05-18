@@ -302,7 +302,10 @@ function preview_image(iiif_root, web_id){
     
     $("#preview_" + web_id).show();
     if ($("#preview_" + web_id).is(':empty')){
-        $("#preview_" + web_id).html("<img src='" + iiif_root + "/" + web_id + "/full/full/0/default.jpg' class='preview_body'>");
+
+        console.log(iiif_root + "/" + web_id + "/full/full/0/default.jpg");
+
+        $("#preview_" + web_id).html("<img src='" + iiif_root + "/" + web_id + "/full/full/0/default.jpg" + "' class='preview_body'>");
     }
     $("#preview_img_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_image_preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> View</button>');
 }
