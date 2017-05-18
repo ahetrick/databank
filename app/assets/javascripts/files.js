@@ -301,12 +301,15 @@ function hide_preview(web_id){
 function preview_image(iiif_root, web_id){
     
     $("#preview_" + web_id).show();
-    $("#preview_" + web_id).html("<img src='" + iiif_root + "/" + web_id + "/full/full/0/default.jpg" + "' class='preview_body'>");
-    $("#preview_img_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_image_preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> View</button>');
+    if ($("#preview_" + web_id).is(':empty')){
+
+        $("#preview_" + web_id).html("<img src='" + iiif_root + "/" + web_id + "/full/full/0/default.jpg" + "' class='preview_body'>");
+    }
+    $("#preview_img_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_image_preview(&#39;' + iiif_root + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> View</button>');
 }
 
-function hide_image_preview(web_id){
-    $("#preview_img_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="preview_image(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-open"></span> View</button>');
+function hide_image_preview(iiif_root, web_id){
+    $("#preview_img_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="preview_image(&#39;' + iiif_root + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-open"></span> View</button>');
     $("#preview_" + web_id).hide();
 }
 
