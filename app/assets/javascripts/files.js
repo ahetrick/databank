@@ -303,7 +303,7 @@ function preview_image(iiif_root, web_id){
     $("#preview_" + web_id).show();
     if ($("#preview_" + web_id).is(':empty')){
 
-        console.log(iiif_root + "/" + web_id + "/full/full/0/default.jpg");
+        //console.log(iiif_root + "/" + web_id + "/full/full/0/default.jpg");
 
         $("#preview_" + web_id).html("<img src='" + iiif_root + "/" + web_id + "/full/full/0/default.jpg" + "' class='preview_body'>");
     }
