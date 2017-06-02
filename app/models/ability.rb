@@ -55,6 +55,7 @@ class Ability
       can :pre_deposit, Dataset
       can :validiate_change2published, :all
       can :search, Dataset
+      can :recordtext, Dataset
 
     else
       can :filepath, Datafile
@@ -72,6 +73,7 @@ class Ability
       can :pre_deposit, Dataset
       can :validiate_change2published, :all
       can :search, Dataset
+      can :recordtext, Dataset
 
     end
     #

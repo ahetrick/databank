@@ -4,6 +4,8 @@ Rails.application.routes.draw do
 
   get '/datasets/:dataset_id/datafiles/add', to: 'datafiles#add'
 
+  get '/datasets/:id/recordtext', to: 'datasets#recordtext'
+
   resources :tokens
   resources :admin
   resources :deckfiles
@@ -41,10 +43,7 @@ Rails.application.routes.draw do
   # You can have the root of your site routed with "root"
   root 'welcome#index'
 
-
   get '/', to: 'welcome#index'
-
-
 
   get '/restoration_events', to: 'restoration_events#index'
 
