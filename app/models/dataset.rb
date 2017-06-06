@@ -46,6 +46,7 @@ class Dataset < ActiveRecord::Base
   validate :published_datasets_must_remain_complete
 
   has_many :datafiles, dependent: :destroy
+  has_one :recordfile, dependent: :destroy
   has_many :creators, dependent: :destroy
   has_many :funders, dependent: :destroy
   has_many :related_materials, dependent: :destroy
@@ -1253,7 +1254,7 @@ class Dataset < ActiveRecord::Base
     content = content + "##########\n\n"
 
     content = content + "[ Title: ] #{self.title}\n"
-    content = content + "[ Creators: ] #{self.creator_list}\n"
+    content = content + "[ #{'Creator'.pluralize(self.creators.count)}: ] #{self.creator_list}\n"
     content = content + "[ Publisher: ] #{self.publisher}\n"
     content = content + "[ Publication Year: ] #{self.publication_year}\n\n"
 
