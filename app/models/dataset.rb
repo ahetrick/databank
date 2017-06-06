@@ -1280,7 +1280,7 @@ class Dataset < ActiveRecord::Base
 
     content = content + "[ Corresponding Creator: ] #{self.corresponding_creator_name}\n"
 
-    content = content + "[ Downloaded: ] #{self.total_downloads} #{"time".pluralize(self.total_downloads)}\n"
+    # content = content + "[ Downloaded: ] #{self.total_downloads} #{"time".pluralize(self.total_downloads)}\n"
 
     content = content +  "\n[ #{'File'.pluralize(self.datafiles.count)} (#{self.datafiles.count}): ] \n"
 
