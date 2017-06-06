@@ -1,5 +1,6 @@
 class Recordfile < ActiveRecord::Base
-  include ActiveModel::Serialization
+
+  include Viewable
   mount_uploader :binary, BinaryUploader
   belongs_to :dataset
 
@@ -9,6 +10,39 @@ class Recordfile < ActiveRecord::Base
 
   def to_param
     self.web_id
+  end
+
+  def bytestream_name
+    return_name = ""
+    if self.binary_name && self.binary_name != ""
+      return_name = self.binary_name
+    elsif self.binary && self.binary.file
+      return_name = self.binary.file.filename
+
+    else
+      return "error: filename not found"
+    end
+    return_name
+  end
+
+  def bytestream_size
+
+    if self.binary_size
+      self.binary_size
+    elsif self.binary
+      self.binary.size
+    else
+      0
+    end
+
+  end
+
+  def bytestream_path
+    if self.medusa_path.nil? || self.medusa_path.empty?
+      self.binary.path
+    else
+      "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{self.medusa_path}"
+    end
   end
 
   private
