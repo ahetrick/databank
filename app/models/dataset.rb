@@ -1271,7 +1271,7 @@ class Dataset < ActiveRecord::Base
       when "CC01"
         content = content + "[ License: ] CC0 - https://creativecommons.org/publicdomain/zero/1.0/\n"
       when "CCBY4"
-        content = content + "[ License: ] => CC BY - http://creativecommons.org/licenses/by/4.0/\n"
+        content = content + "[ License: ] CC BY - http://creativecommons.org/licenses/by/4.0/\n"
       when "license.txt"
         content = content + "[ License: ] Custom - See license.txt file in dataset.\n"
       else
