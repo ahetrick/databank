@@ -25,12 +25,12 @@
         %button(type="button" class="btn btn-default" onclick="window.open('/policies')" )
           Review our policies
       .col-md-4
-        .featured-datasaet
-          %h3 Featured Dataset
-          %hr
-          %a(href="#{IDB_CONFIG[:root_url_text]}/datasets/#{IDB_CONFIG["featured"]["key"]}")
-            - dataset = Dataset.find_by_key(IDB_CONFIG["featured"]["key"])
-            =dataset.title
+        -if @featured_dataset
+          .featured-datasaet
+            %h3 Featured Dataset
+            %hr
+            %a(href="#{IDB_CONFIG[:root_url_text]}/datasets/#{IDB_CONFIG["featured"]["key"]}")
+              =@featured_dataset.title
 
-            %br
-            =image_tag(IDB_CONFIG["featured"]["image_filename"], :class => "img-responsive")
+              %br
+              =image_tag(IDB_CONFIG["featured"]["image_filename"], :class => "img-responsive")

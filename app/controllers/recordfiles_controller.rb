@@ -5,11 +5,8 @@ require 'fileutils'
 require 'net/http'
 require  Rails.root.join('app', 'uploaders', 'binary_uploader.rb')
 
-OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
-
 class RecordfilesController < ApplicationController
   before_action :set_recordfile, only: [:filepath, :preview, :display, :download]
-
 
   def filepath
     render json: {filepath: @recordfile.bytestream_path}
@@ -52,7 +49,7 @@ class RecordfilesController < ApplicationController
   end
   # Never trust parameters from the scary internet, only allow the white list through.
   def datafile_params
-    params.require(:recordfile).permit(:binary, :web_id, :dataset_id)
+    params.require(:recordfile).permit(:web_id, :dataset_id)
   end
 
 end
