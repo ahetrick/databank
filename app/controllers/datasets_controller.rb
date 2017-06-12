@@ -1177,7 +1177,10 @@ class DatasetsController < ApplicationController
 
     if @dataset.identifier && !@dataset.identifier.empty?
       @dataset.datafiles.each do |datafile|
-        datafile.record_download(request.remote_ip)
+
+        if params[:selected_files].include?(datafile.web_id)
+          datafile.record_download(request.remote_ip)
+        end
       end
       file_name = "DOI-#{@dataset.identifier}".parameterize + ".zip"
     else
@@ -1187,6 +1190,10 @@ class DatasetsController < ApplicationController
     datafiles = Datafile.where(web_id: params[:selected_files])
 
     datafiles = Array.new
+
+    if @dataset.recordfile
+      datafiles.append([@dataset.recordfile.bytestream_path, @dataset.recordfile.bytestream_name])
+    end
 
     web_ids = params[:selected_files]
 

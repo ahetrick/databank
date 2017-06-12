@@ -168,4 +168,42 @@ namespace :databank do
     DayFileDownload.where("download_date < ?", 3.days.ago ).destroy_all
   end
 
+  desc 'add legacy recordfiles'
+  task :add_recordfiles => :environment do
+    Dataset.all.each do |dataset|
+      if dataset.identifier && dataset.identifier != '' && dataset.recordfile.nil?
+
+        # create or confirm dataset_staging directory for dataset
+        dataset_dirname = "DOI-#{(dataset.identifier).parameterize}"
+        staging_dir = "#{IDB_CONFIG[:staging_root]}/#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}"
+
+        FileUtils.mkdir_p "#{staging_dir}/system"
+        FileUtils.chmod "u=wrx,go=rx", File.dirname(staging_dir)
+
+        # write recordfile
+
+        record_filepath = "#{staging_dir}/system/record_#{(dataset.identifier).parameterize}_record_#{Time.now.strftime('%Y-%m-%d')}.txt"
+
+        File.open(record_filepath, "w") do |recordfile|
+          recordfile.puts(dataset.recordtext)
+        end
+        FileUtils.chmod 0755, record_filepath
+
+        recordfile = Recordfile.create(dataset_id: dataset.id)
+        recordfile.binary = Pathname.new(record_filepath).open
+        recordfile.save
+
+      end
+    end
+  end
+
+  desc 'delete all recordfiles'
+  task :delete_recordfiles => :environment do
+    Dataset.all.each do |dataset|
+      if dataset.recordfile
+        dataset.recordfile.delete
+      end
+    end
+  end
+
 end

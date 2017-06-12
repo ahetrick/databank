@@ -257,13 +257,10 @@ function create_from_remote(){
 
             }
         });
-
-
-
     }
 }
 
-function preview(web_id){
+function preview(fileclass, web_id){
 
     //$('.preview').css("visibility", "hidden");
     //$('.preview').empty();
@@ -271,14 +268,14 @@ function preview(web_id){
     $("#preview_" + web_id).show();
     if ($("#preview_" + web_id).is(':empty')){
         $.ajax({
-            url: '/datafiles/' + web_id + '/preview.json',
+            url: '/'+ fileclass +'s/' + web_id + '/preview.json',
             type: 'GET',
             datatype: "json",
             success: function(data) {
                 //console.log(data);
                 //$("#previewFilename").html(data.filename);
                 $("#preview_" + web_id).html("<pre class='preview_body'>" + data.body + "</pre>");
-                $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> View</button>');
+                $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview(&#39;' + fileclass + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> View</button>');
             },
             error: function(xhr, status, error){
                 var err = eval("(" + xhr.responseText + ")");
@@ -287,14 +284,14 @@ function preview(web_id){
         });
     } else {
         //console.log($("#preview_" + web_id));
-        $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> View</button>');
+        $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview(&#39;' + fileclass + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> View</button>');
 
     }
 }
 
-function hide_preview(web_id){
+function hide_preview(fileclass, web_id){
 
-    $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-open"></span> View</button>');
+    $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="preview(&#39;' + fileclass + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-open"></span> View</button>');
     $("#preview_" + web_id).hide();
 }
 
@@ -312,17 +309,6 @@ function hide_image_preview(iiif_root, web_id){
     $("#preview_img_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="preview_image(&#39;' + iiif_root + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-open"></span> View</button>');
     $("#preview_" + web_id).hide();
 }
-
-// function preview_doc(web_id){
-//     $("#preview_" + web_id).show();
-//     if ($("#preview_" + web_id).is(':empty')) {
-//         $("#preview_" + web_id).html('<iframe src="http://docs.google.com/gview?url=&embedded=true"></iframe>');
-//     } else {
-//         $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> Preview</button>');
-//     }
-//
-// }
-
 
 function remove_deckfile(deckfile_id, deckfile_index){
     $('#dataset_deckfiles_attributes_'+ deckfile_index +'_remove').val("true");

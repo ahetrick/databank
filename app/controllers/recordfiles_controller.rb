@@ -8,12 +8,15 @@ require  Rails.root.join('app', 'uploaders', 'binary_uploader.rb')
 class RecordfilesController < ApplicationController
   before_action :set_recordfile, only: [:filepath, :preview, :display, :download]
 
+  def index
+    @recordfiles = Recordfile.all
+  end
+
   def filepath
     render json: {filepath: @recordfile.bytestream_path}
   end
 
   def preview
-    @recordfile.record_download(request.remote_ip)
     respond_to do |format|
       format.html {render :preview}
       format.json {render json: {filename: @recordfile.bytestream_name, body: @recordfile.preview, status: :ok}}
