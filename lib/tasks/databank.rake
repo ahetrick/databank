@@ -179,6 +179,10 @@ namespace :databank do
 
         FileUtils.mkdir_p "#{staging_dir}/system"
         FileUtils.chmod "u=wrx,go=rx", File.dirname(staging_dir)
+        
+        # remove old recordfile, if exists
+
+        dataset.recordfile.delete if dataset.recordfile
 
         # write recordfile
 
@@ -188,10 +192,16 @@ namespace :databank do
           recordfile.puts(dataset.recordtext)
         end
         FileUtils.chmod 0755, record_filepath
-
         recordfile = Recordfile.create(dataset_id: dataset.id)
         recordfile.binary = Pathname.new(record_filepath).open
         recordfile.save
+        medusa_ingest = MedusaIngest.new
+        staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/record_#{(dataset.identifier).parameterize}_record_#{Time.now.strftime('%Y-%m-%d')}.txt"
+        medusa_ingest.staging_path = staging_path
+        medusa_ingest.idb_class = 'recordfile'
+        medusa_ingest.idb_identifier = dataset.key
+        medusa_ingest.send_medusa_ingest_message(staging_path)
+        medusa_ingest.save
 
       end
     end
