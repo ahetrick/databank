@@ -888,7 +888,7 @@ function deleteSelected() {
 
 function handleCheckFileGroupChange(){
 
-    var numChecked = $('input.checkFile:checked').length + 1;
+    var numChecked = $('input.checkFile:checked').length;
 
     if (typeof numChecked === 'undefined' || isNaN(numChecked) || numChecked < 1 ){
         numChecked = 0;

@@ -138,7 +138,7 @@ class MedusaIngest < ActiveRecord::Base
 
     # write recordfile
 
-    record_filepath = "#{staging_dir}/system/record_#{(dataset.identifier).parameterize}_record_#{Time.now.strftime('%Y-%m-%d')}.txt"
+    record_filepath = "#{staging_dir}/system/record_#{(dataset.identifier).parameterize}_#{Time.now.strftime('%Y-%m-%d')}.txt"
 
     File.open(record_filepath, "w") do |recordfile|
       recordfile.puts(dataset.recordtext)
@@ -148,7 +148,7 @@ class MedusaIngest < ActiveRecord::Base
     recordfile.binary = Pathname.new(record_filepath).open
     recordfile.save
     medusa_ingest = MedusaIngest.new
-    staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/record_#{(dataset.identifier).parameterize}_record_#{Time.now.strftime('%Y-%m-%d')}.txt"
+    staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/record_#{(dataset.identifier).parameterize}_#{Time.now.strftime('%Y-%m-%d')}.txt"
     medusa_ingest.staging_path = staging_path
     medusa_ingest.idb_class = 'recordfile'
     medusa_ingest.idb_identifier = dataset.key

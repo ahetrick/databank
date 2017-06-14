@@ -1191,7 +1191,7 @@ class DatasetsController < ApplicationController
 
     datafiles = Array.new
 
-    if @dataset.recordfile
+    if @dataset.recordfile && params[:selected_files].include?(@dataset.recordfile.web_id)
       datafiles.append([@dataset.recordfile.bytestream_path, @dataset.recordfile.bytestream_name])
     end
 
@@ -1214,6 +1214,7 @@ class DatasetsController < ApplicationController
   end
 
   # precondition: all valid web_ids in medusa
+  # web_id might be for a datafile or a recordfile
   def download_link
 
     return_hash = Hash.new
@@ -1231,12 +1232,8 @@ class DatasetsController < ApplicationController
       web_ids.each(&:strip!)
 
       path_arr = Array.new
-      web_ids.each do |web_id|
 
-      end
-
-
-      download_hash = DownloaderClient.datafiles_download_hash(web_ids, "DOI-#{@dataset.identifier}".parameterize)
+      download_hash = DownloaderClient.datafiles_download_hash(@dataset, web_ids, "DOI-#{@dataset.identifier}".parameterize)
       if download_hash
         if download_hash['status']== 'ok'
           web_ids.each do |web_id|
