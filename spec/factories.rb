@@ -1,4 +1,13 @@
 FactoryGirl.define do
+  factory :recordfile do
+    dataset_id 1
+    binary "MyString"
+    web_id "MyString"
+    medusa_id "MyString"
+    medusa_path "MyString"
+    binary_name "MyString"
+    binary_size 1
+  end
   factory :restoration_id_map do
     id_class "dataset"
     old_id 1

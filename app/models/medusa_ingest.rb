@@ -80,6 +80,7 @@ class MedusaIngest < ActiveRecord::Base
         medusa_ingest.send_medusa_ingest_message(staging_path)
         medusa_ingest.save
       end
+
       if File.exist?("#{IDB_CONFIG[:agreements_root_path]}/#{dataset.key}/deposit_agreement.txt")
         medusa_ingest = MedusaIngest.new
         full_path = "#{IDB_CONFIG[:agreements_root_path]}/#{dataset.key}/deposit_agreement.txt"
@@ -129,6 +130,31 @@ class MedusaIngest < ActiveRecord::Base
     medusa_ingest.idb_identifier = dataset.key
     medusa_ingest.send_medusa_ingest_message(staging_path)
     medusa_ingest.save
+
+
+    # remove old recordfile, if exists
+
+    dataset.recordfile.delete if dataset.recordfile
+
+    # write recordfile
+
+    record_filepath = "#{staging_dir}/system/record_#{(dataset.identifier).parameterize}_#{Time.now.strftime('%Y-%m-%d')}.txt"
+
+    File.open(record_filepath, "w") do |recordfile|
+      recordfile.puts(dataset.recordtext)
+    end
+    FileUtils.chmod 0755, record_filepath
+    recordfile = Recordfile.create(dataset_id: dataset.id)
+    recordfile.binary = Pathname.new(record_filepath).open
+    recordfile.save
+    medusa_ingest = MedusaIngest.new
+    staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/record_#{(dataset.identifier).parameterize}_#{Time.now.strftime('%Y-%m-%d')}.txt"
+    medusa_ingest.staging_path = staging_path
+    medusa_ingest.idb_class = 'recordfile'
+    medusa_ingest.idb_identifier = dataset.key
+    medusa_ingest.send_medusa_ingest_message(staging_path)
+    medusa_ingest.save
+
   end
 
 

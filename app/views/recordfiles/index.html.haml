@@ -1,0 +1,25 @@
+%h1 Listing recordfiles
+
+%table.table.table-bordered
+  %thead
+    %tr
+      %th Name
+      %th Size
+      %th Path
+      %th Dataset
+
+  %tbody
+    - @recordfiles.each do |recordfile|
+      %tr
+        %td= recordfile.bytestream_name
+        %td= number_to_human_size(recordfile.bytestream_size)
+        %td= recordfile.bytestream_path
+        %td
+          -dataset = Dataset.find_by_id(recordfile.dataset_id)
+          -if dataset
+            %a(href="#{IDB_CONFIG[:root_url_text]}/datasets/dataset.key" )
+              =dataset.title
+          -else
+            Dataset not found.
+
+%br
