@@ -24,13 +24,13 @@
           %p The Illinois Data Bank's mission is to centralize, preserve, and provide persistent and reliable access to the research data created by affiliates of the University of Illinois at Urbana-Champaign, such as its faculty, academic staff, and graduate students. The Research Data Service at the University Library maintains and operates the Illinois Data Bank on behalf of the University of Illinois at Urbana-Champaign campus.  The University Library has a long history of successfully supporting the preservation of and access to Illinois research outputs. The Illinois Data Bank operates within a robust policy framework that fully describes the University's commitment to providing persistent and reliable access to research data.
         %button(type="button" class="btn btn-default" onclick="window.open('/policies')" )
           Review our policies
-      -#.col-md-4
-      -#  -if @featured_dataset
-      -#    .featured-datasaet
-      -#      %h3 Featured Dataset
-      -#      %hr
-      -#      %a(href="#{IDB_CONFIG[:root_url_text]}/datasets/#{IDB_CONFIG["featured"]["key"]}")
-      -#        =@featured_dataset.title
-      -#
-      -#        %br
-      -#        =image_tag(IDB_CONFIG["featured"]["image_filename"], :class => "img-responsive")
+      .col-md-4
+        -if @featured_dataset
+          .featured-datasaet
+            %h3 Featured Dataset
+            %hr
+            %a(href="#{IDB_CONFIG[:root_url_text]}/datasets/#{IDB_CONFIG["featured"]["key"]}")
+              =@featured_dataset.title
+
+              %br
+              =image_tag(IDB_CONFIG["featured"]["image_filename"], :class => "img-responsive")
