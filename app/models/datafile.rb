@@ -1,4 +1,5 @@
 require 'zip'
+require 'rchardet'
 
 class Datafile < ActiveRecord::Base
   include ActiveModel::Serialization
@@ -87,7 +88,35 @@ class Datafile < ActiveRecord::Base
         case filename_split.last # extension
 
           when 'txt', 'csv', 'tsv', 'rb', 'xml', 'json'
-            return File.read(self.bytestream_path)
+
+            filestring = File.read(self.bytestream_path)
+
+            if filestring
+              chardet = CharDet.detect(filestring)
+              if chardet
+                detected_encoding = chardet['encoding']
+
+                #Rails.logger.warn "\n***\n#{detected_encoding}\n***\n"
+                
+                if detected_encoding == "UTF-8"
+                  return filestring
+                else
+
+                 return filestring.encode('utf-8', detected_encoding, :invalid => :replace, :undef => :replace, :replace => '')
+
+                end
+
+              else
+                return "no preview available"
+              end
+
+
+            else
+              return "no preview available"
+            end
+
+
+
 
           when 'zip'
             entry_list_text = `unzip -l "#{self.bytestream_path}"`

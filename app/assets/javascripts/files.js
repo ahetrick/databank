@@ -1,14 +1,12 @@
 // work-around turbo links to trigger ready function stuff on every page.
 
-// var files_ready;
-// files_ready = function () {
-//
-//
-//
-//
-//         // alert("files.js javascript working");
-// }
-// work-around turbo links to trigger ready function stuff on every page.
+var files_ready;
+files_ready = function () {
+    $('.view-load-spinner').hide();
+
+    //alert("files.js javascript working");
+}
+//work-around turbo links to trigger ready function stuff on every page.
 
 
 function remove_file_row_pre_confirm(datafile_index){
@@ -264,6 +262,7 @@ function create_from_remote(){
 }
 
 function preview(web_id){
+    $('.spinner_'+web_id).show();
 
     //$('.preview').css("visibility", "hidden");
     //$('.preview').empty();
@@ -276,16 +275,20 @@ function preview(web_id){
             datatype: "json",
             success: function(data) {
                 //console.log(data);
-                //$("#previewFilename").html(data.filename);
+                $('.spinner_'+web_id).hide();
                 $("#preview_" + web_id).html("<pre class='preview_body'>" + data.body + "</pre>");
                 $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> View</button>');
             },
             error: function(xhr, status, error){
+                $('.spinner_'+web_id).hide();
+                $("#preview_" + web_id).html("<div class='error-message' <h2>ERROR</h2> </p>An error occurred while accessing view. Details have been logged for review by the Research Data Service.</p></div>");
+                $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span>View</button>');
                 var err = eval("(" + xhr.responseText + ")");
                 alert(err.Message);
             }
         });
     } else {
+        $('.spinner_'+web_id).hide();
         //console.log($("#preview_" + web_id));
         $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> View</button>');
 
@@ -335,5 +338,5 @@ function restore_deckfile(deckfile_id, deckfile_index){
     $('.deckfile_remove_btn').show();
 }
 
-//$(document).ready(files_ready);
-//$(document).on('page:load', files_ready);
+$(document).ready(files_ready);
+$(document).on('page:load', files_ready);

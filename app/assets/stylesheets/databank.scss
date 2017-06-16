@@ -317,6 +317,10 @@ div.panel-heading{
 table.deposit-agreement-selection-warning > tbody > tr > td {
   padding-left: 5px;
 }
+.error-message{
+  padding: 5px;
+  border: solid 2px $color__red
+}
 
 .nudge-left-12{
   margin-left: -12px;

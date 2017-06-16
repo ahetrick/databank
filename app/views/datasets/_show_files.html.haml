@@ -41,7 +41,6 @@
 
                     -if dataset.ordered_datafiles
 
-
                       - dataset.ordered_datafiles.each do |datafile|
                         -if (datafile.bytestream_size > 0) && (datafile.job_status == :complete) && ((datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != ""))
                           %tr.row
@@ -90,3 +89,5 @@
                                     File
 
                               .row(id="preview_#{datafile.web_id}")
+                              .row.loading.text-center
+                                %i(class="fa fa-spinner fa-spin fa-4x view-load-spinner spinner_#{datafile.web_id}" )

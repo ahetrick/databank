@@ -28,6 +28,9 @@ gem 'zeroclipboard-rails'
 gem 'rubyzip'
 gem 'zipline'
 
+# Use rchardet to attempt to detect character encoding
+gem 'rchardet'
+
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 # gem 'turbolinks'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
