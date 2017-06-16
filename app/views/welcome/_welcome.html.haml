@@ -26,11 +26,11 @@
           Review our policies
       .col-md-4
         -if @featured_dataset
-          .featured-datasaet
+          .featured-dataset(onclick='window.location.href="#{IDB_CONFIG[:root_url_text]}/datasets/#{IDB_CONFIG["featured"]["key"]}"')
             %h3 Featured Dataset
             %hr
-            %a(href="#{IDB_CONFIG[:root_url_text]}/datasets/#{IDB_CONFIG["featured"]["key"]}")
-              =@featured_dataset.title
 
-              %br
-              =image_tag(IDB_CONFIG["featured"]["image_filename"], :class => "img-responsive")
+            =@featured_dataset.plain_text_citation
+
+            %br
+            =image_tag(IDB_CONFIG["featured"]["image_filename"], :class => "img-responsive")
