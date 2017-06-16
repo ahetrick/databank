@@ -31,12 +31,12 @@
             %hr
 
             =@featured_dataset.creator_list
+            ="(#{@featured_dataset.publication_year})"
             %br
-            ="(#{@featured_dataset.publication_year}):"
             %em
-              ="#{@featured_dataset.title}."
+              ="#{@featured_dataset.title}"
             %br
-            ="#{@featured_dataset.publisher}."
+            ="#{@featured_dataset.publisher}"
             %br
             -if @featured_dataset.identifier && @featured_dataset.identifier != ''
               ="https://doi.org/#{@featured_dataset.identifier}"
