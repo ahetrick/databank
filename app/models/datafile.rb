@@ -1,4 +1,5 @@
 require 'zip'
+require 'rchardet'
 
 class Datafile < ActiveRecord::Base
   include ActiveModel::Serialization
@@ -66,7 +67,6 @@ class Datafile < ActiveRecord::Base
 
     else
       return ""
-
     end
 
   end
@@ -78,7 +78,6 @@ class Datafile < ActiveRecord::Base
       "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{self.medusa_path}"
     end
   end
-
 
   def ip_downloaded_file_today(request_ip)
     DayFileDownload.where(["ip_address = ? and file_web_id = ? and download_date = ?", request_ip, self.web_id, Date.current]).count > 0
@@ -114,24 +113,24 @@ class Datafile < ActiveRecord::Base
       unless ip_downloaded_file_today(request_ip)
 
 
-          DayFileDownload.create(ip_address: request_ip,
-                                 download_date: Date.current,
-                                 file_web_id: self.web_id,
-                                 filename: self.bytestream_name,
-                                 dataset_key: dataset.key,
-                                 doi: dataset.identifier)
+        DayFileDownload.create(ip_address: request_ip,
+                               download_date: Date.current,
+                               file_web_id: self.web_id,
+                               filename: self.bytestream_name,
+                               dataset_key: dataset.key,
+                               doi: dataset.identifier)
 
-          today_datatafile_download_relation = FileDownloadTally.where(["file_web_id = ? and download_date = ?", self.web_id, Date.current])
+        today_datatafile_download_relation = FileDownloadTally.where(["file_web_id = ? and download_date = ?", self.web_id, Date.current])
 
-          if today_datatafile_download_relation.count == 1
-            today_file_download = today_datatafile_download_relation.first
-            today_file_download.tally = today_file_download.tally + 1
-            today_file_download.save
-          elsif today_datatafile_download_relation.count == 0
-            FileDownloadTally.create(tally: 1, download_date: Date.current, dataset_key: dataset.key, doi: dataset.identifier, file_web_id: self.web_id, filename: self.bytestream_name)
-          else
-            Rails.logger.warn "unexpected number of file tally records for download of #{self.web_id} on #{Date.current} from #{request_ip}"
-          end
+        if today_datatafile_download_relation.count == 1
+          today_file_download = today_datatafile_download_relation.first
+          today_file_download.tally = today_file_download.tally + 1
+          today_file_download.save
+        elsif today_datatafile_download_relation.count == 0
+          FileDownloadTally.create(tally: 1, download_date: Date.current, dataset_key: dataset.key, doi: dataset.identifier, file_web_id: self.web_id, filename: self.bytestream_name)
+        else
+          Rails.logger.warn "unexpected number of file tally records for download of #{self.web_id} on #{Date.current} from #{request_ip}"
+        end
 
       end
 
@@ -183,13 +182,5 @@ class Datafile < ActiveRecord::Base
     end
     proposed_id
   end
-
-  # def chmod_binary_for_medusa
-  #   if self.binary && self.binary.file
-  #     FileUtils.chmod "u=wrx,go=rx", File.dirname(self.binary.path)
-  #     FileUtils.chmod "u=wrx,go=rx", self.binary.path
-  #
-  #   end
-  # end
 
 end
