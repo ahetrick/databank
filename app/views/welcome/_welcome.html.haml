@@ -30,7 +30,16 @@
             %h3 Featured Dataset
             %hr
 
-            =@featured_dataset.plain_text_citation
+            =@featured_dataset.creator_list
+            ="(#{@featured_dataset.publication_year}):"
+            %em
+              ="#{@featured_dataset.title}."
+            %br
+            ="#{@featured_dataset.publisher}."
+            %br
+            -if @featured_dataset.identifier && @featured_dataset.identifier != ''
+              ="https://doi.org/#{@featured_dataset.identifier}"
+
 
             %br
             =image_tag(IDB_CONFIG["featured"]["image_filename"], :class => "img-responsive")
