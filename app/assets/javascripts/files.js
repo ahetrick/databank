@@ -10,7 +10,7 @@ files_ready = function () {
 
 
 function remove_file_row_pre_confirm(datafile_index){
-    
+
     if ($("#dataset_datafiles_attributes_" + datafile_index + "_web_id").val() == undefined) {
         console.log("web_id undefined");
     }
@@ -48,7 +48,7 @@ function remove_file_row(datafile_index) {
 }
 
 function remove_filejob_row(job_id, datafile_id){
-    
+
     if (window.confirm("Are you sure?")) {
 
         var maxId = Number($('#datafile_index_max').val());
@@ -61,9 +61,9 @@ function remove_filejob_row(job_id, datafile_id){
         $('#datafile_index_max').val(newId);
 
         var row = '<tr id= "datafile_index_' + newId + '"><td>' +
-                  '<input value="true" type="hidden" name="dataset[datafiles_attributes]['+ newId + '][_destroy]" id="dataset_datafiles_attributes_' + newId + '__destroy "/>' +
-                  '<input value="'+ datafile_id +'" type="hidden" name="dataset[datafiles_attributes]['+ newId + '][_id]" id="dataset_datafiles_attributes_' + newId + '_id "/>' +
-                  '</td></tr>'
+            '<input value="true" type="hidden" name="dataset[datafiles_attributes]['+ newId + '][_destroy]" id="dataset_datafiles_attributes_' + newId + '__destroy "/>' +
+            '<input value="'+ datafile_id +'" type="hidden" name="dataset[datafiles_attributes]['+ newId + '][_id]" id="dataset_datafiles_attributes_' + newId + '_id "/>' +
+            '</td></tr>'
 
         $("table#datafiles > tbody:last-child").append(row);
 
@@ -216,28 +216,28 @@ function create_from_remote(){
 
                     if (content_length > 100000000000){
                         alert("For files larger than 100 GB, please contact the Research Data Service.");
-                    //
-                    // *** temporarily, at least, don't try to use progress bar
-                    // } else if (content_length > 0) {
-                    //     item = {
-                    //         "name": $('#remote_filename').val(),
-                    //         "size": content_length,
-                    //         "url": $('#remote_url').val(),
-                    //         "dataset_key": dataset_key
-                    //     };
-                    //
-                    //     $.ajax({
-                    //         type: "POST",
-                    //         url: "/datafiles/create_from_url",
-                    //         data: item,
-                    //         success: function (data) {
-                    //             eval($(data).text());
-                    //         },
-                    //         error: function (data) {
-                    //             console.log(data);
-                    //         },
-                    //         dataType: 'script'
-                    //     });
+                        //
+                        // *** temporarily, at least, don't try to use progress bar
+                        // } else if (content_length > 0) {
+                        //     item = {
+                        //         "name": $('#remote_filename').val(),
+                        //         "size": content_length,
+                        //         "url": $('#remote_url').val(),
+                        //         "dataset_key": dataset_key
+                        //     };
+                        //
+                        //     $.ajax({
+                        //         type: "POST",
+                        //         url: "/datafiles/create_from_url",
+                        //         data: item,
+                        //         success: function (data) {
+                        //             eval($(data).text());
+                        //         },
+                        //         error: function (data) {
+                        //             console.log(data);
+                        //         },
+                        //         dataType: 'script'
+                        //     });
                     } else {
                         // getting here means not known to be too big
                         //console.log("content length not larger than 0");
@@ -300,7 +300,7 @@ function hide_preview(web_id){
 }
 
 function preview_image(iiif_root, web_id){
-    
+
     $("#preview_" + web_id).show();
     if ($("#preview_" + web_id).is(':empty')){
 
