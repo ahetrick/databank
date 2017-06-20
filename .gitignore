@@ -29,6 +29,12 @@ mock_bk
 features/support/login_data.yml
 solr/*
 solr
+bin/databank_dev
+bin/databank_prod
+bin/databank
+bin/initd_sample
+bin/svc_hooks/*
+bin/README
 
 
 idb_stop.sh
