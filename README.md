@@ -60,11 +60,10 @@ Edit these as necessary.
 #### Solr / Sunspot for search
 * Adjust config/sunspot.yml for actual solr implementation
 
+#### Cantaloupe for image processing for previews
 
-#### Run using passenger standalone on nix system 
-
-`$ ./idb_start.sh`
-
+* Can be downloaded from [Cantaloupe Getting Started](https://medusa-project.github.io/cantaloupe/get-started.html)
+* Find out more at about using the system at [IIIF Image API 2.1.1](http://iiif.io/api/image/2.1/)
 
 ## Integration with digital preservation repository @Illinois (Medusa)
 
