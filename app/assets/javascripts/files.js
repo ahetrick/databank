@@ -293,7 +293,7 @@ function preview(fileclass, web_id){
     }
 }
 
-function hide_preview(web_id){
+function hide_preview(fileclass, web_id){
 
     $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="preview(&#39;' + fileclass + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-open"></span> View</button>');
     $("#preview_" + web_id).hide();
