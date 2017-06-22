@@ -178,6 +178,7 @@ namespace :databank do
         # create or confirm dataset_staging directory for dataset
         dataset_dirname = "DOI-#{(dataset.identifier).parameterize}"
         staging_dir = "#{IDB_CONFIG[:staging_root]}/#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}"
+        recordfilename = "dataset_manifest_#{(dataset.identifier).parameterize}_#{Time.now.strftime('%Y-%m-%d')}.txt"
 
         FileUtils.mkdir_p "#{staging_dir}/system"
         FileUtils.chmod "u=wrx,go=rx", File.dirname(staging_dir)
@@ -188,7 +189,7 @@ namespace :databank do
 
         # write recordfile
 
-        record_filepath = "#{staging_dir}/system/dataset_manifest_#{(dataset.identifier).parameterize}_#{Time.now.strftime('%Y-%m-%d')}.txt"
+        record_filepath = "#{staging_dir}/system/#{recordfilename}"
 
         File.open(record_filepath, "w") do |recordfile|
           recordfile.puts(dataset.recordtext)
@@ -202,7 +203,7 @@ namespace :databank do
           puts "Local mode - no Medusa"
         else
           medusa_ingest = MedusaIngest.new
-          staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/dataset_manifest_#{(dataset.identifier).parameterize}_#{Time.now.strftime('%Y-%m-%d')}.txt"
+          staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/#{recordfilename}"
           medusa_ingest.staging_path = staging_path
           medusa_ingest.idb_class = 'recordfile'
           medusa_ingest.idb_identifier = dataset.key

@@ -767,7 +767,7 @@ function confirm_update() {
             data: $("[id^=edit_dataset]").serialize(),
             datatype: 'json',
             success: function (data) {
-                //console.log(data);
+                console.log(data);
 
                 if (data.message == "ok") {
                     reset_confirm_msg();
