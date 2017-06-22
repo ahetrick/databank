@@ -1281,6 +1281,47 @@ class Dataset < ActiveRecord::Base
 
     content = content + "[ Corresponding Creator: ] #{self.corresponding_creator_name}\n"
 
+    if self.funders.count > 0
+
+      self.funders.each do |funder|
+        content = content + "[ Funder: ] #{funder.name}"
+        if funder.grant && funder.grant != ''
+          content = content + "- [ Grant: ] #{funder.grant}"
+        end
+      end
+
+      content = content + "\n"
+
+    end
+
+    if self.related_materials.count > 0
+
+      self.related_materials.each do |material|
+        if material.uri && (material.relationship_arr.include?(Databank::Relationship::PREVIOUS_VERSION_OF) || material.relationship_arr.include?(Databank::Relationship::NEW_VERSION_OF) )
+           # handled in versions section
+        elsif material.citation || material.link
+           content = content + "[ Related"
+           if material.material_type && material.material_type != ""
+             content = content + " #{material.material_type}: ] "
+           else
+             content = content + "Material: ] "
+           end
+
+           if material.citation && material.citation != ''
+             content = content + "#{material.citation}"
+           end
+
+           if material.citation && material.citation !='' && material.link && material.link !=''
+             content = content + ", "
+           end
+
+           if material.link && material.link != ''
+             content = content + "#{material.link}"
+           end
+        end
+      end
+    end
+
     content = content +  "\n[ #{'File'.pluralize(self.datafiles.count)} (#{self.datafiles.count}): ] \n"
 
     self.ordered_datafiles.each do |datafile|

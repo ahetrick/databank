@@ -38,6 +38,8 @@ namespace :databank do
       audit.destroy
     end
 
+
+
   end
 
   desc 'delete all datafiles'
