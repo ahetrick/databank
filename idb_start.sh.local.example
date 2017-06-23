@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# idb_start.sh
+# script to start up databank and dependencies in the local development environment
+# to be run by the service user from the context of the databank root directory
+
+# remove incomplete files from failed upload attempts
+FILES=/tmp/RackMulti*
+
+for f in $FILES
+do
+  if [ -f $f ]; then
+     echo "Removing temporary file $f ..."
+       rm -f "$f"
+  fi
+done
+
+# start local cantaloupe
+
+echo Starting Cantaloupe image processing server ...
+
+
+nohup java -Dcantaloupe.config=cantaloupe/cantaloupe.properties -Xmx2g -jar cantaloupe/Cantaloupe-3.3.war > log/cantaloupe.log 2> log/cantaloupe.errors.log < /dev/null &
+CANTALOUPE_PID=$!
+echo $CANTALOUPE_PID > $HOME/Projects/databank/tmp/pids/cantaloupe.pid.txt
+
+#start rabbitmq
+
+echo Starting Rabbitmq messaging server ...
+
+rabbitmq-server & RABBITMQ_PID=$!
+echo $RABBITMQ_PID > $HOME/Projects/databank/tmp/pids/rabbitmq.pid.txt
+
+#start solr
+
+echo Starting Solr search indexing core ...
+bundle exec rake sunspot:solr:start
+
+# start databank with standalone passenger with integrated nginx
+
+echo Starting Databank web application in Passenger stand-alone with integrated nginx ...
+
+bundle exec passenger start -d -e development --nginx-config-template nginx.conf.erb

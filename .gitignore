@@ -29,6 +29,9 @@ mock_bk
 features/support/login_data.yml
 solr/*
 solr
+cantaloupe/cantaloupe.properties
+cantaloupe/delegates.rb
+
 bin/databank_dev
 bin/databank_prod
 bin/databank
