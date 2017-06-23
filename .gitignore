@@ -31,7 +31,7 @@ solr/*
 solr
 cantaloupe/cantaloupe.properties
 cantaloupe/delegates.rb
-
+cantaloupe/Cantaloupe-3.3.war
 bin/databank_dev
 bin/databank_prod
 bin/databank
