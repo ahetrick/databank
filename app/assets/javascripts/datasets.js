@@ -849,7 +849,7 @@ function setTokenExamples(upload_token, token_expiration){
     
     if(window.location.href.indexOf("dev") > -1) {
 
-        $('.command-to-copy').html("<pre><code>python illinois_data_bank_datafile.py "+ dataset_key +" "+ upload_token +"development myfile.csv</code></pre>");
+        $('.command-to-copy').html("<pre><code>python illinois_data_bank_datafile.py "+ dataset_key +" "+ upload_token +"myfile.csv development</code></pre>");
         $('.curl-to-copy').html("<pre><code>curl -F &quot;binary=@my_datafile.csv&quot; -H &quot;Authorization: Token token=" + upload_token + "&quot; -H &quot;Transfer-Encoding: chunked&quot; -X POST https://rds-dev.library.illinois.edu/api/dataset/"+ dataset_key +"/datafile -o output.txt -k</code></pre>");
     }else {
 
