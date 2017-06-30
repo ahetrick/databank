@@ -9,7 +9,7 @@ module Viewable
 
         case filename_split.last # extension
 
-          when 'txt', 'csv', 'tsv', 'rb', 'xml', 'json'
+          when 'txt', 'csv', 'tsv', 'rb', 'xml', 'json', 'TXT', 'CSV', 'XML', 'py', 'XML', 'JSON'
 
             filestring = File.read(self.bytestream_path)
 
@@ -165,7 +165,7 @@ module Viewable
     else
       filename_split = self.bytestream_name.split(".")
       extension = filename_split.last
-      if ['txt', 'csv', 'tsv', 'rb', 'xml', 'json', 'zip', '7z'].include?(extension)
+      if ['txt', 'csv', 'tsv', 'rb', 'xml', 'json', 'zip', '7z', 'TXT', 'CSV', 'XML', 'py', 'XML', 'JSON'].include?(extension)
         return true
       else
         return false

@@ -39,6 +39,9 @@ bin/initd_sample
 bin/svc_hooks/*
 bin/README
 
+api-client
+api-client/*
+
 
 idb_stop.sh
 idb_start.sh
