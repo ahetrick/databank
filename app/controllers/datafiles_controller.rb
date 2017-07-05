@@ -9,7 +9,7 @@ OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
 class DatafilesController < ApplicationController
 
-  before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download, :record_download, :upload, :do_upload, :reset_upload, :resume_upload, :update_status, :preview, :display, :filepath]
+  before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download, :record_download, :upload, :do_upload, :reset_upload, :resume_upload, :update_status, :preview, :display, :filepath, :archive_listview]
 
   # GET /datafiles
   # GET /datafiles.json
@@ -390,8 +390,6 @@ class DatafilesController < ApplicationController
   def filepath
     render json: {filepath: @datafile.bytestream_path}
   end
-
-
 
   private
   # Use callbacks to share common setup or constraints between actions.

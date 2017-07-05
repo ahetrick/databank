@@ -93,11 +93,17 @@
 
                                 %span.col-md-2
 
-                                  -if datafile.has_preview?
+                                  -if datafile.is_txt?
                                     %span(id="preview_btn_#{datafile.web_id}")
                                       %button(type='button' class='btn btn-sm btn-success' onclick='preview("datafile", "#{datafile.web_id}")')
                                         %span.glyphicon.glyphicon-eye-open
                                         View
+
+                                  -elsif datafile.is_archive?
+                                    %span(id="preview_btn_#{datafile.web_id}")
+                                      %button(type='button' class='btn btn-sm btn-success' onclick='preview_list("datafile", "#{datafile.web_id}")')
+                                        %span.glyphicon.glyphicon-eye-open
+                                        List
 
                                   -elsif datafile.is_image?
                                     %span(id="preview_img_btn_#{datafile.web_id}")
