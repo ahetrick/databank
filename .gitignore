@@ -42,6 +42,8 @@ bin/README
 api-client
 api-client/*
 
+postgres
+postgres/*
 
 idb_stop.sh
 idb_start.sh
