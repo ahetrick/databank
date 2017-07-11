@@ -29,6 +29,8 @@ mock_bk
 features/support/login_data.yml
 solr/*
 solr
+cantaloupe/log
+cantaloupe/log/*
 cantaloupe/cantaloupe.properties
 cantaloupe/delegates.rb
 cantaloupe/Cantaloupe-3.3.war
@@ -38,6 +40,10 @@ bin/databank
 bin/initd_sample
 bin/svc_hooks/*
 bin/README
+
+rabbitmq
+rabbitmq/*
+
 
 api-client
 api-client/*
