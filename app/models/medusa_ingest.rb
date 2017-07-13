@@ -144,10 +144,19 @@ class MedusaIngest < ActiveRecord::Base
     File.open(record_filepath, "w") do |recordfile|
       recordfile.puts(dataset.recordtext)
     end
-    FileUtils.chmod 0755, record_filepath
+
     recordfile = Recordfile.create(dataset_id: dataset.id)
     recordfile.binary = Pathname.new(record_filepath).open
     recordfile.save
+
+    # make symlink, because setting as binary removes the file and puts it in uploads
+
+    FileUtils.ln(record_filepath, dataset.recordfile.bytestream_path)
+    FileUtils.chmod "u=wrx,go=rx", dataset.recordfile.bytestream_path
+    FileUtils.chmod "u=wrx,go=rx", record_filepath
+
+
+
 
     medusa_ingest = MedusaIngest.new
     staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/#{recordfilename}"
