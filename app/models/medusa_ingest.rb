@@ -148,6 +148,8 @@ class MedusaIngest < ActiveRecord::Base
     recordfile = Recordfile.create(dataset_id: dataset.id)
     recordfile.binary = Pathname.new(record_filepath).open
     recordfile.save
+    dataset.recordfile = recordfile
+    dataset.save
 
     # make symlink, because setting as binary removes the file and puts it in uploads
 
