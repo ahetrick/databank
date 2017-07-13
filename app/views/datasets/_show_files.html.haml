@@ -71,6 +71,12 @@
                           .row(id="preview_#{dataset.recordfile.web_id}")
                           .row.loading.text-center
                             %i(class="fa fa-spinner fa-spin fa-4x view-load-spinner spinner_#{dataset.recordfile.web_id}" )
+                    -else
+                      %tr.row
+                        %td
+                          .row
+                            %span.col-md-12
+                              dataset info file not available
 
                     -if dataset.ordered_datafiles
 
