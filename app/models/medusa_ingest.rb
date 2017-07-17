@@ -27,9 +27,9 @@ class MedusaIngest < ActiveRecord::Base
 
   def self.send_dataset_to_medusa(dataset, old_publication_state)
 
-    if Rails.env.test?
-      return true
-    end
+    # if Rails.env.test?
+    #   return true
+    # end
 
     # create or confirm dataset_staging directory for dataset
     dataset_dirname = "DOI-#{(dataset.identifier).parameterize}"
@@ -148,13 +148,11 @@ class MedusaIngest < ActiveRecord::Base
     recordfile = Recordfile.create(dataset_id: dataset.id)
     recordfile.binary = Pathname.new(record_filepath).open
     recordfile.save
-    dataset.recordfile = recordfile
-    dataset.save
 
     # make symlink, because setting as binary removes the file and puts it in uploads
 
-    FileUtils.ln(dataset.recordfile.bytestream_path, record_filepath)
-    FileUtils.chmod "u=wrx,go=rx", dataset.recordfile.bytestream_path
+    FileUtils.ln(recordfile.bytestream_path, record_filepath)
+    FileUtils.chmod "u=wrx,go=rx", recordfile.bytestream_path
 
     medusa_ingest = MedusaIngest.new
     staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/#{recordfilename}"
