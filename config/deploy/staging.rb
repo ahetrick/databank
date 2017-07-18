@@ -10,8 +10,12 @@ server 'rds-dev.library.illinois.edu', user: 'lib-medusa-databank', roles: %w{ap
 
 set :rails_env, 'development'
 
+# Default deploy_to directory is /var/www/my_app_name
+set :deploy_to, '/home/lib-medusa-databank'
+
 # role-based syntax
-# ==================
+# ==================pwd
+
 
 # Defines a role with one or multiple servers. The primary server in each
 # group is considered to be the first unless any  hosts have the primary
