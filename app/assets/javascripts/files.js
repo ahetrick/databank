@@ -309,12 +309,12 @@ function preview_list(fileclass, web_id){
                 //console.log(data);
                 $('.spinner_'+web_id).hide();
                 $("#preview_" + web_id).html("<pre class='preview_body'>" + data.body + "</pre>");
-                $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview_list(&#39;' + fileclass + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> List</button>');
+                $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview_list(&#39;' + fileclass + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> List Contents</button>');
             },
             error: function(xhr, status, error){
                 $('.spinner_'+web_id).hide();
                 $("#preview_" + web_id).html("<div class='error-message' <h2>ERROR</h2> </p>An error occurred while accessing view. Details have been logged for review by the Research Data Service.</p></div>");
-                $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview_list(&#39;' + fileclass + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> List</button>');
+                $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview_list(&#39;' + fileclass + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> List Contents</button>');
                 var err = eval("(" + xhr.responseText + ")");
                 alert(err.Message);
             }
