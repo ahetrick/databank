@@ -178,38 +178,35 @@ namespace :databank do
         # create or confirm dataset_staging directory for dataset
         dataset_dirname = "DOI-#{(dataset.identifier).parameterize}"
         staging_dir = "#{IDB_CONFIG[:staging_root]}/#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}"
-        recordfilename = "dataset_info_#{(dataset.identifier).parameterize}_#{Time.now.strftime('%Y-%m-%d')}.txt"
 
         FileUtils.mkdir_p "#{staging_dir}/system"
         FileUtils.chmod "u=wrx,go=rx", File.dirname(staging_dir)
-        
-        # remove old recordfile, if exists
-
-        dataset.recordfile.delete if dataset.recordfile
 
         # write recordfile
 
+        recordfilename = "dataset_info_#{(dataset.identifier).parameterize}_#{Time.now.strftime('%Y-%m-%d')}.txt"
         record_filepath = "#{staging_dir}/system/#{recordfilename}"
 
         File.open(record_filepath, "w") do |recordfile|
           recordfile.puts(dataset.recordtext)
         end
-        FileUtils.chmod 0755, record_filepath
+
         recordfile = Recordfile.create(dataset_id: dataset.id)
         recordfile.binary = Pathname.new(record_filepath).open
         recordfile.save
 
-        if IDB_CONFIG[:local_mode] == true
-          puts "Local mode - no Medusa"
-        else
-          medusa_ingest = MedusaIngest.new
-          staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/#{recordfilename}"
-          medusa_ingest.staging_path = staging_path
-          medusa_ingest.idb_class = 'recordfile'
-          medusa_ingest.idb_identifier = dataset.key
-          medusa_ingest.send_medusa_ingest_message(staging_path)
-          medusa_ingest.save
-        end
+        # make symlink, because setting as binary removes the file and puts it in uploads
+
+        FileUtils.ln(recordfile.bytestream_path, record_filepath)
+        FileUtils.chmod "u=wrx,go=rx", recordfile.bytestream_path
+
+        medusa_ingest = MedusaIngest.new
+        staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/#{recordfilename}"
+        medusa_ingest.staging_path = staging_path
+        medusa_ingest.idb_class = 'recordfile'
+        medusa_ingest.idb_identifier = dataset.key
+        medusa_ingest.send_medusa_ingest_message(staging_path)
+        medusa_ingest.save
       end
     end
   end
