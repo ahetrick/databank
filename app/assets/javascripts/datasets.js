@@ -100,6 +100,8 @@ ready = function () {
     $("#checkAllFiles").click(function () {
         $(".checkFileGroup").prop('checked', $(this).prop('checked'));
 
+        var numChecked = $('input.checkFile:checked').length;
+
         $(".checkFileSelectedCount").html("(" + numChecked + ")");
     });
 
