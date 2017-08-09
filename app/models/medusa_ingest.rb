@@ -73,7 +73,7 @@ class MedusaIngest < ActiveRecord::Base
         FileUtils.chmod "u=wrx,go=rx", full_staging_path
         #staging_path is different from full_staging_path because it is relative to a directory known to Medusa
         staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/dataset_files/#{datafile.binary_name}"
-        Rails.logger.warn "staging path: #{staging_path}"
+        #Rails.logger.warn "staging path: #{staging_path}"
         medusa_ingest.staging_path = staging_path
         medusa_ingest.idb_class = 'datafile'
         medusa_ingest.idb_identifier = datafile.web_id
@@ -214,7 +214,6 @@ class MedusaIngest < ActiveRecord::Base
       else
         Rails.logger.warn "did not delete file because Medusa copy does not exist or is not verified for #{ingest.to_yaml}"
       end
-
     else
       Rails.logger.warn "could not find ingest record for medusa succeeded message: #{response_hash['staging_path']}"
     end
