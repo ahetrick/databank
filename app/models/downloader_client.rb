@@ -33,7 +33,7 @@ class DownloaderClient
 
     record_web_id = nil
 
-    web_ids each do |web_id|
+    web_ids.each do |web_id|
       if dataset.recordfile && dataset.recordfile.web_id == web_id
         record_web_id = web_id
         web_ids = web_ids - ["#{web_id}"]
