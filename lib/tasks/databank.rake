@@ -178,13 +178,14 @@ namespace :databank do
         # create or confirm dataset_staging directory for dataset
         dataset_dirname = "DOI-#{(dataset.identifier).parameterize}"
         staging_dir = "#{IDB_CONFIG[:staging_root]}/#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}"
+        file_time = Time.now.strftime('%Y-%m-%d_%H-%M')
 
         FileUtils.mkdir_p "#{staging_dir}/system"
         FileUtils.chmod "u=wrx,go=rx", File.dirname(staging_dir)
 
         # write recordfile
 
-        recordfilename = "dataset_info_#{(dataset.identifier).parameterize}_#{Time.now.strftime('%Y-%m-%d')}.txt"
+        recordfilename = "dataset_info_#{file_time}.txt"
         record_filepath = "#{staging_dir}/system/#{recordfilename}"
 
         File.open(record_filepath, "w") do |recordfile|

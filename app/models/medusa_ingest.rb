@@ -138,7 +138,7 @@ class MedusaIngest < ActiveRecord::Base
 
     # write recordfile
 
-    recordfilename = "dataset_info_#{(dataset.identifier).parameterize}_#{Time.now.strftime('%Y-%m-%d')}.txt"
+    recordfilename = "dataset_info_#{file_time}.txt"
     record_filepath = "#{staging_dir}/system/#{recordfilename}"
 
     File.open(record_filepath, "w") do |recordfile|
