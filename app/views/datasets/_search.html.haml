@@ -1,0 +1,193 @@
+%form(action="/datasets" id="searchForm" accept-charset="UTF-8" method="get" )
+  -if params.has_key?('sort_by')
+    %input(type="hidden" name="sort_by" value="#{params['sort_by']}" )
+  -else
+    %input(type="hidden" name="sort_by" value="sort_updated_desc" )
+  .row
+    .col-md-5
+      %br
+      .input-group
+
+        -if params.has_key?('q') && params['q'].length > 0
+          %input(type="text" class="form-control q" name="q" aria-label="search input box" value="#{params['q']}" )
+        -else
+          %input(type="text" class="form-control q" name="q" aria-label="search input box" placeholder="search for datasets" )
+        %span(class="input-group-btn" )
+          %button(type="submit" class="btn btn-primary" id="submitSearch")
+            %span(class="glyphicon glyphicon-search" aria-hidden="true" )
+          %button(type="button" class="btn btn-danger" onclick="clearSearchTerm()" )
+            %span(class="glyphicon glyphicon-remove" aria-hidden="true" )
+
+    .col-md-2
+      %h2
+        Datasets
+        ="(#{@search.total})"
+
+    -if current_user && current_user.role == 'admin'
+
+      .col-md-5.curator-only
+        %br
+        .input-group
+          %span(class="input-group-btn" )
+            %button(type="button" class="btn btn-default" disabled=true )
+              Updated
+            %button(type="button" class="btn btn-default updated_asc btn-sort" onclick="sortResults('sort_updated_asc')" )
+              %span(class="glyphicon glyphicon-arrow-up" )
+            %button(type="button" class="btn btn-default updated_desc btn-sort" onclick="sortResults('sort_updated_desc')" )
+              %span(class="glyphicon glyphicon-arrow-down" )
+
+          %span(class="input-group-btn" )
+            %button(type="button" class="btn btn-default" disabled=true )
+              Ingested
+            %button(type="button" class="btn btn-default ingested_asc btn-sort" onclick="sortResults('sort_ingested_asc')" )
+              %span(class="glyphicon glyphicon-arrow-up" )
+            %button(type="button" class="btn btn-default ingested_desc btn-sort" onclick="sortResults('sort_ingested_desc')" )
+              %span(class="glyphicon glyphicon-arrow-down" )
+
+          %span(class="input-group-btn" )
+            %button(type="button" class="btn btn-default" disabled=true )
+              Released
+            %button(type="button" class="btn btn-default released_asc btn-sort" onclick="sortResults('sort_released_asc')" )
+              %span(class="glyphicon glyphicon-arrow-up" )
+            %button(type="button" class="btn btn-default released_desc btn-sort" onclick="sortResults('sort_released_desc')" )
+              %span(class="glyphicon glyphicon-arrow-down" )
+  .row
+    .col-md-5
+
+      %button(type="button" class="btn btn-success" onclick="clearFilters()")
+        Clear Filters
+      -if @search && @search.total > 0
+        %button(type="button" class="btn btn-primary" onclick="generateReport()" )
+          Generate Report from Search Results
+      -if @search.total < 1
+        .indent
+          %em no results found
+      -else
+        -if current_user && current_user.role == 'depositor'
+
+          .panel-group
+            .panel.panel-default
+              .panel-heading
+                %h4(class="panel-title")
+                  My Datasets
+
+              .panel-body
+                -current_user_facet_exists = false
+                -@search.facet(:depositor).rows.each do |row|
+                  .facet
+                    -if row.value == current_user.username && params.has_key?('depositors') && params['depositors'].include?(row.value)
+                      %input(id="justMine" type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                        Just My Datasets
+                        ="(#{row.count})"
+                        -current_user_facet_exists = true
+                    -elsif row.value == current_user.username
+                      %input(id="justMine" type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                        Just My Datasets
+                        ="(#{row.count})"
+                        -current_user_facet_exists = true
+                - if current_user_facet_exists == false
+                  %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{current_user.username}" onchange="handleFilterChange()" checked=false disabled = true)
+                    Just My Datasets
+                    ="(0)"
+
+
+          -if current_user && current_user.role == 'depositor' && params.has_key?('depositors') && params['depositors'].include?(current_user.username)
+            .indent
+              .panel-group
+                .panel.panel-default
+                  .panel-heading
+                    %h4(class="panel-title")
+                      My Datasets By Visibility
+                  .panel-body
+
+                    -for row in @search.facet(:visibility_code).rows
+                      .facet
+                        -if params.has_key?('visibility_codes') && params['visibility_codes'].include?(row.value)
+                          %input(type="checkbox" class="checkFacet checkFacetGroup publication_state_facet" name="visibility_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                          = Indexable.visibility_name_from_code(row.value)
+                          ="(#{row.count})"
+                        -else
+                          %input(type="checkbox" class="checkFacet checkFacetGroup publication_state_facet" name="visibility_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                          = Indexable.visibility_name_from_code(row.value)
+                          ="(#{row.count})"
+
+
+        -if current_user && current_user.role == 'admin'
+
+          .panel-group
+            .panel.panel-default
+              .panel-heading
+                %h4(class="panel-title")
+                  Depositor
+              .panel-body
+                -for row in @search.facet(:depositor).rows
+                  .facet
+                    -if params.has_key?('depositors') && params['depositors'].include?(row.value)
+                      %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                        = User.user_info_string(row.value)
+                        ="(#{row.count})"
+                    -else
+                      %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                        = User.user_info_string(row.value)
+                        ="(#{row.count})"
+
+
+        .panel-group
+          .panel.panel-default
+            .panel-heading
+              %h4(class="panel-title")
+                Funder
+            .panel-body
+              -for row in @search.facet(:funder_codes).rows
+                .facet
+                  -if params.has_key?('funder_codes') && params['funder_codes'].include?(row.value)
+                    %input(type="checkbox" class="checkFacet checkFacetGroup funder_facet" name="funder_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                      = Indexable.funder_name_from_code(row.value)
+                      ="(#{row.count})"
+                  -else
+                    %input(type="checkbox" class="checkFacet checkFacetGroup funder_facet" name="funder_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                      = Indexable.funder_name_from_code(row.value)
+                      ="(#{row.count})"
+
+        .panel-group
+          .panel.panel-default
+            .panel-heading
+              %h4(class="panel-title")
+                License
+            .panel-body
+              -@search.facet(:license_code).rows.each do |row|
+
+                - if row.value != ""
+
+                  .facet
+                    -if params.has_key?('license_codes') && params['license_codes'].include?(row.value)
+                      %input(type="checkbox" class="checkFacet checkFacetGroup license_facet" name="license_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                        = Indexable.license_name_from_code(row.value)
+                        ="(#{row.count})"
+                    -else
+                      %input(type="checkbox" class="checkFacet checkFacetGroup license_facet" name="license_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                        = Indexable.license_name_from_code(row.value)
+                        ="(#{row.count})"
+
+
+        -if current_user && current_user.role == 'admin'
+          .panel-group
+            .panel.panel-default
+              .panel-heading
+                %h4(class="panel-title")
+                  Visibility
+              .panel-body
+                -for row in @search.facet(:visibility_code).rows
+                  .facet
+                    -if params.has_key?('visibility_codes') && params['visibility_codes'].include?(row.value)
+                      %input(type="checkbox" class="checkFacet checkFacetGroup publication_state_facet" name="visibility_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                      = Indexable.visibility_name_from_code(row.value)
+                      ="(#{row.count})"
+                    -else
+                      %input(type="checkbox" class="checkFacet checkFacetGroup publication_state_facet" name="visibility_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                        = Indexable.visibility_name_from_code(row.value)
+                        ="(#{row.count})"
+
+    .col-md-7
+      -@search.each_hit_with_result do |hit, dataset|
+        = render partial: 'brief_record', locals: {dataset: dataset}

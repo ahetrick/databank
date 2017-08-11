@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+</head>
+<body>
+<p>The following deposited dataset has been successfully updated in the Illinois Data Bank:</p>
+<blockquote>
+  <%= @dataset.plain_text_citation %>
+</blockquote>
+<p>Here is some information about the deposited dataset:</p>
+<blockquote>
+  <p>DataCite DOI: <%= @dataset.identifier %></p>
+
+  <p>Release date: <%= @dataset.release_date %></p>
+
+  <p>Depositor: <%= @dataset.depositor_name %></p>
+
+  <p>Contact person: <%= @dataset.corresponding_creator_name %></p>
+</blockquote>
+
+<%= render partial: "sigblock_html" %>
+</body>
+</html>

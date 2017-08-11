@@ -1,0 +1,36 @@
+<% if can? :create, Dataset %>
+
+  <script type="text/javascript">
+    window.location.href = "/datasets/new"
+  </script>
+
+<% else %>
+
+  <%= render partial: 'welcome' %>
+  <!-- Modal -->
+  <div class="modal fade" id="login-prompt" tabindex="-1" role="dialog" aria-labelledby="agreement-label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="prompt-title">Log in required to Deposit Dataset</h4>
+        </div>
+        <div class="modal-footer container-fluid">
+
+          <button onclick='window.location = "/login"' , type="button" class="btn btn-primary" data-dismiss="modal" id="login-button">
+            Log in with NetID
+          </button>
+
+          <button onclick='window.location = "/help"' , type="button" class="btn btn-success" data-dismiss="modal" id="help-button">
+            <span class="glyphicon glyphicon-question-sign"></span> Get Help
+          </button>
+
+          <button onclick='window.location = "/"' , type="button" class="btn btn-danger" data-dismiss="modal" id="cancel-button">
+            <span class="glyphicon glyphicon-remove"></span> Cancel
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+<% end %>

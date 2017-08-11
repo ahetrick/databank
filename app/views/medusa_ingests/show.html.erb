@@ -1,0 +1,44 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Idb class:</strong>
+  <%= @medusa_ingest.idb_class %>
+</p>
+
+<p>
+  <strong>Idb identifier:</strong>
+  <%= @medusa_ingest.idb_identifier %>
+</p>
+
+<p>
+  <strong>Staging path:</strong>
+  <%= @medusa_ingest.staging_path %>
+</p>
+
+<p>
+  <strong>Request status:</strong>
+  <%= @medusa_ingest.request_status %>
+</p>
+
+<p>
+  <strong>Medusa path:</strong>
+  <%= @medusa_ingest.medusa_path %>
+</p>
+
+<p>
+  <strong>Medusa uuid:</strong>
+  <%= @medusa_ingest.medusa_uuid %>
+</p>
+
+<p>
+  <strong>Response time:</strong>
+  <%= @medusa_ingest.response_time %>
+</p>
+
+<p>
+  <strong>Error text:</strong>
+  <%= @medusa_ingest.error_text %>
+</p>
+
+<%= link_to 'Edit', edit_medusa_ingest_path(@medusa_ingest) %> |
+<%= link_to 'Back', medusa_ingests_path %>
