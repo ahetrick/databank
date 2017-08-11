@@ -175,6 +175,33 @@ class MedusaIngest < ActiveRecord::Base
           else
             Rails.logger.warn "Datafile already gone for ingest #{ingest.id}"
           end
+
+        elsif ingest.idb_class == 'recordfile'
+          recordfile = Recordfile.find_by_web_id(ingest.idb_identifier)
+
+          dataset = Dataset.where(id: recordfile.dataset_id).first
+
+          unless dataset
+            Rails.logger.warn "dataset not found for ingest #{ingest.to_yaml}"
+          end
+
+          medusa_dataset_dir_json = JSON.parse((ingest.medusa_dataset_dir).gsub("'",'"').gsub('=>',':'))
+
+          if dataset && (!dataset.medusa_dataset_dir || dataset.medusa_dataset_dir == '')
+            dataset.medusa_dataset_dir = medusa_dataset_dir_json['url_path']
+            dataset.save
+          end
+
+          if recordfile && recordfile.binary
+            recordfile.medusa_path = ingest.medusa_path
+            recordfile.medusa_id = ingest.medusa_uuid
+            recordfile.remove_binary!
+            recordfile.save
+          else
+            Rails.logger.warn "Datafile already gone for ingest #{ingest.id}"
+          end
+
+
         end
         # delete file or symlink from staging directory
         File.delete("#{IDB_CONFIG[:staging_root]}/#{response_hash['staging_path']}")
