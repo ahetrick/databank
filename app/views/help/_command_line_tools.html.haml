@@ -57,21 +57,13 @@
             =succeed(",") do
               %a(href="https://www.python.org/" ) python 2 or 3
             %em works on files up to 2 TB.
-          %p Required Modules - general instructions:
+          %p Required Modules
           %pre
-            %code
-              = simple_format("pip install docopt\npip install requests\npip install urllib3[secure]")
-
-          Biocluster instructions for getting required modules:
+            %code pip install docopt
           %pre
-            = simple_format("module load IllinoisDataBank")
-
-          AWS instructions for getting required modules:
+            %code pip install requests
           %pre
-            %code
-              =simple_format("# 'requests' and 'urllib3' already installed on default linux image\npip install docopt")
-
-
+            %code pip install urllib3[secure]"
 
           %p
             A version of the following template command, pre-populated with your dataset identifier and token, comes up in response to clicking on the
@@ -81,7 +73,7 @@
           .command-to-copy
             %pre
               %code
-                =simple_format("python illinois_data_bank_datafile.py [DATASET_IDENTIFIER] [TOKEN] [SYSTEM] [FILE_TO_UPLOAD] ")
+                ="python illinois_data_bank_datafile.py [DATASET_IDENTIFIER] [TOKEN] [SYSTEM] [FILE_TO_UPLOAD] "
 
 
           %p Arguments:

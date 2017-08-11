@@ -56,20 +56,15 @@ Edit these as necessary.
 `$ cd ..`
 `$ bundle exec rake db:setup`
 
-#### Rabbitmq for communication with preservation system
-https://www.rabbitmq.com/
-set up the queues as described in databank.yml
-
 
 #### Solr / Sunspot for search
 * Adjust config/sunspot.yml for actual solr implementation
 
-#### Cantaloupe for image processing for previews
 
-* Can be downloaded from [Cantaloupe Getting Started](https://medusa-project.github.io/cantaloupe/get-started.html)
-* Find out more at about using the system at [IIIF Image API 2.1.1](http://iiif.io/api/image/2.1/)
+#### Run using passenger standalone on nix system 
 
-*for local development, the war can be downloaded to cantalope directory in the project and controlled as in the example idb_start and idb_stop scripts
+`$ ./idb_start.sh`
+
 
 ## Integration with digital preservation repository @Illinois (Medusa)
 
@@ -81,10 +76,31 @@ Databank exchanges AMPQ messages with Medusa.
 * Sending messages is triggered by actions in databank app
 * Getting messages is triggered by cron running a script
 
-#### local development start & stop scripts
+#### script example:
 
-idb_start.sh.local.example and idb_stop.sh.local.example can be used as a starting point for starting and stopping a local development environment. It assumes rabbitmq server has been installed, 
+```bash
+#!/usr/bin/env bash
+# get_medusa_messages.sh
+# ensure a log file
+logfile=/path/to/log/file" 
+touch logfile
 
+# if using rvm, load RVM into shell session and specify context
+#[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+# rvm use 2.2.1@idb_v1 >> $logfile
+
+# log timestamp
+echo $(date -u) >> $logfile
+
+# change context to current databank directory
+cd /path/to/databank/current
+
+# specify environment
+export RAILS_ENV=[test|development|production]
+
+# run rake task to get and handle messages
+bundle exec rake medusa:get_medusa_ingest_responses >> $logfile
+```
 
 #### cron example (hourly):
 `0 * * * * /path/to/scripts/get_medusa_messages.sh`

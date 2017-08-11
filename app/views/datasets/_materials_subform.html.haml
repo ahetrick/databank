@@ -32,8 +32,6 @@
             %td(class="material_cell")
               -if material.selected_type == Databank::MaterialType::OTHER
                 =ff.text_field :material_type, {class: "form-control dataset material-text"}
-              -else
-                =ff.hidden_field :material_type
             %td
               =ff.text_field :link, {class: "form-control dataset", placeholder: "[ URL to resource, e.g:   http://hdl.handle.net/2142/46427 ]"}
             %td

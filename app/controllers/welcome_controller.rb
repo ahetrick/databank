@@ -1,6 +1,5 @@
 class WelcomeController < ApplicationController
   def index
-    @featured_dataset = Dataset.find_by_key(IDB_CONFIG["featured"]["key"])
   end
   def sitemap
     sitemap_path = Rails.root.join('public', 'sitemaps', 'sitemap.xml.gz')

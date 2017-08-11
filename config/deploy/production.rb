@@ -9,9 +9,7 @@
 server 'databank.illinois.edu', user: 'databank', roles: %w{app db web}
 
 set :rails_env, 'production'
-
-# Default deploy_to directory is /var/www/my_app_name
-set :deploy_to, '/home/databank'
+set :unicorn_rack_env, 'production'
 
 # role-based syntax
 # ==================

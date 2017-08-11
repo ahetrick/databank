@@ -9,7 +9,7 @@ OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
 class DatafilesController < ApplicationController
 
-  before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download, :record_download, :upload, :do_upload, :reset_upload, :resume_upload, :update_status, :preview, :display, :filepath, :archive_listview]
+  before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download, :record_download, :upload, :do_upload, :reset_upload, :resume_upload, :update_status, :preview, :display, :filepath]
 
   # GET /datafiles
   # GET /datafiles.json
@@ -17,7 +17,10 @@ class DatafilesController < ApplicationController
 
     if params.has_key?(:dataset_id)
       @dataset = Dataset.find_by_key(params[:dataset_id])
-      @datafiles = Datafile.where(dataset_id: @dataset.id)
+      @datafiles = Datafile.all
+      @datafiles.each do |datafile|
+        datafile.destroy unless ( (datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != "") )
+      end
       authorize! :edit, @dataset
     end
 
@@ -390,6 +393,8 @@ class DatafilesController < ApplicationController
   def filepath
     render json: {filepath: @datafile.bytestream_path}
   end
+
+
 
   private
   # Use callbacks to share common setup or constraints between actions.

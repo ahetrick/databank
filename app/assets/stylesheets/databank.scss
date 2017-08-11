@@ -383,13 +383,13 @@ table.deposit-agreement-selection-warning > tbody > tr > td {
   border-radius: 3px;
 }
 
-.featured-dataset{
-  border: 2px solid $color__burnt-orange;
+.featured-datasaet{
+  border: 1px solid $color__highlight-orange;
   padding-right: 15px;
   padding-left: 15px;
   padding-bottom: 15px;
   margin-top: 30px;
-  cursor: pointer;
+  background-color: $color__gray-background;
 }
 
 .example-site{

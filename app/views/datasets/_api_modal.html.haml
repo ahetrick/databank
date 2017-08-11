@@ -17,9 +17,6 @@
           Your token and dataset identifier are pre-populated into example commands in sections below.
           %br
           Expand Python or cURL section to see the example command for that option.
-          %br
-
-
         %br
       .panel-group(id="python" role="tablist" aria-multiselectable="true")
         .panel.panel-default
@@ -39,26 +36,16 @@
                 =succeed(",") do
                   %a(href="https://www.python.org/" ) python 2 or 3
                 %em works on files up to 2 TB.
-
-              %p Required Modules - general instructions:
+              %p Required Modules
               %pre
                 %code
                   = simple_format("pip install docopt\npip install requests\npip install urllib3[secure]")
 
-              Biocluster instructions for getting required modules:
-              %pre
-                module load IllinoisDataBank
-
-              AWS instructions for getting required modules:
-              %pre
-                %code
-                  =simple_format("# 'requests' and 'urllib3' already installed on default linux image\npip install docopt")
-
-              %p After module set up, copy and paste this code example. Just change "myfile.csv" to your own data file's name.
+              %p Copy and paste this code example. Just change "myfile.csv" to your own data file's name.
               .command-to-copy
                 %pre
                   %code
-                    ="python illinois_data_bank_datafile.py #{@dataset.key} [TOKEN] myfile.csv#{IDB_CONFIG[:root_url_text].include?("dev") ? ' development':''}"
+                    ="python illinois_data_bank_datafile.py #{@dataset.key} [TOKEN] #{IDB_CONFIG[:root_url_text].include?("dev") ? 'development':''} myfile.csv "
 
               %p
                 For more help, see the
