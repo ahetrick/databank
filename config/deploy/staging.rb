@@ -13,6 +13,9 @@ set :rails_env, 'development'
 # Default deploy_to directory is /var/www/my_app_name
 set :deploy_to, '/home/lib-medusa-databank'
 
+# Ask which branch to deploy
+ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
+
 # role-based syntax
 # ==================
 
