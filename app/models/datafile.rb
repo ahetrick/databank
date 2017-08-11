@@ -85,9 +85,9 @@ class Datafile < ActiveRecord::Base
 
       if filename_split.count > 1 # otherwise cannot determine extension
 
-        case filename_split.last # extension
+        case filename_split.last.downcase # extension
 
-          when 'txt', 'csv', 'tsv', 'rb', 'xml', 'json'
+          when 'txt', 'csv', 'tsv', 'rb', 'xml', 'json', 'py'
 
             filestring = File.read(self.bytestream_path)
 
@@ -245,7 +245,7 @@ class Datafile < ActiveRecord::Base
       return false
     else
       filename_split = self.bytestream_name.split(".")
-      extension = filename_split.last
+      extension = filename_split.last.downcase
       if ['txt', 'csv', 'tsv', 'rb', 'xml', 'json', 'zip', '7z'].include?(extension)
         return true
       else
@@ -260,7 +260,7 @@ class Datafile < ActiveRecord::Base
       return false
     else
       filename_split = self.bytestream_name.split(".")
-      extension = filename_split.last
+      extension = filename_split.last.downcase
       if ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'jpg2', 'tif', 'tiff'].include?(extension)
         return true
       else
@@ -274,7 +274,7 @@ class Datafile < ActiveRecord::Base
       return false
     else
       filename_split = self.bytestream_name.split(".")
-      extension = filename_split.last
+      extension = filename_split.last.downcase
       return ['doc', 'docx', 'xls', 'xslx', '.ppt', 'pptx' ].include?(extension)
     end
   end
@@ -298,7 +298,7 @@ class Datafile < ActiveRecord::Base
     else
       filename_split = self.bytestream_name.split(".")
       extension = filename_split.last
-      case extension
+      case extension.downcase
         when 'png'
           return 'image/png'
         when 'jpg', 'jpeg', 'jpg2'
