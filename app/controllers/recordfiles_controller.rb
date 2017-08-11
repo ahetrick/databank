@@ -1,4 +1,4 @@
-include ActionView::Helpers::NumberHelper # to pass a display value to a javascript function that adds characters to view
+iinclude ActionView::Helpers::NumberHelper # to pass a display value to a javascript function that adds characters to view
 require 'tempfile'
 require 'open-uri'
 require 'fileutils'
@@ -42,7 +42,7 @@ class RecordfilesController < ApplicationController
       send_file path
     end
   end
-  
+
 
   private
   # Use callbacks to share common setup or constraints between actions.

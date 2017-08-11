@@ -93,11 +93,16 @@ ready = function () {
         title: "<table class='upload-key'><tr> <td> <span class='fa upload-guide fa-circle'></span></td> <td> consistent </td><td> Reliable performance for a variety of connection speeds and configurations. </td> </tr> <tr> <td> <span class='fa upload-guide fa-adjust'></span> <td>inconsistent</td> </td> <td> Depends for reliability on connection strength and speed. Works well on campus, but home and coffee-shop environments vary. </td> </tr> <tr class='highlight-background'> <td> <span class='fa upload-guide fa-circle-o'></span> <td>unavailable</td> </td> <td> Either does not work at all, or is so unreliable as to be inadvisable. </td> </tr> </table> </table>"
     });
 
-    $(".checkFileSelectedCount").html('(0)');
+    var numChecked = $('input.checkFile:checked').length;
+
+    $(".checkFileSelectedCount").html( '(' + numChecked + ')');
 
     $("#checkAllFiles").click(function () {
         $(".checkFileGroup").prop('checked', $(this).prop('checked'));
-        $(".checkFileSelectedCount").html($('('+'.checkFile:checked').size() + ')');
+
+        var numChecked = $('input.checkFile:checked').length;
+
+        $(".checkFileSelectedCount").html("(" + numChecked + ")");
     });
 
     $('#term-supports').tooltip();
@@ -263,7 +268,7 @@ ready = function () {
                 setTokenExamples(data.token, data.expires);
 
             } else {
-               getNewToken();
+                getNewToken();
             }
 
         });
@@ -363,7 +368,7 @@ ready = function () {
                 '<input type="hidden"  value="' + file.datafileId + '" name="dataset[datafiles_attributes][' + newId + '][id]" id="dataset_datafiles_attributes_' + newId + '_id" />' +
 
                 '<span class="col-md-8">' +
-                    '<label>' +
+                '<label>' +
                 '<input class="checkFile checkFileGroup" name="selected_files[]" type="checkbox" value="' + newId + '" onchange="handleCheckFileGroupChange()">' +
                 file.name +
                 '</input>' +
@@ -636,7 +641,7 @@ function filename_isdup(proposed_name) {
             returnVal = true;
         }
     });
-    
+
     return returnVal;
 }
 
@@ -661,7 +666,7 @@ function offerDownloadLink() {
                 if (result.status == 'ok') {
                     $('.download-link').html("<h2><a href='" + result.url + "' target='_blank'>Download</a></h2>");
                     if (Number(result.total_size) > zip64_threshold) {
-                        $('.download-help').html("<p>For selections of files larger than 4GB, the zip file will be in zip64 format. To open a zip64 formatted file on OS X (Mac) requires additional software not build into the operating system since version 10.11. Options include 7zX and The Unarchiver. If a Windows system has trouble opening the zip file, 7-Zip can be used.</p>")
+                        $('.download-help').html("<p>For selections of files larger than 4GB, the zip file will be in zip64 format. To open a zip64 formatted file on OS X (Mac) requires additional software not built into the operating system since version 10.11. Options include 7zX and The Unarchiver. If a Windows system has trouble opening the zip file, 7-Zip can be used.</p>")
                     }
 
                     $('#downloadLinkModal').modal('show');
@@ -764,7 +769,7 @@ function confirm_update() {
             data: $("[id^=edit_dataset]").serialize(),
             datatype: 'json',
             success: function (data) {
-                //console.log(data);
+                console.log(data);
 
                 if (data.message == "ok") {
                     reset_confirm_msg();
@@ -843,10 +848,10 @@ function setTokenExamples(upload_token, token_expiration){
 
     $('.current-token').html("<p><strong>Current HTTP Authentication Token: </strong>" + upload_token + "<br/><strong>Expires:</strong> " + (new Date(token_expiration)).toISOString() + "</p>");
     $('#token-button-text').text('View token for command line tools');
-    
+
     if(window.location.href.indexOf("dev") > -1) {
 
-        $('.command-to-copy').html("<pre><code>python illinois_data_bank_datafile.py "+ dataset_key +" "+ upload_token +"development myfile.csv</code></pre>");
+        $('.command-to-copy').html("<pre><code>python illinois_data_bank_datafile.py "+ dataset_key +" "+ upload_token +" myfile.csv development</code></pre>");
         $('.curl-to-copy').html("<pre><code>curl -F &quot;binary=@my_datafile.csv&quot; -H &quot;Authorization: Token token=" + upload_token + "&quot; -H &quot;Transfer-Encoding: chunked&quot; -X POST https://rds-dev.library.illinois.edu/api/dataset/"+ dataset_key +"/datafile -o output.txt -k</code></pre>");
     }else {
 
@@ -870,11 +875,13 @@ function cancelUpload() {
 }
 
 function deleteSelected() {
-    
+
+    var numChecked = $('input.checkFile:checked').length;
+
     if (window.confirm("Are you sure?")) {
 
         //console.log($('#checkFileSelectedCount').html());
-        $('.checkFileSelectedCount').html('(0)');
+        $('.checkFileSelectedCount').html( '(' + numChecked + ')');
         $('#checkAllFiles').prop('checked', false);
 
         $.each($("input[name='selected_files[]']:checked"), function () {
@@ -885,14 +892,14 @@ function deleteSelected() {
 
 function handleCheckFileGroupChange(){
 
-    var numChecked = $('.checkFile:checked').size();
+    var numChecked = $('input.checkFile:checked').length;
 
     if (typeof numChecked === 'undefined' || isNaN(numChecked) || numChecked < 1 ){
         numChecked = 0;
     }
 
 
-    $(".checkFileSelectedCount").html( '(' + numChecked.toString()  + ')');
+    $(".checkFileSelectedCount").html( '(' + numChecked + ')');
     $('#checkAllFiles').prop('checked', false);
 }
 
@@ -920,4 +927,3 @@ function handleKeywordKeyup(){
 
 $(document).ready(ready);
 $(document).on('page:load', ready);
-

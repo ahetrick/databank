@@ -10,7 +10,7 @@ files_ready = function () {
 
 
 function remove_file_row_pre_confirm(datafile_index){
-    
+
     if ($("#dataset_datafiles_attributes_" + datafile_index + "_web_id").val() == undefined) {
         console.log("web_id undefined");
     }
@@ -48,7 +48,7 @@ function remove_file_row(datafile_index) {
 }
 
 function remove_filejob_row(job_id, datafile_id){
-    
+
     if (window.confirm("Are you sure?")) {
 
         var maxId = Number($('#datafile_index_max').val());
@@ -61,9 +61,9 @@ function remove_filejob_row(job_id, datafile_id){
         $('#datafile_index_max').val(newId);
 
         var row = '<tr id= "datafile_index_' + newId + '"><td>' +
-                  '<input value="true" type="hidden" name="dataset[datafiles_attributes]['+ newId + '][_destroy]" id="dataset_datafiles_attributes_' + newId + '__destroy "/>' +
-                  '<input value="'+ datafile_id +'" type="hidden" name="dataset[datafiles_attributes]['+ newId + '][_id]" id="dataset_datafiles_attributes_' + newId + '_id "/>' +
-                  '</td></tr>'
+            '<input value="true" type="hidden" name="dataset[datafiles_attributes]['+ newId + '][_destroy]" id="dataset_datafiles_attributes_' + newId + '__destroy "/>' +
+            '<input value="'+ datafile_id +'" type="hidden" name="dataset[datafiles_attributes]['+ newId + '][_id]" id="dataset_datafiles_attributes_' + newId + '_id "/>' +
+            '</td></tr>'
 
         $("table#datafiles > tbody:last-child").append(row);
 
@@ -215,29 +215,29 @@ function create_from_remote(){
                     var content_length = data.remote_content_length;
 
                     if (content_length > 100000000000){
-                        alert("For files larger than 100 GB, please contact the Research Data Service.")
-                    //
-                    // *** temporarily, at least, don't try to use progress bar
-                    // } else if (content_length > 0) {
-                    //     item = {
-                    //         "name": $('#remote_filename').val(),
-                    //         "size": content_length,
-                    //         "url": $('#remote_url').val(),
-                    //         "dataset_key": dataset_key
-                    //     };
-                    //
-                    //     $.ajax({
-                    //         type: "POST",
-                    //         url: "/datafiles/create_from_url",
-                    //         data: item,
-                    //         success: function (data) {
-                    //             eval($(data).text());
-                    //         },
-                    //         error: function (data) {
-                    //             console.log(data);
-                    //         },
-                    //         dataType: 'script'
-                    //     });
+                        alert("For files larger than 100 GB, please contact the Research Data Service.");
+                        //
+                        // *** temporarily, at least, don't try to use progress bar
+                        // } else if (content_length > 0) {
+                        //     item = {
+                        //         "name": $('#remote_filename').val(),
+                        //         "size": content_length,
+                        //         "url": $('#remote_url').val(),
+                        //         "dataset_key": dataset_key
+                        //     };
+                        //
+                        //     $.ajax({
+                        //         type: "POST",
+                        //         url: "/datafiles/create_from_url",
+                        //         data: item,
+                        //         success: function (data) {
+                        //             eval($(data).text());
+                        //         },
+                        //         error: function (data) {
+                        //             console.log(data);
+                        //         },
+                        //         dataType: 'script'
+                        //     });
                     } else {
                         // getting here means not known to be too big
                         //console.log("content length not larger than 0");
@@ -256,12 +256,10 @@ function create_from_remote(){
             }
         });
 
-
-
     }
 }
 
-function preview(web_id){
+function preview(fileclass, web_id){
     $('.spinner_'+web_id).show();
 
     //$('.preview').css("visibility", "hidden");
@@ -270,19 +268,19 @@ function preview(web_id){
     $("#preview_" + web_id).show();
     if ($("#preview_" + web_id).is(':empty')){
         $.ajax({
-            url: '/datafiles/' + web_id + '/preview.json',
+            url: '/' + fileclass + 's/' + web_id + '/preview.json',
             type: 'GET',
             datatype: "json",
             success: function(data) {
                 //console.log(data);
                 $('.spinner_'+web_id).hide();
                 $("#preview_" + web_id).html("<pre class='preview_body'>" + data.body + "</pre>");
-                $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> View</button>');
+                $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview(&#39;' + fileclass + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> View</button>');
             },
             error: function(xhr, status, error){
                 $('.spinner_'+web_id).hide();
                 $("#preview_" + web_id).html("<div class='error-message' <h2>ERROR</h2> </p>An error occurred while accessing view. Details have been logged for review by the Research Data Service.</p></div>");
-                $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span>View</button>');
+                $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview(&#39;' + fileclass + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span>View</button>');
                 var err = eval("(" + xhr.responseText + ")");
                 alert(err.Message);
             }
@@ -290,23 +288,65 @@ function preview(web_id){
     } else {
         $('.spinner_'+web_id).hide();
         //console.log($("#preview_" + web_id));
-        $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> View</button>');
+        $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview(&#39;' + fileclass + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> View</button>');
 
     }
 }
 
-function hide_preview(web_id){
+function preview_list(fileclass, web_id){
+    $('.spinner_'+web_id).show();
 
-    $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-open"></span> View</button>');
+    //$('.preview').css("visibility", "hidden");
+    //$('.preview').empty();
+
+    $("#preview_" + web_id).show();
+    if ($("#preview_" + web_id).is(':empty')){
+        $.ajax({
+            url: '/' + fileclass + 's/' + web_id + '/preview.json',
+            type: 'GET',
+            datatype: "json",
+            success: function(data) {
+                //console.log(data);
+                $('.spinner_'+web_id).hide();
+                $("#preview_" + web_id).html("<pre class='preview_body'>" + data.body + "</pre>");
+                $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview_list(&#39;' + fileclass + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> List Contents</button>');
+            },
+            error: function(xhr, status, error){
+                $('.spinner_'+web_id).hide();
+                $("#preview_" + web_id).html("<div class='error-message' <h2>ERROR</h2> </p>An error occurred while accessing view. Details have been logged for review by the Research Data Service.</p></div>");
+                $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview_list(&#39;' + fileclass + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> List Contents</button>');
+                var err = eval("(" + xhr.responseText + ")");
+                alert(err.Message);
+            }
+        });
+    } else {
+        $('.spinner_'+web_id).hide();
+        //console.log($("#preview_" + web_id));
+        $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview_list(&#39;' + fileclass + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> List</button>');
+
+    }
+}
+
+
+function hide_preview(fileclass, web_id){
+
+    $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="preview(&#39;' + fileclass + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-open"></span> View</button>');
+    $("#preview_" + web_id).hide();
+}
+
+function hide_preview_list(fileclass, web_id){
+
+    $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="preview(&#39;' + fileclass + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-open"></span> List</button>');
     $("#preview_" + web_id).hide();
 }
 
 function preview_image(iiif_root, web_id){
-    
+
     $("#preview_" + web_id).show();
     if ($("#preview_" + web_id).is(':empty')){
-
+        $('.spinner_'+web_id).show();
         $("#preview_" + web_id).html("<img src='" + iiif_root + "/" + web_id + "/full/full/0/default.jpg" + "' class='preview_body'>");
+        $('.spinner_'+web_id).hide();
     }
     $("#preview_img_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_image_preview(&#39;' + iiif_root + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> View</button>');
 }
@@ -315,17 +355,6 @@ function hide_image_preview(iiif_root, web_id){
     $("#preview_img_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="preview_image(&#39;' + iiif_root + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-open"></span> View</button>');
     $("#preview_" + web_id).hide();
 }
-
-// function preview_doc(web_id){
-//     $("#preview_" + web_id).show();
-//     if ($("#preview_" + web_id).is(':empty')) {
-//         $("#preview_" + web_id).html('<iframe src="http://docs.google.com/gview?url=&embedded=true"></iframe>');
-//     } else {
-//         $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview(&#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> Preview</button>');
-//     }
-//
-// }
-
 
 function remove_deckfile(deckfile_id, deckfile_index){
     $('#dataset_deckfiles_attributes_'+ deckfile_index +'_remove').val("true");

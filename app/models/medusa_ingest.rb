@@ -27,9 +27,9 @@ class MedusaIngest < ActiveRecord::Base
 
   def self.send_dataset_to_medusa(dataset, old_publication_state)
 
-    if Rails.env.test?
-      return true
-    end
+    # if Rails.env.test?
+    #   return true
+    # end
 
     # create or confirm dataset_staging directory for dataset
     dataset_dirname = "DOI-#{(dataset.identifier).parameterize}"
@@ -73,13 +73,14 @@ class MedusaIngest < ActiveRecord::Base
         FileUtils.chmod "u=wrx,go=rx", full_staging_path
         #staging_path is different from full_staging_path because it is relative to a directory known to Medusa
         staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/dataset_files/#{datafile.binary_name}"
-        Rails.logger.warn "staging path: #{staging_path}"
+        #Rails.logger.warn "staging path: #{staging_path}"
         medusa_ingest.staging_path = staging_path
         medusa_ingest.idb_class = 'datafile'
         medusa_ingest.idb_identifier = datafile.web_id
         medusa_ingest.send_medusa_ingest_message(staging_path)
         medusa_ingest.save
       end
+
       if File.exist?("#{IDB_CONFIG[:agreements_root_path]}/#{dataset.key}/deposit_agreement.txt")
         medusa_ingest = MedusaIngest.new
         full_path = "#{IDB_CONFIG[:agreements_root_path]}/#{dataset.key}/deposit_agreement.txt"
@@ -129,6 +130,38 @@ class MedusaIngest < ActiveRecord::Base
     medusa_ingest.idb_identifier = dataset.key
     medusa_ingest.send_medusa_ingest_message(staging_path)
     medusa_ingest.save
+
+
+    # remove old recordfile, if exists
+
+    dataset.recordfile.delete if dataset.recordfile
+
+    # write recordfile
+
+    recordfilename = "dataset_info_#{file_time}.txt"
+    record_filepath = "#{staging_dir}/system/#{recordfilename}"
+
+    File.open(record_filepath, "w") do |recordfile|
+      recordfile.puts(dataset.recordtext)
+    end
+
+    recordfile = Recordfile.create(dataset_id: dataset.id)
+    recordfile.binary = Pathname.new(record_filepath).open
+    recordfile.save
+
+    # make symlink, because setting as binary removes the file and puts it in uploads
+
+    FileUtils.ln(recordfile.bytestream_path, record_filepath)
+    FileUtils.chmod "u=wrx,go=rx", recordfile.bytestream_path
+
+    medusa_ingest = MedusaIngest.new
+    staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/#{recordfilename}"
+    medusa_ingest.staging_path = staging_path
+    medusa_ingest.idb_class = 'recordfile'
+    medusa_ingest.idb_identifier = dataset.key
+    medusa_ingest.send_medusa_ingest_message(staging_path)
+    medusa_ingest.save
+
   end
 
 
@@ -175,40 +208,26 @@ class MedusaIngest < ActiveRecord::Base
           else
             Rails.logger.warn "Datafile already gone for ingest #{ingest.id}"
           end
-
         elsif ingest.idb_class == 'recordfile'
           recordfile = Recordfile.find_by_web_id(ingest.idb_identifier)
-
           dataset = Dataset.where(id: recordfile.dataset_id).first
-
           unless dataset
             Rails.logger.warn "dataset not found for ingest #{ingest.to_yaml}"
           end
-
-          medusa_dataset_dir_json = JSON.parse((ingest.medusa_dataset_dir).gsub("'",'"').gsub('=>',':'))
-
-          if dataset && (!dataset.medusa_dataset_dir || dataset.medusa_dataset_dir == '')
-            dataset.medusa_dataset_dir = medusa_dataset_dir_json['url_path']
-            dataset.save
-          end
-
           if recordfile && recordfile.binary
             recordfile.medusa_path = ingest.medusa_path
             recordfile.medusa_id = ingest.medusa_uuid
             recordfile.remove_binary!
             recordfile.save
           else
-            Rails.logger.warn "Datafile already gone for ingest #{ingest.id}"
+            Rails.logger.warn "Recordfile already gone for ingest #{ingest.id}"
           end
-
-
         end
         # delete file or symlink from staging directory
         File.delete("#{IDB_CONFIG[:staging_root]}/#{response_hash['staging_path']}")
       else
         Rails.logger.warn "did not delete file because Medusa copy does not exist or is not verified for #{ingest.to_yaml}"
       end
-
     else
       Rails.logger.warn "could not find ingest record for medusa succeeded message: #{response_hash['staging_path']}"
     end

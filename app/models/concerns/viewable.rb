@@ -90,7 +90,7 @@ module Viewable
         end
 
 
-        #return 'listing of gz files not yet implemented'
+      #return 'listing of gz files not yet implemented'
 
       when 'tar'
         entry_list_text = `tar -tf "#{self.bytestream_path}"`

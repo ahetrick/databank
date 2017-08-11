@@ -85,9 +85,9 @@ class Datafile < ActiveRecord::Base
 
       if filename_split.count > 1 # otherwise cannot determine extension
 
-        case filename_split.last.downcase # extension
+        case filename_split.last # extension
 
-          when 'txt', 'csv', 'tsv', 'rb', 'xml', 'json', 'py'
+          when 'txt', 'csv', 'tsv', 'rb', 'xml', 'json'
 
             filestring = File.read(self.bytestream_path)
 
@@ -97,12 +97,12 @@ class Datafile < ActiveRecord::Base
                 detected_encoding = chardet['encoding']
 
                 #Rails.logger.warn "\n***\n#{detected_encoding}\n***\n"
-                
+
                 if detected_encoding == "UTF-8"
                   return filestring
                 else
 
-                 return filestring.encode('utf-8', detected_encoding, :invalid => :replace, :undef => :replace, :replace => '')
+                  return filestring.encode('utf-8', detected_encoding, :invalid => :replace, :undef => :replace, :replace => '')
 
                 end
 
@@ -245,7 +245,7 @@ class Datafile < ActiveRecord::Base
       return false
     else
       filename_split = self.bytestream_name.split(".")
-      extension = filename_split.last.downcase
+      extension = filename_split.last
       if ['txt', 'csv', 'tsv', 'rb', 'xml', 'json', 'zip', '7z'].include?(extension)
         return true
       else
@@ -260,7 +260,7 @@ class Datafile < ActiveRecord::Base
       return false
     else
       filename_split = self.bytestream_name.split(".")
-      extension = filename_split.last.downcase
+      extension = filename_split.last
       if ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'jpg2', 'tif', 'tiff'].include?(extension)
         return true
       else
@@ -274,7 +274,7 @@ class Datafile < ActiveRecord::Base
       return false
     else
       filename_split = self.bytestream_name.split(".")
-      extension = filename_split.last.downcase
+      extension = filename_split.last
       return ['doc', 'docx', 'xls', 'xslx', '.ppt', 'pptx' ].include?(extension)
     end
   end
@@ -298,7 +298,7 @@ class Datafile < ActiveRecord::Base
     else
       filename_split = self.bytestream_name.split(".")
       extension = filename_split.last
-      case extension.downcase
+      case extension
         when 'png'
           return 'image/png'
         when 'jpg', 'jpeg', 'jpg2'
@@ -349,24 +349,24 @@ class Datafile < ActiveRecord::Base
       unless ip_downloaded_file_today(request_ip)
 
 
-          DayFileDownload.create(ip_address: request_ip,
-                                 download_date: Date.current,
-                                 file_web_id: self.web_id,
-                                 filename: self.bytestream_name,
-                                 dataset_key: dataset.key,
-                                 doi: dataset.identifier)
+        DayFileDownload.create(ip_address: request_ip,
+                               download_date: Date.current,
+                               file_web_id: self.web_id,
+                               filename: self.bytestream_name,
+                               dataset_key: dataset.key,
+                               doi: dataset.identifier)
 
-          today_datatafile_download_relation = FileDownloadTally.where(["file_web_id = ? and download_date = ?", self.web_id, Date.current])
+        today_datatafile_download_relation = FileDownloadTally.where(["file_web_id = ? and download_date = ?", self.web_id, Date.current])
 
-          if today_datatafile_download_relation.count == 1
-            today_file_download = today_datatafile_download_relation.first
-            today_file_download.tally = today_file_download.tally + 1
-            today_file_download.save
-          elsif today_datatafile_download_relation.count == 0
-            FileDownloadTally.create(tally: 1, download_date: Date.current, dataset_key: dataset.key, doi: dataset.identifier, file_web_id: self.web_id, filename: self.bytestream_name)
-          else
-            Rails.logger.warn "unexpected number of file tally records for download of #{self.web_id} on #{Date.current} from #{request_ip}"
-          end
+        if today_datatafile_download_relation.count == 1
+          today_file_download = today_datatafile_download_relation.first
+          today_file_download.tally = today_file_download.tally + 1
+          today_file_download.save
+        elsif today_datatafile_download_relation.count == 0
+          FileDownloadTally.create(tally: 1, download_date: Date.current, dataset_key: dataset.key, doi: dataset.identifier, file_web_id: self.web_id, filename: self.bytestream_name)
+        else
+          Rails.logger.warn "unexpected number of file tally records for download of #{self.web_id} on #{Date.current} from #{request_ip}"
+        end
 
       end
 

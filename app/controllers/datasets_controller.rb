@@ -60,7 +60,7 @@ class DatasetsController < ApplicationController
 
     if current_user && current_user.role
 
-        case current_user.role
+      case current_user.role
         when "admin"
 
           search_get_facets = Dataset.search do
@@ -396,7 +396,7 @@ class DatasetsController < ApplicationController
             with :publication_state, Databank::PublicationState::TempSuppress::FILE
           end
         end
-        
+
         keywords (params[:q])
         facet(:license_code)
         facet(:funder_codes)

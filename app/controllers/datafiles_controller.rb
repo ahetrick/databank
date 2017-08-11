@@ -45,7 +45,7 @@ class DatafilesController < ApplicationController
     authorize! :edit, @dataset
 
     if (@datafile.medusa_path && @datafile.medusa_path != "") || (@datafile.binary.path && @datafile.binary.path != "")
-       redirect_to "/datasets/#{@dataset.key}/datafiles/#{@datafile.web_id}"
+      redirect_to "/datasets/#{@dataset.key}/datafiles/#{@datafile.web_id}"
     end
 
   end
@@ -76,7 +76,7 @@ class DatafilesController < ApplicationController
       @dataset = Dataset.where("id = ?", @datafile.dataset_id).first
     else
       if @dataset
-       @datafile = Datafile.new(dataset_id: @dataset.id)
+        @datafile = Datafile.new(dataset_id: @dataset.id)
       end
     end
 
@@ -176,7 +176,7 @@ class DatafilesController < ApplicationController
     uri = URI.parse(@remote_url)
 
     Net::HTTP.start(uri.host, uri.port, :use_ssl => (uri.scheme == 'https')) { |http|
-        response = http.request_head(uri.path)
+      response = http.request_head(uri.path)
     }
 
     # Rails.logger.warn "content length: #{response['content-length']}"
@@ -187,7 +187,7 @@ class DatafilesController < ApplicationController
 
       if remote_content_length && remote_content_length > 0
 
-         render(json: {"status":"ok", "remote_content_length":remote_content_length }, content_type: request.format, layout: false)
+        render(json: {"status":"ok", "remote_content_length":remote_content_length }, content_type: request.format, layout: false)
 
       else
 
@@ -223,7 +223,7 @@ class DatafilesController < ApplicationController
             res.read_body { |seg|
 
               if File.size(outfile) < 1000000000000
-               outfile << seg
+                outfile << seg
               else
                 @datafile.destroy
                 render(json: {files:[{datafileId: 0,webId: "error",url: "error",name: "error: filesize exceeds 1TB",size: "0"}]}, content_type: request.format, :layout => false)
@@ -310,7 +310,7 @@ class DatafilesController < ApplicationController
       @datafile.save!
       render json: to_fileupload and return
 
-    # If the already uploaded file has the same filename, try to resume
+      # If the already uploaded file has the same filename, try to resume
     else
       current_size = @datafile.binary.size
       content_range = request.headers['CONTENT-RANGE']
