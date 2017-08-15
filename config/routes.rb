@@ -6,6 +6,8 @@ Rails.application.routes.draw do
 
   get '/datasets/:id/recordtext', to: 'datasets#recordtext'
 
+  get '/recordfiles', to: 'recordfiles#index'
+
   resources :tokens
   resources :admin
   resources :deckfiles

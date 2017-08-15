@@ -1,4 +1,4 @@
-iinclude ActionView::Helpers::NumberHelper # to pass a display value to a javascript function that adds characters to view
+include ActionView::Helpers::NumberHelper # to pass a display value to a javascript function that adds characters to view
 require 'tempfile'
 require 'open-uri'
 require 'fileutils'
