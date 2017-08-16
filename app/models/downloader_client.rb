@@ -7,12 +7,16 @@ class DownloaderClient
   include ActiveModel::Naming
 
   #precondition: all targets are in Medusa
+  #a web_id could be for a recordfile or a datafile
 
-  def self.datafiles_download_hash(web_ids, zipname)
+
+  def self.datafiles_download_hash(dataset, web_ids, zipname)
+
     download_hash = Hash.new
     total_size = 0
 
     #web_ids is expected to be an array
+
     num_files = 0
     if web_ids.respond_to?(:count)
       num_files = web_ids.count
@@ -27,7 +31,35 @@ class DownloaderClient
       return download_hash
     end
 
+    record_web_id = nil
+
+    web_ids.each do |web_id|
+      if dataset.recordfile && dataset.recordfile.web_id == web_id
+        record_web_id = web_id
+        web_ids = web_ids - ["#{web_id}"]
+      end
+    end
+
     targets_arr = Array.new
+
+    if record_web_id
+      df = Recordfile.find_by_web_id(record_web_id)
+      if df
+        if !df.medusa_path || df.medusa_path == ''
+          # should not get here because of precondition
+          Rails.logger.warn "no medusa path for #{df.to_yaml}"
+          download_hash['status']='error'
+          download_hash['error']='internal error file path not found'
+          return download_hash
+        end
+        total_size = total_size + df.bytestream_size
+        target_hash = Hash.new
+        target_hash["type"]="file"
+        target_hash["path"]="#{df.medusa_path}"
+        targets_arr.push(target_hash)
+      end
+    end
+
     web_ids.each do |web_id|
       df = Datafile.find_by_web_id(web_id)
 

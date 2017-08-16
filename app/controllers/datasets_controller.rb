@@ -1219,6 +1219,8 @@ class DatasetsController < ApplicationController
 
     return_hash = Hash.new
 
+    recordfile = nil
+
     if params.has_key?('web_ids')
       web_ids_str = params['web_ids']
       web_ids = web_ids_str.split('~')
@@ -1233,7 +1235,7 @@ class DatasetsController < ApplicationController
 
       path_arr = Array.new
 
-      download_hash = DownloaderClient.datafiles_download_hash(@dataset, web_ids, "DOI-#{@dataset.identifier}".parameterize)
+      download_hash = DownloaderClient.datafiles_download_hash(web_ids, "DOI-#{@dataset.identifier}".parameterize)
       if download_hash
         if download_hash['status']== 'ok'
           web_ids.each do |web_id|
