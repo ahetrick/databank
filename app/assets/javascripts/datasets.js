@@ -668,15 +668,12 @@ function offerDownloadLink() {
                     if (Number(result.total_size) > zip64_threshold) {
                         $('.download-help').html("<p>For selections of files larger than 4GB, the zip file will be in zip64 format. To open a zip64 formatted file on OS X (Mac) requires additional software not built into the operating system since version 10.11. Options include 7zX and The Unarchiver. If a Windows system has trouble opening the zip file, 7-Zip can be used.</p>")
                     }
-
                     $('#downloadLinkModal').modal('show');
                 } else {
                     console.log(result);
                     $('.download-link').html("An unexpected error occurred.<br/>Details have been logged for review.<br/><a href='/help' target='_blank'>Contact the Research Data Service Team</a> with any questions.");
                     $('#downloadLinkModal').modal('show');
                 }
-
-
             }
             //context: document.body
         }).done(function () {
