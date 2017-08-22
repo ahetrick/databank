@@ -79,6 +79,14 @@ class Datafile < ActiveRecord::Base
     end
   end
 
+  def iiif_bytestream_path
+    if self.medusa_path.nil? || self.medusa_path.empty?
+      self.binary.path
+    else
+      "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{IDB_CONFIG['medusa']['iiif_medusa_group']}/#{self.medusa_path}"
+    end
+  end
+
   def preview
     if self.bytestream_name != ""
       filename_split = self.bytestream_name.split(".")

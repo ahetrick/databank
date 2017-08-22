@@ -394,6 +394,10 @@ class DatafilesController < ApplicationController
     render json: {filepath: @datafile.bytestream_path}
   end
 
+  def iiif_filepath
+    render json: {filepath: @datafile.iiif_bytestream_path}
+  end
+
 
 
   private
