@@ -42,6 +42,7 @@ class Ability
       end
 
       can :filepath, Datafile
+      can :iiif_filepath, subject Datafile
       can :download_link, Dataset
       can :stream_file, Dataset
       can :download_datafiles, Dataset
@@ -59,6 +60,7 @@ class Ability
 
     else
       can :filepath, Datafile
+      can :iiif_filepath, subject Datafile
       can :download_citation_report, :all
       can :read, :all
       can :download_link, Dataset
