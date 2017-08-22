@@ -60,7 +60,7 @@ class Ability
 
     else
       can :filepath, Datafile
-      can :iiif_filepath, subject Datafile
+      can :iiif_filepath, Datafile
       can :download_citation_report, :all
       can :read, :all
       can :download_link, Dataset
