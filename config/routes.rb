@@ -29,6 +29,7 @@ Rails.application.routes.draw do
         get 'preview', to: 'datafiles#preview'
         get 'display', to: 'datafiles#display'
         get 'filepath', to: 'datafiles#filepath', defaults: {format: 'json'}
+        get 'iiif_filepath', to: 'datafiles#iiif_filepath', defaults: {format: 'json'}
       end
     end
     resources :creators
