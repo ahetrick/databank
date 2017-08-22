@@ -83,7 +83,7 @@ class Datafile < ActiveRecord::Base
     if self.medusa_path.nil? || self.medusa_path.empty?
       self.binary.path
     else
-      "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{IDB_CONFIG['iiif_medusa_group']}/#{self.medusa_path}"
+      "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{IDB_CONFIG[:iiif_medusa_group]}/#{self.medusa_path}"
     end
   end
 
