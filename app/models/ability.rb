@@ -42,7 +42,7 @@ class Ability
       end
 
       can :filepath, Datafile
-      can :iiif_filepath, subject Datafile
+      can :iiif_filepath, Datafile
       can :download_link, Dataset
       can :stream_file, Dataset
       can :download_datafiles, Dataset
