@@ -322,7 +322,6 @@ class Datafile < ActiveRecord::Base
       end
     end
   end
->>>>>>> master
 
   def ip_downloaded_file_today(request_ip)
     DayFileDownload.where(["ip_address = ? and file_web_id = ? and download_date = ?", request_ip, self.web_id, Date.current]).count > 0
