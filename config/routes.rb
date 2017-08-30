@@ -31,6 +31,7 @@ Rails.application.routes.draw do
         get 'preview', to: 'datafiles#preview'
         get 'display', to: 'datafiles#display'
         get 'filepath', to: 'datafiles#filepath', defaults: {format: 'json'}
+        get 'iiif_filepath', to: 'datafiles#iiif_filepath', defaults: {format: 'json'}
       end
     end
     resources :creators
@@ -104,6 +105,9 @@ Rails.application.routes.draw do
 
   # filepath
   get '/datafiles/:id/filepath', to: "datafiles#filepath", defaults: {format: 'json'}
+
+  # iiif_filepath
+  get '/datafiles/:id/iiif_filepath', to: "datafiles#iiif_filepath", defaults: {format: 'json'}
 
   # create from box file select widget
   post "/datafiles/create_from_url", to: 'datafiles#create_from_url'

@@ -9,7 +9,7 @@ OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
 class DatafilesController < ApplicationController
 
-  before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download, :record_download, :upload, :do_upload, :reset_upload, :resume_upload, :update_status, :preview, :display, :filepath]
+  before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download, :record_download, :upload, :do_upload, :reset_upload, :resume_upload, :update_status, :preview, :display, :filepath, :iiif_filepath]
 
   # GET /datafiles
   # GET /datafiles.json
@@ -392,6 +392,10 @@ class DatafilesController < ApplicationController
 
   def filepath
     render json: {filepath: @datafile.bytestream_path}
+  end
+
+  def iiif_filepath
+    render json: {filepath: @datafile.iiif_bytestream_path}
   end
 
 
