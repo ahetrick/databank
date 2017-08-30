@@ -209,10 +209,11 @@ class MedusaIngest < ActiveRecord::Base
             Rails.logger.warn "Datafile already gone for ingest #{ingest.id}"
           end
         elsif ingest.idb_class == 'recordfile'
+          Rails.logger.warn "recordfile ingest: #{ingest.to_yaml}"
           recordfile = Recordfile.find_by_web_id(ingest.idb_identifier)
           dataset = Dataset.where(id: recordfile.dataset_id).first
           unless dataset
-            Rails.logger.warn "dataset not found for ingest #{ingest.to_yaml}"
+            Rails.logger.warn "dataset not found for recordfile ingest #{ingest.to_yaml}"
           end
           if recordfile && recordfile.binary
             recordfile.medusa_path = ingest.medusa_path

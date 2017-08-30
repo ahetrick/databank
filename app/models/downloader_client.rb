@@ -43,11 +43,12 @@ class DownloaderClient
     targets_arr = Array.new
 
     if record_web_id
+      Rails.logger.warn 'recordfile found'
       df = Recordfile.find_by_web_id(record_web_id)
       if df
         if !df.medusa_path || df.medusa_path == ''
           # should not get here because of precondition
-          Rails.logger.warn "no medusa path for #{df.to_yaml}"
+          Rails.logger.warn "no medusa path for recordfile #{df.to_yaml}"
           download_hash['status']='error'
           download_hash['error']='internal error file path not found'
           return download_hash
@@ -58,7 +59,10 @@ class DownloaderClient
         target_hash["path"]="#{df.medusa_path}"
         targets_arr.push(target_hash)
       end
+    else
+      Rails.logger.warn 'recordfile not found'
     end
+
 
     web_ids.each do |web_id|
       df = Datafile.find_by_web_id(web_id)
@@ -66,7 +70,7 @@ class DownloaderClient
       if df
         if !df.medusa_path || df.medusa_path == ''
           # should not get here because of precondition
-          Rails.logger.warn "no medusa path for #{df.to_yaml}"
+          Rails.logger.warn "no medusa path for datafile #{df.to_yaml}"
           download_hash['status']='error'
           download_hash['error']='internal error file path not found'
           return download_hash

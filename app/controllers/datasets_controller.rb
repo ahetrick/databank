@@ -1219,8 +1219,6 @@ class DatasetsController < ApplicationController
 
     return_hash = Hash.new
 
-    recordfile = nil
-
     if params.has_key?('web_ids')
       web_ids_str = params['web_ids']
       web_ids = web_ids_str.split('~')
