@@ -657,7 +657,7 @@ class Dataset < ActiveRecord::Base
     ensure
       return response
     end
-    
+
   end
 
   def withdrawn_metadata
