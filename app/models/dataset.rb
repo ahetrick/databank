@@ -53,7 +53,7 @@ class Dataset < ActiveRecord::Base
 
   accepts_nested_attributes_for :datafiles, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :deckfiles, reject_if: :all_blank, allow_destroy: true
-  accepts_nested_attributes_for :creators, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :creators, reject_if: proc { |attributes| ((attributes['family_name'].blank?) && (attributes['given_name'].blank?)) }, allow_destroy: true
   accepts_nested_attributes_for :funders, reject_if: proc { |attributes| (attributes['name'].blank?) }, allow_destroy: true
   accepts_nested_attributes_for :related_materials, reject_if: proc { |attributes| ((attributes['link'].blank?) && (attributes['citation'].blank?)) }, allow_destroy: true
 
