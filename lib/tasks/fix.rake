@@ -16,5 +16,21 @@ namespace :fix do
 
   end
 
+  desc 'fix specific record'
+  task :fix_specific_record => :environment do
+
+    record_to_fix = RelatedMaterial.find(78)
+    if record_to_fix
+      puts "Found Related Material 78"
+      puts record_to_fix.to_yaml
+      record_to_fix.uri = '10.13012/B2IDB-2031816_V2'
+      record_to_fix.link = 'http://dx.doi.org/10.13012/B2IDB-2031816_V2'
+    else
+      puts "Did not find Related Mateiral 78"
+    end
+
+  end
+
+
 
 end
