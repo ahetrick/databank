@@ -44,6 +44,7 @@ class Dataset < ActiveRecord::Base
   MAX_FILES = 10000
 
   validate :published_datasets_must_remain_complete
+  validates :dataset_version, presence: true
 
   has_many :datafiles, dependent: :destroy
   has_many :creators, dependent: :destroy
