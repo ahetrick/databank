@@ -7,7 +7,7 @@ namespace :fix do
     if datasets_missing_version.count > 0
       datasets_missing_version.each do |dataset|
         puts("Fixing missing version for dataset #{dataset.key}")
-        dataset.dataset_version = 0
+        dataset.dataset_version = '1'
         dataset.save
       end
     else
