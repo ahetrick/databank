@@ -11,6 +11,7 @@ class MedusaIngest < ActiveRecord::Base
   def self.on_medusa_message (response)
     response_hash = JSON.parse(response)
     if response_hash.has_key? 'status'
+      Rails.logger.warn("medusa message resopnse: #{response_hash.to_yaml}")
       case response_hash['status']
         when 'ok'
           self.on_medusa_succeeded_message(response_hash)
