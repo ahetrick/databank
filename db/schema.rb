@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170221161626) do
+ActiveRecord::Schema.define(version: 20170907145551) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -191,15 +191,7 @@ ActiveRecord::Schema.define(version: 20170221161626) do
     t.datetime "updated_at",        null: false
     t.string   "code"
   end
-
-  create_table "identities", force: :cascade do |t|
-    t.string   "name"
-    t.string   "email"
-    t.string   "password_digest"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-  end
-
+  
   create_table "medusa_ingests", force: :cascade do |t|
     t.string   "idb_class"
     t.string   "idb_identifier"
@@ -212,6 +204,18 @@ ActiveRecord::Schema.define(version: 20170221161626) do
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
     t.string   "medusa_dataset_dir"
+  end
+
+  create_table "recordfiles", force: :cascade do |t|
+    t.integer  "dataset_id"
+    t.string   "binary"
+    t.string   "web_id"
+    t.string   "medusa_id"
+    t.string   "medusa_path"
+    t.string   "binary_name"
+    t.integer  "binary_size"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
   create_table "related_materials", force: :cascade do |t|
