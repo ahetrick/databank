@@ -33,36 +33,30 @@ class DownloaderClient
 
     record_web_id = nil
 
-    web_ids.each do |web_id|
-      if dataset.recordfile && dataset.recordfile.web_id == web_id
-        record_web_id = web_id
-        web_ids = web_ids - ["#{web_id}"]
-      end
+    if dataset.recordfile && web_ids.include?(dataset.recordfile.web_id)
+      record_web_id = dataset.recordfile.web_id
+      web_ids = web_ids - ["#{dataset.recordfile.web_id}"]
     end
 
     targets_arr = Array.new
 
     if record_web_id
-      Rails.logger.warn 'recordfile found'
-      df = Recordfile.find_by_web_id(record_web_id)
-      if df
-        if !df.medusa_path || df.medusa_path == ''
-          # should not get here because of precondition
-          Rails.logger.warn "no medusa path for recordfile #{df.to_yaml}"
-          download_hash['status']='error'
-          download_hash['error']='internal error file path not found'
-          return download_hash
-        end
-        total_size = total_size + df.bytestream_size
-        target_hash = Hash.new
-        target_hash["type"]="file"
-        target_hash["path"]="#{df.medusa_path}"
-        targets_arr.push(target_hash)
-      end
-    else
-      Rails.logger.warn 'recordfile not found'
-    end
+      Rails.logger.warn "recordfile found for #{dataset.key}"
+      df = dataset.recordfile
 
+      if !df.medusa_path || df.medusa_path == ''
+        # should not get here because of precondition
+        Rails.logger.warn "no medusa path for recordfile #{df.to_yaml}"
+        download_hash['status']='error'
+        download_hash['error']='internal error file path not found'
+        return download_hash
+      end
+      total_size = total_size + df.bytestream_size
+      target_hash = Hash.new
+      target_hash["type"]="file"
+      target_hash["path"]="#{df.medusa_path}"
+      targets_arr.push(target_hash)
+    end
 
     web_ids.each do |web_id|
       df = Datafile.find_by_web_id(web_id)
@@ -118,7 +112,7 @@ class DownloaderClient
       if response_hash.has_key?("download_url")
         # Rails.logger.warn "inside downloader client: #{response_hash["download_url"]}"
         download_hash['status']='ok'
-        download_hash['download_url']= response_hash["download_url"]
+        download_hash['download_url']=response_hash["download_url"]
         download_hash['status_url']=response_hash["status_url"]
         download_hash['total_size']=total_size
         return download_hash
