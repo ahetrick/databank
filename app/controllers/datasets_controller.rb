@@ -601,7 +601,6 @@ class DatasetsController < ApplicationController
 
   end
 
-
   # GET /datasets/new
   def new
     @dataset = Dataset.new
@@ -699,7 +698,6 @@ class DatasetsController < ApplicationController
           else
             format.html { redirect_to "/datasets?q=&#{URI.encode('depositors[]')}=#{current_user.name}&context=exit_doi" }
           end
-
 
         elsif params.has_key?('context') && params['context'] == 'publish'
 
@@ -900,7 +898,6 @@ class DatasetsController < ApplicationController
     end
   end
 
-
   def temporarily_suppress_files
 
     @dataset.hold_state = Databank::PublicationState::TempSuppress::FILE
@@ -983,7 +980,6 @@ class DatasetsController < ApplicationController
     end
 
   end
-
 
   def permanently_suppress_metadata
 
