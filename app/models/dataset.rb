@@ -86,7 +86,13 @@ class Dataset < ActiveRecord::Base
     # follow daisy chain of previous versions
     current_dataset = self
 
-    while current_dataset
+
+    current_group_count = 0
+    max_group_count = 50
+
+    while current_dataset && current_group_count < max_group_count
+
+      current_group_count = current_group_count + 1
 
       previous_dataset = current_dataset.previous_idb_dataset
 
@@ -107,8 +113,11 @@ class Dataset < ActiveRecord::Base
 
     #reset pointer for chain of next versions
     current_dataset = self
+    current_group_count = 0
 
     while current_dataset
+
+      current_group_count = current_group_count + 1
 
       next_dataset = current_dataset.next_idb_dataset
 
