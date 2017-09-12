@@ -25,6 +25,7 @@ namespace :fix do
       puts record_to_fix.to_yaml
       record_to_fix.uri = '10.13012/B2IDB-2031816_V2'
       record_to_fix.link = 'http://dx.doi.org/10.13012/B2IDB-2031816_V2'
+      record_to_fix.save
     else
       puts "Did not find Related Mateiral 78"
     end
