@@ -191,7 +191,15 @@ ActiveRecord::Schema.define(version: 20170907145551) do
     t.datetime "updated_at",        null: false
     t.string   "code"
   end
-  
+
+  create_table "identities", force: :cascade do |t|
+    t.string   "name"
+    t.string   "email"
+    t.string   "password_digest"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
   create_table "medusa_ingests", force: :cascade do |t|
     t.string   "idb_class"
     t.string   "idb_identifier"
