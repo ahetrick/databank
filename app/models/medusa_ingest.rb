@@ -11,7 +11,7 @@ class MedusaIngest < ActiveRecord::Base
   def self.on_medusa_message (response)
     response_hash = JSON.parse(response)
     if response_hash.has_key? 'status'
-      Rails.logger.warn("medusa message resopnse: #{response_hash.to_yaml}")
+      #Rails.logger.warn("medusa message resopnse: #{response_hash.to_yaml}")
       case response_hash['status']
         when 'ok'
           self.on_medusa_succeeded_message(response_hash)
@@ -178,7 +178,7 @@ class MedusaIngest < ActiveRecord::Base
       ingest = ingest_relation.first
       ingest.request_status = response_hash['status'].to_s
       ingest.medusa_path = response_hash['medusa_path']
-      ingest.medusa_uuid = response_hash['medusa_uuid']
+      ingest.medusa_uuid = response_hash['uuid']
       ingest.medusa_dataset_dir = response_hash['item_root_dir']
       ingest.response_time = Time.now.utc.iso8601
       ingest.save!

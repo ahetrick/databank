@@ -41,7 +41,7 @@ class DownloaderClient
     targets_arr = Array.new
 
     if record_web_id
-      Rails.logger.warn "recordfile found for #{dataset.key}"
+      #Rails.logger.warn "recordfile found for #{dataset.key}"
       df = dataset.recordfile
 
       if !df.medusa_path || df.medusa_path == ''

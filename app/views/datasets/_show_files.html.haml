@@ -43,7 +43,7 @@
                                   ="(#{dataset.datafiles.count})"
 
                     -# If there is a recordfile IN MEDUSA, display a recordfile row
-                    -if dataset.fileset_preserved? && dataset.recordfile && dataset.recordfile.medusa_id && dataset.record.medusa_id != ''
+                    -if dataset.fileset_preserved? && dataset.recordfile && dataset.recordfile.medusa_path && dataset.record.medusa_path != ''
                       %tr.row
                         %td
                           .row.checkbox
