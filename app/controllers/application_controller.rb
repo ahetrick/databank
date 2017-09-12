@@ -50,6 +50,7 @@ class ApplicationController < ActionController::Base
       respond_to do |format|
         format.html { render ('errors/error404'), status: 404}
         format.json { render :nothing, status: 404 }
+        format.all { render ('errors/error404'), status: 404}
       end
 
     else

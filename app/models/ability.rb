@@ -57,6 +57,7 @@ class Ability
       can :validiate_change2published, :all
       can :search, Dataset
       can :recordtext, Dataset
+      can :temporary_error, Dataset
 
     else
       can :filepath, Datafile
@@ -76,6 +77,7 @@ class Ability
       can :validiate_change2published, :all
       can :search, Dataset
       can :recordtext, Dataset
+      can :temporary_error, Dataset
 
     end
     #
