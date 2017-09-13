@@ -228,7 +228,9 @@ class MedusaIngest < ActiveRecord::Base
         # delete file or symlink from staging directory
         File.delete("#{IDB_CONFIG[:staging_root]}/#{response_hash['staging_path']}")
       else
-        Rails.logger.warn "did not delete file because Medusa copy does not exist or is not verified for #{ingest.to_yaml}"
+        Rails.logger.warn "did not delete file because Medusa copy does not exist or is not verified for ingest #{ingest.id}"
+        Rails.logger.warn "staging path: #{IDB_CONFIG[:staging_root]}/#{response_hash['staging_path']}"
+        Rails.logger.warn "medusa path: #{IDB_CONFIG['medusa']['medusa_path_root']}/#{response_hash['medusa_path']}"
       end
     else
       Rails.logger.warn "could not find ingest record for medusa succeeded message: #{response_hash['staging_path']}"

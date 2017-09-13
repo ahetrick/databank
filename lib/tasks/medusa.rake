@@ -132,7 +132,13 @@ namespace :medusa do
         if ingest
           puts "has ingest"
 
-          if File.exists?("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}") && FileUtils.identical?("#{df.binary.path}", "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}")
+          effective_binary_path_str = df.binary.path.to_s
+
+          unless effective_binary_path_str.includes?("lib-medusa-databank")
+            effective_binary_path_str.sub! 'databank' 'lib-medusa-databank'
+          end
+          
+          if File.exists?("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}") && FileUtils.identical?("#{effective_binary_path_str}", "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}")
             df.medusa_path = ingest.medusa_path
             df.medusa_id = ingest.medusa_uuid
             df.remove_binary!
