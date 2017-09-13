@@ -138,10 +138,6 @@ namespace :medusa do
           puts "binary: #{effective_binary_path_str}"
           puts "medusa: #{effective_medusa_path_str}"
 
-          unless effective_binary_path_str.include?("lib-medusa-databank")
-            effective_binary_path_str.sub!('databank', 'lib-medusa-databank')
-          end
-
           if File.exists?(effective_medusa_path_str) && File.exists?(effective_binary_path_str) && FileUtils.identical?(Pathname.new(effective_medusa_path_str), Pathname.new(effective_binary_path_str))
             df.medusa_path = ingest.medusa_path
             df.medusa_id = ingest.medusa_uuid
