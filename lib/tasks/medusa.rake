@@ -135,6 +135,9 @@ namespace :medusa do
           effective_binary_path_str = df.binary.path.to_s
           effective_medusa_path_str = "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}".to_s
 
+          puts "binary: #{effective_binary_path_str}"
+          puts "medusa: #{effective_medusa_path_str}"
+
           unless effective_binary_path_str.include?("lib-medusa-databank")
             effective_binary_path_str.sub!('databank', 'lib-medusa-databank')
           end
