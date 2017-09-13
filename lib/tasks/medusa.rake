@@ -161,6 +161,58 @@ namespace :medusa do
         end
       end
     end
+
+    recordfiles = Recordfiles.all
+    recordfiles.each do |df|
+
+      if !df.binary && !df.medusa_path
+        puts "web_id: #{df.web_id}"
+        puts "no binary or no medusa_path"
+        ingest = MedusaIngest.find_by_idb_identifier(df.web_id)
+        if ingest
+          puts "has ingest"
+          df.medusa_path = ingest.medusa_path
+          df.save
+        else
+          puts "has no ingest"
+        end
+
+      elsif df.binary && !df.medusa_path
+        puts "web_id: #{df.web_id}"
+        puts "binary but no medusa path"
+        ingest = MedusaIngest.find_by_idb_identifier(df.web_id)
+        if ingest
+          puts "has ingest"
+
+          effective_binary_path_str = df.binary.path.to_s
+          effective_medusa_path_str = "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}".to_s
+
+          puts "binary: #{effective_binary_path_str}"
+          puts "medusa: #{effective_medusa_path_str}"
+
+          if File.exists?(effective_medusa_path_str) && File.exists?(effective_binary_path_str) && FileUtils.identical?(Pathname.new(effective_medusa_path_str), Pathname.new(effective_binary_path_str))
+            df.medusa_path = ingest.medusa_path
+            df.medusa_id = ingest.medusa_uuid
+            df.remove_binary!
+            df.save
+          else
+            puts "first pass of file validation failed"
+          end
+
+          if File.exists?(effective_medusa_path_str) && !File.exists?(effective_binary_path_str)
+            df.medusa_path = ingest.medusa_path
+            df.medusa_id = ingest.medusa_uuid
+            df.remove_binary!
+            df.save
+          else
+            puts "missing binary file but file exists in Medusa"
+          end
+
+        else
+          puts "has no ingest for web_id: #{df.web_id}"
+        end
+      end
+    end
   end
 
   desc 'resend failed medusa messages'
