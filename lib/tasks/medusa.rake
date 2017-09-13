@@ -144,7 +144,16 @@ namespace :medusa do
             df.remove_binary!
             df.save
           else
-            puts "file validation failed"
+            puts "first pass of file validation failed"
+          end
+
+          if File.exists?(effective_medusa_path_str) && !File.exists?(effective_binary_path_str)
+            df.medusa_path = ingest.medusa_path
+            df.medusa_id = ingest.medusa_uuid
+            df.remove_binary!
+            df.save
+          else
+            puts "missing binary file but file exists in Medusa"
           end
 
         else
