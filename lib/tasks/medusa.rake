@@ -134,11 +134,11 @@ namespace :medusa do
 
           effective_binary_path_str = df.binary.path.to_s
 
-          unless effective_binary_path_str.includes?("lib-medusa-databank")
-            effective_binary_path_str.sub! 'databank' 'lib-medusa-databank'
+          unless effective_binary_path_str.include?("lib-medusa-databank")
+            effective_binary_path_str.sub!('databank', 'lib-medusa-databank')
           end
-          
-          if File.exists?("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}") && FileUtils.identical?("#{effective_binary_path_str}", "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}")
+
+          if File.exists?("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}") && File.exists?("#{effective_binary_path_str}") && FileUtils.identical?("#{effective_binary_path_str}", "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}")
             df.medusa_path = ingest.medusa_path
             df.medusa_id = ingest.medusa_uuid
             df.remove_binary!
