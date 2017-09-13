@@ -133,12 +133,13 @@ namespace :medusa do
           puts "has ingest"
 
           effective_binary_path_str = df.binary.path.to_s
+          effective_medusa_path_str = "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}".to_s
 
           unless effective_binary_path_str.include?("lib-medusa-databank")
             effective_binary_path_str.sub!('databank', 'lib-medusa-databank')
           end
 
-          if File.exists?("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}") && File.exists?("#{effective_binary_path_str}") && FileUtils.identical?("#{effective_binary_path_str}", "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}")
+          if File.exists?(effective_medusa_path_str) && File.exists?(effective_binary_path_str) && FileUtils.identical?(Pathname.new(effective_medusa_path_str), Pathname.new(effective_binary_path_str))
             df.medusa_path = ingest.medusa_path
             df.medusa_id = ingest.medusa_uuid
             df.remove_binary!
