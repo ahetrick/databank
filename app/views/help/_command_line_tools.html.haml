@@ -110,96 +110,135 @@
             =succeed(".") do
               %a(href="/help#contact") Contact Us
 
-    .panel-group(id="cURL" role="tablist" aria-multiselectable="true")
-      .panel.panel-default
-        .panel-heading(role="tab" id="cURLHeading")
-          %h4(class="panel-title")
-            %a( role="button" data-toggle="collapse" data-parent="#cURL" href="#cURLPanel" aria-expanded="false" aria-controls="cURLPanel" class="accordion-toggle collapsed" )
-              %span( class="metadata-label" ) Execute a cURL command. (click to expand)
-        .panel-collapse.collapse(id="cURLPanel" role="tabpanel" aria-labelledby="cURLHeading" )
-          .panel-body
-            %p
-              Requires
-              =succeed(",") do
-                %a(href="https://curl.haxx.se/" target="_blank" ) cURL
-              %em works on files up to 4 GB.
+  .panel-group(id="campus" role="tablist" aria-multiselectable="true")
+    .panel.panel-default
+      .panel-heading(role="tab" id="campusHeading")
+        %h4(class="panel-title")
+          %a( role="button" data-toggle="collapse" data-parent="#campus" href="#campusPanel" aria-expanded="false" aria-controls="campusPanel" class="accordion-toggle collapsed" )
+            %span( class="metadata-label" )
+              %em Notes on using our Python script on campus systems. (click to expand)
+      .panel-collapse.collapse(id="campusPanel" role="tabpanel" aria-labelledby="campusHeading" )
+        .panel-body
+
+          %h4
+            %strong Institute for Genomic Biology
+
+          .indent
 
             %p
-              A version of the following example command, pre-populated with your dataset identifier and token, comes up in response to clicking on the
-              %em Get token for command line tools
-              button when editing a draft dataset. The only part that would need to change from that example is the name of your file in the "binary = @my_datafile.csv" section. The at symbol (@) is required just before the file name.
+              The
+              %em IllinoisDataBank
+              module on biocluster2, available to any user of the system, ensures a python environment with the modules needed to upload files using our custom Python script, as further described in the above section.
 
-            .curl-to-copy
-              %pre
-                %code
-                  = %Q[curl -F "binary=@my_datafile.csv" -H "Authorization: Token token=[TOKEN]" -H "Transfer-Encoding: chunked" -X POST #{IDB_CONFIG[:root_url_text]}/api/dataset/[DATASET_IDENTIFIER]/datafile -o output.txt]
-                  -if IDB_CONFIG[:root_url_text].include?("dev")
-                    = %Q[-k]
+            %pre
+              %code
+                module load IllinoisDataBank
 
+          %h4
+            %strong AWS
+          .indent
+            %p The default Linux system in AWS already has Python along with the 'requests' and 'urllib3' modules installed, so only the 'docopts' module would need to be installed, as in the instructions in the section above.
+
+          %h4
+            %strong Virtual Hosting Group at Technology Services
+          .indent
+            %p Since the OS installation and component parts are handled by the tenant, tenant owners have full administrative rights to follow the instructions in the section above.
+
+          %p
+            For more help,
+            =succeed(".") do
+              %a(href="/help#contact") Contact Us
+
+  .panel-group(id="cURL" role="tablist" aria-multiselectable="true")
+    .panel.panel-default
+      .panel-heading(role="tab" id="cURLHeading")
+        %h4(class="panel-title")
+          %a( role="button" data-toggle="collapse" data-parent="#cURL" href="#cURLPanel" aria-expanded="false" aria-controls="cURLPanel" class="accordion-toggle collapsed" )
+            %span( class="metadata-label" ) Execute a cURL command. (click to expand)
+      .panel-collapse.collapse(id="cURLPanel" role="tabpanel" aria-labelledby="cURLHeading" )
+        .panel-body
+          %p
+            Requires
+            =succeed(",") do
+              %a(href="https://curl.haxx.se/" target="_blank" ) cURL
+            %em works on files up to 4 GB.
+
+          %p
+            A version of the following example command, pre-populated with your dataset identifier and token, comes up in response to clicking on the
+            %em Get token for command line tools
+            button when editing a draft dataset. The only part that would need to change from that example is the name of your file in the "binary = @my_datafile.csv" section. The at symbol (@) is required just before the file name.
+
+          .curl-to-copy
+            %pre
+              %code
+                = %Q[curl -F "binary=@my_datafile.csv" -H "Authorization: Token token=[TOKEN]" -H "Transfer-Encoding: chunked" -X POST #{IDB_CONFIG[:root_url_text]}/api/dataset/[DATASET_IDENTIFIER]/datafile -o output.txt]
+                -if IDB_CONFIG[:root_url_text].include?("dev")
+                  = %Q[-k]
+
+          %p
+            The basic endpoint URL pattern is
+            = %Q[#{IDB_CONFIG[:root_url_text]}/api/dataset/[DATASET_IDENTIFIER]/datafile]
+          %p The request method is POST.
+          %p The authorization token must be sent in a header.
+          %p A header setting the Transfer-Encoding to chunked is recommended.
+          %p The file must be sent in a form in an element named binary.  In cURL, that can be done with the -F option and an element like "binary=@my_datafile.csv".
+          %p The -o option must be used to send response output to a file to see the progress meter.
+          %p Even after the cURL progress meter reaches 100%, additional processing is done, which may take as long as it took to reach 100%.
+          -if IDB_CONFIG[:root_url_text].include?("dev")
+            %p For rds-dev only, -k at at the end of the cURL command makes it tolerate the self-signed certificate.
+          -else
+          %p After upload is complete, refresh the dataset page to see the new datafile listing.
+
+          %p
+            For more help,
+            =succeed(".") do
+              %a(href="/help#contact") Contact Us
+
+
+  .panel-group(id="script" role="tablist" aria-multiselectable="true")
+    .panel.panel-default
+      .panel-heading(role="tab" id="scriptHeading")
+        %h4(class="panel-title")
+          %a(role="button" data-toggle="collapse" data-parent="#script" href="#scriptPanel" aria-expanded="false" aria-controls="scriptPanel" class="accordion-toggle collapsed" )
+            %span( class="metadata-label" ) Create your own custom script using our API. (click to expand)
+      .panel-collapse.collapse(id="scriptPanel" role="tabpanel" aria-labelledby="scriptHeading" )
+        .panel-body
+          %p
+            %em Size constraints depend on implementation details.
+
+
+          %h3 Simple Protocol
+          .indent
+            %p
+              The simple one-call protocol supports files
+              %emp up to 4GB
+            %p
+              The curl example above uses the simple protocol.
             %p
               The basic endpoint URL pattern is
               = %Q[#{IDB_CONFIG[:root_url_text]}/api/dataset/[DATASET_IDENTIFIER]/datafile]
             %p The request method is POST.
             %p The authorization token must be sent in a header.
             %p A header setting the Transfer-Encoding to chunked is recommended.
-            %p The file must be sent in a form in an element named binary.  In cURL, that can be done with the -F option and an element like "binary=@my_datafile.csv".
-            %p The -o option must be used to send response output to a file to see the progress meter.
-            %p Even after the cURL progress meter reaches 100%, additional processing is done, which may take as long as it took to reach 100%.
-            -if IDB_CONFIG[:root_url_text].include?("dev")
-              %p For rds-dev only, -k at at the end of the cURL command makes it tolerate the self-signed certificate.
-            -else
+            %p The file must be sent in a form in an element named binary.
             %p After upload is complete, refresh the dataset page to see the new datafile listing.
 
+          %h3 Complex Protocol
+          .indent
+
+            %p
+              The complex protocol, used by the sample python client above, requires several coordinated calls, but supports files
+              %em up to 2TB
+              in size, to an existing draft dataset with an authentication token and dataset key as described above.
+            %p
+              An example of using the complex protocol in a python script can be found on GitHub at
+              =succeed(".") do
+                %a(href="https://github.com/medusa-project/databank-client" target="_blank" ) https://github.com/medusa-project/databank-client
+            %p
+              Detailed documenatation is available in
+              =succeed(".") do
+                %a(href="/Illinois_Data_Bank_upload.pdf" target="_blank" ) Illinois_Data_Bank_upload.pdf
             %p
               For more help,
               =succeed(".") do
                 %a(href="/help#contact") Contact Us
-
-
-    .panel-group(id="script" role="tablist" aria-multiselectable="true")
-      .panel.panel-default
-        .panel-heading(role="tab" id="scriptHeading")
-          %h4(class="panel-title")
-            %a(role="button" data-toggle="collapse" data-parent="#script" href="#scriptPanel" aria-expanded="false" aria-controls="scriptPanel" class="accordion-toggle collapsed" )
-              %span( class="metadata-label" ) Create your own custom script using our API. (click to expand)
-        .panel-collapse.collapse(id="scriptPanel" role="tabpanel" aria-labelledby="scriptHeading" )
-          .panel-body
-            %p
-              %em Size constraints depend on implementation details.
-
-
-            %h3 Simple Protocol
-            .indent
-              %p
-                The simple one-call protocol supports files
-                %emp up to 4GB
-              %p
-                The curl example above uses the simple protocol.
-              %p
-                The basic endpoint URL pattern is
-                = %Q[#{IDB_CONFIG[:root_url_text]}/api/dataset/[DATASET_IDENTIFIER]/datafile]
-              %p The request method is POST.
-              %p The authorization token must be sent in a header.
-              %p A header setting the Transfer-Encoding to chunked is recommended.
-              %p The file must be sent in a form in an element named binary.
-              %p After upload is complete, refresh the dataset page to see the new datafile listing.
-
-            %h3 Complex Protocol
-            .indent
-
-              %p
-                The complex protocol, used by the sample python client above, requires several coordinated calls, but supports files
-                %em up to 2TB
-                in size, to an existing draft dataset with an authentication token and dataset key as described above.
-              %p
-                An example of using the complex protocol in a python script can be found on GitHub at
-                =succeed(".") do
-                  %a(href="https://github.com/medusa-project/databank-client" target="_blank" ) https://github.com/medusa-project/databank-client
-              %p
-                Detailed documenatation is available in
-                =succeed(".") do
-                  %a(href="/Illinois_Data_Bank_upload.pdf" target="_blank" ) Illinois_Data_Bank_upload.pdf
-              %p
-                For more help,
-                =succeed(".") do
-                  %a(href="/help#contact") Contact Us

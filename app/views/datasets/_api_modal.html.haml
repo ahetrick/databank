@@ -48,7 +48,10 @@
                     ="python illinois_data_bank_datafile.py #{@dataset.key} [TOKEN] #{IDB_CONFIG[:root_url_text].include?("dev") ? 'development':''} myfile.csv "
 
               %p
-                For more help, see the
+                For more help, and for notes on using this script on
+                =succeed(",") do
+                  %strong biocluster2, AWS, or the Vitual Hosting Group on campus
+                see the
                 =succeed(",") do
                   %a(href="/help#api" ) Command Line Tools / API Reference
                 or
