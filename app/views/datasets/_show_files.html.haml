@@ -37,7 +37,7 @@
                               %label
                                 %input(type="checkbox" id="checkAllFiles" value="checkAllFiles")
                                 Select all
-                                -if dataset.fileset_preserved? && dataset.recordfile && dataset.recordfile.medusa_path && dataset.record.medusa_path != ''
+                                -if dataset.fileset_preserved? && dataset.recordfile && dataset.recordfile.medusa_path && dataset.recordfile.medusa_path != ''
                                   ="(#{dataset.datafiles.count + 1})"
                                 -else
                                   ="(#{dataset.datafiles.count})"
