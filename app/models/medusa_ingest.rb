@@ -159,7 +159,7 @@ class MedusaIngest < ActiveRecord::Base
     staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/#{recordfilename}"
     medusa_ingest.staging_path = staging_path
     medusa_ingest.idb_class = 'recordfile'
-    medusa_ingest.idb_identifier = dataset.key
+    medusa_ingest.idb_identifier = recordfile.web_id
     medusa_ingest.send_medusa_ingest_message(staging_path)
     medusa_ingest.save
 
