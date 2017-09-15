@@ -162,7 +162,9 @@ namespace :medusa do
       end
     end
 
-    recordfiles = Recordfiles.all
+    puts "* * *   DONE WITH DATAFIES, STARTING RECORDFILES  * * *"
+
+    recordfiles = Recordfile.all
     recordfiles.each do |df|
 
       if !df.binary && !df.medusa_path
