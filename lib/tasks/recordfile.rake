@@ -47,7 +47,7 @@ namespace :recordfile do
             medusa_ingest.send_medusa_ingest_message(staging_path)
             medusa_ingest.save
           end
-          
+
         rescue Exception => ex
 
           puts ex.message
