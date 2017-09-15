@@ -18,7 +18,6 @@ class Recordfile < ActiveRecord::Base
       return_name = self.binary_name
     elsif self.binary && self.binary.file
       return_name = self.binary.file.filename
-
     else
       return "error: filename not found"
     end
