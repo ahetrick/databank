@@ -1,7 +1,10 @@
 Rails.application.routes.draw do
 
-  #get 'datasets/IDB-2031816', to: 'datasets#temporary_error'
-  #get 'datasets/idb-2031816', to: 'datasets#temporary_error'
+  resources :featured_researchers do
+    member do
+      get 'preview'
+    end
+  end
 
   get 'datasets/download_citation_report', to: 'datasets#download_citation_report'
 

@@ -19,4 +19,5 @@
 //= require zeroclipboard
 //= require bootstrap-sprockets
 //= require effective_datatables
+//= require trix
 //= require_tree .

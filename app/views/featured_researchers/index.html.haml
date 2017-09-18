@@ -1,0 +1,22 @@
+.container-fluid
+  %h1 Featured Researchers
+
+  - @featured_researchers.each do |featured_researcher|
+    -if featured_researcher.binary?
+      .row
+      =image_tag(src: featured_researcher.binary.url, alt: "Photo", class: "img-responsive")
+    .row
+      .col-md-9
+        = "#{featured_researcher.name}, #{featured_researcher.title}"
+      .col-md-1
+        =link_to '<button class="btn btn-primary btn-block">Show</button>'.html_safe, featured_researcher
+      .col-md-1
+        =link_to '<button class="btn btn-info btn-block">Edit</button>'.html_safe, edit_featured_researcher_path(featured_researcher)
+      .col-md-1
+        =link_to '<button class="btn btn-danger btn-block ">Delete</button>'.html_safe, featured_researcher, :method => :delete, :data => { :confirm => 'Are you sure?' }
+    .row
+      =  featured_researcher.bio.html_safe
+    .row
+      = featured_researcher.testimonial.html_safe
+
+= link_to 'New Featured researcher', new_featured_researcher_path

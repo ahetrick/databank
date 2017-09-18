@@ -58,6 +58,8 @@ class Ability
       can :search, Dataset
       can :recordtext, Dataset
       can :temporary_error, Dataset
+      can :show, FeaturedResearcher
+      can :index, FeaturedResearcher
 
     else
       can :filepath, Datafile

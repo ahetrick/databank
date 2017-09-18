@@ -1,6 +1,5 @@
 source 'http://rubygems.org'
 
-
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.3'
 # Use postgresql as the database for Active Record
@@ -129,6 +128,9 @@ gem 'curb', '~> 0.9.1'
 
 # Use modernizr-rails to handle different browsers differently
 gem 'modernizr-rails'
+
+# Use trix to support rich text editing (for featured researcher cms)
+gem 'trix', '~> 0.11.0'
 
 # Call 'byebug' anywhere in the code to stop execution and get a debugger console
 gem 'byebug'

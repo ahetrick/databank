@@ -1,0 +1,35 @@
+= form_for @featured_researcher, html: {multipart: true, class: "featuredform"} do |f|
+  - if @featured_researcher.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@featured_researcher.errors.count, "error")} prohibited this featured_researcher from being saved:"
+      %ul
+        - @featured_researcher.errors.full_messages.each do |msg|
+          %li= msg
+
+  .container-fluid
+
+    -if @featured_researcher.binary && @featured_researcher.binary_url
+      .row.featured-photo
+        =image_tag(@featured_researcher.binary_url)
+
+    .form-group.row
+      .field
+        = f.label :binary, "Upload Photo", class: "control-label"
+        = f.file_field :binary
+    .form-group.row
+      .field
+        = f.label :name, "Display Name", class: "control-label"
+        = f.text_field :name, class: "form-control"
+    .form-group.row
+      .field
+        = f.label :title, "Title", class: "control-label"
+        = f.text_field :title, class: "form-control"
+    .form-group.row
+      .field
+        = f.label :bio, "Biography", class: "control-label"
+        = f.trix_editor :bio, class: "form-control"
+    .form-group.row
+      .field
+        = f.label :testimonial, "Comment", class: "control-label"
+        = f.trix_editor :testimonial, class: "form-control"
+  = f.submit 'Save and Preview', class: "btn btn-primary"

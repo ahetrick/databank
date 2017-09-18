@@ -1,4 +1,11 @@
 FactoryGirl.define do
+  factory :featured_researcher do
+    name "MyString"
+    title "MyString"
+    bio "MyText"
+    testimonial "MyText"
+    binary "MyString"
+  end
   factory :restoration_id_map do
     id_class "dataset"
     old_id 1

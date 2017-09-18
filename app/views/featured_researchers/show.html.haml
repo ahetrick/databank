@@ -1,0 +1,21 @@
+%h1 Featured Researcher
+.container-fluid
+  .row
+    .featured-bio
+      -if @featured_researcher.binary
+        .featured-photo
+          %img(src="#{@featured_researcher.binary.url}" class="img-responsive" )
+      %h4
+        =succeed(",") do
+          = @featured_researcher.name
+        = @featured_researcher.title
+
+      = @featured_researcher.bio.html_safe
+
+    .featured-comment
+      = @featured_researcher.testimonial.html_safe
+
+
+= link_to 'Edit', edit_featured_researcher_path(@featured_researcher)
+\|
+= link_to 'Back', featured_researchers_path
