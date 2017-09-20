@@ -4,4 +4,4 @@
   = render 'form'
   .row
     .col-md-2.col-md-offset-10
-      %a(href="/featured_researcher/#{featured_researcher.id}" class="btn btn-danger btn-block idb" data-method="delete" data-confirm="Are you sure?") Delete
+      =link_to '<button class="btn btn-danger btn-block idb elbow ">Delete</button>'.html_safe, @featured_researcher, :method => :delete, :data => { :confirm => 'Are you sure?' }

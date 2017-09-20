@@ -439,6 +439,10 @@ table.deposit-agreement-selection-warning > tbody > tr > td {
   margin-top: 5px;
 }
 
+.elbow{
+  margin-top: 5px;
+}
+
 @media print {
   * { background: transparent !important; color: black !important; text-shadow: none !important; filter:none !important; -ms-filter: none !important; min-height: 0 !important;} /* Black prints faster: h5bp.com/s */
   .hide-when-printing {visibility: hidden;}

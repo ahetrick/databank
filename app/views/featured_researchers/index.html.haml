@@ -22,7 +22,8 @@
         -if(can? :manage, featured_researcher)
           .curator-only
             %a(href="/featured_researchers/#{featured_researcher.id}/preview" class="btn btn-primary btn-block idb") Preview
-            %a(href="/featured_researcher/#{featured_researcher.id}/edit" class="btn btn-success btn-block idb" ) Edit
-            %a(href="/featured_researcher/#{featured_researcher.id}" class="btn btn-danger btn-block idb" data-method="delete" data-confirm="Are you sure?") Delete
+            %a(href="/featured_researchers/#{featured_researcher.id}/edit" class="btn btn-success btn-block idb" ) Edit
+            =link_to '<button class="btn btn-danger btn-block idb elbow ">Delete</button>'.html_safe, featured_researcher, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
     %hr
 = link_to 'New Featured researcher', new_featured_researcher_path, class: "btn btn-warning idb"
