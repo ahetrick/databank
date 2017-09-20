@@ -1,21 +1,13 @@
 = form_for @featured_researcher, html: {multipart: true, class: "featuredform"} do |f|
   - if @featured_researcher.errors.any?
     #error_explanation
-      %h2= "#{pluralize(@featured_researcher.errors.count, "error")} prohibited this featured_researcher from being saved:"
+      %h2= "#{pluralize(@featured_researcher.errors.count, "error")} prohibited this featured researcher record from being saved:"
       %ul
         - @featured_researcher.errors.full_messages.each do |msg|
           %li= msg
 
   .container-fluid
 
-    -if @featured_researcher.binary && @featured_researcher.binary_url
-      .row.featured-photo
-        =image_tag(@featured_researcher.binary_url)
-
-    .form-group.row
-      .field
-        = f.label :binary, "Upload Photo", class: "control-label"
-        = f.file_field :binary
     .form-group.row
       .field
         = f.label :name, "Display Name", class: "control-label"

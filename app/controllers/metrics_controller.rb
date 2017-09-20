@@ -11,4 +11,8 @@ class MetricsController < ApplicationController
     @file_download_tallies = FileDownloadTally.all
   end
 
+  def datafiles
+    @datafiles = Datafile.all
+  end
+
 end

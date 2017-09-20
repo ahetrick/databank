@@ -62,7 +62,7 @@ class FeaturedResearchersController < ApplicationController
   def destroy
     @featured_researcher.destroy
     respond_to do |format|
-      format.html { redirect_to featured_researchers_url, notice: 'Featured researcher was successfully destroyed.' }
+      format.html { redirect_to featured_researchers_url, notice: 'Featured researcher entry was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
