@@ -12,7 +12,10 @@ class MetricsController < ApplicationController
   end
 
   def datafiles
-    @datafiles = Datafile.all
+    datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT).pluck(:id)
+    @datafiles = Datafile.where(dataset_id: datasets)
+
+
   end
 
 end

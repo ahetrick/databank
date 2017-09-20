@@ -91,6 +91,15 @@ class Datafile < ActiveRecord::Base
     DayFileDownload.where(["ip_address = ? and file_web_id = ? and download_date = ?", request_ip, self.web_id, Date.current]).count > 0
   end
 
+  def dataset_key
+    dataset = Dataset.where(id: self.dataset_id).first
+    if dataset
+      return dataset.key
+    else
+      return nil
+    end
+  end
+
   def record_download(request_ip)
 
     if Robot.exists?(address: request_ip)
