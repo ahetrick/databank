@@ -2,21 +2,27 @@
   %h1 Featured Researchers
 
   - @featured_researchers.each do |featured_researcher|
-    -if featured_researcher.binary?
-      .row
-      =image_tag(src: featured_researcher.binary.url, alt: "Photo", class: "img-responsive")
     .row
-      .col-md-9
-        = "#{featured_researcher.name}, #{featured_researcher.title}"
-      .col-md-1
-        =link_to '<button class="btn btn-primary btn-block">Show</button>'.html_safe, featured_researcher
-      .col-md-1
-        =link_to '<button class="btn btn-info btn-block">Edit</button>'.html_safe, edit_featured_researcher_path(featured_researcher)
-      .col-md-1
-        =link_to '<button class="btn btn-danger btn-block ">Delete</button>'.html_safe, featured_researcher, :method => :delete, :data => { :confirm => 'Are you sure?' }
-    .row
-      =  featured_researcher.bio.html_safe
-    .row
-      = featured_researcher.testimonial.html_safe
+      .col-md-4
+        -if featured_researcher.photo_url && featured_researcher.photo_url != ""
+          .photo-preview
+            %img(src="#{featured_researcher.photo_url}" class="img-responsive" alt="featured researcher photo" )
+        -else
+          .no-image-available
+            No photo available.
+      .col-md-4
+        %strong
+          = "#{featured_researcher.name}, #{featured_researcher.title}"
+        %br
+        =  featured_researcher.bio.html_safe
+        %br
+        = featured_researcher.testimonial.html_safe
 
-= link_to 'New Featured researcher', new_featured_researcher_path
+      .col-md-2
+        -if(can? :manage, featured_researcher)
+          .curator-only
+            %a(href="/featured_researchers/#{featured_researcher.id}/preview" class="btn btn-primary btn-block idb") Preview
+            %a(href="/featured_researcher/#{featured_researcher.id}/edit" class="btn btn-success btn-block idb" ) Edit
+            %a(href="/featured_researcher/#{featured_researcher.id}" class="btn btn-danger btn-block idb" data-method="delete" data-confirm="Are you sure?") Delete
+    %hr
+= link_to 'New Featured researcher', new_featured_researcher_path, class: "btn btn-warning idb"

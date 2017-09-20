@@ -421,8 +421,22 @@ table.deposit-agreement-selection-warning > tbody > tr > td {
   margin: 5px;
 }
 
-.featured-reseracher{
+.featured-researcher{
   border-left: 2px solid $color__gray-background;
+}
+
+.no-image-available{
+  padding: 20px;
+  text-align: center;
+  background-color: $color__gray-background;
+  font-size: large;
+}
+.photo-preview{
+  border: 20px solid $color__gray-background;
+}
+
+.featured-bio{
+  margin-top: 5px;
 }
 
 @media print {

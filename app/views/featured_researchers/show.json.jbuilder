@@ -1,1 +1,0 @@
-json.partial! "featured_researchers/featured_researcher", featured_researcher: @featured_researcher

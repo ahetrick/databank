@@ -1,7 +1,7 @@
-%h1 Editing Featured Researcher
+%h2 Editing Featured Researcher
+.container-fluid
 
-= render 'form'
-
-= link_to 'Show', @featured_researcher
-\|
-= link_to 'Back', featured_researchers_path
+  = render 'form'
+  .row
+    .col-md-2.col-md-offset-10
+      %a(href="/featured_researcher/#{featured_researcher.id}" class="btn btn-danger btn-block idb" data-method="delete" data-confirm="Are you sure?") Delete

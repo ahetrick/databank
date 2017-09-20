@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   resources :featured_researchers do
     member do
       get 'preview'
+      get 'feature'
     end
   end
 

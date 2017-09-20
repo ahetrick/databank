@@ -2,7 +2,7 @@ class FeaturedResearchersController < ApplicationController
 
   authorize_resource
   skip_load_and_authorize_resource :only => :show
-  before_action :set_featured_researcher, only: [:show, :preview, :to_fileupload, :edit, :update, :destroy]
+  before_action :set_featured_researcher, only: [:show, :preview, :to_fileupload, :edit, :update, :destroy, :feature]
 
   # GET /featured_researchers
   # GET /featured_researchers.json
@@ -13,6 +13,7 @@ class FeaturedResearchersController < ApplicationController
   # GET /featured_researchers/1
   # GET /featured_researchers/1.json
   def show
+    render :preview
   end
 
   def preview
@@ -67,6 +68,11 @@ class FeaturedResearchersController < ApplicationController
     end
   end
 
+  def feature
+    @featured_researcher.set_as_featured_researcher
+    redirect_to root_path
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_featured_researcher
@@ -75,7 +81,7 @@ class FeaturedResearchersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def featured_researcher_params
-      params.require(:featured_researcher).permit(:name, :title, :bio, :testimonial, :binary)
+      params.require(:featured_researcher).permit(:name, :title, :bio, :testimonial, :photo_url)
     end
 
     def to_fileupload

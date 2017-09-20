@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170915200219) do
+ActiveRecord::Schema.define(version: 20170920172151) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -178,6 +178,7 @@ ActiveRecord::Schema.define(version: 20170915200219) do
     t.string   "binary"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.string   "photo_url"
   end
 
   create_table "file_download_tallies", force: :cascade do |t|

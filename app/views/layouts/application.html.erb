@@ -55,7 +55,7 @@
       <%= sanitize(value) %>
     </div>
   <% end %>
-  <% if current_page?(root_path) %>
+  <% if current_page?(root_path) || ( request.original_fullpath.include?('featured_researchers') && request.original_fullpath.include?('preview')  ) %>
     <div id="welcome-image" class="hidden-xs">
       <div id="welcome-overlay">
         <p>The Illinois Data Bank is a public access repository for publishing research data from the University of Illinois at Urbana-Champaign</p>

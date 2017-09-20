@@ -24,23 +24,22 @@
           %p The Illinois Data Bank's mission is to centralize, preserve, and provide persistent and reliable access to the research data created by affiliates of the University of Illinois at Urbana-Champaign, such as its faculty, academic staff, and graduate students. The Research Data Service at the University Library maintains and operates the Illinois Data Bank on behalf of the University of Illinois at Urbana-Champaign campus.  The University Library has a long history of successfully supporting the preservation of and access to Illinois research outputs. The Illinois Data Bank operates within a robust policy framework that fully describes the University's commitment to providing persistent and reliable access to research data.
         %button(type="button" class="btn btn-default" onclick="window.open('/policies')" )
           Review our policies
-      .col-md-4.featured-reseracher
-        %h3 Featured Researcher, Bryan M. Reiley
-        .featured-photo
-          =image_tag('bryan.jpg', class: "img-responsive", alt: "Featured Researcher Photo")
+      .col-md-4.featured-researcher
+        -if @featured_researcher
+          %h3 Featured Researcher
+          .featured-bio
+            -if @featured_researcher.photo_url && @featured_researcher.photo_url != ""
+              .photo-preview
+                %img(src="#{@featured_researcher.photo_url}" class="img-responsive" alt="featured researcher photo" )
+            %strong
+              =succeed(",") do
+                = @featured_researcher.name
+              = @featured_researcher.title
 
-        .featured-bio
-          %p Bryan M. Reiley is a graduate student at the University of Illinois / Illinois Natural History Survey working on his PhD in the Department of Natural Resources and Environmental Sciences.
-          %p
-            Reiley deposited
-            %a(href="https://doi.org/10.13012/B2IDB-0341890_V1" ) data
-            supporting his
-            %a(href="https://doi.org/10.1371/journal.pone.0175179" ) recent article
-            on flooding impacts on Swainson’s warblers.
+            = @featured_researcher.bio.html_safe
 
-        .featured-comment
-          %p
-            %em What influcended your decision to deposit your data in the Illinois Data Bank?
-            While I found many options available to store my data online, the cost was prohibitive for my tight graduate student budget and my project did not have funds to cover the cost of data storage. As I looked for more economical options I was surprised and happy to find that the U of I had an option that was free to students and faculty.
+          .featured-comment
+            = @featured_researcher.testimonial.html_safe
+          %hr
 
 

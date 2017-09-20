@@ -1,7 +1,7 @@
 .container-fluid
   .welcome
     .row
-      .col-md-7
+      .col-md-8
         %h3 You are ready to deposit data if:
         %ul
           %li your data is in a final state and not expected to undergo revisions.
@@ -24,13 +24,16 @@
           %p The Illinois Data Bank's mission is to centralize, preserve, and provide persistent and reliable access to the research data created by affiliates of the University of Illinois at Urbana-Champaign, such as its faculty, academic staff, and graduate students. The Research Data Service at the University Library maintains and operates the Illinois Data Bank on behalf of the University of Illinois at Urbana-Champaign campus.  The University Library has a long history of successfully supporting the preservation of and access to Illinois research outputs. The Illinois Data Bank operates within a robust policy framework that fully describes the University's commitment to providing persistent and reliable access to research data.
         %button(type="button" class="btn btn-default" onclick="window.open('/policies')" )
           Review our policies
-      .col-md-5
-
+      .col-md-4.featured-researcher
+        %h3 Featured Researcher
         .featured-bio
-          -if @featured_researcher.binary
-            .featured-photo
-              %img(src="#{@featured_researcher.binary.url}" class="img-responsive" )
-          %h4
+          -if @featured_researcher.photo_url && @featured_researcher.photo_url != ""
+            .photo-preview
+              %img(src="#{@featured_researcher.photo_url}" class="img-responsive" alt="featured researcher photo" )
+          -else
+            .no-image-available
+              No photo available.
+          %strong
             =succeed(",") do
               = @featured_researcher.name
             = @featured_researcher.title
@@ -40,8 +43,9 @@
         .featured-comment
           = @featured_researcher.testimonial.html_safe
         %hr
-        = link_to 'Edit', edit_featured_researcher_path(@featured_researcher)
-        \|
-        = link_to 'Back', featured_researchers_path
+
+        %a(href="/featured_researchers/#{@featured_researcher.id}/feature" class="btn btn-block btn-primary idb" ) Feature this researcher now
+        %a(href="/featured_researchers/#{@featured_researcher.id}/edit" class="btn btn-success btn-block idb") Edit featured researcher
+        %a(href="/featured_researchers"  class="btn btn-info btn-block idb" ) List Featured Researchers
 
 

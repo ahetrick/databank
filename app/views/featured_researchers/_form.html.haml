@@ -6,22 +6,32 @@
         - @featured_researcher.errors.full_messages.each do |msg|
           %li= msg
 
-  .container-fluid
+  .form-group.row
+    .field
+      = f.label :name, "Photo URL", class: "control-label"
+      = f.text_field :photo_url, class: "form-control"
 
-    .form-group.row
-      .field
-        = f.label :name, "Display Name", class: "control-label"
-        = f.text_field :name, class: "form-control"
-    .form-group.row
-      .field
-        = f.label :title, "Title", class: "control-label"
-        = f.text_field :title, class: "form-control"
-    .form-group.row
-      .field
-        = f.label :bio, "Biography", class: "control-label"
-        = f.trix_editor :bio, class: "form-control"
-    .form-group.row
-      .field
-        = f.label :testimonial, "Comment", class: "control-label"
-        = f.trix_editor :testimonial, class: "form-control"
-  = f.submit 'Save and Preview', class: "btn btn-primary"
+  -if @featured_researcher.photo_url && @featured_researcher.photo_url != ""
+    .row
+      .col-md-5
+        .photo-preview
+          %img(src="#{@featured_researcher.photo_url}" class="img-responsive" alt="featured researcher photo" )
+  .form-group.row
+    .field
+      = f.label :name, "Name", class: "control-label"
+      = f.text_field :name, class: "form-control"
+  .form-group.row
+    .field
+      = f.label :title, "Title", class: "control-label"
+      = f.text_field :title, class: "form-control"
+  .form-group.row
+    .field
+      = f.label :bio, "Biography", class: "control-label"
+      = f.trix_editor :bio, class: "form-control"
+  .form-group.row
+    .field
+      = f.label :testimonial, "Testimonial", class: "control-label"
+      = f.trix_editor :testimonial, class: "form-control"
+  .row
+    .col-md-2.col-md-offset-10
+      = f.submit 'Save and Preview', class: "btn btn-primary btn-block"
