@@ -431,9 +431,6 @@ table.deposit-agreement-selection-warning > tbody > tr > td {
   background-color: $color__gray-background;
   font-size: large;
 }
-.photo-preview{
-  border: 20px solid $color__gray-background;
-}
 
 .featured-bio{
   margin-top: 5px;
@@ -442,6 +439,12 @@ table.deposit-agreement-selection-warning > tbody > tr > td {
 .elbow{
   margin-top: 5px;
 }
+
+.photo-preview {
+  border-radius: 50%;
+  overflow: hidden;
+}
+
 
 @media print {
   * { background: transparent !important; color: black !important; text-shadow: none !important; filter:none !important; -ms-filter: none !important; min-height: 0 !important;} /* Black prints faster: h5bp.com/s */

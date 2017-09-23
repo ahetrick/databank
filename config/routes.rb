@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  get '/featured_researchers/feature_none', to: 'featured_researchers#feature_none'
+
   resources :featured_researchers do
     member do
       get 'preview'
@@ -7,7 +9,7 @@ Rails.application.routes.draw do
     end
   end
 
-  get 'datasets/download_citation_report', to: 'datasets#download_citation_report'
+  get '/datasets/download_citation_report', to: 'datasets#download_citation_report'
 
   get '/datasets/:dataset_id/datafiles/add', to: 'datafiles#add'
 

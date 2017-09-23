@@ -34,5 +34,13 @@ class FeaturedResearcher < ActiveRecord::Base
     end
   end
 
+  def self.feature_none
+    yaml_filename = File.join(Rails.root, 'config', 'featured_researcher.yml')
+
+    if File.exists?(yaml_filename)
+      File.delete(yaml_filename)
+    end
+
+  end
 
 end
