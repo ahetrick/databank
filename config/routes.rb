@@ -2,6 +2,8 @@ Rails.application.routes.draw do
 
   get '/featured_researchers/feature_none', to: 'featured_researchers#feature_none'
 
+  get '/researcher_spotlights', to: 'featured_researchers#index'
+
   resources :featured_researchers do
     member do
       get 'preview'
@@ -69,9 +71,6 @@ Rails.application.routes.draw do
   get '/datasets/:id/download_RIS', to: 'datasets#download_RIS'
   get '/datasets/:id/download_plaintext_citation', to: 'datasets#download_plaintext_citation'
   get '/datasets/:id/download_plaintext_citation', to: 'datasets#download_plaintext_citation'
-
-
-
   get '/datasets/:id/download_box_file/:box_file_id', to: 'datasets#download_box_file'
 
   post 'api/dataset/:dataset_key/upload', to: 'api_dataset#upload', defaults: {format: 'json'}
