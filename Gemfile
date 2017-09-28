@@ -130,7 +130,7 @@ gem 'curb', '~> 0.9.1'
 gem 'modernizr-rails'
 
 # Use trix to support rich text editing (for featured researcher cms)
-gem 'trix', '~> 0.11.0'
+# gem 'trix', '~> 0.11.0'
 
 # Call 'byebug' anywhere in the code to stop execution and get a debugger console
 gem 'byebug'

@@ -27,11 +27,11 @@
   .form-group.row
     .field
       = f.label :bio, "Biography", class: "control-label"
-      = f.trix_editor :bio, class: "form-control"
+      = f.text_area :bio, class: "form-control"
   .form-group.row
     .field
       = f.label :testimonial, "Testimonial", class: "control-label"
-      = f.trix_editor :testimonial, class: "form-control"
+      = f.text_area :testimonial, class: "form-control"
   .row
     .col-md-2.col-md-offset-10
       = f.submit 'Save and Preview', class: "btn btn-primary btn-block"
