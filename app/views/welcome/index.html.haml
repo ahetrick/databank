@@ -3,5 +3,4 @@
   - if current_user && current_user.role == 'admin'
     .curator-only
       %a(href="/researcher_spotlights" class="btn btn-success idb") Manage Researcher Spotlight
-      %a(href="/featured_researchers/feature_none" class="btn btn-warning idb" ) Clear Researcher Spotlight Selection
     = render partial: 'role_switch_form'
