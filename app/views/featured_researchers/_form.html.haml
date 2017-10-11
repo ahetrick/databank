@@ -8,7 +8,7 @@
 
   .form-group.row
     .field
-      = f.label :name, "Photo URL", class: "control-label"
+      = f.label :photo_url, "Photo URL", class: "control-label"
       = f.text_field :photo_url, class: "form-control"
 
   -if @featured_researcher.photo_url && @featured_researcher.photo_url != ""
@@ -16,18 +16,22 @@
       .col-md-5
         .photo-preview
           %img(src="#{@featured_researcher.photo_url}" class="img-responsive" alt="featured researcher photo" )
+
   .form-group.row
     .field
-      = f.label :name, "Name", class: "control-label"
+      = f.label :name, "Name Text", class: "control-label"
       = f.text_field :name, class: "form-control"
-  .form-group.row
-    .field
-      = f.label :title, "Title", class: "control-label"
-      = f.text_field :title, class: "form-control"
+
   .form-group.row
     .field
       = f.label :bio, "Biography", class: "control-label"
       = f.text_area :bio, class: "form-control"
+
+  .form-group.row
+    .field
+      = f.label :question, "Testimonial Prompt", class: "control-label"
+      = f.text_field :name, class: "form-control"
+
   .form-group.row
     .field
       = f.label :testimonial, "Testimonial", class: "control-label"
