@@ -11,37 +11,39 @@
         -else
           .no-image-available
             No photo available.
-      .col-md-8
+
+      .col-md-6
         %h4
           %strong
-            = @featured_researcher.name
-          = @featured_researcher.bio.html_safe
+            = featured_researcher.name
+          = featured_researcher.bio.html_safe
 
-        .featured-buttons
-          %button(type="button" class="btn btn-primary" onclick="window.open('#{@featured_researcher.dataset_url}')" )
-            %span(class="glyphicon glyphicon-tasks" )
-            &nbsp;
-            dataset
-          %button(type="button" class="btn btn-primary" onclick="window.open('#{@featured_researcher.article_url}')" )
-            %span(class="glyphicon glyphicon-file" )
-            &nbsp;
-            article
+
 
         .featured-comment
           %h4
             %strong
-              = @featured_researcher.question
-          = @featured_researcher.testimonial.html_safe
+              = featured_researcher.question
+          = featured_researcher.testimonial.html_safe
 
+      .col-md-2
+        %button(type="button" class="btn btn-primary btn-block" onclick="window.open('#{featured_researcher.dataset_url}')" )
+          %span(class="glyphicon glyphicon-tasks" )
+          &nbsp;
+          dataset
+        %button(type="button" class="btn btn-primary btn-block" onclick="window.open('#{featured_researcher.article_url}')" )
+          %span(class="glyphicon glyphicon-file" )
+          &nbsp;
+          article
       .col-md-2
         -if(can? :manage, featured_researcher)
           .curator-only
             -if featured_researcher.is_active
-              .label.label-success
-                Currently Published
+              .label.label-default
+                Published
             -else
               .label.label-default
-                Currently Not Published
+                Not Published
 
 
             = form_for featured_researcher do |f|
@@ -57,12 +59,12 @@
 
               -if featured_researcher.is_active
                 =f.hidden_field :is_active, value: false
-                = f.submit 'Unpublish', class: "btn btn-primary btn-block"
+                = f.submit 'Unpublish', class: "btn btn-warning btn-block elbow"
               -else
                 =f.hidden_field :is_active, value: true
-                = f.submit 'Publish', class: "btn btn-primary btn-block"
+                = f.submit 'Publish', class: "btn btn-warning btn-block elbow"
 
-            %a(href="/featured_researchers/#{featured_researcher.id}/preview" class="btn btn-primary btn-block idb") Preview
+            %a(href="/featured_researchers/#{featured_researcher.id}/preview" class="btn btn-primary btn-block idb elbow") Preview
             %a(href="/featured_researchers/#{featured_researcher.id}/edit" class="btn btn-success btn-block idb" ) Edit
             =link_to '<button class="btn btn-danger btn-block idb elbow ">Delete</button>'.html_safe, featured_researcher, :method => :delete, :data => { :confirm => 'Are you sure?' }
 
@@ -72,4 +74,3 @@
     .row
       .col-md-3.col-md-offset-9.curator-only
         = link_to 'New Featured researcher', new_featured_researcher_path, class: "btn btn-primary btn-block idb"
-        %a(href="/featured_researchers/feature_none" class="btn btn-success btn-block elbow idb" ) Clear Researcher Spotlight Selection

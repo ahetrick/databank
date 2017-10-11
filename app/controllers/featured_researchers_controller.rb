@@ -7,12 +7,12 @@ class FeaturedResearchersController < ApplicationController
   # GET /featured_researchers
   # GET /featured_researchers.json
   def index
-    if current_user && current_user.role && current_user.role == admin
+    if current_user && current_user.role && current_user.role == "admin"
       @featured_researchers = FeaturedResearcher.all
     else
       @featured_researcher = active_featured_researchers.order("RANDOM()")
     end
-    
+
   end
 
   # GET /featured_researchers/1
