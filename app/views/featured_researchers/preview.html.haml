@@ -47,10 +47,10 @@
             article
 
         .featured-comment
-          %h4
-            %strong
-              = @featured_researcher.question
-          = @featured_researcher.testimonial.html_safe
+          %strong
+            = @featured_researcher.question
+          .elbow
+            = @featured_researcher.testimonial.html_safe
         %hr
 
         = form_for @featured_researcher do |f|
