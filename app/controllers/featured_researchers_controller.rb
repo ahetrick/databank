@@ -10,6 +10,7 @@ class FeaturedResearchersController < ApplicationController
     if current_user && current_user.role && current_user.role == "admin"
       @featured_researchers = FeaturedResearcher.all
     else
+      active_featured_researchers = FeaturedResearcher.where(is_active: true)
       @featured_researcher = active_featured_researchers.order("RANDOM()")
     end
 
