@@ -1197,7 +1197,6 @@ class DatasetsController < ApplicationController
   end
 
   # precondition: all valid web_ids in medusa
-  # web_id might be for a datafile or a recordfile
   def download_link
 
     return_hash = Hash.new

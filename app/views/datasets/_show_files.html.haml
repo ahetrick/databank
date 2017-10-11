@@ -38,45 +38,7 @@
                                 %input(type="checkbox" id="checkAllFiles" value="checkAllFiles")
                                 Select all
 
-                                -if dataset.fileset_preserved? && dataset.recordfile && dataset.recordfile.medusa_path && dataset.recordfile.medusa_path != ''
-                                  ="(#{dataset.datafiles.count + 1})"
-                                -else
-                                  ="(#{dataset.datafiles.count})"
-
-
-                    -# If there is a recordfile IN MEDUSA, display a recordfile row
-                    -if dataset.fileset_preserved? && dataset.recordfile && dataset.recordfile.medusa_path && dataset.recordfile.medusa_path != ''
-                      %tr.row
-                        %td
-                          .row.checkbox
-                            %span.col-md-6
-                              %label
-                                %input(type="checkbox"
-                                       class="checkFile checkFileGroup"
-                                       name="selected_files[]"
-                                       value="#{dataset.recordfile.web_id}"
-                                       onchange="handleCheckFileGroupChange()"
-                                       checked="true")
-                                = dataset.recordfile.bytestream_name
-
-                            %span.col-md-2
-                              = number_to_human_size(dataset.recordfile.bytestream_size)
-
-                            %span.col-md-2
-                              %span(id="preview_btn_#{dataset.recordfile.web_id}")
-                                %button(type='button' class='btn btn-sm btn-success' onclick='preview("recordfile", "#{dataset.recordfile.web_id}")')
-                                  %span.glyphicon.glyphicon-eye-open
-                                  View
-
-                            %span.col-md-2
-                              %a(href="/recordfiles/#{dataset.recordfile.web_id}/download" class="btn btn-primary btn-sm idb" )
-                                %span.glyphicon.glyphicon-download
-                                File
-
-                          .row(id="preview_#{dataset.recordfile.web_id}")
-                          .row.loading.text-center
-                            %i(class="fa fa-spinner fa-spin fa-4x view-load-spinner spinner_#{dataset.recordfile.web_id}" )
-
+                                ="(#{dataset.datafiles.count})"
 
                     -if dataset.ordered_datafiles
 

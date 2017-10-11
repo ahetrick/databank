@@ -31,16 +31,9 @@ class DownloaderClient
       return download_hash
     end
 
-    record_web_id = nil
-
-    if dataset.recordfile && web_ids.include?(dataset.recordfile.web_id)
-      record_web_id = dataset.recordfile.web_id
-      web_ids = web_ids - ["#{dataset.recordfile.web_id}"]
-    end
-
     targets_arr = Array.new
 
-    if record_web_id
+    if dataset.recordfile  && dataset.recordfile.in_medusa?
       #Rails.logger.warn "recordfile found for #{dataset.key}"
       df = dataset.recordfile
 

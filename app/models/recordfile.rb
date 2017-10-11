@@ -44,6 +44,10 @@ class Recordfile < ActiveRecord::Base
     end
   end
 
+  def in_medusa?
+    self.medusa_path && self.medusa_path != ""
+  end
+
   private
 
   ##
