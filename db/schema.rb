@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170920172151) do
+ActiveRecord::Schema.define(version: 20171011140707) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -172,7 +172,7 @@ ActiveRecord::Schema.define(version: 20170920172151) do
 
   create_table "featured_researchers", force: :cascade do |t|
     t.string   "name"
-    t.string   "title"
+    t.string   "question"
     t.text     "bio"
     t.text     "testimonial"
     t.string   "binary"
