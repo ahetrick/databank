@@ -24,24 +24,35 @@
           %p The Illinois Data Bank's mission is to centralize, preserve, and provide persistent and reliable access to the research data created by affiliates of the University of Illinois at Urbana-Champaign, such as its faculty, academic staff, and graduate students. The Research Data Service at the University Library maintains and operates the Illinois Data Bank on behalf of the University of Illinois at Urbana-Champaign campus.  The University Library has a long history of successfully supporting the preservation of and access to Illinois research outputs. The Illinois Data Bank operates within a robust policy framework that fully describes the University's commitment to providing persistent and reliable access to research data.
         %button(type="button" class="btn btn-default" onclick="window.open('/policies')" )
           Review our policies
-      .col-md-4.featured-researcher
-        -if @featured_researcher
+      -if @featured_researcher
+        .col-md-4.featured-researcher
           %h3 Researcher Spotlight
           .featured-bio
             -if @featured_researcher.photo_url && @featured_researcher.photo_url != ""
               .photo-preview
-                %img(src="#{@featured_researcher.photo_url}" class="img-responsive featured-img" alt="featured researcher photo" )
-            %strong
-              =succeed(",") do
-                = @featured_researcher.name
-              = @featured_researcher.title
+                %img(src="#{@featured_researcher.photo_url}" class="img-responsive" alt="featured researcher photo" )
 
+            %h4
+              %strong
+                = @featured_researcher.name
             = @featured_researcher.bio.html_safe
 
+          .featured-buttons
+            %button(type="button" class="btn btn-primary" onclick="window.open('#{@featured_researcher.dataset_url}')" )
+              %span(class="glyphicon glyphicon-tasks" )
+              &nbsp;
+              dataset
+            %button(type="button" class="btn btn-primary" onclick="window.open('#{@featured_researcher.article_url}')" )
+              %span(class="glyphicon glyphicon-file" )
+              &nbsp;
+              article
+
           .featured-comment
-            %br
+            %h4
+              %strong
+                = @featured_researcher.question
             = @featured_researcher.testimonial.html_safe
-          %hr
+
           %p
             %a(href="/researcher_spotlights") See all researcher splotlights
 

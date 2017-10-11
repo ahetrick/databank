@@ -1,6 +1,10 @@
 class WelcomeController < ApplicationController
   def index
-    @featured_researcher = FeaturedResearcher.get_featured_researcher
+    active_featured_researchers = FeaturedResearcher.where(is_active: true)
+    if active_featured_researchers.count > 0
+      @featured_researcher = active_featured_researchers.order("RANDOM()").first
+    end
+
   end
   def sitemap
     sitemap_path = Rails.root.join('public', 'sitemaps', 'sitemap.xml.gz')

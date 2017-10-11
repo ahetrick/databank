@@ -30,23 +30,51 @@
           -if @featured_researcher.photo_url && @featured_researcher.photo_url != ""
             .photo-preview
               %img(src="#{@featured_researcher.photo_url}" class="img-responsive" alt="featured researcher photo" )
-          -else
-            .no-image-available
-              No photo available.
-          %strong
-            =succeed(",") do
-              = @featured_researcher.name
-            = @featured_researcher.title
 
+          %h4
+            %strong
+              = @featured_researcher.name
           = @featured_researcher.bio.html_safe
 
+        .featured-buttons
+          %button(type="button" class="btn btn-primary" onclick="window.open('#{@featured_researcher.dataset_url}')" )
+            %span(class="glyphicon glyphicon-tasks" )
+            &nbsp;
+            dataset
+          %button(type="button" class="btn btn-primary" onclick="window.open('#{@featured_researcher.article_url}')" )
+            %span(class="glyphicon glyphicon-file" )
+            &nbsp;
+            article
+
         .featured-comment
-          %br
+          %h4
+            %strong
+              = @featured_researcher.question
           = @featured_researcher.testimonial.html_safe
         %hr
 
-        %a(href="/featured_researchers/#{@featured_researcher.id}/feature" class="btn btn-block btn-primary idb" ) Feature this researcher now
-        %a(href="/featured_researchers/#{@featured_researcher.id}/edit" class="btn btn-success btn-block idb") Edit featured researcher
-        %a(href="/featured_researchers"  class="btn btn-info btn-block idb" ) List Featured Researchers
+        = form_for @featured_researcher do |f|
+
+          =f.hidden_field :name, value: @featured_researcher.name
+          =f.hidden_field :question, value: @featured_researcher.question
+          =f.hidden_field :dataset_url, value: @featured_researcher.dataset_url
+          =f.hidden_field :article_url, value: @featured_researcher.article_url
+          =f.hidden_field :bio, value: @featured_researcher.bio
+          =f.hidden_field :testimonial, value: @featured_researcher.testimonial
+          =f.hidden_field :photo_url, value: @featured_researcher.photo_url
+
+
+          -if @featured_researcher.is_active
+            =f.hidden_field :is_active, value: false
+            = f.submit 'Unpublish', class: "btn btn-primary btn-block"
+          -else
+            =f.hidden_field :is_active, value: true
+            = f.submit 'Publish', class: "btn btn-primary btn-block"
+
+        .featured-controls
+          %a(href="/featured_researchers/#{@featured_researcher.id}/edit" class="btn btn-success btn-block idb") Edit Researcher Spotlight
+          %a(href="/featured_researchers"  class="btn btn-info btn-block idb" ) List Researcher Spotlights
+
+
 
 

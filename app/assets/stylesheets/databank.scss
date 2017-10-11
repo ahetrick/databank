@@ -446,6 +446,22 @@ table.deposit-agreement-selection-warning > tbody > tr > td {
   border-radius: 50%;
 }
 
+.featured-buttons{
+  margin-top: 5px;
+  margin-bottom: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.featured-buttons button{
+  width: 45%;
+  text-align: center;
+  margin: auto;
+}
+
+.featured-controls {
+  margin-top: 5px;
+}
 
 @media print {
   * { background: transparent !important; color: black !important; text-shadow: none !important; filter:none !important; -ms-filter: none !important; min-height: 0 !important;} /* Black prints faster: h5bp.com/s */

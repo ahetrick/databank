@@ -87,7 +87,7 @@ class FeaturedResearchersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def featured_researcher_params
-      params.require(:featured_researcher).permit(:name, :title, :bio, :testimonial, :photo_url)
+      params.require(:featured_researcher).permit(:name, :question, :dataset_url, :article_url, :bio, :testimonial, :photo_url, :is_active)
     end
 
     def to_fileupload
