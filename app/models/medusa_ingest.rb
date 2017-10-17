@@ -248,6 +248,13 @@ class MedusaIngest < ActiveRecord::Base
       ingest.error_text = response_hash['error']
       ingest.response_time = Time.now.utc.iso8601
       ingest.save
+
+      if response_hash['status'] != 'ok'
+        error_string = "Problem ingesting #{response_hash['staging_path']} into Medusa : #{response_hash['error']}"
+        notification = DatabankMailer.error(error_string)
+        notification.deliver_now
+      end
+
     else
       Rails.logger.warn "could not find file for medusa failure message: #{response_hash['staging_path']}"
     end
