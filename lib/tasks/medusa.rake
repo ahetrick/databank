@@ -219,7 +219,16 @@ namespace :medusa do
 
   desc 'resend failed medusa messages'
   task :retry_failed => :environment do
-    puts "not yet implemented"
+    failed_ingests = MedusaIngest.where(request_status: 'error')
+    failed_ingests.each do |ingest|
+
+      ingest.request_status = 'resent'
+      ingest.error_text = ''
+      ingest.response_time = ''
+      ingest.send_medusa_ingest_message(ingest.staging_path)
+      ingest.save
+
+    end
   end
 
   desc 'retroactively set medusa_dataset_dir in dataset if it exist in ingest'
