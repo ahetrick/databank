@@ -1,5 +1,13 @@
 namespace :recordfile do
 
+  desc 'remove all recordfiles'
+  task :remove_all_recordfiles => :environment do
+    recordfiles = Recordfile.all
+    recordfiles.each do |recordfile|
+      recordfile.delete
+    end
+  end
+
   desc 'retrofit datasets with recordfiles'
   task :add_legacy_recordfiles => :environment do
     datasets = Dataset.all

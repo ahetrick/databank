@@ -142,6 +142,8 @@ function approve_deckfile(deckfile_id){
 function create_from_remote_unknown_size(){
     $('#loadingModal').modal('show');
 
+    console.log("inside create_from_remote_unknown_size()")
+
     // Use Ajax to submit form data
 
     $.ajax({

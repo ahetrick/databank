@@ -7,6 +7,8 @@
       %li
         %a(href="#contact" ) Contact Us
       %li
+        %a(href="#supplemental") Journal Supplemental Materials
+      %li
         %a(href="#start" ) Getting Started
         %ul(class="nav nav-stacked")
           %li
@@ -47,6 +49,8 @@
   .col-xs-9(id="help-body")
     %h1 How can we help you?
     = render partial: 'contact', locals: {dataset: @dataset}
+    = render partial: 'supplemental_material'
+    %a(href="#top" class="pull-right" ) Go to Top
     = render partial: 'start'
     %a(href="#top" class="pull-right" ) Go to Top
     = render partial: 'curation_procedures'

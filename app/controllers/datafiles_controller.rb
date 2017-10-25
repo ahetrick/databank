@@ -217,12 +217,14 @@ class DatafilesController < ApplicationController
 
       File.open(filepath, 'wb+') do |outfile|
         uri = URI.parse(@remote_url)
+        Rails.logger.warn(uri.to_yaml)
 
-        Net::HTTP.start(uri.host, uri.port, :use_ssl => (uri.scheme == 'https')) { |http|
+        Net::HTTP.start(uri.host, uri.port, :use_ssl => true) { |http|
           http.request_get(uri.path) { |res|
             res.read_body { |seg|
 
               if File.size(outfile) < 1000000000000
+                Rails.logger.warn(seg)
                 outfile << seg
               else
                 @datafile.destroy
