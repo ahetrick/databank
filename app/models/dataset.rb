@@ -155,8 +155,10 @@ class Dataset < ActiveRecord::Base
 
   def is_most_recent_version
 
+    Rails.logger.warn (self.version_group[:entries].to_yaml)
+
     if self.version_group.length > 0
-      return (self.version_group[0]).version == self.dataset_version.to_i
+      return (self.version_group[:entries][0])[:version] == self.dataset_version.to_i
     else
       return true
     end
