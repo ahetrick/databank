@@ -155,8 +155,8 @@ class Dataset < ActiveRecord::Base
 
   def is_most_recent_version
 
-    if self.version_group
-      return self.version_group[0].version == self.dataset_version.to_i
+    if self.version_group.length > 0
+      return (self.version_group[0]).version == self.dataset_version.to_i
     else
       return true
     end
