@@ -33,6 +33,7 @@ class Dataset < ActiveRecord::Base
     string :hold_state
     string :publication_state
     boolean :is_test
+    boolean :is_most_recent_version
     time :ingest_datetime
     time :release_datetime
     time :created_at
@@ -150,6 +151,12 @@ class Dataset < ActiveRecord::Base
     end
 
     {version: self_version, selected: false, doi: self.identifier || "not yet set", version_comment: self.version_comment || "", publication_date: self.release_date ? self.release_date.iso8601 : "not yet set"}
+  end
+
+  def is_most_recent_version
+
+    self.version_group[0].version == self.dataset_version.to_i
+
   end
 
 

@@ -65,6 +65,7 @@ class DatasetsController < ApplicationController
 
           search_get_facets = Dataset.search do
             without(:depositor, 'error')
+            with(:is_most_recent_version, true)
             keywords (params[:q])
             facet(:license_code)
             facet(:funder_codes)
@@ -164,6 +165,7 @@ class DatasetsController < ApplicationController
             all_of do
               without(:depositor, 'error')
               with :depositor_email, current_user.email
+              with(:is_most_recent_version, true)
               with :is_test, false
               any_of do
                 with :publication_state, Databank::PublicationState::DRAFT
@@ -296,6 +298,7 @@ class DatasetsController < ApplicationController
           search_get_facets = Dataset.search do
             all_of do
               without(:depositor, 'error')
+              with(:is_most_recent_version, true)
               with :is_test, false
               without :hold_state, Databank::PublicationState::TempSuppress::METADATA
               any_of do
@@ -388,6 +391,7 @@ class DatasetsController < ApplicationController
 
         all_of do
           without(:depositor, 'error')
+          with(:is_most_recent_version, true)
           with :is_test, false
           without :hold_state, Databank::PublicationState::TempSuppress::METADATA
           any_of do
@@ -411,6 +415,7 @@ class DatasetsController < ApplicationController
 
         all_of do
           without(:depositor, 'error')
+          with(:is_most_recent_version, true)
           with :is_test, false
           without :hold_state, Databank::PublicationState::TempSuppress::METADATA
           any_of do
