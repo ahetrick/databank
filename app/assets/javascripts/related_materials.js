@@ -67,6 +67,7 @@ function add_material_row() {
 
         var material_row = '<tr class="item row" id="material_index_' + newId + '">' +
             '<td>' +
+            '<input value="false" type="hidden" name="dataset[related_materials_attributes][' + newId + '][_destroy]" id="dataset_related_materials_attributes_' + newId + '__destroy" />' +
             '<select class="form-control dataset" onchange="handleMaterialChange(' + newId + ')" name="dataset[related_materials_attributes][' + newId + '][selected_type]" id="dataset_related_materials_attributes_' + newId + '_selected_type">' +
             '<option value="">Select...</option>' +
             '<option value="Article">Article</option>' +
@@ -76,8 +77,8 @@ function add_material_row() {
             '<option value="Thesis">Thesis</option>' +
             '<option value="Other">Other:</option></select>' +
             '</td>' +
-            '<td>' +
-            '<input class="form-control dataset material-text" type="text" name="dataset[related_materials_attributes][' + newId + '][material_type]" id="dataset_related_materials_attributes_' + newId + '_material_type" style="visibility: hidden;" />' +
+            '<td class="material_cell">' +
+            '<input type="hidden" name="dataset[related_materials_attributes][' + newId + '][material_type]" id="dataset_related_materials_attributes_' + newId + '_material_type" />' +
             '</td>' +
             '<td>' +
             '<input class="form-control dataset" type="text" placeholder="[ URL to resource, e.g:   http://hdl.handle.net/2142/46427 ]"  name="dataset[related_materials_attributes][' + newId + '][link]" id="dataset_related_materials_attributes_' + newId + '_link" />' +
