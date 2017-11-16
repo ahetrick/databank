@@ -29,7 +29,7 @@
             %td
               =ff.hidden_field :_destroy, value: false
               =ff.select :selected_type, options_for_select([Databank::MaterialType::ARTICLE, Databank::MaterialType::CODE, Databank::MaterialType::DATASET, Databank::MaterialType::PRESENTATION, Databank::MaterialType::THESIS, ["Other:",Databank::MaterialType::OTHER]], material.selected_type), {prompt: "Select..."}, {class: "form-control dataset", onchange: "handleMaterialChange(#{i})"}
-            %td(class="material_cell")
+            %td(id="material_cell_#{i}")
               -if material.selected_type == Databank::MaterialType::OTHER
                 =ff.text_field :material_type, {class: "form-control dataset material-text"}
               -else

@@ -24,7 +24,7 @@ function handleMaterialChange(materialIndex) {
             break;
         case 'Other':
             $('#dataset_related_materials_attributes_' + materialIndex + '_material_type').val('');
-            $('.material_cell').html('<input class="form-control dataset material-text" type="text" name="dataset[related_materials_attributes][' + materialIndex + '][material_type]" id="dataset_related_materials_attributes_' + materialIndex+'_material_type" />');
+            $('#material_cell_'+materialIndex).html('<input class="form-control dataset material-text" type="text" name="dataset[related_materials_attributes][' + materialIndex + '][material_type]" id="dataset_related_materials_attributes_' + materialIndex+'_material_type" />');
             $('#dataset_related_materials_attributes_' + materialIndex + '_material_type').css("visibility", "visible");
 
             $('#dataset_related_materials_attributes_' + materialIndex + '_material_type').focus();
@@ -77,7 +77,7 @@ function add_material_row() {
             '<option value="Thesis">Thesis</option>' +
             '<option value="Other">Other:</option></select>' +
             '</td>' +
-            '<td class="material_cell">' +
+            '<td id="material_cell_' + newId + '">' +
             '<input type="hidden" name="dataset[related_materials_attributes][' + newId + '][material_type]" id="dataset_related_materials_attributes_' + newId + '_material_type" />' +
             '</td>' +
             '<td>' +
