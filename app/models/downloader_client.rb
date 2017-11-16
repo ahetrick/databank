@@ -99,7 +99,7 @@ class DownloaderClient
       client.post
       client.headers = {'Content-Type' => 'application/json'}
       response = client.perform
-      Rails.logger.warn "downloader response: #{response.to_yaml}"
+      # Rails.logger.warn "downloader response: #{response.to_yaml}"
       response_json = client.body_str
       response_hash = JSON.parse(client.body_str)
       if response_hash.has_key?("download_url")
