@@ -180,7 +180,7 @@ module Viewable
 
       dataset = Dataset.find(self.dataset_id)
 
-      return "https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fdatabank.illinois.edu%2Fdatasets%2FIDB-0341890%2F#{dataset.key}%2Fdatafiles%2#{self.web_id}%2Fdisplay"
+      return "https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fdatabank.illinois.edu%2Fdatasets%2FIDB-0341890%2F#{dataset.key}%2Fdatafiles%2F#{self.web_id}%2Fdisplay"
 
     else
       raise "Microsoft preview url requested for non-Microsoft file."
