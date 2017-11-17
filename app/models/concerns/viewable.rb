@@ -171,7 +171,7 @@ module Viewable
     else
       filename_split = self.bytestream_name.split(".")
       extension = filename_split.last
-      return ['doc', 'docx', 'xls', 'xldx', '.ppt', 'pptx' ].include?(extension.downcase)
+      return ['doc', 'docx', 'xls', 'xlsx', '.ppt', 'pptx' ].include?(extension.downcase)
     end
   end
 
