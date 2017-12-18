@@ -82,8 +82,8 @@ Rails.application.configure do
   # email stuff
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-      address: 'express-smtp.cites.uiuc.edu',
-      domain: 'express-smtp.cites.uiuc.edu',
+      address: 'outbound-relays.techservices.illinois.edu',
+      domain: 'outbound-relays.techservices.illinois.edu',
       openssl_verify_mode: 'none'
   }
   config.action_mailer.perform_deliveries = true
