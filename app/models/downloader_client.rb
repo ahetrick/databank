@@ -72,7 +72,9 @@ class DownloaderClient
 
     test_hash = Hash.new
     test_hash["type"]="literal"
+    test_hash["name"]="text.txt"
     test_hash["content"]="Test placeholder content."
+    targets_arr.push(test_hash)
 
     if targets_arr.count == 0
       download_hash['status']='error'
