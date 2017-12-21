@@ -51,7 +51,6 @@ class DatafilesController < ApplicationController
   end
 
   def add
-    Rails.logger.warn "inside add datafile"
     @dataset = Dataset.find_by_key(params[:dataset_id])
     @datafile = Datafile.create(dataset_id: @dataset.id)
     authorize! :edit, @dataset
