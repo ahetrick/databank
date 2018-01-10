@@ -56,6 +56,14 @@ module Databank
     OTHER = 'Other'
   end
 
+  class Subject
+    PHYSICAL_SCIENCES = 'Physical Sciences'
+    LIFE_SCIENCES = 'Life Sciences'
+    SOCIAL_SCIENCES = 'Social Sciences'
+    TECHNOLOGY_ENGINEERING = 'Technology & Engineering'
+    ARTS_HUMANITIES = 'Arts & Humanities'
+  end
+
   class Application < Rails::Application
 
     attr_accessor :shibboleth_host
