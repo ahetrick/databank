@@ -135,6 +135,8 @@ class DatabankMailer < ActionMailer::Base
       subject.prepend("[DEV: ")
     elsif IDB_CONFIG[:root_url_text].include?("localhost")
       subject.prepend("[LOCAL: ")
+    elsif IDB_CONFIG[:root_url_text].include?("pilot")
+      subject.prepend("[PILOT: ")
     else
       subject.prepend("[")
     end
