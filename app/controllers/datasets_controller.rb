@@ -505,7 +505,7 @@ class DatasetsController < ApplicationController
         facet(:license_code)
         facet(:funder_codes)
         facet(:creator_names)
-        facet(:subject)
+        facet(:subject_text)
         facet(:depositor)
         facet(:visibility_code)
         facet(:hold_state)
