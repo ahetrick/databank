@@ -82,9 +82,19 @@
           %tr.row
             %td
               %span.metadata-label
-                Dataset Description:
+                Dataset Description
             %td
               = simple_format(dataset.description)
+
+        -if dataset.subject && dataset.subject != ''
+          %tr.row
+            %td
+              %span.metadata-label
+                Subject
+            %td
+              %a(href="https://rds-dev.library.illinois.edu/datasets?sort_by=sort_updated_desc&q=&subjects%5B%5D=#{URI.encode(dataset.subject)}" )
+                = dataset.subject
+
 
         -if dataset.keywords && !dataset.keywords.empty?
           %tr.row
@@ -94,14 +104,14 @@
               = dataset.keywords
         %tr.row
           %td
-            %span.metadata-label License:
+            %span.metadata-label License
           %td
             = dataset.license_name
         - if [Databank::PublicationState::Embargo::METADATA, Databank::PublicationState::Embargo::FILE].include?(dataset.publication_state) || (dataset.publication_state == Databank::PublicationState::DRAFT && dataset.release_date && dataset.release_date > Date.current())
           %tr.row
             %td
               %span(class="metadata-label")
-                Release Date:
+                Release Date
             %td
               = dataset.release_date
 
@@ -109,7 +119,7 @@
           %tr.row
             %td
               %span.metadata-label
-                Funder:
+                Funder
             %td
               = funder.name
               -if funder.grant && funder.grant != ""
@@ -120,7 +130,7 @@
         %tr.row
           %td
             %span.metadata-label
-              Corresponding Creator:
+              Corresponding Creator
           %td
             -if (!dataset.corresponding_creator_name || dataset.corresponding_creator_name.empty?)
               ="[corresponding creator name not provided]"
@@ -136,7 +146,7 @@
         -if can? :manage, dataset
           %tr.row
             %td
-              %span.metadata-label Corresponding Creator Email:
+              %span.metadata-label Corresponding Creator Email
             %td
               = (!dataset.corresponding_creator_email || dataset.corresponding_creator_email.empty?) ? "[corresponding creator email not provided]" : dataset.corresponding_creator_email
           %tr.row
@@ -147,6 +157,6 @@
         -if dataset.total_downloads > 0
           %tr.row
             %td
-              %span.metadata-label Downloaded:
+              %span.metadata-label Downloaded
             %td
               = pluralize(dataset.total_downloads, 'time')
