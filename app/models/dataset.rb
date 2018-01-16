@@ -17,11 +17,12 @@ class Dataset < ActiveRecord::Base
   has_associated_audits
 
   searchable do
-    text :title, :description, :keywords, :identifier, :funder_names_fulltext, :grant_numbers_fulltext, :creator_names_fulltext, :filenames_fulltext, :datafile_extensions_fulltext, :publication_year
+    text :title, :description, :subject_text, :keywords, :identifier, :funder_names_fulltext, :grant_numbers_fulltext, :creator_names_fulltext, :filenames_fulltext, :datafile_extensions_fulltext, :publication_year
 
     string :publication_year
     string :license_code
     string :depositor
+    string :subject_text
     string :depositor_email
     string :visibility_code
     string :dataset_version

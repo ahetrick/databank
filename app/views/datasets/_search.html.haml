@@ -136,6 +136,23 @@
           .panel.panel-default
             .panel-heading
               %h4(class="panel-title")
+                Subject
+            .panel-body
+              -for row in @search.facet(:subject_text).rows
+                .facet
+                  -if params.has_key?('subjects') && params['subjects'].include?(row.value)
+                    %input(type="checkbox" class="checkFacet checkFacetGroup subject_facet" name="subjects[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                      = row.value
+                      ="(#{row.count})"
+                  -else
+                    %input(type="checkbox" class="checkFacet checkFacetGroup subject_facet" name="subjects[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                      = row.value
+                      ="(#{row.count})"
+
+        .panel-group
+          .panel.panel-default
+            .panel-heading
+              %h4(class="panel-title")
                 Funder
             .panel-body
               -for row in @search.facet(:funder_codes).rows

@@ -191,6 +191,14 @@ module Indexable
     self.creator_names.join(" ")
   end
 
+  def subject_text
+    if self.subject && self.subject != ''
+      return self.subject
+    else
+      return 'None'
+    end
+  end
+
 
   def filenames
     return_arr = Array.new

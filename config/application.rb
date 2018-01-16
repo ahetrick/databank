@@ -57,6 +57,7 @@ module Databank
   end
 
   class Subject
+    NONE = ''
     PHYSICAL_SCIENCES = 'Physical Sciences'
     LIFE_SCIENCES = 'Life Sciences'
     SOCIAL_SCIENCES = 'Social Sciences'

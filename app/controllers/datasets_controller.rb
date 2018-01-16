@@ -71,6 +71,7 @@ class DatasetsController < ApplicationController
             facet(:funder_codes)
             facet(:creator_names)
             facet(:depositor)
+            facet(:subject_text)
             facet(:visibility_code)
             facet(:hold_state)
             facet(:datafile_extensions)
@@ -84,6 +85,14 @@ class DatasetsController < ApplicationController
               any_of do
                 params['license_codes'].each do |license_code|
                   with :license_code, license_code
+                end
+              end
+            end
+
+            if params.has_key?('subjects')
+              any_of do
+                params['subjects'].each do |subject|
+                  with :subject_text, subject
                 end
               end
             end
@@ -136,10 +145,14 @@ class DatasetsController < ApplicationController
             facet(:funder_codes)
             facet(:creator_names)
             facet(:depositor)
+            facet(:subject_text)
             facet(:visibility_code)
             facet(:hold_state)
             facet(:datafile_extensions)
           end
+
+          # this makes a row for each category, even if the current search does not have any results in a category
+          # these facets are only for admins
 
           search_get_facets.facet(:visibility_code).rows.each do |outer_row|
             has_this_row = false
@@ -203,6 +216,7 @@ class DatasetsController < ApplicationController
             facet(:license_code)
             facet(:funder_codes)
             facet(:creator_names)
+            facet(:subject_text)
             facet(:depositor)
             facet(:visibility_code)
             facet(:hold_state)
@@ -228,6 +242,14 @@ class DatasetsController < ApplicationController
                 any_of do
                   params['depositors'].each do |depositor|
                     with :depositor, depositor
+                  end
+                end
+              end
+
+              if params.has_key?('subjects')
+                any_of do
+                  params['subjects'].each do |subject|
+                    with :subject_text, subject
                   end
                 end
               end
@@ -278,6 +300,7 @@ class DatasetsController < ApplicationController
             end
             facet(:license_code)
             facet(:funder_codes)
+            facet(:subject_text)
             facet(:depositor)
             facet(:visibility_code)
             facet(:hold_state)
@@ -285,6 +308,7 @@ class DatasetsController < ApplicationController
 
           end
 
+          # this gets all categories for facets, even if current results do not have any instances
 
           search_get_my_facets.facet(:visibility_code).rows.each do |outer_row|
             has_this_row = false
@@ -313,6 +337,7 @@ class DatasetsController < ApplicationController
             facet(:license_code)
             facet(:funder_codes)
             facet(:creator_names)
+            facet(:subject_text)
             facet(:depositor)
             facet(:visibility_code)
             facet(:hold_state)
@@ -335,6 +360,14 @@ class DatasetsController < ApplicationController
                 any_of do
                   params['depositors'].each do |depositor|
                     with :depositor, depositor
+                  end
+                end
+              end
+
+              if params.has_key?('subjects')
+                any_of do
+                  params['subjects'].each do |subject|
+                    with :subject_text, subject
                   end
                 end
               end
@@ -377,6 +410,7 @@ class DatasetsController < ApplicationController
             facet(:license_code)
             facet(:funder_codes)
             facet(:creator_names)
+            facet(:subject_text)
             facet(:depositor)
             facet(:visibility_code)
             facet(:hold_state)
@@ -404,6 +438,7 @@ class DatasetsController < ApplicationController
         keywords (params[:q])
         facet(:license_code)
         facet(:funder_codes)
+        facet(:subject_text)
         facet(:creator_names)
         facet(:depositor)
         facet(:visibility_code)
@@ -428,6 +463,14 @@ class DatasetsController < ApplicationController
             any_of do
               params['license_codes'].each do |license_code|
                 with :license_code, license_code
+              end
+            end
+          end
+
+          if params.has_key?('subjects')
+            any_of do
+              params['subjects'].each do |subject|
+                with :subject_text, subject
               end
             end
           end
@@ -462,6 +505,7 @@ class DatasetsController < ApplicationController
         facet(:license_code)
         facet(:funder_codes)
         facet(:creator_names)
+        facet(:subject)
         facet(:depositor)
         facet(:visibility_code)
         facet(:hold_state)
@@ -469,6 +513,17 @@ class DatasetsController < ApplicationController
 
       end
 
+    end
+
+    # this makes a row for each category, even if the current search does not have any results in a category
+    # these facets are in all searchers
+
+    search_get_facets.facet(:subject_text).rows.each do |outer_row|
+      has_this_row = false
+      @search.facet(:subject_text).rows.each do |inner_row|
+        has_this_row = true if inner_row.value == outer_row.value
+      end
+      @search.facet(:subject_text).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
     end
 
     search_get_facets.facet(:license_code).rows.each do |outer_row|
@@ -645,6 +700,9 @@ class DatasetsController < ApplicationController
 
     @funder_info_arr = FUNDER_INFO_ARR
     @license_info_arr = LICENSE_INFO_ARR
+
+    @dataset.subject = Databank::Subject::NONE unless @dataset.subject
+
   end
 
   def get_new_token
@@ -1483,7 +1541,7 @@ class DatasetsController < ApplicationController
   # def dataset_params
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :dataset_version, :release_date, :is_test, :is_import, :audit_id, :removed_private, :have_permission, :agree, :web_ids, :version_comment, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destroy, :_update, :audit_id], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update, :audit_id], related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id], deckfiles_attributes: [:disposition, :remove, :path, :dataset_id, :id])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :dataset_version, :release_date, :is_test, :is_import, :audit_id, :removed_private, :have_permission, :agree, :web_ids, :version_comment, :subject, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destroy, :_update, :audit_id], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update, :audit_id], related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id], deckfiles_attributes: [:disposition, :remove, :path, :dataset_id, :id])
   end
 
 
