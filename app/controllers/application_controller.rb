@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
 
   include CanCan::ControllerAdditions
 
-  rescue_from Exception::StandardError, with: :error_occurred
+  rescue_from StandardError, with: :error_occurred
 
   after_filter :store_location
 

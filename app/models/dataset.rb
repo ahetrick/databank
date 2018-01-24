@@ -962,7 +962,7 @@ class Dataset < ActiveRecord::Base
         datafile.destroy unless ((datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != ""))
       end
     rescue StandardError => ex
-      Rails.logger.warn "unable to remove invalid datafile #{datafile.id}"
+      Rails.logger.warn "unable to remove invalid datafile"
     end
   end
 

@@ -3,7 +3,9 @@ lock '3.6.1'
 
 set :application, 'databank'
 set :repo_url, 'https://github.com/medusa-project/databank.git'
-set :rvm_ruby_version, '2.2.1@idb_v1'
+set :rvm_ruby_version, '2.5.0@idb'
+
+set :passenger_restart_with_touch, true
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
@@ -21,7 +23,7 @@ set :rvm_ruby_version, '2.2.1@idb_v1'
 # set :pty, true
 
 # Default value for :linked_files is []
-set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'config/secrets.yml', 'config/databank.yml', 'config/shibboleth.yml', 'config/sunspot.yml', 'public/robots.txt', 'idb_stop.sh', 'idb_start.sh', 'idb_restart.sh', 'dj_stop.sh', 'dj_start.sh', 'nginx.conf.erb')
+set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'config/secrets.yml', 'config/databank.yml', 'config/shibboleth.yml', 'config/sunspot.yml', 'public/robots.txt', 'idb_stop.sh', 'idb_start.sh', 'idb_restart.sh', 'dj_stop.sh', 'dj_start.sh', 'nginx.conf.erb.old')
 
 # Default value for linked_dirs is []
 set :linked_dirs, fetch(:linked_dirs, []).push('log', 'scripts', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'tmp/uploads', 'tmp/sessions', 'public/sitemaps')

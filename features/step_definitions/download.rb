@@ -1,3 +1,4 @@
+=begin
 Given(/^Dataset exists with files named:$/) do |table|
 
   @dataset = FactoryGirl.create(:dataset, publication_state: "released")
@@ -21,3 +22,4 @@ end
 Then(/^I uncheck the box: (.*)$/) do |checkbox_identifier|
   uncheck(checkbox_identifier)
 end
+=end

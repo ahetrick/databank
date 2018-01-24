@@ -1,3 +1,4 @@
+=begin
 Given(/^Draft datasets exist titled:$/) do |table|
   table.headers.each do |header|
     dataset = FactoryGirl.create(:dataset, title: header)
@@ -32,4 +33,4 @@ Given(/^Datasets published by someone else exist titled:$/) do |table|
     dataset.save
     creator = FactoryGirl.create(:creator, dataset_id: dataset.id)
   end
-end
+end=end

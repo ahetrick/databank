@@ -21,7 +21,7 @@ config/secrets.yml
 config/shibboleth.yml
 public/uploads
 config/sunspot.yml
-nginx.conf.erb
+nginx.conf.erb.old
 mock_medusa
 mock_bk
 /scripts
@@ -48,4 +48,5 @@ dj_stop.sh
 /public/backups
 /public/sitemaps
 /public/deck
+/public/assets
 /dataset_staging

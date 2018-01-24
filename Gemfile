@@ -1,9 +1,9 @@
 source 'http://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.3'
+gem 'rails', '~> 4.2', '>= 4.2.10'
 # Use postgresql as the database for Active Record
-gem 'pg'
+gem 'pg', '~> 0.15'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -61,13 +61,15 @@ gem 'simple_form'
 # gem 'ranked-model'
 
 # use carrierwave for file upload
-gem 'carrierwave'
+gem 'carrierwave', '~> 1.0'
+
+gem 'mime-types', require: 'mime/types/full'
 
 # use will_paginate to handle paging results on datasets index
 # gem 'will_paginate', '~> 3.0.5'
 
 # use effective_datatables to handle sorting and pagination on datasets index page
-gem 'effective_datatables'
+gem 'effective_datatables', '~> 2.6', '>= 2.6.14'
 
 #gem 'httpclient', git: 'git://github.com/medusa-project/httpclient.git'
 
@@ -102,7 +104,7 @@ gem 'boxr'
 # Use delayed_job during upload and ingest from box to avoid timeout failures
 gem 'delayed_job_active_record'
 gem 'daemons'
-gem 'progress_job'
+# gem 'progress_job'
 # gem 'delayed_job_heartbeat_plugin'
 
 # Use canan to restrict what resources a given user is allowed to access
@@ -124,7 +126,7 @@ gem 'builder', '~> 3.2', '>= 3.2.2'
 gem 'sitemap_generator', '~> 5.1'
 
 # Use curb to wrap curl
-gem 'curb', '~> 0.9.1'
+gem 'curb', '~> 0.9.4'
 
 # Use modernizr-rails to handle different browsers differently
 gem 'modernizr-rails'
@@ -151,7 +153,7 @@ gem 'selenium-webdriver'
 gem 'rspec-rails', '~> 3.5'
 
 #Use factory girl for fixtures
-gem 'factory_girl_rails'
+# gem 'factory_girl_rails'
 
 #Use Cucumber for behavior testing
 gem 'cucumber-rails', :require => false

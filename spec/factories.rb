@@ -1,3 +1,4 @@
+=begin
 FactoryGirl.define do
   factory :featured_researcher do
     name "MyString"
@@ -65,4 +66,4 @@ FactoryGirl.define do
     grant "RFA-Unicorns"
   end
 
-end
+end=end
