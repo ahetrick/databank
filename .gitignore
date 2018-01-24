@@ -22,6 +22,7 @@ config/shibboleth.yml
 public/uploads
 config/sunspot.yml
 nginx.conf.erb.old
+nginx.conf.erb
 mock_medusa
 mock_bk
 /scripts
