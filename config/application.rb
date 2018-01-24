@@ -61,8 +61,8 @@ module Databank
     PHYSICAL_SCIENCES = 'Physical Sciences'
     LIFE_SCIENCES = 'Life Sciences'
     SOCIAL_SCIENCES = 'Social Sciences'
-    TECHNOLOGY_ENGINEERING = 'Technology & Engineering'
-    ARTS_HUMANITIES = 'Arts & Humanities'
+    TECHNOLOGY_ENGINEERING = 'Technology and Engineering'
+    ARTS_HUMANITIES = 'Arts and Humanities'
   end
 
   class Application < Rails::Application
