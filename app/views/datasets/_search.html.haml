@@ -165,6 +165,26 @@
                     %input(type="checkbox" class="checkFacet checkFacetGroup funder_facet" name="funder_codes[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
                       = Indexable.funder_name_from_code(row.value)
                       ="(#{row.count})"
+        .panel-group
+          .panel.panel-default
+            .panel-heading
+              %h4(class="panel-title")
+                Publication Year
+            .panel-body
+              -@search.facet(:publication_year).rows.each do |row|
+
+                - if row.value != ""
+
+                  .facet
+                    -if params.has_key?('publication_years') && params['publication_years'].include?(row.value)
+                      %input(type="checkbox" class="checkFacet checkFacetGroup publication_year_facet" name="publication_years[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                        = row.value
+                        ="(#{row.count})"
+                    -else
+                      %input(type="checkbox" class="checkFacet checkFacetGroup publication_year_facet" name="publication_years[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                        = row.value
+                        ="(#{row.count})"
+
 
         .panel-group
           .panel.panel-default

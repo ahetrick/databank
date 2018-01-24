@@ -58,7 +58,7 @@ class DatasetsController < ApplicationController
     @search = nil
     search_get_facets = nil
 
-    if current_user && current_user.role
+    if current_user&.role
 
       case current_user.role
         when "admin"
@@ -75,6 +75,7 @@ class DatasetsController < ApplicationController
             facet(:visibility_code)
             facet(:hold_state)
             facet(:datafile_extensions)
+            facet(:publication_year)
           end
 
           @search = Dataset.search do
@@ -121,6 +122,14 @@ class DatasetsController < ApplicationController
               end
             end
 
+            if params.has_key?('publication_years')
+              any_of do
+                params['publication_years'].each do |publication_year|
+                  with :publication_year, publication_year
+                end
+              end
+            end
+
             keywords (params[:q])
 
             if params.has_key?('sort_by')
@@ -149,6 +158,7 @@ class DatasetsController < ApplicationController
             facet(:visibility_code)
             facet(:hold_state)
             facet(:datafile_extensions)
+            facet(:publication_year)
           end
 
           # this makes a row for each category, even if the current search does not have any results in a category
@@ -221,6 +231,7 @@ class DatasetsController < ApplicationController
             facet(:visibility_code)
             facet(:hold_state)
             facet(:datafile_extensions)
+            facet(:publication_year)
           end
 
           @search = Dataset.search do
@@ -278,6 +289,14 @@ class DatasetsController < ApplicationController
                 end
               end
 
+              if params.has_key?('publication_years')
+                any_of do
+                  params['publication_years'].each do |publication_year|
+                    with :publication_year, publication_year
+                  end
+                end
+              end
+
             end
 
             keywords (params[:q])
@@ -305,6 +324,7 @@ class DatasetsController < ApplicationController
             facet(:visibility_code)
             facet(:hold_state)
             facet(:datafile_extensions)
+            facet(:publication_year)
 
           end
 
@@ -342,6 +362,7 @@ class DatasetsController < ApplicationController
             facet(:visibility_code)
             facet(:hold_state)
             facet(:datafile_extensions)
+            facet(:publication_year)
           end
 
           @search = Dataset.search do
@@ -368,6 +389,14 @@ class DatasetsController < ApplicationController
                 any_of do
                   params['subjects'].each do |subject|
                     with :subject_text, subject
+                  end
+                end
+              end
+
+              if params.has_key?('publication_years')
+                any_of do
+                  params['publication_years'].each do |publication_year|
+                    with :publication_year, publication_year
                   end
                 end
               end
@@ -415,6 +444,7 @@ class DatasetsController < ApplicationController
             facet(:visibility_code)
             facet(:hold_state)
             facet(:datafile_extensions)
+            facet(:publication_year)
 
           end
       end
@@ -444,6 +474,7 @@ class DatasetsController < ApplicationController
         facet(:visibility_code)
         facet(:hold_state)
         facet(:datafile_extensions)
+        facet(:publication_year)
       end
 
       @search = Dataset.search do
@@ -459,10 +490,19 @@ class DatasetsController < ApplicationController
             with :publication_state, Databank::PublicationState::TempSuppress::FILE
           end
 
+
           if params.has_key?('license_codes')
             any_of do
               params['license_codes'].each do |license_code|
                 with :license_code, license_code
+              end
+            end
+          end
+
+          if params.has_key?('publication_years')
+            any_of do
+              params['publication_years'].each do |publication_year|
+                with :publication_year, publication_year
               end
             end
           end
@@ -510,6 +550,7 @@ class DatasetsController < ApplicationController
         facet(:visibility_code)
         facet(:hold_state)
         facet(:datafile_extensions)
+        facet(:publication_year)
 
       end
 
@@ -524,6 +565,14 @@ class DatasetsController < ApplicationController
         has_this_row = true if inner_row.value == outer_row.value
       end
       @search.facet(:subject_text).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
+    end
+
+    search_get_facets.facet(:publication_year).rows.each do |outer_row|
+      has_this_row = false
+      @search.facet(:publication_year).rows.each do |inner_row|
+        has_this_row = true if inner_row.value == outer_row.value
+      end
+      @search.facet(:publication_year).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
     end
 
     search_get_facets.facet(:license_code).rows.each do |outer_row|
