@@ -3,6 +3,8 @@
 require 'singleton'
 require 'set'
 
+OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+
 class AmqpConnector < Object
   include Singleton
 
