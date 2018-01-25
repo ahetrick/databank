@@ -885,6 +885,7 @@ class DatasetsController < ApplicationController
             FileUtils.cp "#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.txt", "#{IDB_CONFIG[:agreements_root_path]}/new/license.txt"
             temporary_datafile.binary = Pathname.new("#{IDB_CONFIG[:agreements_root_path]}/new/license.txt").open()
             temporary_datafile.save
+            proposed_dataset.save
           end
         end
 
@@ -942,6 +943,9 @@ class DatasetsController < ApplicationController
         end
 
       end
+
+      Rails.logger.warn("DEBUG license file detection for changed published datasets")
+      Rails.logger.warn(proposed_dataset.datafiles.to_yaml)
 
       completion_check_message = Dataset.completion_check(proposed_dataset, current_user)
 
