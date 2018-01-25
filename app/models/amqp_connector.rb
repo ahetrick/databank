@@ -18,9 +18,7 @@ class AmqpConnector < Object
     self.known_queues = Set.new
     self.connection.close if self.connection
     self.connection = Bunny.new(config)
-
-    Rails.logger.warn(self.connection.to_yaml)
-
+    
     self.connection.start
   end
 
