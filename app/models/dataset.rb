@@ -396,9 +396,9 @@ class Dataset < ActiveRecord::Base
             rightsNode.parent = rightsListNode
             rightsListNode.parent = resourceNode
 
-          when "deposit_agreement.txt"
+          when "license.txt"
 
-            rightsNode.content = "See deposit_agreement.txt in dataset"
+            rightsNode.content = "See license.txt in dataset"
             rightsNode.parent = rightsListNode
             rightsListNode.parent = resourceNode
 
@@ -590,18 +590,18 @@ class Dataset < ActiveRecord::Base
         end
       end
 
-      if dataset.license && dataset.license == "deposit_agreement.txt"
+      if dataset.license && dataset.license == "license.txt"
         has_file = false
         if dataset.datafiles
           dataset.datafiles.each do |datafile|
-            if datafile.bytestream_name && ((datafile.bytestream_name).downcase == "deposit_agreement.txt")
+            if datafile.bytestream_name && ((datafile.bytestream_name).downcase == "license.txt")
               has_file = true
             end
           end
         end
 
         if !has_file
-          validation_error_messages << "a license file named deposit_agreement.txt or a different license selection"
+          validation_error_messages << "a license file named license.txt or a different license selection"
         end
 
       end
