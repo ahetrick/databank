@@ -254,6 +254,8 @@ GEM
     progress_bar (1.1.0)
       highline (~> 1.6)
       options (~> 2.3.0)
+    progress_job (0.0.4)
+      delayed_job
     public_suffix (3.0.1)
     rack (1.6.8)
     rack-test (0.6.3)
@@ -428,6 +430,7 @@ DEPENDENCIES
   passenger (>= 5.0.25)
   pg (~> 0.15)
   progress_bar
+  progress_job
   rails (~> 4.2, >= 4.2.10)
   rchardet
   rspec-rails (~> 3.5)
