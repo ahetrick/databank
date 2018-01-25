@@ -86,10 +86,7 @@ namespace :medusa do
     config = (idbconfig['amqp'] || {}).symbolize_keys
 
     config.merge!(recover_from_connection_close: true)
-
-    Rails.logger.warn("DEBUG connection - certificate verify failed")
-    Rails.logger.warn(config.to_yaml)
-
+    
     conn = Bunny.new(config)
     conn.start
 

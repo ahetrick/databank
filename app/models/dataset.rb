@@ -594,6 +594,8 @@ class Dataset < ActiveRecord::Base
         has_file = false
         if dataset.datafiles
           dataset.datafiles.each do |datafile|
+            Rails.logger.warn("DEBUG not detecting license file")
+            Rails.logger.warn(datafile.bytestream_name)
             if datafile.bytestream_name && ((datafile.bytestream_name).downcase == "license.txt")
               has_file = true
             end
