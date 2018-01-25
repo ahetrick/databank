@@ -18,6 +18,8 @@ namespace :medusa do
 
     config = (idbconfig['amqp'] || {}).symbolize_keys
 
+    Rails.logger.warn(config.to_yaml)
+
     config.merge!(recover_from_connection_close: true)
 
     conn = Bunny.new(config)
