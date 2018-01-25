@@ -111,7 +111,7 @@ gem 'progress_job'
 gem 'cancancan'
 
 # User bunny to handle RabbitMQ messages
-gem "bunny", ">= 2.2.2"
+gem "bunny", ">= 2.8.1"
 
 # Used audited-activerecord for dataset changelog
 gem "audited-activerecord", "~> 4.0"

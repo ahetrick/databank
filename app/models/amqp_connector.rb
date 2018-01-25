@@ -8,8 +8,6 @@ class AmqpConnector < Object
 
   attr_accessor :connection, :known_queues
 
-  OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
-
   def initialize
     self.reinitialize
   end

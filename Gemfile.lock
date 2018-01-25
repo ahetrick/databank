@@ -393,7 +393,7 @@ DEPENDENCIES
   bootstrap-sass (~> 3.3.4.1)
   boxr
   builder (~> 3.2, >= 3.2.2)
-  bunny (>= 2.2.2)
+  bunny (>= 2.8.1)
   byebug
   cancancan
   capistrano-bundler
