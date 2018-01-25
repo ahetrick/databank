@@ -8,6 +8,8 @@ class AmqpConnector < Object
 
   attr_accessor :connection, :known_queues
 
+  OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+
   def initialize
     self.reinitialize
   end
@@ -18,7 +20,6 @@ class AmqpConnector < Object
     self.known_queues = Set.new
     self.connection.close if self.connection
     self.connection = Bunny.new(config)
-    
     self.connection.start
   end
 

@@ -590,8 +590,6 @@ class Dataset < ActiveRecord::Base
         end
       end
 
-      Rails.logger.warn("DEBUG not detecting license.txt: #{dataset.license}")
-
       if dataset.license && dataset.license == "license.txt"
         has_file = false
         if dataset.datafiles

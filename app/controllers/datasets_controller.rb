@@ -944,9 +944,6 @@ class DatasetsController < ApplicationController
 
       end
 
-      Rails.logger.warn("DEBUG license file detection for changed published datasets")
-      Rails.logger.warn(proposed_dataset.datafiles.to_yaml)
-
       completion_check_message = Dataset.completion_check(proposed_dataset, current_user)
 
       proposed_dataset.destroy
