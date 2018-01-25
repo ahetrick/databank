@@ -596,13 +596,16 @@ class Dataset < ActiveRecord::Base
         has_file = false
         if dataset.datafiles
           dataset.datafiles.each do |datafile|
+            Rails.logger.warn("Filename: #{(datafile.bytestream_name).downcase}")
             if datafile.bytestream_name && ((datafile.bytestream_name).downcase == "license.txt")
+              Rails.logger.warn("DEBUG text compare are license.txt")
               has_file = true
             end
           end
         end
 
         if !has_file
+          Rails.logger.warn("Inside does not have file: #{dataset.key}, #{dataset.license}")
           validation_error_messages << "a license file named license.txt or a different license selection"
         end
 
