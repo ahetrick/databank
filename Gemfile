@@ -104,7 +104,7 @@ gem 'boxr'
 # Use delayed_job during upload and ingest from box to avoid timeout failures
 gem 'delayed_job_active_record'
 gem 'daemons'
-# gem 'progress_job'
+gem 'progress_job'
 # gem 'delayed_job_heartbeat_plugin'
 
 # Use canan to restrict what resources a given user is allowed to access
