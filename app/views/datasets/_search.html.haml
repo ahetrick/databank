@@ -142,11 +142,17 @@
                 .facet
                   -if params.has_key?('subjects') && params['subjects'].include?(row.value)
                     %input(type="checkbox" class="checkFacet checkFacetGroup subject_facet" name="subjects[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
-                      = row.value
+                      - if row.value =='None'
+                        Uncategorized
+                      -else
+                        = row.value
                       ="(#{row.count})"
                   -else
                     %input(type="checkbox" class="checkFacet checkFacetGroup subject_facet" name="subjects[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
-                      = row.value
+                      - if row.value =='None'
+                        Uncategorized
+                      -else
+                        = row.value
                       ="(#{row.count})"
 
         .panel-group
