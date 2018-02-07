@@ -44,7 +44,7 @@ class DatasetsController < ApplicationController
   # GET /datasets.json
   def index
 
-    @datasets = nil #used for json response
+    @datasets = Dataset.where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::TempSuppress::FILE, Databank::PublicationState::PermSuppress::FILE]) #used for json response
     # @datatable = nil
 
     @my_datasets_count = 0
