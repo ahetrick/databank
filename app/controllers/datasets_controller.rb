@@ -878,14 +878,16 @@ class DatasetsController < ApplicationController
       has_license_file = false
 
       if @dataset.datafiles
+
+        proposed_dataset.datafiles = Array.new
+
         @dataset.datafiles.each do |datafile|
           if datafile.bytestream_name && ((datafile.bytestream_name).downcase == "license.txt")
             has_license_file = true
             temporary_datafile = Datafile.create(dataset_id: proposed_dataset.id)
             FileUtils.cp "#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.txt", "#{IDB_CONFIG[:agreements_root_path]}/new/license.txt"
             temporary_datafile.binary = Pathname.new("#{IDB_CONFIG[:agreements_root_path]}/new/license.txt").open()
-            temporary_datafile.save
-            proposed_dataset.save
+            proposed_dataset.datafiles.push(temporary_datafile)
           end
         end
 
@@ -893,7 +895,7 @@ class DatasetsController < ApplicationController
           temporary_datafile = Datafile.create(dataset_id: proposed_dataset.id)
           FileUtils.cp "#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.txt", "#{IDB_CONFIG[:agreements_root_path]}/new/placeholder.txt"
           temporary_datafile.binary = Pathname.new("#{IDB_CONFIG[:agreements_root_path]}/new/placeholder.txt").open()
-          temporary_datafile.save
+          proposed_dataset.datafiles.push(temporary_datafile)
         end
 
       end

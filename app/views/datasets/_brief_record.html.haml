@@ -28,6 +28,12 @@
         &nbsp;
         .label.label-default
           =Indexable.visibility_name_from_code(dataset.visibility_code)
+        &nbsp;
+        .label.label-default
+          -if dataset.subject && dataset.subject != ""
+            =dataset.subject
+          -else
+            Uncategorized
 
         -if !dataset.hold_state.nil? && dataset.hold_state != 'none'
           &nbsp;
