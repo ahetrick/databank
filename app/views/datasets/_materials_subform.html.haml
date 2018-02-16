@@ -4,28 +4,17 @@
   %table(id="material_table" class="table table-striped")
     %thead
       %tr(class="row" )
-        - if (can? :manage, @dataset)
-          %th(class="col-md-2")
-            Related Resource Type
-          %th
-          %th(class="col-md-3")
-            URL to Resource
-          %th(class="col-md-3" )
-            Citation
-          %th(class="col-md-2")
-            DataCite
-        - else
-          %th(colspan="2" class="col-md-4")
-            Related Resource Type
-          %th(class="col-md-3")
-            URL to Resource
-          %th(class="col-md-4" )
-            Citation
+        %th(colspan="2" class="col-md-4")
+          Related Resource Type
+        %th(class="col-md-3")
+          URL to Resource
+        %th(class="col-md-4" )
+          Citation
         %th(class="col-md-1")
     %tbody
       - @dataset.related_materials.each_with_index do |material, i|
         = f.fields_for :related_materials, material do |ff|
-          %tr(class="item row" id="material_index_#{i}" )
+          %tr(class="row item" id="material_index_#{i}" )
             %td
               =ff.hidden_field :_destroy, value: false
               =ff.select :selected_type, options_for_select([Databank::MaterialType::ARTICLE, Databank::MaterialType::CODE, Databank::MaterialType::DATASET, Databank::MaterialType::PRESENTATION, Databank::MaterialType::THESIS, ["Other:",Databank::MaterialType::OTHER]], material.selected_type), {prompt: "Select..."}, {class: "form-control dataset", onchange: "handleMaterialChange(#{i})"}
@@ -38,16 +27,17 @@
               =ff.text_field :link, {class: "form-control dataset", placeholder: "[ URL to resource, e.g:   http://hdl.handle.net/2142/46427 ]"}
             %td
               =ff.text_area :citation, {rows: 2, class: "form-control dataset", placeholder: %Q[[ related resource citation, e.g.:  Author(s). "Title of Article." Title of Periodical Date: pages. Medium of publication.  identifier ]]}
-            - if (can? :manage, @dataset)
+            %td
 
+
+          - if (can? :manage, @dataset)
+            %tr(class="row datacite-relationship curator-only" id="datacite_material_index_#{i}" )
+
+              %td(colspan="2" )
+                This dataset
               %td
-                .form-group.curator-only
-                  =ff.text_field :uri, {placeholder: "[URI]", class: "form-control dataset"}
 
-                .form-group.curator-only
-                  =ff.select :uri_type, options_for_select(["ARK","arXiv","bibcode","DOI","EAN13","EISSN","Handle","ISBN","ISSN","ISTC","LISSN","LSID","PMID","PURL","UPC","URL","URN"], material.uri_type), {prompt: "Select Type"}, {class: "form-control dataset"}
-
-                .form-group.curator-only
+                .form-group
                   =ff.hidden_field :datacite_list
                   - dataciteArr = nil
                   - if material.datacite_list && material.datacite_list != ''
@@ -87,6 +77,15 @@
                   - else
                     %input(type="checkbox" name="datacite_relation" value="#{Databank::Relationship::NEW_VERSION_OF}" class="material_checkbox_#{i}" onchange="handle_relationship_box(#{i})")
                       = Databank::Relationship::NEW_VERSION_OF
-            %td
+              %td
+
+                .form-group
+                  =ff.select :uri_type, options_for_select(["ARK","arXiv","bibcode","DOI","EAN13","EISSN","Handle","ISBN","ISSN","ISTC","LISSN","LSID","PMID","PURL","UPC","URL","URN"], material.uri_type), {prompt: "Select Type"}, {class: "form-control dataset"}
+
+                .form-group
+                  =ff.text_field :uri, {placeholder: "URI: Just the part after the DOI or whatever.", class: "form-control dataset"}
+
+
+              %td
   %table(id="deleted_material_table")
     %tbody

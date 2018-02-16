@@ -37,17 +37,21 @@ function handleMaterialChange(materialIndex) {
 }
 
 function handleMaterialTable() {
-    $('#material_table tr').each(function (i) {
-        if (i > 0) {
-            var split_id = (this.id).split('_');
-            var material_index = split_id[2];
+    $('#material_table tr.item').each(function (i) {
+        console.log("i to string: " + i.toString());
+        console.log("length to string:" +($("#material_table tr.item").length).toString());
 
-            if ((i + 1 ) == ($("#material_table tr").length)) {
-                $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_material_row(\x22" + material_index + "\x22 )' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_material_row()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
-            } else {
-                $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_material_row(\x22" + material_index + "\x22 )' type='button'><span class='glyphicon glyphicon-trash'></span></button>");
-            }
+        var split_id = (this.id).split('_');
+        var material_index = split_id[2];
+
+        if ((i + 1 ) == ($("#material_table tr.item").length)) {
+            console.log("Supposed to do something here.");
+            console.log( $("td:last-child", this).html());
+            $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_material_row(\x22" + material_index + "\x22 )' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_material_row()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
+        } else {
+            $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_material_row(\x22" + material_index + "\x22 )' type='button'><span class='glyphicon glyphicon-trash'></span></button>");
         }
+
     });
 }
 
@@ -63,36 +67,51 @@ function add_material_row() {
     }
     $('#material_index_max').val(newId);
 
+    var material_row = '<tr class="item row" id="material_index_' + newId + '">' +
+        '<td>' +
+        '<input value="false" type="hidden" name="dataset[related_materials_attributes][' + newId + '][_destroy]" id="dataset_related_materials_attributes_' + newId + '__destroy" />' +
+        '<select class="form-control dataset" onchange="handleMaterialChange(' + newId + ')" name="dataset[related_materials_attributes][' + newId + '][selected_type]" id="dataset_related_materials_attributes_' + newId + '_selected_type">' +
+        '<option value="">Select...</option>' +
+        '<option value="Article">Article</option>' +
+        '<option value="Code">Code</option>' +
+        '<option value="Dataset">Dataset</option>' +
+        '<option value="Presentation">Presentation</option>' +
+        '<option value="Thesis">Thesis</option>' +
+        '<option value="Other">Other:</option></select>' +
+        '</td>' +
+        '<td id="material_cell_' + newId + '">' +
+        '<input type="hidden" name="dataset[related_materials_attributes][' + newId + '][material_type]" id="dataset_related_materials_attributes_' + newId + '_material_type" />' +
+        '</td>' +
+        '<td>' +
+        '<input class="form-control dataset" type="text" placeholder="[ URL to resource, e.g:   http://hdl.handle.net/2142/46427 ]"  name="dataset[related_materials_attributes][' + newId + '][link]" id="dataset_related_materials_attributes_' + newId + '_link" />' +
+        '</td>' +
+        '<td>' +
+        '<textarea rows="2" class="form-control dataset" placeholder="[ related resource citation, e.g.:  Author(s). &quot;Title of Article.&quot; Title of Periodical Date: pages. Medium of publication.  identifier ]" name="dataset[related_materials_attributes][' + newId + '][citation]" id="dataset_related_materials_attributes_' + newId + '_citation">' +
+        '</textarea>' +
+        '</td>' +
+        '<td></td>' +
+        '</tr>'
+
     if (user_role == 'admin') {
 
-        var material_row = '<tr class="item row" id="material_index_' + newId + '">' +
+        material_row = material_row + '<tr class="row datacite-relationship curator-only" id="datacite_material_index_' + newId +'">' +
+            '<td colspan="2">This dataset</td>' +
             '<td>' +
-            '<input value="false" type="hidden" name="dataset[related_materials_attributes][' + newId + '][_destroy]" id="dataset_related_materials_attributes_' + newId + '__destroy" />' +
-            '<select class="form-control dataset" onchange="handleMaterialChange(' + newId + ')" name="dataset[related_materials_attributes][' + newId + '][selected_type]" id="dataset_related_materials_attributes_' + newId + '_selected_type">' +
-            '<option value="">Select...</option>' +
-            '<option value="Article">Article</option>' +
-            '<option value="Code">Code</option>' +
-            '<option value="Dataset">Dataset</option>' +
-            '<option value="Presentation">Presentation</option>' +
-            '<option value="Thesis">Thesis</option>' +
-            '<option value="Other">Other:</option></select>' +
-            '</td>' +
-            '<td id="material_cell_' + newId + '">' +
-            '<input type="hidden" name="dataset[related_materials_attributes][' + newId + '][material_type]" id="dataset_related_materials_attributes_' + newId + '_material_type" />' +
-            '</td>' +
-            '<td>' +
-            '<input class="form-control dataset" type="text" placeholder="[ URL to resource, e.g:   http://hdl.handle.net/2142/46427 ]"  name="dataset[related_materials_attributes][' + newId + '][link]" id="dataset_related_materials_attributes_' + newId + '_link" />' +
-            '</td>' +
-            '<td>' +
-            '<textarea rows="2" class="form-control dataset" placeholder="[ related resource citation, e.g.:  Author(s). &quot;Title of Article.&quot; Title of Periodical Date: pages. Medium of publication.  identifier ]" name="dataset[related_materials_attributes][' + newId + '][citation]" id="dataset_related_materials_attributes_' + newId + '_citation">' +
-            '</textarea>' +
-            '</td>' +
-
-            '<td>' +
-            '<div class="form-group curator-only">' +
-            '<input placeholder="[URI]" class="form-control dataset" type="text" name="dataset[related_materials_attributes][' + newId + '][uri]" id="dataset_related_materials_attributes_' + newId + '_uri" />' +
+            '<div class="form-group">' +
+            '<input type="hidden" name="dataset[related_materials_attributes][' + newId + '][datacite_list]" id="dataset_related_materials_attributes_' + newId + '_datacite_list" />' +
+            '<input name="datacite_relation" type="checkbox" value="IsSupplementTo" class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsSupplementTo </input>' +
+            '<br/>' +
+            '<input name="datacite_relation" type="checkbox" value="IsSupplementedBy " class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsSupplementedBy  </input>' +
+            '<br/>' +
+            '<input name="datacite_relation" type="checkbox" value="IsCitedBy" class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsCitedBy </input>' +
+            '<br/>' +
+            '<input name="datacite_relation" type="checkbox" value="IsPreviousVersionOf" class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsPreviousVersionOf </input>' +
+            '<br/>' +
+            '<input name="datacite_relation" type="checkbox" value="IsNewVersionOf" class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsNewVersionOf </input>' +
             '</div>' +
-            '<div class="form-group curator-only">' +
+            '</td>' +
+            '<td>' +
+            '<div class="form-group">' +
             '<select class="form-control dataset" name="dataset[related_materials_attributes][' + newId + '][uri_type]" id="dataset_related_materials_attributes_' + newId + '_uri_type">' +
             '<option value="">Select Type</option>' +
             '<option value="ARK">ARK</option>' +
@@ -114,47 +133,11 @@ function add_material_row() {
             '<option value="URN">URN</option>' +
             '</select>' +
             '</div>' +
-            '<div class="form-group curator-only">' +
-            '<input type="hidden" name="dataset[related_materials_attributes][' + newId + '][datacite_list]" id="dataset_related_materials_attributes_' + newId + '_datacite_list" />' +
-            '<input name="datacite_relation" type="checkbox" value="IsSupplementTo" class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsSupplementTo </input>' +
-            '<br/>' +
-            '<input name="datacite_relation" type="checkbox" value="IsSupplementedBy " class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsSupplementedBy  </input>' +
-            '<br/>' +
-            '<input name="datacite_relation" type="checkbox" value="IsCitedBy" class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsCitedBy </input>' +
-            '<br/>' +
-            '<input name="datacite_relation" type="checkbox" value="IsPreviousVersionOf" class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsPreviousVersionOf </input>' +
-            '<br/>' +
-            '<input name="datacite_relation" type="checkbox" value="IsNewVersionOf" class="material_checkbox_' + newId + '" onchange="handle_relationship_box(' + newId + ')"> IsNewVersionOf </input>' +
+            '<div class="form-group">'+
+            '<input placeholder="URI: Just the part after the DOI or whatever." class="form-control dataset" type="text" name="dataset[related_materials_attributes][' + newId + '][uri]" id="dataset_related_materials_attributes_' + newId + '_uri" />'+
             '</div>' +
-            '</td>' +
+            '</td><td></td></tr>'
 
-            '<td></td>' +
-            '</tr>'
-
-    } else {
-        var material_row = '<tr class="item row" id="material_index_' + newId + '">' +
-            '<td>' +
-            '<select class="form-control dataset" onchange="handleMaterialChange(' + newId + ')" name="dataset[related_materials_attributes][' + newId + '][selected_type]" id="dataset_related_materials_attributes_' + newId + '_selected_type">' +
-            '<option value="">Select...</option>' +
-            '<option value="Article">Article</option>' +
-            '<option value="Code">Code</option>' +
-            '<option value="Dataset">Dataset</option>' +
-            '<option value="Presentation">Presentation</option>' +
-            '<option value="Thesis">Thesis</option>' +
-            '<option value="Other">Other:</option></select>' +
-            '</td>' +
-            '<td>' +
-            '<input class="form-control dataset material-text" type="text" name="dataset[related_materials_attributes][' + newId + '][material_type]" id="dataset_related_materials_attributes_' + newId + '_material_type" style="visibility: hidden;" />' +
-            '</td>' +
-            '<td>' +
-            '<input class="form-control dataset" type="text" placeholder="[ URL to resource, e.g:   http://hdl.handle.net/2142/46427 ]" name="dataset[related_materials_attributes][' + newId + '][link]" id="dataset_related_materials_attributes_' + newId + '_link" />' +
-            '</td>' +
-            '<td>' +
-            '<textarea rows="2" class="form-control dataset" placeholder="[ related resource citation, e.g.:  Author(s). &quot;Title of Article.&quot; Title of Periodical Date: pages. Medium of publication.  identifier ]" name="dataset[related_materials_attributes][' + newId + '][citation]" id="dataset_related_materials_attributes_' + newId + '_citation">' +
-            '</textarea>' +
-            '</td>' +
-            '<td></td>' +
-            '</tr>'
     }
 
     $("#material_table tbody:last-child").append(material_row);
