@@ -191,40 +191,6 @@ class Dataset < ActiveRecord::Base
 
   end
 
-
-
-  # # returns an array of hashes
-  # def self.related_datasets
-  #   datasets_in_version_relationships = RelatedMaterial.where('datacite_list like?', '%Version')
-  #   return {} unless datasets_in_version_relationships.count > 0
-  #
-  #   related_datasets_array = []
-  #
-  #   # build related datasets array
-  #
-  #   datasets_in_version_relationships.each do |material|
-  #     if material.uri
-  #       idb_dataset = Dataset.find_by_identifier(material.uri)
-  #
-  #       if idb_dataset
-  #         child_related_datasets = idb_dataset.related_materials.where('datacite_list like?', '%Version')
-  #         if child_related_datasets.count > 0
-  #           child_related_datasets.each do |child|
-  #             related_datasets_array << {idb_dataset.id => child.id}
-  #             related_datasets_array << {child.id => idb_dataset.id}
-  #           end
-  #         end
-  #       end
-  #     end
-  #   end
-  #
-  #   #remove duplicates
-  #
-  #   related_datasets_array.uniq!
-  #
-  # end
-
-
   def publication_year
     if self.release_date
       self.release_date.year || Time.now.year
