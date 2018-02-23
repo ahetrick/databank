@@ -276,6 +276,43 @@ ready = function () {
         $("#api_modal").modal('show');
     });
 
+    $("#reserve-doi-btn").click(function () {
+
+        $.getJSON("/datasets/" + dataset_key + "/reserve_doi", function (data) {
+            console.log("You are here.");
+            console.log(data);
+            if (data.status && data.status == "ok"){
+
+                $("#deposit").modal('show');
+
+                $("#your-doi-here").html("We've reserved a DOI for you: " + data.doi + ", but your dataset is not yet published.");
+
+            } else {
+                alert("We're sorry, something went wrong during an attempt to reserve a DOI for this dataset.")
+            }
+
+        });
+
+    });
+
+    $("#request-review-btn").click(function () {
+
+        $.getJSON("/datasets/" + dataset_key + "/request_review", function (data) {
+            console.log(data);
+            if (data.status && data.status == "ok"){
+
+                $("#deposit").modal('hide');
+
+                $(".request-review-response").html("<p>Your dataset review request has been sent to the Research Data Service.</p>");
+
+            } else {
+                alert("We're sorry, something went wrong during an attempt to request a review for this dataset.")
+            }
+
+        });
+
+    });
+
     $("#new_datafile").fileupload({
 
         downloadTemplate: null,
@@ -810,7 +847,7 @@ function reset_confirm_msg() {
 
         $.getJSON("/datasets/" + dataset_key + "/confirmation_message?new_embargo_state=" + new_embargo + "&release_date=" + release_date, function (data) {
             //console.log(data);
-            $('.publish-msg').html('<p class="ds-paragraph">' + data.message + '</p>');
+            $('.publish-msg').html(data.message);
         })
             .fail(function (xhr, textStatus, errorThrown) {
                 console.log("error" + textStatus);

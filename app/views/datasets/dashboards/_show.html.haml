@@ -63,24 +63,19 @@
           %button(type="button" onclick='window.open("/help?context=review&key=#{@dataset.key}")' class="btn btn-success")
             %span(class="glyphicon glyphicon-question-sign")
             Request Dataset Consultation
+          .request-review-response
 
         .col-md-3
           - if @completion_check == 'ok'
             -# confirm button conditional complex, so broken into three statements
             -if ((can? :manage, @dataset) && (@dataset.publication_state != Databank::PublicationState::DRAFT) && (@dataset.publication_state != Databank::PublicationState::Embargo::METADATA) && (@dataset.embargo == Databank::PublicationState::Embargo::METADATA))
-              %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit")
-                Confirm
-                %span(class="glyphicon glyphicon-triangle-right" )
+              =render partial: 'datasets/reserve_btn'
 
             -elsif (@dataset.publication_state == Databank::PublicationState::DRAFT)
-              %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit")
-                Confirm
-                %span(class="glyphicon glyphicon-triangle-right" )
+              =render partial: 'datasets/reserve_btn'
 
             -elsif @dataset.publication_state == Databank::PublicationState::Embargo::METADATA && @dataset.embargo != Databank::PublicationState::Embargo::METADATA
-              %button(type="button" id="show-confirm-modal-link" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit")
-                Confirm
-                %span(class="glyphicon glyphicon-triangle-right" )
+              =render partial: 'datasets/reserve_btn'
           -else
             %button(type="button" id="show-confirm-modal-link" class="btn btn-default btn-block" data-toggle="modal" data-target="#incomplete")
               Confirm

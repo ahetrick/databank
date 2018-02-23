@@ -28,7 +28,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :confirmation_message
   skip_load_and_authorize_resource :only => :validate_change2published
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message, :get_new_token]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :request_review, :reserve_doi, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message, :get_new_token]
 
   before_action :remove_empty_datafiles, only: [:show, :edit]
 
@@ -1140,10 +1140,79 @@ class DatasetsController < ApplicationController
     end
   end
 
+  def reserve_doi
+
+    @dataset.complete = false
+
+    # only publish complete datasets
+    if Dataset.completion_check(@dataset, current_user) == 'ok'
+
+      @dataset.complete = true
+
+      unless @dataset.identifier && @dataset.identifier != ''
+        @dataset.identifier = Dataset.create_doi(@dataset, current_user)
+        @dataset.selected_embargo = @dataset.embargo
+        @dataset.selected_release_date = @dataset.release_date #keep nil if nil
+
+        @dataset.embargo = Databank::PublicationState::Embargo::METADATA
+        @dataset.release_date = Time.now + 1.year
+      end
+
+    end
+
+    respond_to do |format|
+
+      if @dataset.complete
+        if @dataset.save
+          format.html { render json: {"status":"ok", "doi":@dataset.identifier }, content_type: request.format, :layout => false }
+          format.json { render json: {"status":"ok", "doi":@dataset.identifier }, content_type: request.format, :layout => false }
+          else
+          format.html { redirect_to controller: welcome, action: :index }
+          format.json { render json: @dataset.errors, status: :unprocessable_entity }
+        end
+      else
+        format.html { redirect_to dataset_path(@dataset.key), notice: Dataset.completion_check(@dataset, current_user)}
+        format.json { render :show, status: :unprocessable_entity, location: dataset_path(@dataset.key) }
+      end
+
+    end
+
+  end
+
+  def request_review
+
+    @params = Hash.new
+    @params['help-name'] = @dataset.depositor_name
+    @params['help-email'] = @dataset.depositor_email
+    @params['help-topic'] = 'Dataset Consultation'
+    @params['help-dataset'] = "#{request.base_url}#{dataset_path(@dataset.key)}"
+    @params['help-message'] = "Pre-deposit review request"
+
+    respond_to do |format|
+
+      begin
+        help_request = DatabankMailer.contact_help(params)
+        help_request.deliver_now
+        format.html { render json: {"status":"ok" }, content_type: request.format, :layout => false }
+        format.json { render json: {"status":"ok" }, content_type: request.format, :layout => false }
+      rescue StandardError
+        format.html { redirect_to dataset_path(@dataset.key), notice: "We're sorry, something unexpected happened when attempting to request a dataset review."}
+        format.json { render :show, status: :unprocessable_entity, location: dataset_path(@dataset.key) }
+      end
+
+    end
+
+  end
+
   # publishing in IDB means interacting with DataCite and Medusa
   def publish
 
+    @dataset.complete = false
+
     old_publication_state = @dataset.publication_state
+
+    @dataset.release_date = @dataset.selected_release_date
+    @dataset.embargo = @dataset.selected_embargo
 
     @dataset.release_date ||= Date.current
 
@@ -1163,8 +1232,6 @@ class DatasetsController < ApplicationController
         @dataset.release_date ||= Date.current
       end
 
-    else
-      @dataset.complete = false
     end
 
     respond_to do |format|
@@ -1593,7 +1660,7 @@ class DatasetsController < ApplicationController
   # def dataset_params
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :dataset_version, :release_date, :is_test, :is_import, :audit_id, :removed_private, :have_permission, :agree, :web_ids, :version_comment, :subject, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destroy, :_update, :audit_id], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update, :audit_id], related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id], deckfiles_attributes: [:disposition, :remove, :path, :dataset_id, :id])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :selected_embargo, :complete, :search, :dataset_version, :release_date, :selected_release_date, :is_test, :is_import, :audit_id, :removed_private, :have_permission, :agree, :web_ids, :version_comment, :subject, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destroy, :_update, :audit_id], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update, :audit_id], related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id], deckfiles_attributes: [:disposition, :remove, :path, :dataset_id, :id])
   end
 
 

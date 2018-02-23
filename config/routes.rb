@@ -79,6 +79,12 @@ Rails.application.routes.draw do
   # deposit
   get '/datasets/:id/publish', to: 'datasets#publish'
 
+  # reserve doi
+  get '/datasets/:id/reserve_doi', to: 'datasets#reserve_doi', defaults: {format: 'json'}
+
+  # request review
+  get '/datasets/:id/request_review', to: 'datasets#request_review', defaults: {format: 'json'}
+
   # tombstone
   get '/datasets/:id/tombstone', to: 'datasets#tombstone'
 

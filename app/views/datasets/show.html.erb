@@ -6,7 +6,6 @@
 
 <%= render partial: 'download_link_modal' %>
 <% if (can? :edit, @dataset) %>
-
   <%= render partial: 'confirm_deposit_modal' %>
   <%= render partial: 'datasets/dashboards/show' %>
   <%= render partial: 'incomplete_deposit_modal' %>
@@ -178,4 +177,3 @@
     <%= image_tag('Rainbow_Unicorn.png') %>
   </div>
 <% end %>
-

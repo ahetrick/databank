@@ -41,6 +41,14 @@ class Ability
         dataset.try(:depositor_email) == user.email
       end
 
+      can :reserve_doi, Dataset do |dataset|
+        dataset.try(:depositor_email) == user.email
+      end
+
+      can :request_review, Dataset do |dataset|
+        dataset.try(:depositor_email) == user.email
+      end
+
       can :filepath, Datafile
       can :iiif_filepath, Datafile
       can :download_link, Dataset
@@ -80,6 +88,7 @@ class Ability
       can :search, Dataset
       can :recordtext, Dataset
       can :temporary_error, Dataset
+
 
     end
     #
