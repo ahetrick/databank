@@ -329,9 +329,13 @@ class Dataset < ActiveRecord::Base
       if self.tombstone_date && self.tombstone_date != ""
         releasedateNode.content = "#{self.release_date.iso8601}/#{self.tombstone_date.iso8601} "
       else
-        releasedateNode.content = self.release_date.iso8601 || Date.current().iso8601
+        if self.release_date && self.release_date != ''
+          releasedateNode.content = self.release_date.iso8601
+        else
+          releasedateNode.content = Date.current.iso8601
+        end
+
       end
-      releasedateNode.content = self.release_date.iso8601 || Date.current().iso8601
       releasedateNode.parent = datesNode
 
       # languageNode = doc.create_element('language')

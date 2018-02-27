@@ -1143,6 +1143,7 @@ class DatasetsController < ApplicationController
   def reserve_doi
 
     @dataset.complete = false
+    identifier_ok = nil
 
     # only publish complete datasets
     if Dataset.completion_check(@dataset, current_user) == 'ok'
@@ -1150,19 +1151,27 @@ class DatasetsController < ApplicationController
       @dataset.complete = true
 
       unless @dataset.identifier && @dataset.identifier != ''
-        @dataset.identifier = Dataset.create_doi(@dataset, current_user)
-        @dataset.selected_embargo = @dataset.embargo
-        @dataset.selected_release_date = @dataset.release_date #keep nil if nil
 
-        @dataset.embargo = Databank::PublicationState::Embargo::METADATA
-        @dataset.release_date = Time.now + 1.year
+        begin
+          @dataset.identifier = Dataset.create_doi(@dataset, current_user)
+
+          @dataset.selected_embargo = @dataset.embargo
+          @dataset.selected_release_date = @dataset.release_date #keep nil if nil
+
+          @dataset.embargo = Databank::PublicationState::Embargo::METADATA
+          @dataset.release_date = Time.now + 1.year
+          identifier_ok = true
+        rescue
+         identifier_ok = false
+        end
+        
       end
 
     end
 
     respond_to do |format|
 
-      if @dataset.complete
+      if @dataset.complete && identifier_ok == true
         if @dataset.save
           format.html { render json: {"status":"ok", "doi":@dataset.identifier }, content_type: request.format, :layout => false }
           format.json { render json: {"status":"ok", "doi":@dataset.identifier }, content_type: request.format, :layout => false }
@@ -1170,6 +1179,11 @@ class DatasetsController < ApplicationController
           format.html { redirect_to controller: welcome, action: :index }
           format.json { render json: @dataset.errors, status: :unprocessable_entity }
         end
+      elsif identifier_ok == false
+        notification = DatabankMailer.error("Error reserving DOI for #{@dataset.key}")
+        notification.deliver_now
+        format.html { redirect_to dataset_path(@dataset.key), notice: "Error reserving DOI."}
+        format.json { render :show, status: :unprocessable_entity, location: dataset_path(@dataset.key) }
       else
         format.html { redirect_to dataset_path(@dataset.key), notice: Dataset.completion_check(@dataset, current_user)}
         format.json { render :show, status: :unprocessable_entity, location: dataset_path(@dataset.key) }
@@ -1211,8 +1225,10 @@ class DatasetsController < ApplicationController
 
     old_publication_state = @dataset.publication_state
 
-    @dataset.release_date = @dataset.selected_release_date
-    @dataset.embargo = @dataset.selected_embargo
+    if @dataset.identifier && @dataset.identifier !='' && @dataset.publication_state == Databank::PublicationState::DRAFT
+      @dataset.release_date = @dataset.selected_release_date || Date.current
+      @dataset.embargo = @dataset.selected_embargo || Databank::PublicationState::Embargo::NONE
+    end
 
     @dataset.release_date ||= Date.current
 

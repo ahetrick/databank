@@ -46,6 +46,7 @@ module Datacite
       else
         metadata['_status'] = 'public'
         metadata['datacite'] = dataset.to_datacite_xml
+
       end
 
       uri = URI.parse("https://#{host}/id/doi:#{dataset.identifier}")
