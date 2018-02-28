@@ -95,7 +95,8 @@ function add_material_row() {
     if (user_role == 'admin') {
 
         material_row = material_row + '<tr class="row datacite-relationship curator-only" id="datacite_material_index_' + newId +'">' +
-            '<td colspan="2">This dataset</td>' +
+            '<td></td>' +
+            '<td><h3>This dataset...</h3></td>' +
             '<td>' +
             '<div class="form-group">' +
             '<input type="hidden" name="dataset[related_materials_attributes][' + newId + '][datacite_list]" id="dataset_related_materials_attributes_' + newId + '_datacite_list" />' +
