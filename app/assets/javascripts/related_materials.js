@@ -135,7 +135,7 @@ function add_material_row() {
             '</select>' +
             '</div>' +
             '<div class="form-group">'+
-            '<input placeholder="URI: Just the part after the DOI or whatever." class="form-control dataset" type="text" name="dataset[related_materials_attributes][' + newId + '][uri]" id="dataset_related_materials_attributes_' + newId + '_uri" />'+
+            '<input placeholder="URI: For a DOI, the part that starts with 10." class="form-control dataset" type="text" name="dataset[related_materials_attributes][' + newId + '][uri]" id="dataset_related_materials_attributes_' + newId + '_uri" />'+
             '</div>' +
             '</td><td></td></tr>'
 
