@@ -1,7 +1,53 @@
 %h2 Metrics
-%a(href="/metrics/dataset_downloads") Dataset Downloads
-%br
-%a(href="/metrics/file_downloads") File Downloads
-%br
-%a(href="/metrics/datafiles") Datafiles
+.metrics-border
+  %h3
+    %a(href="/metrics/dataset_downloads") Dataset downloads json
+  .indent
+    %p
+      Link displays a json string detailing downloads calculated per
+      %strong dataset
+      per day.
+.metrics-border
+  %h3
+    %a(href="/metrics/file_downloads") Datafile downloads json
+  .indent
+    %p
+      Link displays a json string detailing downloads calculated per
+      %strong datafile
+      per day.
+.metrics-border
+  %h3
+    %a(href="/metrics/datafiles_simple_list") Datafiles listing
+  .indent
+    %p Link displays an html listing of datafiles with associated links to their respective datasets.
 
+.metrics-border
+  %h3
+    %a(href="/metrics/datasets_csv" class="btn btn-primary idb" )
+      %span.glyphicon.glyphicon-download
+      Datasets CSV
+
+  .indent
+    %p Button triggers a file download.
+
+    %strong Column Headings
+    %ul
+      %li
+        %strong doi:
+        The DOI that identifies this dataset
+      %li
+        %strong pub_date:
+        The date the files in this dataset were first available for download
+      %li
+        %strong num_files:
+        The total number of datafiles in this dataset
+      %li
+        %strong num_bytes:
+        The combined total size for all files in this dataset, in bytes.
+      %li
+        %strong total_downloads:
+        The number of downloads for this dataset, calculated as described in our metrics help section:
+        %a(href="https://databank.illinois.edu/help#metrics") https://databank.illinois.edu/help#metrics
+      %li
+        %strong num_relationships:
+        The number of related materials, excluding other versions of this dataset.

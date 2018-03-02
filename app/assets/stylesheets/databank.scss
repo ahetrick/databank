@@ -97,6 +97,12 @@ div {
   color: green;
 }
 
+.metrics-border{
+  border: 1px solid $color__light-grey;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
 .field_with_errors {
   padding: 2px;
   background-color: $color__red;

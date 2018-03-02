@@ -988,6 +988,24 @@ class Dataset < ActiveRecord::Base
 
   end
 
+  def num_external_relationships
+
+    external_relationship_count = 0
+
+    relationship_count = self.related_materials.length
+
+    other_version_count = (version_group.length) - 1
+
+    if relationship_count > 0
+
+      external_relationship_count = relationship_count - other_version_count
+
+    end
+
+    return external_relationship_count
+
+  end
+
   def self.local_zip_max_size
     750000000
   end
