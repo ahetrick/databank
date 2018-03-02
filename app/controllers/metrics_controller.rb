@@ -70,6 +70,29 @@ class MetricsController < ApplicationController
 
   def related_materials_csv
 
+    t = Tempfile.new("related_materials_csv")
+
+    datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT)
+
+    csv_string = "doi,material_id,material_id_type,material_type"
+
+    datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT)
+
+    datasets.each do |dataset|
+      dataset.related_materials.each do |material|
+        line = "\n#{dataset.identifier},#{material.uri},#{material.uri_type},#{material.selected_type}"
+        csv_string = csv_string + line
+      end
+    end
+
+    t.write(csv_string)
+
+    send_file t.path, :type => 'text/csv',
+              :disposition => 'attachment',
+              :filename => "related_materials.csv"
+
+    t.close
+
   end
 
 

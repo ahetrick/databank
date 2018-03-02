@@ -172,6 +172,8 @@ Rails.application.routes.draw do
 
   get "/metrics/datafiles_csv", to: "metrics#datafiles_csv"
 
+  get "/metrics/related_materials_csv", to: "metrics#related_materials_csv"
+
   get "/metrics", to: 'metrics#index'
 
   get "/datasets/:id/download_metrics", to: 'datasets#download_metrics', defaults: {format: 'json'}
