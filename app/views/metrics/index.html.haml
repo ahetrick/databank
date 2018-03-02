@@ -28,7 +28,9 @@
       Datasets CSV
 
   .indent
-    %p Button triggers a file download.
+    %p
+      Button triggers a csv file download.
+      %em (datasets)
 
     %strong Column Headings
     %ul
@@ -43,11 +45,44 @@
         The total number of datafiles in this dataset
       %li
         %strong num_bytes:
-        The combined total size for all files in this dataset, in bytes.
+        The combined total size for all files in this dataset, in bytes
       %li
         %strong total_downloads:
         The number of downloads for this dataset, calculated as described in our metrics help section:
         %a(href="https://databank.illinois.edu/help#metrics") https://databank.illinois.edu/help#metrics
       %li
         %strong num_relationships:
-        The number of related materials, excluding other versions of this dataset.
+        The number of related materials, excluding other versions of this dataset
+.metrics-border
+  %h3
+    %a(href="/metrics/datafiles_csv" class="btn btn-primary idb" )
+      %span.glyphicon.glyphicon-download
+      Datafiles CSV
+
+  .indent
+    %p
+      Button triggers a csv file download.
+      %em (data files)
+
+    %strong Column Headings
+    %ul
+      %li
+        %strong doi:
+        The DOI that identifies the dataset this file is part of
+      %li
+        %strong pub_date:
+        The date this file was first made available for download
+      %li
+        %strong filename:
+        The name of the file, with extension
+      %li
+        %strong file_format:
+        The mime type (file format from the left column in the Medusa “statistics” view)
+      %li
+        %strong num_bytes:
+        The number of downloads for this dataset, calculated as described in our metrics help section:
+        %a(href="https://databank.illinois.edu/help#metrics") https://databank.illinois.edu/help#metrics
+      %li
+        %strong total_downloads:
+        The number of downloads for this file, calculated as described in our metrics help section:
+        %a(href="https://databank.illinois.edu/help#metrics") https://databank.illinois.edu/help#metrics

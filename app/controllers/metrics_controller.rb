@@ -24,7 +24,7 @@ class MetricsController < ApplicationController
 
     csv_string = "doi,pub_date,num_files,num_bytes,total_downloads,num_relationships"
 
-    datasets.each_with_index do |dataset, i|
+    datasets.each do |dataset|
 
       line = "\n#{dataset.identifier},#{dataset.release_date.iso8601},#{dataset.datafiles.count},#{dataset.total_filesize},#{dataset.total_downloads},#{dataset.num_external_relationships}"
       csv_string = csv_string + line
@@ -43,8 +43,28 @@ class MetricsController < ApplicationController
 
   def datafiles_csv
 
-    datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT).pluck(:id)
-    @datafiles = Datafile.where(dataset_id: datasets)
+    t = Tempfile.new("datafiles_csv")
+
+    datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT)
+
+    csv_string = "doi,pub_date,filename,file_format,num_bytes,total_downloads"
+
+    datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT)
+
+    datasets.each do |dataset|
+      dataset.datafiles.each do |datafile|
+        line = "\n#{dataset.identifier},#{dataset.release_date.iso8601},#{datafile.bytestream_name},mimetype,#{datafile.bytestream_size},#{datafile.total_downloads}"
+        csv_string = csv_string + line
+      end
+    end
+
+    t.write(csv_string)
+
+    send_file t.path, :type => 'text/csv',
+              :disposition => 'attachment',
+              :filename => "datafiles.csv"
+
+    t.close
 
   end
 
