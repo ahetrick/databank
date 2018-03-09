@@ -14,7 +14,7 @@ set :rails_env, 'development'
 set :deploy_to, '/home/lib-medusa-databank'
 
 # Ask which branch to deploy
-ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
+# ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
 
 # role-based syntax
 # ==================
