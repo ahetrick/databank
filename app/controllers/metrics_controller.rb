@@ -43,6 +43,10 @@ class MetricsController < ApplicationController
 
   def datafiles_csv
 
+    doi_filename_mimetype = JSON.parse MedusaInfo.doi_filename_mimetype
+
+    return nil unless doi_filename_mimetype
+
     t = Tempfile.new("datafiles_csv")
 
     datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT)
@@ -53,7 +57,7 @@ class MetricsController < ApplicationController
 
     datasets.each do |dataset|
       dataset.datafiles.each do |datafile|
-        line = "\n#{dataset.identifier},#{dataset.release_date.iso8601},#{datafile.bytestream_name},mimetype,#{datafile.bytestream_size},#{datafile.total_downloads}"
+        line = "\n#{dataset.identifier},#{dataset.release_date.iso8601},#{datafile.bytestream_name},#{doi_filename_mimetype[dataset.identifier]},#{datafile.bytestream_size},#{datafile.total_downloads}"
         csv_string = csv_string + line
       end
     end
