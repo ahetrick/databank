@@ -36,7 +36,7 @@ class MedusaInfo
 
     raise("Unexpected result in content_type_manifest") unless content_type_manifest && content_type_manifest['record']
 
-    type_records = content_type_manifest['records']
+    type_records = content_type_manifest['record']
 
     return_hash = {}
 
