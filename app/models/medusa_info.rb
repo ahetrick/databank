@@ -8,7 +8,7 @@ class MedusaInfo
     user = IDB_CONFIG['medusa_info']['user']
     password = IDB_CONFIG['medusa_info']['password']
 
-    uri = URI("#{IDB_CONFIG['medusa']['file_group_url']}/content_type_manifest.json?")
+    uri = URI("#{IDB_CONFIG['medusa']['file_group_url']}/content_type_manifest.json?start=1&count=2")
 
     begin
 
@@ -36,9 +36,9 @@ class MedusaInfo
 
     content_type_manifest = MedusaInfo.content_type_manifest
 
-    raise("Unexpected result in content_type_manifest") unless content_type_manifest && content_type_manifest['record']
+    raise("Unexpected result in content_type_manifest") unless content_type_manifest && content_type_manifest['records']
 
-    type_records = content_type_manifest['record']
+    type_records = content_type_manifest['records']
 
     Rails.logger.warn type_records
 
