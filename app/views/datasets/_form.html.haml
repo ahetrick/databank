@@ -165,7 +165,7 @@
                       Imported DOI
                     .col-md-3
                       - if @dataset.publication_state == Databank::PublicationState::DRAFT
-                        =f.check_box :is_import, :class => "dataset"
+                        =f.check_box :is_test, :class => "dataset"
                       -else
                         =f.check_box :is_test, class: "dataset", readonly: true
                       Test DOI
