@@ -1161,7 +1161,8 @@ class DatasetsController < ApplicationController
           @dataset.embargo = Databank::PublicationState::Embargo::METADATA
           @dataset.release_date = Time.now + 1.year
           identifier_ok = true
-        rescue
+        rescue StandardError => error
+          Rails.logger.warn error.to_yaml
          identifier_ok = false
         end
         
