@@ -21,7 +21,9 @@ class MedusaInfo
 
         response = http.request request # Net::HTTPResponse object
 
-        return response.body
+        response_hash = JSON.parse(response.body)
+
+        return response_hash
       end
 
     rescue StandardError => error
@@ -37,6 +39,8 @@ class MedusaInfo
     raise("Unexpected result in content_type_manifest") unless content_type_manifest && content_type_manifest['record']
 
     type_records = content_type_manifest['record']
+
+    Rails.logger.warn type_records
 
     return_hash = {}
 
