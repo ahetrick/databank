@@ -43,7 +43,7 @@ class MetricsController < ApplicationController
 
   def datafiles_csv
 
-    doi_filename_mimetype = JSON.parse MedusaInfo.doi_filename_mimetype
+    doi_filename_mimetype = MedusaInfo.doi_filename_mimetype
 
     return nil unless doi_filename_mimetype
 
@@ -57,7 +57,7 @@ class MetricsController < ApplicationController
 
     datasets.each do |dataset|
       dataset.datafiles.each do |datafile|
-        doi_filename = "#{dataset.identifier}_#{datafile.bytestream_namegit }"
+        doi_filename = "#{dataset.identifier}_#{datafile.bytestream_name }"
         line = "\n#{dataset.identifier},#{dataset.release_date.iso8601},#{datafile.bytestream_name},#{doi_filename_mimetype[doi_filename]},#{datafile.bytestream_size},#{datafile.total_downloads}"
         csv_string = csv_string + line
       end
