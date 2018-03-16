@@ -47,8 +47,6 @@ class MetricsController < ApplicationController
 
     return nil unless doi_filename_mimetype
 
-    Rails.logger.warn doi_filename_mimetype
-
     t = Tempfile.new("datafiles_csv")
 
     datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT)
@@ -59,8 +57,7 @@ class MetricsController < ApplicationController
 
     datasets.each do |dataset|
       dataset.datafiles.each do |datafile|
-        doi_filename = "#{dataset.identifier}_#{datafile.bytestream_name }"
-        Rails.logger.warn doi_filename
+        doi_filename = "#{dataset.identifier}_#{datafile.bytestream_name }".downcase
         line = "\n#{dataset.identifier},#{dataset.release_date.iso8601},#{datafile.bytestream_name},#{doi_filename_mimetype[doi_filename]},#{datafile.bytestream_size},#{datafile.total_downloads}"
         csv_string = csv_string + line
       end

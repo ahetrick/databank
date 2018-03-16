@@ -52,7 +52,7 @@ class MedusaInfo
         doi_string = "10.#{doi_uri[7..10]}/#{doi_uri[12..31]}"
         bytestream_name = path_arr[4]
         hash_key = "#{doi_string}_#{bytestream_name}"
-        mimetype = type_record['content_type_name']
+        mimetype = (type_record['content_type_name']).downcase
 
         return_hash[hash_key] = mimetype
 
