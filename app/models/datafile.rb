@@ -1,4 +1,10 @@
 require 'zip'
+require 'seven_zip_ruby'
+require 'filemagic'
+require 'mime/types'
+require 'minitar'
+require 'zlib'
+
 
 class Datafile < ActiveRecord::Base
   include ActiveModel::Serialization
@@ -98,6 +104,126 @@ class Datafile < ActiveRecord::Base
     else
       return nil
     end
+  end
+
+  def content_files
+
+    extension = self.bytestream_name.split(".").last
+
+    content_files_array = []
+
+    if self.is_archive?
+      case extension
+
+        when 'zip'
+
+          Zip::InputStream.open(self.bytestream_path) do |io|
+
+            while (entry = io.get_next_entry)
+
+              content_file_hash = {}
+              content_path_array = entry.name.split("/")
+              content_file_hash['content_filename']=content_path_array[-1]
+              content_file_hash['num_bytes'] = entry.size
+
+              FileMagic.open(:mime) do |fm|
+                 fm_info = fm.io(entry.get_input_stream)
+                 content_file_hash['file_format'] = (fm_info.split("; "))[0]
+              end
+
+              content_files_array.push(content_file_hash)
+
+            end
+
+          end
+
+
+        when '7z'
+
+          entry_list_text = `7za l "#{self.bytestream_path}"`
+
+          entry_list_array = entry_list_text.split("\n")
+
+          entry_list_array.each_with_index do |raw_entry, index|
+            if index > 19  && index < (entry_list_array.length - 2) # first twenty lines are headers, last two lines are summary
+
+              entry_array = raw_entry.strip.split " "
+
+              if entry_array[-1]
+
+                content_file_hash = {}
+
+                content_path_array = (entry_array[-1]).split("/")
+
+                content_file_hash['content_filename']=content_path_array[-1]
+
+                entry_num_bytes = (raw_entry[25..39]).strip.to_i
+
+                content_file_hash['num_bytes'] = entry_num_bytes
+
+                content_file_hash['file_format'] = MIME::Types.type_for(content_file_hash['content_filename']).first.content_type
+
+                content_files_array.push(content_file_hash)
+
+              end
+
+
+            end
+          end
+
+
+        when 'gz'
+
+          tar_extract = Gem::Package::TarReader.new(Zlib::GzipReader.open(self.bytestream_path))
+          tar_extract.rewind # The extract has to be rewinded after every iteration
+          tar_extract.each do |entry|
+
+            if entry.file?
+
+              content_file_hash = {}
+              content_path_array = (entry.full_name).split("/")
+              content_file_hash['content_filename']=content_path_array[-1]
+              content_file_hash['num_bytes'] = entry.bytes_read
+              FileMagic.open(:mime) do |fm|
+                fm_info = fm.io(entry.read)
+                content_file_hash['file_format'] = (fm_info.split("; "))[0]
+              end
+              content_files_array.push(content_file_hash)
+
+            end
+
+          end
+          tar_extract.close
+
+
+        when 'tar'
+          tar_extract = Gem::Package::TarReader.new(self.bytestream_path)
+          tar_extract.rewind # The extract has to be rewinded after every iteration
+          tar_extract.each do |entry|
+
+            if entry.file?
+
+              content_file_hash = {}
+              content_path_array = (entry.full_name).split("/")
+              content_file_hash['content_filename']=content_path_array[-1]
+              content_file_hash['num_bytes'] = entry.bytes_read
+              FileMagic.open(:mime) do |fm|
+                fm_info = fm.io(entry.read)
+                content_file_hash['file_format'] = (fm_info.split("; "))[0]
+              end
+              content_files_array.push(content_file_hash)
+
+            end
+
+          end
+          tar_extract.close
+        
+      end
+
+    end
+
+    content_files_array
+
   end
 
   def record_download(request_ip)

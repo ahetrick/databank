@@ -89,6 +89,37 @@
 
 .metrics-border
   %h3
+    %a(href="/metrics/archived_content_csv" class="btn btn-primary idb" )
+      %span.glyphicon.glyphicon-download
+      Archived Content CSV
+
+  .indent
+    %p
+      Button triggers a csv file download.
+      %em (archived content)
+
+    %strong Column Headings
+    %ul
+      %li
+        %strong doi:
+        The DOI that identifies the dataset this file is part of
+      %li
+        %strong archive_filename:
+        The filename of the archive file
+      %li
+        %strong content_filename:
+        The filename of content within the archive file
+        %br
+        %em Full paths not given. Duplicate filenames from different branches may be present.
+      %li
+        %strong file_format:
+        The mime type, based on filemagic detections (in .zip) or extension (in .7z, .tar, or .gz)
+      %li
+        %strong num_bytes:
+        The size of this files, in bytes
+
+.metrics-border
+  %h3
     %a(href="/metrics/related_materials_csv" class="btn btn-primary idb" )
       %span.glyphicon.glyphicon-download
       Related Materials CSV

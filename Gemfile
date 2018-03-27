@@ -23,9 +23,18 @@ gem 'highcharts-rails'
 # Use zeroclipboard-rails to copy text to clipboards
 gem 'zeroclipboard-rails'
 
+# Use filemagic to detect file types
+gem 'ruby-filemagic', '~> 0.7.2'
+
 # Use rubyzip to stream dynamically generated zip files
 gem 'rubyzip'
 gem 'zipline'
+
+# Use seven_zip_ruby to handle 7zip archives
+gem 'seven_zip_ruby', '~> 1.2', '>= 1.2.5'
+
+# Use minitar to deal with POSIX tar archive files
+gem 'minitar', '~> 0.6.1'
 
 # Use rchardet to attempt to detect character encoding
 gem 'rchardet'

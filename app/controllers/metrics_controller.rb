@@ -73,6 +73,38 @@ class MetricsController < ApplicationController
 
   end
 
+  def archived_content_csv
+
+    t = Tempfile.new("archived_contents_csv")
+
+    csv_string = "doi,archive_filename,content_filename,file_format,num_bytes"
+
+    datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT)
+
+    datasets.each do |dataset|
+      dataset.datafiles.each do |datafile|
+        if datafile.is_archive?
+          content_files = datafile.content_files
+          content_files.each do |content_hash|
+
+            line = "\n#{dataset.identifier},#{datafile.bytestream_name},#{content_hash['content_filename']},#{content_hash['file_format']},#{content_hash['num_bytes']}"
+            csv_string = csv_string + line
+          end
+        end
+      end
+    end
+
+
+    t.write(csv_string)
+
+    send_file t.path, :type => 'text/csv',
+              :disposition => 'attachment',
+              :filename => "archived_contents.csv"
+
+    t.close
+
+  end
+
   def related_materials_csv
 
     t = Tempfile.new("related_materials_csv")
