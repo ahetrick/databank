@@ -324,7 +324,7 @@ function preview_list(fileclass, web_id){
     } else {
         $('.spinner_'+web_id).hide();
         //console.log($("#preview_" + web_id));
-        $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview_list(&#39;' + fileclass + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> List</button>');
+        $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_preview_list(&#39;' + fileclass + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> List Contents</button>');
 
     }
 }
