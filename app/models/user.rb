@@ -101,6 +101,11 @@ class User < ActiveRecord::Base
 
   def self.can_deposit(netid)
 
+    # exception for Patrick Brown, former faculty who still has some datasets to deposit.
+    if netid == 'pjb34'
+      return TRUE
+    end
+
     response = open("http://quest.grainger.uiuc.edu/directory/ed/person/#{netid}").read
     # Rails.logger.warn response
     # response_nospace = response.gsub(">\r\n", "")
