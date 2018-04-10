@@ -29,7 +29,7 @@
 
   .indent
     %p
-      Button triggers a csv file download.
+      Button triggers a csv file download of dataset details.
       %em (datasets)
 
     %strong Column Headings
@@ -62,7 +62,7 @@
 
   .indent
     %p
-      Button triggers a csv file download.
+      Button triggers a csv file download of datafile details.
       %em (data files)
 
     %strong Column Headings
@@ -91,11 +91,11 @@
   %h3
     %a(href="/metrics/archived_content_csv" class="btn btn-primary idb" )
       %span.glyphicon.glyphicon-download
-      Archived Content CSV
+      Compressed Content CSV
 
   .indent
     %p
-      Button triggers a csv file download.
+      Button triggers a csv file download of contents details for files in compresed formats (.zip, .tar.gz, .7z).
       %em (archived content)
 
     %strong Column Headings
@@ -108,15 +108,25 @@
         The filename of the archive file
       %li
         %strong content_filename:
-        The filename of content within the archive file
+        The filename of content file within the archive file
         %br
         %em Full paths not given. Duplicate filenames from different branches may be present.
       %li
         %strong file_format:
-        The mime type, based on filemagic detections (in .zip) or extension (in .7z, .tar, or .gz)
+        The mime type of the content file.
       %li
         %strong num_bytes:
         The size of this files, in bytes
+      %li
+        %strong determination:
+        The method of determining the file format value.
+        %br
+        %em detect:
+        detected using libmagic
+        %br
+        %em lookup:
+        looked up extension in registry
+
 
 .metrics-border
   %h3
@@ -130,7 +140,7 @@
       %em (related materials)
 
     %strong Column Headings
-    -# doi,material_id,material_id_type,material_type
+    
     %ul
       %li
         %strong doi:

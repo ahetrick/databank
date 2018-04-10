@@ -117,24 +117,90 @@ class Datafile < ActiveRecord::Base
 
         when 'zip'
 
-          Zip::InputStream.open(self.bytestream_path) do |io|
+          begin
 
-            while (entry = io.get_next_entry)
+            Zip::InputStream.open(self.bytestream_path) do |io|
 
-              content_file_hash = {}
-              content_path_array = entry.name.split("/")
-              content_file_hash['content_filename']=content_path_array[-1]
-              content_file_hash['num_bytes'] = entry.size
+              while (entry = io.get_next_entry)
 
-              FileMagic.open(:mime) do |fm|
-                 fm_info = fm.io(entry.get_input_stream)
-                 content_file_hash['file_format'] = (fm_info.split("; "))[0]
+                if !entry.name_is_directory? &&  entry.name.exclude?('.DS_Store') && entry.name.exclude?('__MACOSX')
+
+                  content_file_hash = {}
+                  content_path_array = entry.name.split("/")
+                  content_file_hash['content_filename']=content_path_array[-1]
+                  content_file_hash['num_bytes'] = entry.size
+                  content_file_hash['format_method'] = 'detect'
+
+                  FileMagic.open(:mime) do |fm|
+                     fm_info = fm.io(entry.get_input_stream)
+                     content_file_hash['file_format'] = (fm_info.split("; "))[0]
+                  end
+
+                  content_files_array.push(content_file_hash)
+                end
+
+
               end
-
-              content_files_array.push(content_file_hash)
 
             end
 
+          rescue StandardError
+
+
+            entry_list_text = `unzip -l "#{self.bytestream_path}"`
+            filepaths_arr = Array.new
+
+            entry_list_array = entry_list_text.split("\n")
+
+            entry_list_array.each_with_index do |raw_entry, index|
+              if index > 2  && index < (entry_list_array.length - 2) # first three lines are headers, last two lines are summary
+                entry_array = raw_entry.strip.split " "
+                if entry_array[-1]
+
+                  if entry_array[-1][-1] != "/" # means directory
+
+                  content_file_hash = {}
+
+                  content_path_array = (entry_array[-1]).split("/")
+
+                  if content_path_array[-1] && (content_path_array[-1]).exclude?('.DS_Store') && (content_path_array[-1]).exclude?('__MACOSX')
+
+                    content_file_hash['format_method'] = 'lookup'
+
+
+                    content_file_hash['content_filename']=content_path_array[-1]
+
+                    entry_num_bytes = (raw_entry[25..39]).strip.to_i
+
+                    content_file_hash['num_bytes'] = entry_num_bytes
+
+                    file_format_objs = MIME::Types.type_for(content_file_hash['content_filename'])
+
+                    first_file_format_obj = file_format_objs.first
+
+                    if first_file_format_obj
+
+                      file_format = first_file_format_obj.content_type
+
+                      content_file_hash['file_format'] = file_format
+
+                    else
+
+                      content_file_hash['file_format'] = 'application/unknown'
+
+                    end
+                    content_files_array.push(content_file_hash)
+
+                  end
+
+
+
+                  end
+
+
+                end
+              end
+            end
           end
 
 
@@ -155,15 +221,20 @@ class Datafile < ActiveRecord::Base
 
                 content_path_array = (entry_array[-1]).split("/")
 
-                content_file_hash['content_filename']=content_path_array[-1]
+                if content_path_array[-1] && (content_path_array[-1]).exclude?('.DS_Store') && (content_path_array[-1]).exclude?('__MACOSX')
 
-                entry_num_bytes = (raw_entry[25..39]).strip.to_i
+                  content_file_hash['content_filename']=content_path_array[-1]
 
-                content_file_hash['num_bytes'] = entry_num_bytes
+                  entry_num_bytes = (raw_entry[25..39]).strip.to_i
 
-                content_file_hash['file_format'] = MIME::Types.type_for(content_file_hash['content_filename']).first.content_type
+                  content_file_hash['num_bytes'] = entry_num_bytes
 
-                content_files_array.push(content_file_hash)
+                  content_file_hash['file_format'] = MIME::Types.type_for(content_file_hash['content_filename']).first.content_type
+                  content_file_hash['format_method'] = 'lookup'
+
+                  content_files_array.push(content_file_hash)
+                end
+
 
               end
 
@@ -184,10 +255,14 @@ class Datafile < ActiveRecord::Base
               content_path_array = (entry.full_name).split("/")
               content_file_hash['content_filename']=content_path_array[-1]
               content_file_hash['num_bytes'] = entry.bytes_read
+
               FileMagic.open(:mime) do |fm|
                 fm_info = fm.io(entry.read)
                 content_file_hash['file_format'] = (fm_info.split("; "))[0]
               end
+
+              content_file_hash['format_method'] = 'detect'
+
               content_files_array.push(content_file_hash)
 
             end
@@ -211,6 +286,8 @@ class Datafile < ActiveRecord::Base
                 fm_info = fm.io(entry.read)
                 content_file_hash['file_format'] = (fm_info.split("; "))[0]
               end
+
+              content_file_hash['format_method'] = 'detect'
               content_files_array.push(content_file_hash)
 
             end

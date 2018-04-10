@@ -338,7 +338,7 @@ function hide_preview(fileclass, web_id){
 
 function hide_preview_list(fileclass, web_id){
 
-    $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="preview(&#39;' + fileclass + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-open"></span> List Contents</button>');
+    $("#preview_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="preview_list(&#39;' + fileclass + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-open"></span> List Contents</button>');
     $("#preview_" + web_id).hide();
 }
 

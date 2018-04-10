@@ -46,7 +46,14 @@ module Viewable
         entry_list_array.each_with_index do |raw_entry, index|
           if index > 2  && index < (entry_list_array.length - 2) # first three lines are headers, last two lines are summary
             entry_array = raw_entry.strip.split " "
-            filepaths_arr.push(entry_array[-1])
+            if entry_array[-1]
+              unless entry_array[-1].include?('.DS_Store')
+                #DEBUG
+                Rails.logger.warn(entry_array[-1])
+                filepaths_arr.push(entry_array[-1])
+              end
+
+            end
           end
         end
 
@@ -63,7 +70,9 @@ module Viewable
         entry_list_array.each_with_index do |raw_entry, index|
           if index > 19  && index < (entry_list_array.length - 2) # first twenty lines are headers, last two lines are summary
             entry_array = raw_entry.strip.split " "
-            filepaths_arr.push(entry_array[-1]) if entry_array[-1]
+            if entry_array[-1] && entry_array[-1] != '.DS_Store'
+              filepaths_arr.push(entry_array[-1])
+            end
           end
         end
 
@@ -110,7 +119,7 @@ module Viewable
 
     filepaths_arr.each do |filepath|
 
-      if filepath.exclude?('__MACOSX/')
+      if filepath.exclude?('__MACOSX/') && filepath.exclude?('.DS_Store')
 
         name_arr = filepath.split("/")
 
