@@ -219,96 +219,87 @@ function search_orcid() {
     $("#orcid-search-results").empty();
     $('.orcid-search-spinner').show();
 
-    var choices = []
-
-    var orcidList = getOrcidList();
-
-    var total_found = orcidList.length;
-    var max_records = total_found;
-
-
-    if (total_found > 50) {
-        $("#orcid-search-results").append("<div class='row'>Showing first 50 results of " + total_found + ". For more results, search <a href='https://orcid.org/orcid-search/quick-search?searchQuery=" + orcidSearchString + "' target='_blank'>The ORCID site</a>.</div><hr/>");
-        max_records = 50;
-    }
-
-    if (total_found > 0) {
-
-
-        for (i = 0; i < max_records; i++) {
-            orcidIdRecord = orcidList[i];
-
-            orcidPerson = getOrcidPerson(orcidIdRecord["path"]);
-
-            choices.push({
-                "given-names": orcidPerson["given-names"]["value"],
-                "family-name": orcidPerson["family-name"]["value"],
-                "orcid": orcidIdRecord["path"],
-                "orcid_uri": orcidIdRecord["uri"]
-            })
+    var endpoint = 'https://pub.orcid.org/v2.0/search?q=';
+    if ($("#creator-family").val() != "") {
+        var search_query = 'family-name:' + $("#creator-family").val();
+        if ($("#creator-given").val() != "") {
+            search_query = search_query + '+AND+given-names:' + $("#creator-given").val();
         }
+    } else if ($("#creator-given").val() != "") {
+        var search_query = 'given-names:' + $("#creator-given").val();
     }
 
-    displayOrcidChoices(choices);
+    var search_string = endpoint + search_query;
 
+    $.ajax({
+        url: search_string,
+        dataType: 'jsonp',
+        success: function (data) {
+            $('.orcid-search-spinner').hide();
 
+              try {
+
+                  var responseJson = JSON.parse(data);
+
+                  total_found = responseJson["num-found"];
+
+                  resultJson = responseJson["result"];
+
+                  var identifiers = [];
+
+                  for (var i = 0; i < total_found; i++) {
+
+                      if (typeof resultJson[i] != "undefined") {
+
+                          entry = resultJson[i]["orcid-identifier"];
+
+                          identifiers.push(entry);
+                      }
+                  }
+
+                  var choices = [];
+
+                  var max_records = total_found;
+
+                  if (total_found > 50) {
+                      $("#orcid-search-results").append("<div class='row'>Showing first 50 results of " + total_found + ". For more results, search <a href='https://orcid.org/orcid-search/quick-search?searchQuery=" + orcidSearchString + "' target='_blank'>The ORCID site</a>.</div><hr/>");
+                      max_records = 50;
+                  }
+                  if (total_found > 0) {
+
+                      $("#orcid-search-results").append("<table class='table table-striped' id='orcid-search-results-table'><thead><tr class='row'><th><span class='col-md-6'>Identifier (click link for details)</span><span class='col-md-1'>Select</span></th></tr></thead><tbody></tbody></table>")
+
+                      for (i = 0; i < max_records; i++) {
+                          var orcidIdRecord = orcidList[i];
+
+                          var orcidPerson = getOrcidPerson(orcidIdRecord["path"]);
+
+                          var given_name = orcidPerson["given-names"]["value"];
+                          var family_name = orcidPerson["family-name"]["value"];
+                          var orcid = orcidIdRecord["path"];
+                          var orcid_uri = orcidIdRecord["uri"];
+
+                          $("#orcid-search-results-table > tbody:last-child").append("<tr class='row'><td><span class='col-md-6'><a href='" + orcid_uri + "' target='_blank'>" + family_name + ", " + given_name + ": " + orcid + "</a></span><span class='col-md-1'><input type='radio' name='orcid-search-select' onclick='enableOrcidImport()'  value='" + orcid + "~" + family_name + "~" + given_name + "'/></span></td></tr>");
+
+                      }
+
+                  } else {
+                      $("#orcid-search-results").append("<p>No results found.  Try fewer letters or <a href='http://orcid.org' target='_blank'>The ORCID site</a></p>")
+                  }
+              } catch(err){
+                  alert("Error searching: " + err.message);
+              }
+
+        },
+        error: function (xhr) {
+            alert("Error in search.");
+            console.error(xhr);
+        }
+    });
+    
 }
 
-function getOrcidList() {
 
-    var list = [];
-
-    try {
-
-        var search_url = 'https://pub.orcid.org/';
-        var bio_segment = 'v2.0/search?q='
-        if ($("#creator-family").val() != "") {
-            var search_query = 'family-name:' + $("#creator-family").val();
-            if ($("#creator-given").val() != "") {
-                search_query = search_query + '+AND+given-names:' + $("#creator-given").val();
-            }
-        } else if ($("#creator-given").val() != "") {
-            var search_query = 'given-names:' + $("#creator-given").val();
-        }
-
-        var search_string = search_url + bio_segment + search_query + '&start=0&rows=50&wt=json';
-
-        var xmlHttp = new XMLHttpRequest();
-
-        xmlHttp.open("GET", search_string, false); // false for synchronous request
-        xmlHttp.setRequestHeader("Accept", "application/json");
-        xmlHttp.send(null);
-        response = xmlHttp.responseText;
-
-        var responseJson = JSON.parse(response);
-
-        //console.log(responseJson);
-
-        num_results = responseJson["num-found"];
-
-        resultJson = responseJson["result"];
-
-        console.log(resultJson);
-
-
-        for (var i = 0; i < num_results; i++) {
-
-            if (typeof resultJson[i] != "undefined") {
-
-                entry = resultJson[i]["orcid-identifier"];
-
-                list.push(entry);
-            }
-        }
-
-    } catch (err) {
-        alert("Error fetching search results: " + err.message);
-        console.log(err);
-    }
-
-    return list;
-
-}
 
 function getOrcidPerson(orcid) {
 
@@ -329,34 +320,6 @@ function getOrcidPerson(orcid) {
 
 }
 
-function displayOrcidChoices(people) {
-
-    $('.orcid-search-spinner').hide();
-
-    if (people.length < 1) {
-
-        $("#orcid-search-results").append("<p>No results found.  Try fewer letters or <a href='http://orcid.org' target='_blank'>The ORCID site</a></p>")
-    } else {
-
-        $("#orcid-search-results").append("<table class='table table-striped' id='orcid-search-results-table'><thead><tr class='row'><th><span class='col-md-6'>Identifier (click link for details)</span><span class='col-md-1'>Select</span></th></tr></thead><tbody></tbody></table>")
-
-
-        $.each(people, function (index, person) {
-
-            try {
-                given_name = person['given-names'];
-                family_name = person['family-name'];
-                orcid = person['orcid'];
-                orcid_uri = person['orcid_id'];
-                $("#orcid-search-results-table > tbody:last-child").append("<tr class='row'><td><span class='col-md-6'><a href='" + orcid_uri + "' target='_blank'>" + family_name + ", " + given_name + ": " + orcid + "</a></span><span class='col-md-1'><input type='radio' name='orcid-search-select' onclick='enableOrcidImport()'  value='" + orcid + "~" + family_name + "~" + given_name + "'/></span></td></tr>");
-            } catch (err) {
-                alert("Error displaying search results: " + err.message);
-                console.log(err);
-            }
-        });
-
-    }
-}
 
 function enableOrcidImport() {
 
