@@ -239,7 +239,7 @@ function search_orcid() {
 
               try {
 
-                  var responseJson = JSON.parse(data);
+                  var responseJson = data;
 
                   total_found = responseJson["num-found"];
 
@@ -262,7 +262,10 @@ function search_orcid() {
                   var max_records = total_found;
 
                   if (total_found > 50) {
-                      $("#orcid-search-results").append("<div class='row'>Showing first 50 results of " + total_found + ". For more results, search <a href='https://orcid.org/orcid-search/quick-search?searchQuery=" + orcidSearchString + "' target='_blank'>The ORCID site</a>.</div><hr/>");
+
+
+
+                      $("#orcid-search-results").append("<div class='row'>Showing first 50 results of " + total_found + ". For more results, search <a href='http://orcid.org' target='_blank'>The ORCID site</a>.</div><hr/>");
                       max_records = 50;
                   }
                   if (total_found > 0) {
@@ -270,7 +273,7 @@ function search_orcid() {
                       $("#orcid-search-results").append("<table class='table table-striped' id='orcid-search-results-table'><thead><tr class='row'><th><span class='col-md-6'>Identifier (click link for details)</span><span class='col-md-1'>Select</span></th></tr></thead><tbody></tbody></table>")
 
                       for (i = 0; i < max_records; i++) {
-                          var orcidIdRecord = orcidList[i];
+                          var orcidIdRecord = identifiers[i];
 
                           var orcidPerson = getOrcidPerson(orcidIdRecord["path"]);
 
@@ -296,7 +299,7 @@ function search_orcid() {
             console.error(xhr);
         }
     });
-    
+
 }
 
 
