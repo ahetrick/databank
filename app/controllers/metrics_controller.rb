@@ -103,7 +103,7 @@ class MetricsController < ApplicationController
 
     send_file t.path, :type => 'text/csv',
               :disposition => 'attachment',
-              :filename => "archived_contents.csv"
+              :filename => "container_file_contents.csv"
 
     t.close
 
@@ -113,16 +113,28 @@ class MetricsController < ApplicationController
 
     t = Tempfile.new("related_materials_csv")
 
-    datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT)
-
-    csv_string = "doi,material_id,material_id_type,material_type"
+    csv_string = "doi,datacite_relationship,material_id_type,material_id,material_type"
 
     datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT)
 
     datasets.each do |dataset|
       dataset.related_materials.each do |material|
-        line = "\n#{dataset.identifier},#{material.uri},#{material.uri_type},#{material.selected_type}"
-        csv_string = csv_string + line
+
+        datacite_arr = Array.new
+
+        if material.datacite_list && material.datacite_list != ''
+          datacite_arr = material.datacite_list.split(',')
+        else
+          datacite_arr << 'IsSupplementTo'
+        end
+
+        datacite_arr.each do |relationship|
+
+          line = "\n#{dataset.identifier},#{relationship},#{material.uri_type},#{material.uri},#{material.selected_type}"
+          csv_string = csv_string + line
+
+        end
+
       end
     end
 
@@ -135,7 +147,5 @@ class MetricsController < ApplicationController
     t.close
 
   end
-
-
-
+  
 end
