@@ -124,8 +124,6 @@ class MetricsController < ApplicationController
 
         if material.datacite_list && material.datacite_list != ''
           datacite_arr = material.datacite_list.split(',')
-        else
-          datacite_arr << 'IsSupplementTo'
         end
 
         datacite_arr.each do |relationship|
@@ -147,5 +145,5 @@ class MetricsController < ApplicationController
     t.close
 
   end
-  
+
 end
