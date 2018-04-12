@@ -129,7 +129,7 @@ class Datafile < ActiveRecord::Base
                   content_path_array = entry.name.split("/")
                   content_file_hash['content_filename']=content_path_array[-1]
                   content_file_hash['num_bytes'] = entry.size
-                  content_file_hash['format_method'] = 'detect'
+                  content_file_hash['determination'] = 'detect'
 
                   FileMagic.open(:mime) do |fm|
                      fm_info = fm.io(entry.get_input_stream)
@@ -146,7 +146,6 @@ class Datafile < ActiveRecord::Base
 
           rescue StandardError
 
-
             entry_list_text = `unzip -l "#{self.bytestream_path}"`
             filepaths_arr = Array.new
 
@@ -159,41 +158,34 @@ class Datafile < ActiveRecord::Base
 
                   if entry_array[-1][-1] != "/" # means directory
 
-                  content_file_hash = {}
+                    content_file_hash = {}
 
-                  content_path_array = (entry_array[-1]).split("/")
+                    content_path_array = (entry_array[-1]).split("/")
 
-                  if content_path_array[-1] && (content_path_array[-1]).exclude?('.DS_Store') && (content_path_array[-1]).exclude?('__MACOSX')
+                    if content_path_array[-1] && (content_path_array[-1]).exclude?('.DS_Store') && (content_path_array[-1]).exclude?('__MACOSX')
 
-                    content_file_hash['format_method'] = 'lookup'
+                      content_file_hash['determination'] = 'lookup'
 
+                      content_file_hash['content_filename']=content_path_array[-1]
 
-                    content_file_hash['content_filename']=content_path_array[-1]
+                      file_format_objs = MIME::Types.type_for(content_file_hash['content_filename'])
 
-                    entry_num_bytes = (raw_entry[25..39]).strip.to_i
+                      first_file_format_obj = file_format_objs.first
 
-                    content_file_hash['num_bytes'] = entry_num_bytes
+                      if first_file_format_obj
 
-                    file_format_objs = MIME::Types.type_for(content_file_hash['content_filename'])
+                        file_format = first_file_format_obj.content_type
 
-                    first_file_format_obj = file_format_objs.first
+                        content_file_hash['file_format'] = file_format
 
-                    if first_file_format_obj
+                      else
 
-                      file_format = first_file_format_obj.content_type
+                        content_file_hash['file_format'] = 'application/unknown'
 
-                      content_file_hash['file_format'] = file_format
-
-                    else
-
-                      content_file_hash['file_format'] = 'application/unknown'
+                      end
+                      content_files_array.push(content_file_hash)
 
                     end
-                    content_files_array.push(content_file_hash)
-
-                  end
-
-
 
                   end
 
@@ -201,6 +193,8 @@ class Datafile < ActiveRecord::Base
                 end
               end
             end
+
+
           end
 
 
@@ -223,14 +217,11 @@ class Datafile < ActiveRecord::Base
 
                 if content_path_array[-1] && (content_path_array[-1]).exclude?('.DS_Store') && (content_path_array[-1]).exclude?('__MACOSX')
 
+                  content_file_hash = {}
+
                   content_file_hash['content_filename']=content_path_array[-1]
-
-                  entry_num_bytes = (raw_entry[25..39]).strip.to_i
-
-                  content_file_hash['num_bytes'] = entry_num_bytes
-
                   content_file_hash['file_format'] = MIME::Types.type_for(content_file_hash['content_filename']).first.content_type
-                  content_file_hash['format_method'] = 'lookup'
+                  content_file_hash['determination'] = 'lookup'
 
                   content_files_array.push(content_file_hash)
                 end
@@ -245,61 +236,78 @@ class Datafile < ActiveRecord::Base
 
         when 'gz'
 
-          tar_extract = Gem::Package::TarReader.new(Zlib::GzipReader.open(self.bytestream_path))
-          tar_extract.rewind # The extract has to be rewinded after every iteration
-          tar_extract.each do |entry|
+          inside_extension = ''
+          filename_arr = self.bytestream_name.split(".")
 
-            if entry.file?
+          if filename_arr.length > 1
+            inside_extension = filename_arr[-2]
+          end
 
+          case inside_extension
+
+            when 'tar'
+
+              content_files_array = self.tar_contents()
+
+            else
               content_file_hash = {}
-              content_path_array = (entry.full_name).split("/")
-              content_file_hash['content_filename']=content_path_array[-1]
-              content_file_hash['num_bytes'] = entry.bytes_read
-
-              FileMagic.open(:mime) do |fm|
-                fm_info = fm.io(entry.read)
-                content_file_hash['file_format'] = (fm_info.split("; "))[0]
-              end
-
-              content_file_hash['format_method'] = 'detect'
-
+              content_file_hash['content_filename']=self.bytestream_name.chomp('.gz')
+              content_file_hash['file_format'] = MIME::Types.type_for(content_file_hash['content_filename']).first.content_type
+              content_file_hash['determination'] = 'lookup'
               content_files_array.push(content_file_hash)
 
-            end
-
           end
-          tar_extract.close
-
 
         when 'tar'
-          tar_extract = Gem::Package::TarReader.new(self.bytestream_path)
-          tar_extract.rewind # The extract has to be rewinded after every iteration
-          tar_extract.each do |entry|
 
-            if entry.file?
-
-              content_file_hash = {}
-              content_path_array = (entry.full_name).split("/")
-              content_file_hash['content_filename']=content_path_array[-1]
-              content_file_hash['num_bytes'] = entry.bytes_read
-              FileMagic.open(:mime) do |fm|
-                fm_info = fm.io(entry.read)
-                content_file_hash['file_format'] = (fm_info.split("; "))[0]
-              end
-
-              content_file_hash['format_method'] = 'detect'
-              content_files_array.push(content_file_hash)
-
-            end
-
-          end
-          tar_extract.close
+          content_files_array = self.tar_contents()
         
       end
 
     end
 
     content_files_array
+
+  end
+
+  def tar_contents()
+
+    entry_list_text = `tar -tf "#{self.bytestream_path}"`
+
+    entry_list = entry_list_text.split("\n")
+
+    content_list = []
+
+    entry_list.each do |entry|
+
+      if entry[-1] != "/" # means directory
+
+        content_path_array = entry.split("/")
+
+        if content_path_array[-1] && (content_path_array[-1]).exclude?('.DS_Store') && (content_path_array[-1]).exclude?('__MACOSX')
+
+          content_file_hash = {}
+          content_file_hash['content_filename']=content_path_array[-1]
+
+          type_search_result = MIME::Types.type_for(content_file_hash['content_filename'])
+
+          if type_search_result.length > 0
+
+            content_file_hash['file_format'] = type_search_result.first.content_type
+
+          else
+            content_file_hash['file_format'] = 'application/unknown'
+
+          end
+
+          content_file_hash['determination'] = 'lookup'
+          content_list.push(content_file_hash)
+        end
+      end
+
+    end
+
+    content_list
 
   end
 

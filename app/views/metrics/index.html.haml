@@ -36,23 +36,23 @@
     %ul
       %li
         %strong doi:
-        The DOI that identifies this dataset
+        DOI that identifies this dataset
       %li
         %strong pub_date:
-        The date the files in this dataset were first available for download
+        Date the files in this dataset were first available for download
       %li
         %strong num_files:
-        The total number of datafiles in this dataset
+        Total number of datafiles in this dataset
       %li
         %strong num_bytes:
-        The combined total size for all files in this dataset, in bytes
+        Combined total size for all files in this dataset, in bytes
       %li
         %strong total_downloads:
-        The number of downloads for this dataset, calculated as described in our metrics help section:
+        Number of downloads for this dataset, calculated as described in our metrics help section:
         %a(href="https://databank.illinois.edu/help#metrics") https://databank.illinois.edu/help#metrics
       %li
         %strong num_relationships:
-        The number of related materials, excluding other versions of this dataset
+        Number of related materials, excluding other versions of this dataset
 
 .metrics-border
   %h3
@@ -69,57 +69,55 @@
     %ul
       %li
         %strong doi:
-        The DOI that identifies the dataset this file is part of
+        DOI that identifies the dataset this file is part of
       %li
         %strong pub_date:
-        The date this file was first made available for download
+        Date this file was first made available for download
       %li
         %strong filename:
-        The name of the file, with extension
+        Name of the file, with extension
       %li
         %strong file_format:
-        The mime type (file format from the left column in the Medusa “statistics” view)
+        Mime type (file format from the left column in the Medusa “statistics” view)
       %li
         %strong num_bytes:
-        The size of this files, in bytes
+        Size of this files, in bytes
       %li
         %strong total_downloads:
-        The number of downloads for this file, calculated as described in our metrics help section:
+        Number of downloads for this file, calculated as described in our metrics help section:
         %a(href="https://databank.illinois.edu/help#metrics") https://databank.illinois.edu/help#metrics
 
 .metrics-border
   %h3
     %a(href="/metrics/archived_content_csv" class="btn btn-primary idb" )
       %span.glyphicon.glyphicon-download
-      Compressed Content CSV
+      Files in Containers (zip) CSV
 
   .indent
     %p
-      Button triggers a csv file download of contents details for files in compresed formats (.zip, .tar.gz, .7z).
-      %em (archived content)
+      Button triggers a csv file download of contents details for files in complex container formats (.zip, .tar.gz, .7z).
+    %h4
+      THIS TAKES A VERY, VERY LONG TIME
 
     %strong Column Headings
     %ul
       %li
         %strong doi:
-        The DOI that identifies the dataset this file is part of
+        DOI that identifies the dataset this file is part of
       %li
         %strong archive_filename:
-        The filename of the archive file
+        Filename of the archive file
       %li
         %strong content_filename:
-        The filename of content file within the archive file
+        Filename of content file within the archive file
         %br
         %em Full paths not given. Duplicate filenames from different branches may be present.
       %li
         %strong file_format:
-        The mime type of the content file.
-      %li
-        %strong num_bytes:
-        The size of this files, in bytes
+        Mime type of the content file
       %li
         %strong determination:
-        The method of determining the file format value.
+        Method of determining the file format value
         %br
         %em detect:
         detected using libmagic
