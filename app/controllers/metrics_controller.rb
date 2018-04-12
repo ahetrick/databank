@@ -124,12 +124,17 @@ class MetricsController < ApplicationController
 
         if material.datacite_list && material.datacite_list != ''
           datacite_arr = material.datacite_list.split(',')
+        else
+          line = "\n#{dataset.identifier},,#{material.uri_type},#{material.uri},#{material.selected_type}"
         end
 
         datacite_arr.each do |relationship|
 
-          line = "\n#{dataset.identifier},#{relationship},#{material.uri_type},#{material.uri},#{material.selected_type}"
-          csv_string = csv_string + line
+          if ['IsPreviousVersionOf','IsNewVersionOf'].exclude?(relationship)
+            line = "\n#{dataset.identifier},#{relationship},#{material.uri_type},#{material.uri},#{material.selected_type}"
+            csv_string = csv_string + line
+          end
+
 
         end
 
