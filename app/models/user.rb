@@ -191,6 +191,19 @@ class User < ActiveRecord::Base
 
   end
 
+  def self.reserve_doi_user()
+
+    user = User.new(provider: "system",
+    uid: IDB_CONFIG[:reserve_doi_netid],
+    email: "#{IDB_CONFIG[:reserve_doi_netid]}@illinois.edu",
+    username: IDB_CONFIG[:reserve_doi_netid],
+    name: IDB_CONFIG[:reserve_doi_netid],
+    role: "admin")
+
+    user
+
+  end
+
   def self.user_display_name(netid)
     response = open("http://quest.grainger.uiuc.edu/directory/ed/person/#{netid}").read
     xml_doc = Nokogiri::XML(response)

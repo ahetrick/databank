@@ -1,0 +1,23 @@
+.modal.fade(id= "deposit" tabindex="-1" role="dialog" aria-labelledby="agreement-label" aria-hidden="true")
+  .modal-dialog.modal-lg
+    .modal-content
+      .modal-body
+        %button(type="button" class="close pull-right" data-dismiss="modal" )
+          &times;
+
+        %p(class="ds-paragraph")
+          = Dataset.publish_modal_msg(@dataset).html_safe
+
+      .modal-footer.container-fluid
+
+        %a.btn.btn-primary.btn-link.idb{"href"=>"/datasets/#{@dataset.key}/publish", 'role'=>'button', 'data-dismiss'=>"modal", 'id' =>"login-button"  }
+          %span(class="glyphicon glyphicon-send")
+          Publish
+
+        %a.btn.btn-success.btn-link.idb{"href"=>"/help", 'role'=>"button", 'data-dismiss'=>"modal", 'id'=>"help-button"}
+          %span(class="glyphicon glyphicon-question-sign")
+          Get Help
+
+        %a.btn.btn-danger.btn-link.idb{"href"=>"/datasets/#{@dataset.key}", 'role'=>'button', 'data-dismiss'=>"modal", 'id'=>"help-button"}
+          %span(class="glyphicon glyphicon-remove")
+          Cancel

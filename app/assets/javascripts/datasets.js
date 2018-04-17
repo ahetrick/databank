@@ -20,9 +20,57 @@ var ready;
 ready = function () {
 
     $('.bytestream_name').css("visibility", "hidden");
+
+    $('#offer_review_submit_v_btn').css("visibility", "hidden");
+    $('#offer_review_submit_v_btn').prop("disabled", true);
+
+    $('#offer_review_submit_h_btn').css("visibility", "hidden");
+    $('#offer_review_submit_h_btn').prop("disabled", true);
+
     $('.deposit-agreement-warning').hide();
+
     $('.deposit-agreement-selection-warning').hide();
     $('#agree-button').prop("disabled", true);
+
+    $("input[name='review_choice_v']").change(function(){
+
+        $('#offer_review_submit_v_btn').prop("disabled", null);
+        $('#offer_review_submit_v_btn').css("visibility", "visible");
+        $('#offer_review_submit_v_btn').html(this.value);
+        $('#offer_review_submit_v_btn').removeAttr('onclick');
+        $('#offer_review_submit_v_btn').attr('onClick', 'handleReviewChoice_V();');
+
+    });
+
+    $("input[name='review_choice_h']").change(function(){
+        $('#offer_review_submit_h_btn').prop("disabled", null);
+        $('#offer_review_submit_h_btn').css("visibility", "visible");
+        $('#offer_review_submit_h_btn').html(this.value);
+
+        $('#offer_review_submit_h_btn').removeAttr('onclick');
+        $('#offer_review_submit_h_btn').attr('onClick', 'handleReviewChoice_H();');
+    });
+
+    $( ".choose_review_block_v" ).click(function() {
+        $('#choose_review_v').trigger("click");
+    });
+
+
+    $( ".choose_continue_block_v" ).click(function() {
+        $('#choose_continue_v').trigger("click");
+    });
+
+    $( ".choose_review_block_h" ).click(function() {
+        $('#choose_review_h').trigger("click");
+    });
+
+
+    $( ".choose_continue_block_h" ).click(function() {
+        $('#choose_continue_h').trigger("click");
+    });
+
+
+
 
     $('#keyword-text').keyup(handleKeywordKeyup);
     $('#keyword-text').blur(handleKeywordKeyup);
@@ -57,7 +105,7 @@ ready = function () {
             var c = content.substr(0, showChar);
             var h = content.substr(showChar-1, content.length - showChar);
 
-            var html = c + '<span class="moreellipses">' + ellipsestext+ '&nbsp;</span><span class="morecontent"><span>' + h + '</span>&nbsp;&nbsp;<a href="" class="morelink">' + moretext + '</a></span>';
+            var html = c + '<span class="moreellipses">' + ellipsestext + '&nbsp;</span><span class="morecontent"><span>' + h + '</span>&nbsp;&nbsp;<a href="" class="morelink">' + moretext + '</a></span>';
 
             $(this).html(html);
         }
@@ -295,24 +343,6 @@ ready = function () {
 
     });
 
-    $("#request-review-btn").click(function () {
-
-        $.getJSON("/datasets/" + dataset_key + "/request_review", function (data) {
-            console.log(data);
-            if (data.status && data.status == "ok"){
-
-                $("#deposit").modal('hide');
-
-                $(".request-review-response").html("<p>Your dataset review request has been sent to the Research Data Service.</p>");
-
-            } else {
-                alert("We're sorry, something went wrong during an attempt to request a review for this dataset.")
-            }
-
-        });
-
-    });
-
     $("#new_datafile").fileupload({
 
         downloadTemplate: null,
@@ -471,6 +501,7 @@ ready = function () {
 
 }
 
+
 var Reflector = function (obj) {
     this.getProperties = function () {
         var properties = [];
@@ -486,6 +517,58 @@ var Reflector = function (obj) {
 function pad(n) {
     return n < 10 ? '0' + n : n
 }
+
+
+function closeOfferReviewModal(){
+
+    $("input[name='review_choice_h']:checked").prop('checked',false);
+    $("input[name='review_choice_v']:checked").prop('checked',false);
+
+    $('#offer_review_submit_v_btn').css("visibility", "hidden");
+    $('#offer_review_submit_v_btn').prop("disabled", true);
+
+    $('#offer_review_submit_h_btn').css("visibility", "hidden");
+    $('#offer_review_submit_h_btn').prop("disabled", true);
+
+    $('#offer_review_v').modal('hide');
+    $('#offer_review_h').modal('hide');
+
+}
+
+function handleReviewChoice_V(){
+
+    choice = $("input[name='review_choice_v']:checked").val();
+
+    closeOfferReviewModal();
+
+    if(choice == "Review"){
+        window.location.href = "/datasets/" + dataset_key + "/request_review"
+
+    } else if(choice == "Continue") {
+        $('#deposit').modal('show');
+    } else {
+        console.log("unexpected chosen option: " + choice);
+    }
+}
+
+function handleReviewChoice_H(){
+
+    choice = $("input[name='review_choice_h']:checked").val();
+
+    console.log("choice inside handle review choice h")
+
+    closeOfferReviewModal();
+
+    if(choice == "Review"){
+        cwindow.location.href = "/datasets/" + dataset_key + "/request_review"
+
+    } else if(choice == "Continue") {
+        $('#deposit').modal('show');
+    } else {
+        console.log("unexpected chosen option: " + choice);
+    }
+}
+
 
 function cancelBoxUpload(datafile, job) {
 

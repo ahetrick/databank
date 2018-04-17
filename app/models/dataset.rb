@@ -945,6 +945,42 @@ class Dataset < ActiveRecord::Base
     end
   end
 
+
+  # may return null if unsuccesful
+  def reserve_doi
+
+    self.complete = false
+
+    # only reserve doi for complete datasets
+    if Dataset.completion_check(self, User.reserve_doi_user) == 'ok'
+
+      self.complete = true
+
+      #unless there is already an identifier, reserve one
+      unless self.identifier && self.identifier != ''
+
+        begin
+          self.identifier = Dataset.create_doi(self, User.reserve_doi_user)
+
+          self.selected_embargo = @dataset.embargo
+          self.selected_release_date = @dataset.release_date #keep nil if nil
+
+          self.embargo = Databank::PublicationState::Embargo::METADATA
+          self.release_date = Time.now + 1.year
+        rescue StandardError => error
+          Rails.logger.warn error.to_yaml
+        end
+
+      end
+
+    end
+
+    self.save
+
+    self.identifier
+
+  end
+
   def default_preview_file
 
     returnfile = nil

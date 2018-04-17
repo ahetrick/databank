@@ -58,14 +58,14 @@ div.alert.alert-alert {
   padding: 15px;
   background-color: $color__yellow;
   position: relative;
-  z-index: 2100;
+  //z-index: 2100;
   margin-bottom: 0;
 }
 div.alert.alert-notice {
   padding: 15px;
   background-color: $color__light-blue;
   position: relative;
-  z-index: 2100;
+  //z-index: 2100;
   margin-bottom: 0;
 }
 
@@ -447,6 +447,10 @@ table.deposit-agreement-selection-warning > tbody > tr > td {
 }
 .more-elbow {
   margin-top: 10px;
+}
+
+.bordercol{
+  border-left: 1px solid $color__light-grey;
 }
 
 .photo-preview {

@@ -1139,61 +1139,7 @@ class DatasetsController < ApplicationController
       end
     end
   end
-
-  def reserve_doi
-
-    @dataset.complete = false
-    identifier_ok = nil
-
-    # only publish complete datasets
-    if Dataset.completion_check(@dataset, current_user) == 'ok'
-
-      @dataset.complete = true
-
-      unless @dataset.identifier && @dataset.identifier != ''
-
-        begin
-          @dataset.identifier = Dataset.create_doi(@dataset, current_user)
-
-          @dataset.selected_embargo = @dataset.embargo
-          @dataset.selected_release_date = @dataset.release_date #keep nil if nil
-
-          @dataset.embargo = Databank::PublicationState::Embargo::METADATA
-          @dataset.release_date = Time.now + 1.year
-          identifier_ok = true
-        rescue StandardError => error
-          Rails.logger.warn error.to_yaml
-         identifier_ok = false
-        end
-        
-      end
-
-    end
-
-    respond_to do |format|
-
-      if @dataset.complete && identifier_ok == true
-        if @dataset.save
-          format.html { render json: {"status":"ok", "doi":@dataset.identifier }, content_type: request.format, :layout => false }
-          format.json { render json: {"status":"ok", "doi":@dataset.identifier }, content_type: request.format, :layout => false }
-          else
-          format.html { redirect_to controller: welcome, action: :index }
-          format.json { render json: @dataset.errors, status: :unprocessable_entity }
-        end
-      elsif identifier_ok == false
-        notification = DatabankMailer.error("Error reserving DOI for #{@dataset.key}")
-        notification.deliver_now
-        format.html { redirect_to dataset_path(@dataset.key), notice: "Error reserving DOI."}
-        format.json { render :show, status: :unprocessable_entity, location: dataset_path(@dataset.key) }
-      else
-        format.html { redirect_to dataset_path(@dataset.key), notice: Dataset.completion_check(@dataset, current_user)}
-        format.json { render :show, status: :unprocessable_entity, location: dataset_path(@dataset.key) }
-      end
-
-    end
-
-  end
-
+  
   def request_review
 
     @params = Hash.new
@@ -1205,14 +1151,17 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
 
-      begin
-        help_request = DatabankMailer.contact_help(params)
-        help_request.deliver_now
-        format.html { render json: {"status":"ok" }, content_type: request.format, :layout => false }
-        format.json { render json: {"status":"ok" }, content_type: request.format, :layout => false }
-      rescue StandardError
-        format.html { redirect_to dataset_path(@dataset.key), notice: "We're sorry, something unexpected happened when attempting to request a dataset review."}
-        format.json { render :show, status: :unprocessable_entity, location: dataset_path(@dataset.key) }
+      help_request = DatabankMailer.contact_help(params)
+      help_request.deliver_now
+
+      reserved_doi = @dataset.reserve_doi
+
+      if reserved_doi && reserved_doi != ''
+        format.html { redirect_to dataset_path(@dataset.key), notice: "Your request has been submitted. In the meantime, your DOI has been reserved and you can give your citation to your publisher as a placeholder:  #{@dataset.plain_text_citation}"}
+        format.json { render json: {status: :ok }, content_type: request.format, :layout => false }
+      else
+        format.html { redirect_to dataset_path(@dataset.key), notice: "Your request has been submitted."}
+        format.json { render json: {status: :ok }, content_type: request.format, :layout => false }
       end
 
     end

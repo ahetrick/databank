@@ -48,8 +48,6 @@ module Viewable
             entry_array = raw_entry.strip.split " "
             if entry_array[-1]
               unless entry_array[-1].include?('.DS_Store')
-                #DEBUG
-                Rails.logger.warn(entry_array[-1])
                 filepaths_arr.push(entry_array[-1])
               end
 

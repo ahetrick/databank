@@ -82,9 +82,6 @@ Rails.application.routes.draw do
   # reserve doi
   get '/datasets/:id/reserve_doi', to: 'datasets#reserve_doi', defaults: {format: 'json'}
 
-  # request review
-  get '/datasets/:id/request_review', to: 'datasets#request_review', defaults: {format: 'json'}
-
   # tombstone
   get '/datasets/:id/tombstone', to: 'datasets#tombstone'
 
@@ -181,6 +178,8 @@ Rails.application.routes.draw do
   get "/datasets/:id/download_metrics", to: 'datasets#download_metrics', defaults: {format: 'json'}
 
   post "/datasets/:id/download_deckfile", to: 'datasets#download_deckfile'
+
+  get "/datasets/:id/request_review", to: 'datasets#request_review', defaults: {format: 'html'}
 
   get "/deckfiles/:id/download", to: 'deckfiles#download'
 
