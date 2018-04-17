@@ -1142,12 +1142,12 @@ class DatasetsController < ApplicationController
   
   def request_review
 
-    @params = Hash.new
-    @params['help-name'] = @dataset.depositor_name
-    @params['help-email'] = @dataset.depositor_email
-    @params['help-topic'] = 'Dataset Consultation'
-    @params['help-dataset'] = "#{request.base_url}#{dataset_path(@dataset.key)}"
-    @params['help-message'] = "Pre-deposit review request"
+    params = Hash.new
+    params['help-name'] = @dataset.depositor_name
+    params['help-email'] = @dataset.depositor_email
+    params['help-topic'] = 'Dataset Consultation'
+    params['help-dataset'] = "#{request.base_url}#{dataset_path(@dataset.key)}"
+    params['help-message'] = "Pre-deposit review request"
 
     respond_to do |format|
 
