@@ -10,14 +10,14 @@
 
       .modal-footer.container-fluid
 
-        %a.btn.btn-primary.btn-link.idb{"href"=>"/datasets/#{@dataset.key}/publish", 'role'=>'button', 'data-dismiss'=>"modal", 'id' =>"login-button"  }
+        %button.btn.btn-primary.idb{"onclick"=>%Q(window.location="/datasets/#{@dataset.key}/publish"), 'type'=>'button', 'data-dismiss'=>"modal", 'id' =>"login-button"  }
           %span(class="glyphicon glyphicon-send")
           Publish
 
-        %a.btn.btn-success.btn-link.idb{"href"=>"/help", 'role'=>"button", 'data-dismiss'=>"modal", 'id'=>"help-button"}
+        %button.btn.btn-success.idb{"onclick"=>'window.open("/help")', 'type'=>"button", 'data-dismiss'=>"modal", 'id'=>"help-button"}
           %span(class="glyphicon glyphicon-question-sign")
           Get Help
 
-        %a.btn.btn-danger.btn-link.idb{"href"=>"/datasets/#{@dataset.key}", 'role'=>'button', 'data-dismiss'=>"modal", 'id'=>"help-button"}
+        %button.btn.btn-danger.idb{"onclick"=>%Q(window.location="/datasets/#{@dataset.key}"), 'type'=>'button', 'data-dismiss'=>"modal", 'id'=>"help-button"}
           %span(class="glyphicon glyphicon-remove")
           Cancel
