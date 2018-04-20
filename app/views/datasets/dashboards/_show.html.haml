@@ -20,7 +20,7 @@
         .col-md-9
           -if(can? :manage, @dataset)
             .curator-only
-              -if dataset.publication_state == Databank::PublicationState::DRAFT && dataset.identifier && dataset.identifier != ''
+              -if @dataset.publication_state == Databank::PublicationState::DRAFT && @dataset.identifier && @dataset.identifier != ''
                 .label.label-danger
                   pre-publication review
                 &nbsp;
