@@ -961,12 +961,6 @@ class Dataset < ActiveRecord::Base
 
         begin
           self.identifier = Dataset.create_doi(self, User.reserve_doi_user)
-
-          self.selected_embargo = @dataset.embargo
-          self.selected_release_date = @dataset.release_date #keep nil if nil
-
-          self.embargo = Databank::PublicationState::Embargo::METADATA
-          self.release_date = Time.now + 1.year
         rescue StandardError => error
           Rails.logger.warn error.to_yaml
         end

@@ -1175,11 +1175,6 @@ class DatasetsController < ApplicationController
 
     old_publication_state = @dataset.publication_state
 
-    if @dataset.identifier && @dataset.identifier !='' && @dataset.publication_state == Databank::PublicationState::DRAFT
-      @dataset.release_date = @dataset.selected_release_date || Date.current
-      @dataset.embargo = @dataset.selected_embargo || Databank::PublicationState::Embargo::NONE
-    end
-
     @dataset.release_date ||= Date.current
 
     # only publish complete datasets
@@ -1306,7 +1301,7 @@ class DatasetsController < ApplicationController
 
   def zip_and_download_selected
 
-    if @dataset.identifier && !@dataset.identifier.empty?
+    if @dataset.identifier && !@dataset.identifier.empty? && @dataset.publication_state != Databank::PublicationState::DRAFT
       @dataset.datafiles.each do |datafile|
 
         if params[:selected_files].include?(datafile.web_id)
@@ -1626,7 +1621,7 @@ class DatasetsController < ApplicationController
   # def dataset_params
 
   def dataset_params
-    params.require(:dataset).permit(:title, :identifier, :publisher, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :selected_embargo, :complete, :search, :dataset_version, :release_date, :selected_release_date, :is_test, :is_import, :audit_id, :removed_private, :have_permission, :agree, :web_ids, :version_comment, :subject, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destroy, :_update, :audit_id], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update, :audit_id], related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id], deckfiles_attributes: [:disposition, :remove, :path, :dataset_id, :id])
+    params.require(:dataset).permit(:title, :identifier, :publisher, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :dataset_version, :release_date, :is_test, :is_import, :audit_id, :removed_private, :have_permission, :agree, :web_ids, :version_comment, :subject, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destroy, :_update, :audit_id], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update, :audit_id], related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id], deckfiles_attributes: [:disposition, :remove, :path, :dataset_id, :id])
   end
 
 

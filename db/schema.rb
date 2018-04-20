@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180220213533) do
+ActiveRecord::Schema.define(version: 20180420142313) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -121,8 +121,6 @@ ActiveRecord::Schema.define(version: 20180220213533) do
     t.boolean  "suppress_changelog",          default: false
     t.text     "version_comment"
     t.string   "subject"
-    t.string   "selected_embargo"
-    t.date     "selected_release_date"
   end
 
   add_index "datasets", ["key"], name: "index_datasets_on_key", unique: true, using: :btree
