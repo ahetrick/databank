@@ -560,7 +560,7 @@ function handleReviewChoice_H(){
     closeOfferReviewModal();
 
     if(choice == "Review"){
-        cwindow.location.href = "/datasets/" + dataset_key + "/request_review"
+        window.location.href = "/datasets/" + dataset_key + "/request_review"
 
     } else if(choice == "Continue") {
         $('#deposit').modal('show');
