@@ -7,63 +7,62 @@
           &times;
 
         .container-fluid
-          %hr
           %h3 Choose the next step!
-          %hr
+
         .container-fluid
 
           =form_tag "/datasets/#{@dataset.key}" do
             .row
               .col-md-6
-                &nbsp;
-                =radio_button_tag 'review_choice_h', 'Review', false, id: 'choose_review_h'
-                &nbsp;
-                %span(class="choose_review_block_h" )
-                  %strong Review then publish
-                  %hr
-                .choose_review_block_h
-                  .indent
-                    %ul
-                      %li
-                        %p
-                          Reserve your DOI and activate it in
-                          %strong 2-5 days
-                      %li
-                        %p
-                          Find and fix errors
-                          %strong before
-                          publication
-                      %li
-                        %p
-                          Share
-                          %strong high-quality
-                          work
+                %button(type="button" id="review-then-publish-btn" class="btn btn-primary btn-block")
+                  Review then publish
+                  %span(class="glyphicon glyphicon-triangle-right" )
+                %br
 
+                %ul
+                  %li
+                    %p
+                      Reserve your DOI and activate it in
+                      %strong 2-5 days
+                  %li
+                    %p
+                      Find and fix errors
+                      %strong before
+                      publication
+                  %li
+                    %p
+                      Share
+                      %strong high-quality
+                      work
 
-              .col-md-6.bordercol
-                &nbsp;
-                =radio_button_tag 'review_choice_h', 'Continue', false, id: 'choose_continue_h'
-                &nbsp;
-                %span(class="choose_continue_block_h" )
-                  %strong Publish then review (then maybe republish)
-                  %hr
-                .choose_continue_block_h
-                  .indent
-                    %ul
-                      %li
-                        %p
-                          Activate your DOI
-                          %strong now
-                      %li
-                        %p
-                          Find and fix errors
-                          %strong after
-                          publication (have to publish new version of the dataset)
-                      %li
-                        %p
-                          Share work that may
-                          %strong prompt questions
-                          about unknown problems
-            %br
-            .text-center
-              %button(role="button" type="button" class="btn btn-primary" id='offer_review_submit_h_btn')
+                .text-center
+                  %span(class="glyphicon glyphicon-arrow-up" )
+                  %em pick me!
+                  %span(class="glyphicon glyphicon-arrow-up" )
+                    
+
+              .col-md-6
+                %button(type="button" id="publish-then-review-btn" class="btn btn-primary btn-block")
+                  Publish then review
+                  %strong (then maybe republish)
+                  %span(class="glyphicon glyphicon-triangle-right" )
+
+                %br
+
+                %ul
+                  %li
+                    %p
+                      Activate your DOI
+                      %strong now
+                  %li
+                    %p
+                      Find and fix errors
+                      %strong after
+                      publication
+                      %br
+                      (have to publish new version of the dataset)
+                  %li
+                    %p
+                      Share work that may
+                      %strong prompt questions
+                      about unknown problems
