@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180420142313) do
+ActiveRecord::Schema.define(version: 20180507210652) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -78,6 +78,8 @@ ActiveRecord::Schema.define(version: 20180420142313) do
     t.integer  "binary_size",          limit: 8
     t.integer  "upload_file_size",     limit: 8
     t.string   "upload_status"
+    t.string   "peek_type"
+    t.text     "peek_text"
   end
 
   create_table "dataset_download_tallies", force: :cascade do |t|
@@ -227,6 +229,18 @@ ActiveRecord::Schema.define(version: 20180420142313) do
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
     t.string   "medusa_dataset_dir"
+  end
+
+  create_table "nested_items", force: :cascade do |t|
+    t.integer  "datafile_id"
+    t.integer  "parent_id"
+    t.string   "item_name"
+    t.string   "media_type"
+    t.integer  "size"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.string   "item_path"
+    t.boolean  "is_directory"
   end
 
   create_table "recordfiles", force: :cascade do |t|

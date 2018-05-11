@@ -145,53 +145,32 @@ module Viewable
   end
 
   def is_archive?
-    name_arr = self.bytestream_name.split(".")
-    # wish_list = ["gz", "tar", 'zip', '7z', 'bz', 'bz2', 'bzip2']
-    ['gz', 'tar', 'zip', '7z'].include?(name_arr.last.downcase)
+    return self.peek_type == 'listing'
   end
 
+  def is_all_txt?
+    return self.peek_type == 'all_text'
+  end
 
-  def is_txt?
-    if self.bytestream_name == ""
-      return false
-    else
-      filename_split = self.bytestream_name.split(".")
-      extension = filename_split.last
-      return ['txt', 'csv', 'tsv', 'rb', 'xml', 'json', 'py'].include?(extension.downcase)
-    end
-
+  def is_part_txt?
+    return self.peek_type == 'part_text'
   end
 
   def is_image?
-    if self.bytestream_name == ""
-      return false
-    else
-      filename_split = self.bytestream_name.split(".")
-      extension = filename_split.last
-      return ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'jpg2', 'tif', 'tiff'].include?(extension.downcase)
-    end
+    return self.peek_type == 'image'
   end
 
   def is_microsoft?
-    if self.bytestream_name == ""
-      return false
-    else
-      filename_split = self.bytestream_name.split(".")
-      extension = filename_split.last
-      return ['doc', 'docx', 'xls', 'xlsx', '.ppt', 'pptx' ].include?(extension.downcase)
-    end
+    return self.peek_type == 'microsoft'
+  end
+
+  def is_pdf?
+    return self.peek_type == 'pdf'
   end
 
   def microsoft_preview_url
     if self.is_microsoft?
-
-      dataset = Dataset.find(self.dataset_id)
-
-      return "https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fdatabank.illinois.edu%2Fdatasets%2F#{dataset.key}%2Fdatafiles%2F#{self.web_id}%2Fdisplay"
-
-    else
-      raise "Microsoft preview url requested for non-Microsoft file."
-
+     return self.peek_text
     end
   end
 

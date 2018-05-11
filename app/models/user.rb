@@ -101,8 +101,13 @@ class User < ActiveRecord::Base
 
   def self.can_deposit(netid)
 
-    # exception for Patrick Brown, former faculty who still has some datasets to deposit.
+    # exception for Patrick Brown, former faculty who still has some datasets to deposit.
     if netid == 'pjb34'
+      return TRUE
+    end
+
+    # exception for Neil Smalheiser, UIC faculty who is also Affiliated Faculty with the iSchool at Illinois
+    if netid == 'neils'
       return TRUE
     end
 
@@ -205,11 +210,31 @@ class User < ActiveRecord::Base
   end
 
   def self.user_display_name(netid)
-    response = open("http://quest.grainger.uiuc.edu/directory/ed/person/#{netid}").read
-    xml_doc = Nokogiri::XML(response)
-    xml_doc.remove_namespaces!
-    display_name = xml_doc.xpath("//attr[@name='displayname']").text()
-    display_name.strip!
+
+    # exception for Neil Smalheiser, UIC faculty who is also Affiliated Faculty with the iSchool at Illinois
+    if netid == 'neils'
+      return "Neil Smalheiser"
+    else
+
+      begin
+
+        response = open("http://quest.grainger.uiuc.edu/directory/ed/person/#{netid}").read
+        xml_doc = Nokogiri::XML(response)
+        xml_doc.remove_namespaces!
+        display_name = xml_doc.xpath("//attr[@name='displayname']").text()
+        display_name.strip!
+
+        return display_name
+
+      catch OpenURI::HTTPError
+
+        return "Guest"
+
+      end
+
+
+    end
+
   end
 
 

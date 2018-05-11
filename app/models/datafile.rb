@@ -11,6 +11,7 @@ class Datafile < ActiveRecord::Base
   include Viewable
   mount_uploader :binary, BinaryUploader
   belongs_to :dataset
+  has_many :nested_items, dependent: :destroy
   audited associated_with: :dataset
 
   WEB_ID_LENGTH = 5
@@ -108,164 +109,17 @@ class Datafile < ActiveRecord::Base
 
   def content_files
 
-    extension = self.bytestream_name.split(".").last
-
-    content_files_array = []
-
-    if self.is_archive?
-      case extension
-
-        when 'zip'
-
-          begin
-
-            Zip::InputStream.open(self.bytestream_path) do |io|
-
-              while (entry = io.get_next_entry)
-
-                if !entry.name_is_directory? &&  entry.name.exclude?('.DS_Store') && entry.name.exclude?('__MACOSX')
-
-                  content_file_hash = {}
-                  content_path_array = entry.name.split("/")
-                  content_file_hash['content_filename']=content_path_array[-1]
-                  content_file_hash['num_bytes'] = entry.size
-                  content_file_hash['determination'] = 'detect'
-
-                  FileMagic.open(:mime) do |fm|
-                     fm_info = fm.io(entry.get_input_stream)
-                     content_file_hash['file_format'] = (fm_info.split("; "))[0]
-                  end
-
-                  content_files_array.push(content_file_hash)
-                end
-
-
-              end
-
-            end
-
-          rescue StandardError
-
-            entry_list_text = `unzip -l "#{self.bytestream_path}"`
-            filepaths_arr = Array.new
-
-            entry_list_array = entry_list_text.split("\n")
-
-            entry_list_array.each_with_index do |raw_entry, index|
-              if index > 2  && index < (entry_list_array.length - 2) # first three lines are headers, last two lines are summary
-                entry_array = raw_entry.strip.split " "
-                if entry_array[-1]
-
-                  if entry_array[-1][-1] != "/" # means directory
-
-                    content_file_hash = {}
-
-                    content_path_array = (entry_array[-1]).split("/")
-
-                    if content_path_array[-1] && (content_path_array[-1]).exclude?('.DS_Store') && (content_path_array[-1]).exclude?('__MACOSX')
-
-                      content_file_hash['determination'] = 'lookup'
-
-                      content_file_hash['content_filename']=content_path_array[-1]
-
-                      file_format_objs = MIME::Types.type_for(content_file_hash['content_filename'])
-
-                      first_file_format_obj = file_format_objs.first
-
-                      if first_file_format_obj
-
-                        file_format = first_file_format_obj.content_type
-
-                        content_file_hash['file_format'] = file_format
-
-                      else
-
-                        content_file_hash['file_format'] = 'application/unknown'
-
-                      end
-                      content_files_array.push(content_file_hash)
-
-                    end
-
-                  end
-
-
-                end
-              end
-            end
-
-
-          end
-
-
-        when '7z'
-
-          entry_list_text = `7za l "#{self.bytestream_path}"`
-
-          entry_list_array = entry_list_text.split("\n")
-
-          entry_list_array.each_with_index do |raw_entry, index|
-            if index > 19  && index < (entry_list_array.length - 2) # first twenty lines are headers, last two lines are summary
-
-              entry_array = raw_entry.strip.split " "
-
-              if entry_array[-1]
-
-                content_file_hash = {}
-
-                content_path_array = (entry_array[-1]).split("/")
-
-                if content_path_array[-1] && (content_path_array[-1]).exclude?('.DS_Store') && (content_path_array[-1]).exclude?('__MACOSX')
-
-                  content_file_hash = {}
-
-                  content_file_hash['content_filename']=content_path_array[-1]
-                  content_file_hash['file_format'] = MIME::Types.type_for(content_file_hash['content_filename']).first.content_type
-                  content_file_hash['determination'] = 'lookup'
-
-                  content_files_array.push(content_file_hash)
-                end
-
-
-              end
-
-
-            end
-          end
-
-
-        when 'gz'
-
-          inside_extension = ''
-          filename_arr = self.bytestream_name.split(".")
-
-          if filename_arr.length > 1
-            inside_extension = filename_arr[-2]
-          end
-
-          case inside_extension
-
-            when 'tar'
-
-              content_files_array = self.tar_contents()
-
-            else
-              content_file_hash = {}
-              content_file_hash['content_filename']=self.bytestream_name.chomp('.gz')
-              content_file_hash['file_format'] = MIME::Types.type_for(content_file_hash['content_filename']).first.content_type
-              content_file_hash['determination'] = 'lookup'
-              content_files_array.push(content_file_hash)
-
-          end
-
-        when 'tar'
-
-          content_files_array = self.tar_contents()
-        
+    content_files_array = Array.new
+    entries = self.nested_items
+      for entry in entries
+        if !entry.is_directory? && entry.item_name.strip() != '.DS_Store'
+          content_file_hash = {}
+          content_file_hash['content_filepath'] = entry.item_path
+          content_file_hash['content_filename'] = entry.item_name
+          content_file_hash['file_format'] = entry.media_type
+          content_files_array.push(content_file_hash)
+        end
       end
-
-    end
-
     content_files_array
 
   end

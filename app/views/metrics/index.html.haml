@@ -87,45 +87,37 @@
         Number of downloads for this file, calculated as described in our metrics help section:
         %a(href="https://databank.illinois.edu/help#metrics") https://databank.illinois.edu/help#metrics
 
-- if False
-  .metrics-border
-    %h3
-      %a(href="/metrics/archived_content_csv" class="btn btn-primary idb" )
-        %span.glyphicon.glyphicon-download
-        Container File Contents (zip) CSV
+.metrics-border
+  %h3
+    %a(href="/metrics/archived_content_csv" class="btn btn-primary idb" )
+      %span.glyphicon.glyphicon-download
+      Container File Contents (zip) CSV
 
-    .indent
-      %p
-        Button triggers a csv file download of contents details for files in complex container formats (.zip, .tar.gz, .7z).
-      %h4
-        THIS TAKES A VERY, VERY LONG TIME - approximately 10 to 30 minutes
+  %p  TAKES SEVERAL MINUTES
 
-      %strong Column Headings
-      %ul
-        %li
-          %strong doi:
-          DOI that identifies the dataset this file is part of
-        %li
-          %strong archive_filename:
-          Filename of the archive file
-        %li
-          %strong content_filename:
-          Filename of content file within the archive file
-          %br
-          %em Full paths not given. Duplicate filenames from different branches may be present.
-        %li
-          %strong file_format:
-          Mime type of the content file
-        %li
-          %strong determination:
-          Method of determining the file format value
-          %br
-          %em detect:
-          detected using libmagic
-          %br
-          %em lookup:
-          looked up extension in registry
+  .indent
+    %p
+      Button triggers a csv file download of contents details for files in complex container formats (.zip, .tar.gz, .7z).
 
+    %strong Column Headings
+    %ul
+      %li
+        %strong doi:
+        DOI that identifies the dataset this file is part of
+      %li
+        %strong container_filename:
+        Filename of the container file
+      %li
+        %strong content_filepath:
+        Full path of the file, in the context of the container file
+      %li
+        %strong content_filename:
+        Filename of content file within the archive file
+        %br
+        %em Duplicate filenames from different branches may be present.
+      %li
+        %strong file_format:
+        Mime type of the content file
 
 .metrics-border
   %h3

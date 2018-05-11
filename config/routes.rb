@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :nested_items
   get '/featured_researchers/feature_none', to: 'featured_researchers#feature_none'
 
   get '/researcher_spotlights', to: 'featured_researchers#index'

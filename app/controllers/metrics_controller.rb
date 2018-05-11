@@ -1,3 +1,6 @@
+require 'csv'
+require 'tempfile'
+
 class MetricsController < ApplicationController
 
   def index
@@ -18,27 +21,31 @@ class MetricsController < ApplicationController
 
   def datasets_csv
 
-    t = Tempfile.new("datasets_csv")
-
     datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT)
 
-    csv_string = "doi,pub_date,num_files,num_bytes,total_downloads,num_relationships"
+    Tempfile.open("datasets_csv") do |t|
 
-    datasets.each do |dataset|
+      CSV.open(t, 'w') do |report|
 
-      line = "\n#{dataset.identifier},#{dataset.release_date.iso8601},#{dataset.datafiles.count},#{dataset.total_filesize},#{dataset.total_downloads},#{dataset.num_external_relationships}"
-      csv_string = csv_string + line
+          report << ['doi', 'pub_date' ,'num_files', 'num_bytes', 'total_downloads', 'num_relationships']
 
-    end
+          datasets.each do |dataset|
 
-    t.write(csv_string)
+            report << ["#{dataset.identifier}",
+                       "#{dataset.release_date.iso8601}",
+                       "#{dataset.datafiles.count}",
+                       "#{dataset.total_filesize}",
+                       "#{dataset.total_downloads}",
+                       "#{dataset.num_external_relationships}"]
 
-    send_file t.path, :type => 'text/csv',
-              :disposition => 'attachment',
-              :filename => "datasets.csv"
+          end
 
-    t.close
+        end
 
+      send_file t.path, :type => 'text/csv',
+                :disposition => 'attachment',
+                :filename => "datasets.csv"
+      end
   end
 
   def datafiles_csv
@@ -47,108 +54,108 @@ class MetricsController < ApplicationController
 
     return nil unless doi_filename_mimetype
 
-    t = Tempfile.new("datafiles_csv")
-
     datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT)
 
-    csv_string = "doi,pub_date,filename,file_format,num_bytes,total_downloads"
+    Tempfile.open("datafiles_csv", "w") do |t|
 
-    datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT)
+      CSV.open(t, 'w') do |report|
 
-    datasets.each do |dataset|
-      dataset.datafiles.each do |datafile|
-        doi_filename = "#{dataset.identifier}_#{datafile.bytestream_name }".downcase
-        line = "\n#{dataset.identifier},#{dataset.release_date.iso8601},#{datafile.bytestream_name},#{doi_filename_mimetype[doi_filename]},#{datafile.bytestream_size},#{datafile.total_downloads}"
-        csv_string = csv_string + line
+        report << ['doi', 'pub_date', 'filename', 'file_format', 'num_bytes', 'total_downloads']
+
+        datasets.each do |dataset|
+          dataset.datafiles.each do |datafile|
+            doi_filename = "#{dataset.identifier}_#{datafile.bytestream_name }".downcase
+            report << ["#{dataset.identifier}",
+                       "#{dataset.release_date.iso8601}",
+                       "#{datafile.bytestream_name}",
+                       "#{doi_filename_mimetype[doi_filename]}",
+                       "#{datafile.bytestream_size}",
+                       "#{datafile.total_downloads}"]
+          end
+        end
+
       end
+
+      send_file t.path, :type => 'text/csv',
+                :disposition => 'attachment',
+                :filename => "datafiles.csv"
     end
-
-    t.write(csv_string)
-
-    send_file t.path, :type => 'text/csv',
-              :disposition => 'attachment',
-              :filename => "datafiles.csv"
-
-    t.close
 
   end
 
   def archived_content_csv
 
-    t = Tempfile.new("archived_contents_csv")
-
-    csv_string = "doi,archive_filename,content_filename,file_format,determination"
-
     datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT)
 
-    datasets.each do |dataset|
-      dataset.datafiles.each do |datafile|
-        if datafile.is_archive?
+    Tempfile.open("contained_csv") do |t|
 
-          #DUBUG
-          Rails.logger.warn(datafile.bytestream_name)
-          content_files = datafile.content_files
-          content_files.each do |content_hash|
+      report = CSV.new(t)
 
-            line = "\n#{dataset.identifier},#{datafile.bytestream_name},#{content_hash['content_filename']},#{content_hash['file_format']},#{content_hash['determination']}"
-            Rails.logger.warn(line)
-            csv_string = csv_string + line
+      report << ['doi', 'container_filename', 'content_filepath', 'content_filename', 'file_format']
+
+      datasets.each do |dataset|
+        dataset.datafiles.each do |datafile|
+          if datafile.is_archive?
+            content_files = datafile.content_files
+            content_files.each do |content_hash|
+
+              report << ["#{dataset.identifier}",
+                         "#{datafile.bytestream_name}",
+                         "#{content_hash['content_filepath']}",
+                         "#{content_hash['content_filename']}",
+                         "#{content_hash['file_format']}"]
+            end
           end
         end
       end
+
+      send_file t.path, :type => 'text/csv',
+                :disposition => 'attachment',
+                :filename => "contained.csv"
+
+      report.close(unlink_now=false)
+
     end
-
-
-    t.write(csv_string)
-
-    send_file t.path, :type => 'text/csv',
-              :disposition => 'attachment',
-              :filename => "container_file_contents.csv"
-
-    t.close
 
   end
 
   def related_materials_csv
 
-    t = Tempfile.new("related_materials_csv")
+    Tempfile.open("contained_files_csv") do |t|
 
-    csv_string = "doi,datacite_relationship,material_id_type,material_id,material_type"
+      datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT)
 
-    datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT)
+      report = CSV.new(t)
 
-    datasets.each do |dataset|
-      dataset.related_materials.each do |material|
+      report << [ "doi,datacite_relationship", "material_id_type", "material_id,material_type" ]
 
-        datacite_arr = Array.new
+        datasets.each do |dataset|
+          dataset.related_materials.each do |material|
 
-        if material.datacite_list && material.datacite_list != ''
-          datacite_arr = material.datacite_list.split(',')
-        else
-          line = "\n#{dataset.identifier},,#{material.uri_type},#{material.uri},#{material.selected_type}"
+            datacite_arr = Array.new
+
+            if material.datacite_list && material.datacite_list != ''
+              datacite_arr = material.datacite_list.split(',')
+            # else
+            #   report << ["#{dataset.identifier}", "", "#{material.uri_type}", "#{material.uri}", "#{material.selected_type}"]
+            end
+
+            datacite_arr.each do |relationship|
+
+              if ['IsPreviousVersionOf','IsNewVersionOf'].exclude?(relationship)
+                report << ["#{dataset.identifier}", "#{relationship}", "#{material.uri_type}", "#{material.uri}", "#{material.selected_type}"]
+              end
+
+            end
         end
-
-        datacite_arr.each do |relationship|
-
-          if ['IsPreviousVersionOf','IsNewVersionOf'].exclude?(relationship)
-            line = "\n#{dataset.identifier},#{relationship},#{material.uri_type},#{material.uri},#{material.selected_type}"
-            csv_string = csv_string + line
-          end
-
-
-        end
-
       end
-    end
 
-    t.write(csv_string)
+      send_file t.path, :type => 'text/csv',
+                :disposition => 'attachment',
+                :filename => "related_materials.csv"
 
-    send_file t.path, :type => 'text/csv',
-              :disposition => 'attachment',
-              :filename => "related_materials.csv"
+      report.close(unlink_now=false)
 
-    t.close
-
+     end
   end
-
 end

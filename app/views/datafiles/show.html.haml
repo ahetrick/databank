@@ -20,3 +20,11 @@
     =link_to datafile_path(@datafile.web_id), :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-danger btn-block idb" do
       %span(class="glyphicon glyphicon-trash" )
       Delete
+
+%strong Peek Type
+= @datafile.peek_type
+
+%br
+%strong Peek Text
+%br
+= simple_format(@datafile.peek_text)
