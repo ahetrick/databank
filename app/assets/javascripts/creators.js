@@ -270,19 +270,25 @@ function search_orcid() {
                   }
                   if (total_found > 0) {
 
-                      $("#orcid-search-results").append("<table class='table table-striped' id='orcid-search-results-table'><thead><tr class='row'><th><span class='col-md-6'>Identifier (click link for details)</span><span class='col-md-1'>Select</span></th></tr></thead><tbody></tbody></table>")
+                      $("#orcid-search-results").append("<table class='table table-striped' id='orcid-search-results-table'><thead><tr class='row'><th class='col-md-5'>Identifier (click link for details)</th><th class='col-md-5'>Affiliation</span></th><th class='col-md-1'>Select</th></tr></thead><tbody></tbody></table>")
 
                       for (i = 0; i < max_records; i++) {
                           var orcidIdRecord = identifiers[i];
 
-                          var orcidPerson = getOrcidPerson(orcidIdRecord["path"]);
+                          var orcid = orcidIdRecord["path"];
+
+                          var orcid_uri = orcidIdRecord["uri"];
+
+                          var orcidPerson = getOrcidPerson(orcid);
 
                           var given_name = orcidPerson["given-names"]["value"];
                           var family_name = orcidPerson["family-name"]["value"];
-                          var orcid = orcidIdRecord["path"];
-                          var orcid_uri = orcidIdRecord["uri"];
 
-                          $("#orcid-search-results-table > tbody:last-child").append("<tr class='row'><td><span class='col-md-6'><a href='" + orcid_uri + "' target='_blank'>" + family_name + ", " + given_name + ": " + orcid + "</a></span><span class='col-md-1'><input type='radio' name='orcid-search-select' onclick='enableOrcidImport()'  value='" + orcid + "~" + family_name + "~" + given_name + "'/></span></td></tr>");
+
+                          var affiliation = getOrcidAffiliation(orcid);
+
+
+                          $("#orcid-search-results-table > tbody:last-child").append("<tr class='row'><td><a href='" + orcid_uri + "' target='_blank'>" + family_name + ", " + given_name + ": " + orcid + "</a></td><td>" + affiliation + "</td><td><input type='radio' name='orcid-search-select' onclick='enableOrcidImport()'  value='" + orcid + "~" + family_name + "~" + given_name + "'/></td></tr>");
 
                       }
 
@@ -290,6 +296,7 @@ function search_orcid() {
                       $("#orcid-search-results").append("<p>No results found.  Try fewer letters or <a href='http://orcid.org' target='_blank'>The ORCID site</a></p>")
                   }
               } catch(err){
+                  console.trace();
                   alert("Error searching: " + err.message);
               }
 
@@ -320,6 +327,31 @@ function getOrcidPerson(orcid) {
     var responseJson = JSON.parse(response);
 
     return responseJson["name"];
+
+}
+
+function getOrcidAffiliation(orcid){
+    var endoint = 'https://pub.orcid.org/v2.0/';
+
+    var employmentsUrl = endoint + orcid + "/employments";
+
+    var xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.open("GET", employmentsUrl, false); // false for synchronous request
+    xmlHttp.setRequestHeader("Accept", "application/json");
+    xmlHttp.send(null);
+    response = xmlHttp.responseText;
+
+    var responseJson = JSON.parse(response);
+
+    var affiliaiton = 'unknown';
+
+    if(responseJson["employment-summary"] != null && responseJson["employment-summary"][0] !=null && responseJson["employment-summary"][0]["organization"] != null) {
+
+        var affiliaiton = responseJson["employment-summary"][0]["organization"]["name"] || "unknown";
+    }
+
+    return affiliaiton;
 
 }
 
