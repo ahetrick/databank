@@ -71,28 +71,29 @@
                 = f.label :description, "Dataset Description", :class => "control-label"
                 %br
                 = f.text_area :description, :rows => 3,  :class => "form-control dataset", :placeholder => "[Provide a brief description of the dataset you are publishing. This will be publicly displayed for visitors to your dataset's page. This information should inform another researcher how your dataset may be useful or what conclusions it may support. You may choose to repeat a portion of your main documentation file here as well. This information should describe your dataset, not summarize a paper that may be associated with it.]"
-              .row.curator-only
-                .col-md-12
-                  .form-group
-                    =f.label :subject, "Subject", class: "control-label"
-                    %br
-                    =f.radio_button :subject, Databank::Subject::ARTS_HUMANITIES, checked: @dataset.subject == Databank::Subject::ARTS_HUMANITIES, class: "dataset", id: "arts"
-                    =label_tag('arts', Databank::Subject::ARTS_HUMANITIES)
-                    %br
-                    =f.radio_button :subject, Databank::Subject::LIFE_SCIENCES, checked: @dataset.subject == Databank::Subject::LIFE_SCIENCES, class: "dataset", id: "life"
-                    =label_tag('life', Databank::Subject::LIFE_SCIENCES)
-                    %br
-                    =f.radio_button :subject, Databank::Subject::PHYSICAL_SCIENCES, checked: @dataset.subject == Databank::Subject::PHYSICAL_SCIENCES, class: "dataset", id: 'physical'
-                    =label_tag('physical', Databank::Subject::PHYSICAL_SCIENCES)
-                    %br
-                    =f.radio_button :subject, Databank::Subject::SOCIAL_SCIENCES, checked: @dataset.subject == Databank::Subject::SOCIAL_SCIENCES, class: "dataset", id: 'social'
-                    =label_tag('social', Databank::Subject::SOCIAL_SCIENCES)
-                    %br
-                    =f.radio_button :subject, Databank::Subject::TECHNOLOGY_ENGINEERING, checked: @dataset.subject == Databank::Subject::TECHNOLOGY_ENGINEERING, class: "dataset", id:'tech'
-                    =label_tag('tech', Databank::Subject::TECHNOLOGY_ENGINEERING)
-                    %br
-                    =f.radio_button :subject, Databank::Subject::NONE, checked: @dataset.subject == Databank::Subject::NONE, class: "dataset", id:'none'
-                    =label_tag('none', 'None')
+                -if(can? :manage, @dataset)
+                .row.curator-only
+                  .col-md-12
+                    .form-group
+                      =f.label :subject, "Subject", class: "control-label"
+                      %br
+                      =f.radio_button :subject, Databank::Subject::ARTS_HUMANITIES, checked: @dataset.subject == Databank::Subject::ARTS_HUMANITIES, class: "dataset", id: "arts"
+                      =label_tag('arts', Databank::Subject::ARTS_HUMANITIES)
+                      %br
+                      =f.radio_button :subject, Databank::Subject::LIFE_SCIENCES, checked: @dataset.subject == Databank::Subject::LIFE_SCIENCES, class: "dataset", id: "life"
+                      =label_tag('life', Databank::Subject::LIFE_SCIENCES)
+                      %br
+                      =f.radio_button :subject, Databank::Subject::PHYSICAL_SCIENCES, checked: @dataset.subject == Databank::Subject::PHYSICAL_SCIENCES, class: "dataset", id: 'physical'
+                      =label_tag('physical', Databank::Subject::PHYSICAL_SCIENCES)
+                      %br
+                      =f.radio_button :subject, Databank::Subject::SOCIAL_SCIENCES, checked: @dataset.subject == Databank::Subject::SOCIAL_SCIENCES, class: "dataset", id: 'social'
+                      =label_tag('social', Databank::Subject::SOCIAL_SCIENCES)
+                      %br
+                      =f.radio_button :subject, Databank::Subject::TECHNOLOGY_ENGINEERING, checked: @dataset.subject == Databank::Subject::TECHNOLOGY_ENGINEERING, class: "dataset", id:'tech'
+                      =label_tag('tech', Databank::Subject::TECHNOLOGY_ENGINEERING)
+                      %br
+                      =f.radio_button :subject, Databank::Subject::NONE, checked: @dataset.subject == Databank::Subject::NONE, class: "dataset", id:'none'
+                      =label_tag('none', 'None')
 
               .row
                 .col-md-6
