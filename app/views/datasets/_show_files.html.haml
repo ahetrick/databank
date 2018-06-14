@@ -104,6 +104,7 @@
                               .row
                                 .indent
                                   .preview(id="preview_#{datafile.web_id}")
-                                    =simple_format(datafile.peek_text)
+                                    -if datafile.is_all_txt? || datafile.is_part_txt?
+                                      =simple_format(datafile.peek_text)
                               .row.loading.text-center
                                 %i(class="fa fa-spinner fa-spin fa-4x view-load-spinner spinner_#{datafile.web_id}" )
