@@ -23,6 +23,16 @@ namespace :databank do
     end
   end
 
+  desc 'delete specific dataset'
+  task :delete_specific => :environment do
+
+    destroy_me = Dataset.find_by_key('IDBDEV-5368097')
+    destroy_me.destroy
+
+  end
+
+
+
   desc 'delete all datasets'
   task :delete_all => :environment do
 
