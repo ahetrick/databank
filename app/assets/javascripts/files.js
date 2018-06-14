@@ -280,9 +280,15 @@ function preview_image(iiif_root, web_id){
 
     $("#preview_" + web_id).show();
     if ($("#preview_" + web_id).is(':empty')){
+        console.log("preview was empty");
         $('.spinner_'+web_id).show();
-        $("#preview_" + web_id).html("<img src='" + iiif_root + "/" + web_id + "/full/full/0/default.jpg" + "' class='preview_body'>");
+        var image_url = iiif_root + "/" + web_id + "/full/full/0/default.jpg";
+        console.log(image_url);
+        $("#preview_" + web_id).html("<img src="+ image_url +" class='preview_body'>");
         $('.spinner_'+web_id).hide();
+    } else {
+        console.log("preview was not empty")
+        console.log($("#preview_" + web_id).html());
     }
     $("#preview_img_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="hide_image_preview(&#39;' + iiif_root + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-close"></span> View</button>');
 }
