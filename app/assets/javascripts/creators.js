@@ -221,12 +221,12 @@ function search_orcid() {
 
     var endpoint = 'https://pub.orcid.org/v2.0/search?q=';
     if ($("#creator-family").val() != "") {
-        var search_query = 'family-name:' + $("#creator-family").val();
+        var search_query = 'family-name:' + $("#creator-family").val() + "*";
         if ($("#creator-given").val() != "") {
-            search_query = search_query + '+AND+given-names:' + $("#creator-given").val();
+            search_query = search_query + '+AND+given-names:' + $("#creator-given").val() + "*";
         }
     } else if ($("#creator-given").val() != "") {
-        var search_query = 'given-names:' + $("#creator-given").val();
+        var search_query = 'given-names:' + $("#creator-given").val() + "*";
     }
 
     var search_string = endpoint + search_query;

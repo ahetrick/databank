@@ -249,15 +249,12 @@ function create_from_remote(){
                 else{
                     create_from_remote_unknown_size();
                 }
-
             },
             error: function (data) {
                 console.log("content-length unavailable");
                 create_from_remote_unknown_size();
-
             }
         });
-
     }
 }
 
@@ -271,7 +268,6 @@ function preview(web_id){
         $('.spinner_'+web_id).show();
 
         $.getJSON( "/datafiles/" + web_id + "/viewtext", function( json ) {
-            console.log(json);
             $("#preview_" + web_id).html(json.peek_text);
             $("#preview_" + web_id).addClass('fetched');
             $('.spinner_'+web_id).hide();

@@ -31,7 +31,23 @@ namespace :databank do
 
   end
 
+  desc 'update sitemap'
+  task :update_sitemap => :environment do
 
+    doc = Nokogiri::XML::Document.parse(%Q(<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"></urlset>))
+
+    puts doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
+
+    released_datasets = Dataset.where(:publication_state => Databank::PublicationState::RELEASED )
+
+    released_datasets.each do |d|
+      puts d.title
+    end
+
+
+
+
+  end
 
   desc 'delete all datasets'
   task :delete_all => :environment do
@@ -47,9 +63,6 @@ namespace :databank do
     Audited::Adapters::ActiveRecord::Audit.all.each do |audit|
       audit.destroy
     end
-
-
-
   end
 
   desc 'delete all datafiles'
