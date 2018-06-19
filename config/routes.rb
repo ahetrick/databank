@@ -43,6 +43,7 @@ Rails.application.routes.draw do
         get 'preview', to: 'datafiles#preview'
         get 'display', to: 'datafiles#display'
         get 'filepath', to: 'datafiles#filepath', defaults: {format: 'json'}
+        get 'viewtext', to: 'datafiles#peek_text', defaults: {format: 'json'}
         get 'iiif_filepath', to: 'datafiles#iiif_filepath', defaults: {format: 'json'}
       end
     end
@@ -117,6 +118,9 @@ Rails.application.routes.draw do
 
   # filepath
   get '/datafiles/:id/filepath', to: "datafiles#filepath", defaults: {format: 'json'}
+
+  # viewtext
+  get '/datafiles/:id/viewtext', to: 'datafiles#peek_text', defaults: {format: 'json'}
 
   # iiif_filepath
   get '/datafiles/:id/iiif_filepath', to: "datafiles#iiif_filepath", defaults: {format: 'json'}

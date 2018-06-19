@@ -264,6 +264,20 @@ function create_from_remote(){
 function preview(web_id){
     console.log("inside preview")
     $("#preview_" + web_id).show();
+
+    if ($("#preview_" + web_id).hasClass('fetched')){
+        console.log("using previously fetched text");
+    } else {
+        $('.spinner_'+web_id).show();
+
+        $.getJSON( "/datafiles/" + web_id + "/viewtext", function( json ) {
+            console.log(json);
+            $("#preview_" + web_id).html(json.peek_text);
+            $("#preview_" + web_id).addClass('fetched');
+            $('.spinner_'+web_id).hide();
+        });
+    }
+
     $("#preview_glyph_" + web_id).removeClass("glyphicon-eye-open");
     $("#preview_glyph_" + web_id).addClass("glyphicon-eye-close");
     $("#preview_btn_" + web_id).attr('onclick', "hide_preview('" + web_id  + "')");

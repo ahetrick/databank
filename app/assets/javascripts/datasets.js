@@ -41,8 +41,6 @@ ready = function () {
 
     });
 
-
-
     $( ".choose_review_block_v" ).click(function() {
         $('#choose_review_v').trigger("click");
     });
@@ -116,7 +114,6 @@ ready = function () {
         $(this).prev().toggle();
         return false;
     });
-
 
     $(".upload-consistent").tooltip({
         html: "true",
@@ -896,9 +893,6 @@ function getNewToken() {
         setTokenExamples(data.token, data.expires);
     });
 }
-
-
-
 
 function setTokenExamples(upload_token, token_expiration){
 

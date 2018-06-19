@@ -3,13 +3,15 @@ require 'tempfile'
 require 'open-uri'
 require 'fileutils'
 require 'net/http'
-require  Rails.root.join('app', 'uploaders', 'binary_uploader.rb')
+require Rails.root.join('app', 'uploaders', 'binary_uploader.rb')
 
 OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
 class DatafilesController < ApplicationController
 
-  before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download, :record_download, :upload, :do_upload, :reset_upload, :resume_upload, :update_status, :preview, :display, :filepath, :iiif_filepath]
+  before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download, :record_download,
+                                      :upload, :do_upload, :reset_upload, :resume_upload, :update_status,
+                                      :preview, :display, :peek_text, :filepath, :iiif_filepath]
 
   # GET /datafiles
   # GET /datafiles.json
@@ -19,7 +21,7 @@ class DatafilesController < ApplicationController
       @dataset = Dataset.find_by_key(params[:dataset_id])
       @datafiles = Datafile.all
       @datafiles.each do |datafile|
-        datafile.destroy unless ( (datafile.binary&.file) || (datafile.medusa_path && datafile.medusa_path != "") )
+        datafile.destroy unless ((datafile.binary&.file) || (datafile.medusa_path && datafile.medusa_path != ""))
       end
       authorize! :edit, @dataset
     end
@@ -55,8 +57,8 @@ class DatafilesController < ApplicationController
     @datafile = Datafile.create(dataset_id: @dataset.id)
     authorize! :edit, @dataset
     respond_to do |format|
-      format.html { redirect_to "/datasets/#{@dataset.key}/datafiles/#{@datafile.web_id}/upload" }
-      format.json { render :edit, status: :created, location: "/datasets/#{@dataset.key}/datafiles/#{@datafile.webi_id}/upload" }
+      format.html {redirect_to "/datasets/#{@dataset.key}/datafiles/#{@datafile.web_id}/upload"}
+      format.json {render :edit, status: :created, location: "/datasets/#{@dataset.key}/datafiles/#{@datafile.webi_id}/upload"}
     end
   end
 
@@ -83,11 +85,11 @@ class DatafilesController < ApplicationController
 
     respond_to do |format|
       if @datafile.save
-        format.html { redirect_to "/datasets/#{@dataset.key}/datafiles/#{@datafile.web_id}/upload" }
-        format.json { render json: to_fileupload, content_type: request.format, :layout => false }
+        format.html {redirect_to "/datasets/#{@dataset.key}/datafiles/#{@datafile.web_id}/upload"}
+        format.json {render json: to_fileupload, content_type: request.format, :layout => false}
       else
-        format.html { render :new }
-        format.json { render json: @datafile.errors, status: :unprocessable_entity }
+        format.html {render :new}
+        format.json {render json: @datafile.errors, status: :unprocessable_entity}
       end
     end
 
@@ -105,10 +107,10 @@ class DatafilesController < ApplicationController
     @datafile.record_download(request.remote_ip)
     respond_to do |format|
       format.html {
-        send_file( @datafile.bytestream_path,
-                   :disposition => 'inline',
-                   :type => @datafile.mime_type,
-                   :x_sendfile => true )
+        send_file(@datafile.bytestream_path,
+                  :disposition => 'inline',
+                  :type => @datafile.mime_type,
+                  :x_sendfile => true)
       }
       format.json {render json: {filename: @datafile.bytestream_name, body: @datafile.preview, status: :ok}}
     end
@@ -122,11 +124,11 @@ class DatafilesController < ApplicationController
 
     respond_to do |format|
       if @datafile.update(datafile_params)
-        format.html { redirect_to @datafile, notice: 'Datafile was successfully updated.' }
-        format.json { render :show, status: :ok, location: @datafile }
+        format.html {redirect_to @datafile, notice: 'Datafile was successfully updated.'}
+        format.json {render :show, status: :ok, location: @datafile}
       else
-        format.html { render :edit }
-        format.json { render json: @datafile.errors, status: :unprocessable_entity }
+        format.html {render :edit}
+        format.json {render json: @datafile.errors, status: :unprocessable_entity}
       end
     end
   end
@@ -141,13 +143,13 @@ class DatafilesController < ApplicationController
     respond_to do |format|
 
       if @dataset
-        format.html{ redirect_to edit_dataset_path(@dataset.key)}
-        format.json { render json: {"confirmation" => "deleted"}, status: :ok }
+        format.html {redirect_to edit_dataset_path(@dataset.key)}
+        format.json {render json: {"confirmation" => "deleted"}, status: :ok}
       else
-        format.html { redirect_to "/datasets/edit" }
-        format.json { render json: {"confirmation" => "deleted"}, status: :ok }
+        format.html {redirect_to "/datasets/edit"}
+        format.json {render json: {"confirmation" => "deleted"}, status: :ok}
       end
-      format.json { render json: {"confirmation" => "deleted"}, status: :ok }
+      format.json {render json: {"confirmation" => "deleted"}, status: :ok}
     end
 
   end
@@ -168,7 +170,7 @@ class DatafilesController < ApplicationController
     # If no file has been uploaded or the uploaded file has a different filename,
     # do a new upload from scratch
 
-    if !@datafile.binary || !@datafile.binary.file  || (@datafile.binary.file.filename != unpersisted_datafile.binary.file.filename)
+    if !@datafile.binary || !@datafile.binary.file || (@datafile.binary.file.filename != unpersisted_datafile.binary.file.filename)
       @datafile.assign_attributes(upload_params)
       @datafile.upload_status = 'uploading'
       @datafile.save!
@@ -178,7 +180,7 @@ class DatafilesController < ApplicationController
     else
       current_size = @datafile.binary.size
       content_range = request.headers['CONTENT-RANGE']
-      begin_of_chunk =  content_range[/\ (.*?)-/,1].to_i # "bytes 100-999999/1973660678" will return '100'
+      begin_of_chunk = content_range[/\ (.*?)-/, 1].to_i # "bytes 100-999999/1973660678" will return '100'
 
       # If the there is a mismatch between the size of the incomplete upload and the content-range in the
       # headers, then it's the wrong chunk!
@@ -189,7 +191,7 @@ class DatafilesController < ApplicationController
       end
 
       # Add the following chunk to the incomplete upload
-      File.open(@datafile.binary.path, "ab") { |f| f.write(upload_params[:binary].read) }
+      File.open(@datafile.binary.path, "ab") {|f| f.write(upload_params[:binary].read)}
 
       # Update the upload_file_size attribute
       @datafile.upload_file_size = @datafile.upload_file_size.nil? ? unpersisted_datafile.binary.file.size : @datafile.upload_file_size + unpersisted_datafile.binary.file.size
@@ -213,7 +215,7 @@ class DatafilesController < ApplicationController
   def resume_upload
     @dataset = Dataset.find_by_key(params[:dataset_id])
     raise "Dataset not Found, params:#{params.to_yaml}" unless @dataset
-    render json: { file: { name: "/datafiles/#{@dataset.key}/datafiles/#{@datafile.web_id}", size: @datafile.binary.size } } and return
+    render json: {file: {name: "/datafiles/#{@dataset.key}/datafiles/#{@datafile.web_id}", size: @datafile.binary.size}} and return
     #render json: {file: {name: "#{@datafile.binary.file.filename}", size: @datafile.binary.size}} and return
   end
 
@@ -258,6 +260,10 @@ class DatafilesController < ApplicationController
     render json: {filepath: @datafile.bytestream_path}
   end
 
+  def peek_text
+    render json: {peek_text: @datafile.peek_text}
+  end
+
   def iiif_filepath
     render json: {filepath: @datafile.iiif_bytestream_path}
   end
@@ -295,7 +301,7 @@ class DatafilesController < ApplicationController
 
   def create_from_deckfile
 
-    @datafile= Datafile.new
+    @datafile = Datafile.new
     @dataset = Dataset.find_by_key(params[:dataset_key])
     @deckfile = Deckfile.find(params[:deckfile_id])
     if @dataset && @deckfile
@@ -323,7 +329,7 @@ class DatafilesController < ApplicationController
 
     uri = URI.parse(@remote_url)
 
-    Net::HTTP.start(uri.host, uri.port, :use_ssl => (uri.scheme == 'https')) { |http|
+    Net::HTTP.start(uri.host, uri.port, :use_ssl => (uri.scheme == 'https')) {|http|
       response = http.request_head(uri.path)
     }
 
@@ -335,16 +341,16 @@ class DatafilesController < ApplicationController
 
       if remote_content_length && remote_content_length > 0
 
-        render(json: {"status":"ok", "remote_content_length":remote_content_length }, content_type: request.format, layout: false)
+        render(json: {"status": "ok", "remote_content_length": remote_content_length}, content_type: request.format, layout: false)
 
       else
 
-        render(json: {"status":"error", "error":"error getting remote content length"}, content_type: request.format, layout: false)
+        render(json: {"status": "error", "error": "error getting remote content length"}, content_type: request.format, layout: false)
 
       end
 
     else
-      render(json: {"status":"error", "error":"error getting content length from url"}, content_type: request.format, layout: false)
+      render(json: {"status": "error", "error": "error getting content length from url"}, content_type: request.format, layout: false)
     end
   end
 
@@ -367,16 +373,16 @@ class DatafilesController < ApplicationController
         uri = URI.parse(@remote_url)
         Rails.logger.warn(uri.to_yaml)
 
-        Net::HTTP.start(uri.host, uri.port, :use_ssl => true) { |http|
-          http.request_get(uri.path) { |res|
-            res.read_body { |seg|
+        Net::HTTP.start(uri.host, uri.port, :use_ssl => true) {|http|
+          http.request_get(uri.path) {|res|
+            res.read_body {|seg|
 
               if File.size(outfile) < 1000000000000
                 Rails.logger.warn(seg)
                 outfile << seg
               else
                 @datafile.destroy
-                render(json: {files:[{datafileId: 0,webId: "error",url: "error",name: "error: filesize exceeds 1TB",size: "0"}]}, content_type: request.format, :layout => false)
+                render(json: {files: [{datafileId: 0, webId: "error", url: "error", name: "error: filesize exceeds 1TB", size: "0"}]}, content_type: request.format, :layout => false)
               end
             }
           }
@@ -400,8 +406,8 @@ class DatafilesController < ApplicationController
   end
 
 
-
   private
+
   # Use callbacks to share common setup or constraints between actions.
   def set_datafile
     @datafile = Datafile.find_by_web_id(params[:id])

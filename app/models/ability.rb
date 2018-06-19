@@ -49,6 +49,7 @@ class Ability
         dataset.try(:depositor_email) == user.email
       end
 
+      can :peek_text, Datafile
       can :filepath, Datafile
       can :iiif_filepath, Datafile
       can :download_link, Dataset
@@ -70,6 +71,7 @@ class Ability
       can :index, FeaturedResearcher
 
     else
+      can :peek_text, Datafile
       can :filepath, Datafile
       can :iiif_filepath, Datafile
       can :download_citation_report, :all
