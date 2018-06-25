@@ -161,6 +161,8 @@ class DatabankMailer < ActionMailer::Base
                 end
               rescue OpenURI::HTTPError => ex
                 status_code = ex.io.status
+              rescue Errno::ENOENT => err
+                status_code = "error while checking"
               end
 
             end
