@@ -129,6 +129,61 @@ class DatabankMailer < ActionMailer::Base
 
   end
 
+
+  def link_report()
+    subject = prepend_system_code('Illinois Data Bank] Related Materials Links Status Report')
+
+    datasets = Dataset.where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::TempSuppress::FILE, Databank::PublicationState::PermSuppress::FILE]).where(is_test: false)
+
+    @report = "<table border='1'><tr><th>DOI</th><th>Dataset_URL</th><th>Material_Type</th><th>Relationship</th><th>Material_URL</th><th>Status_Code</th></tr>"
+
+    datasets.each do |dataset|
+
+      dataset.related_materials.each do |material|
+
+        datacite_arr = Array.new
+
+        if material.datacite_list && material.datacite_list != ''
+          datacite_arr = material.datacite_list.split(',')
+        end
+
+        datacite_arr.each do |relationship|
+
+          if ['IsPreviousVersionOf','IsNewVersionOf'].exclude?(relationship)
+
+            if material.link && material.link != ""
+
+              status_code = ""
+
+              begin
+                open(material.link) do |request|
+                  status_code = request.status
+                end
+              rescue OpenURI::HTTPError => ex
+                status_code = ex.io.status
+              end
+
+            end
+
+            @report = @report + "<tr><td>#{dataset.identifier}</td><td>#{IDB_CONFIG[:root_url_text]}/datasets/#{dataset.key}</td><td>#{material.selected_type}</td><td>#{relationship}</td><td>#{material.link}</td><td>#{status_code}</td></tr>"
+
+          end
+
+        end
+
+
+
+      end
+
+    end
+
+    @report = @report + "</table>"
+
+    mail(to: 'mfall3@illinois.edu', subject: subject )
+
+  end
+
+
   def prepend_system_code(subject)
     # Rails.logger.warn IDB_CONFIG[:root_url_text]
     if IDB_CONFIG[:root_url_text].include?("dev")

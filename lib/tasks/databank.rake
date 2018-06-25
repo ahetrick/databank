@@ -31,6 +31,7 @@ namespace :databank do
 
   end
 
+  #TODO: complete
   desc 'update sitemap'
   task :update_sitemap => :environment do
 
@@ -44,8 +45,13 @@ namespace :databank do
       puts d.title
     end
 
+  end
 
+  desc 'check_metadata_links'
+  task :verify_metadata_links => :environment do
 
+    notification = DatabankMailer.link_report()
+    notification.deliver_now
 
   end
 
