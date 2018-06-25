@@ -1,3 +1,5 @@
+require 'net/http'
+
 class DatabankMailer < ActionMailer::Base
   default from: "databank@library.illinois.edu"
 
@@ -156,13 +158,22 @@ class DatabankMailer < ActionMailer::Base
               status_code = ""
 
               begin
-                open(material.link) do |request|
-                  status_code = request.status
+                uri = URI(material.link)
+                Net::HTTP.start(uri.host, uri.port) do |http|
+                  request = Net::HTTP::Get.new uri
+                  response = http.request request # Net::HTTPResponse object
+
+                  case response
+                  when Net::HTTPSuccess then
+                    status_code = "OK"
+                  when Net::HTTPRedirection then
+                    status_code = "OK redirected to #{response['location']}"
+                  else
+                    status_code = "#{response.value}"
+                  end
                 end
-              rescue OpenURI::HTTPError => ex
-                status_code = ex.io.status
-              rescue Errno::ENOENT => err
-                status_code = "error while checking"
+              rescue => ex
+                status_code = "error attempting check"
               end
 
             end
