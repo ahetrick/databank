@@ -1,4 +1,4 @@
-require 'net/http'
+require 'open-uri'
 
 class DatabankMailer < ActionMailer::Base
   default from: "databank@library.illinois.edu"
@@ -155,30 +155,35 @@ class DatabankMailer < ActionMailer::Base
 
             if material.link && material.link != ""
 
-              status_code = ""
+              the_status = ""
 
               begin
                 uri = URI(material.link)
-                Net::HTTP.start(uri.host, uri.port) do |http|
-                  request = Net::HTTP::Get.new uri
-                  response = http.request request # Net::HTTPResponse object
+                begin
+                  io_thing = open(uri)
 
-                  case response
-                  when Net::HTTPSuccess then
-                    status_code = "OK"
-                  when Net::HTTPRedirection then
-                    status_code = "OK redirected to #{response['location']}"
-                  else
-                    status_code = "#{response.value}"
-                  end
+                  # The text of the status code is in [1]
+                  the_status = io_thing.status[0]
+
+                rescue OpenURI::HTTPError => the_error
+                  # some clean up work goes here and then..
+
+                  the_status = the_error.io.status[0] # => 3xx, 4xx, or 5xx
+
+                rescue Exception => ex
+
+                  puts ex.message
+                  puts ex.class
+
+                  raise ex
+
                 end
-              rescue => ex
-                status_code = "error attempting check"
+
               end
 
-            end
+              @report = @report + "<tr><td>#{dataset.identifier}</td><td>#{IDB_CONFIG[:root_url_text]}/datasets/#{dataset.key}</td><td>#{material.selected_type}</td><td>#{relationship}</td><td>#{material.link}</td><td>#{the_status}</td></tr>"
 
-            @report = @report + "<tr><td>#{dataset.identifier}</td><td>#{IDB_CONFIG[:root_url_text]}/datasets/#{dataset.key}</td><td>#{material.selected_type}</td><td>#{relationship}</td><td>#{material.link}</td><td>#{status_code}</td></tr>"
+            end
 
           end
 
@@ -192,7 +197,7 @@ class DatabankMailer < ActionMailer::Base
 
     @report = @report + "</table>"
 
-    mail(to: 'mfall3@illinois.edu', subject: subject )
+    mail(to: "#{IDB_CONFIG[:tech_error_mail_list]}", subject: subject)
 
   end
 
