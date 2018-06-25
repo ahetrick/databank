@@ -155,7 +155,7 @@ class DatabankMailer < ActionMailer::Base
 
             if material.link && material.link != ""
 
-              the_status = ""
+              the_status = "error"
 
 
               begin
@@ -169,12 +169,19 @@ class DatabankMailer < ActionMailer::Base
 
                 the_status = the_error.io.status[0] # => 3xx, 4xx, or 5xx
 
-              rescue Exception => ex
+              rescue Errno::ENOENT => err
 
-                puts ex.message
-                puts ex.class
+                link_plus_slash = material.link + "/"
 
-                raise ex
+                begin
+                  io_thing2 = open(link_plus_slash)
+                  the_status = io_thing2.status[0]
+
+                rescue OpenURI::HTTPError => the_error
+                  # some clean up work goes here and then..
+                  the_status = the_error.io.status[0] # => 3xx, 4xx, or 5xx
+                end
+
 
               end
 
@@ -185,7 +192,7 @@ class DatabankMailer < ActionMailer::Base
           end
 
         end
-        
+
       end
 
     end
