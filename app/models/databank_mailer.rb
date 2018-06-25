@@ -170,18 +170,7 @@ class DatabankMailer < ActionMailer::Base
 
               rescue Errno::ENOENT => err
 
-                puts "inside caught Errno::ENOENT"
-
-                link_plus_slash = material.link + "/"
-
-                begin
-                  io_thing2 = open(link_plus_slash)
-                  the_status = io_thing2.status[0]
-
-                rescue OpenURI::HTTPError => the_error
-                  the_status = the_error.io.status[0] # => 3xx, 4xx, or 5xx
-                end
-
+                the_status = "malformed url"
 
               end
 
