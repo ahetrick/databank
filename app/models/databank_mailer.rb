@@ -1,4 +1,5 @@
 require 'open-uri'
+require 'open_uri_redirections'
 
 class DatabankMailer < ActionMailer::Base
   default from: "databank@library.illinois.edu"
@@ -159,7 +160,7 @@ class DatabankMailer < ActionMailer::Base
 
 
               begin
-                io_thing = open(material.link)
+                io_thing = open(material.link, allow_redirections: :all)
 
                 # The text of the status code is in [1]
                 the_status = io_thing.status[0]

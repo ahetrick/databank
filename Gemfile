@@ -58,6 +58,8 @@ gem 'haml'
 
 gem 'uuid'
 
+gem 'open_uri_redirections'
+
 gem 'simple_form'
 
 # Use RMagick to connect with ImageMagick
