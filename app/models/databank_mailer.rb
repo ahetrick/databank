@@ -165,11 +165,12 @@ class DatabankMailer < ActionMailer::Base
                 the_status = io_thing.status[0]
 
               rescue OpenURI::HTTPError => the_error
-                # some clean up work goes here and then..
 
                 the_status = the_error.io.status[0] # => 3xx, 4xx, or 5xx
 
               rescue Errno::ENOENT => err
+
+                puts "inside caught Errno::ENOENT"
 
                 link_plus_slash = material.link + "/"
 
@@ -178,7 +179,6 @@ class DatabankMailer < ActionMailer::Base
                   the_status = io_thing2.status[0]
 
                 rescue OpenURI::HTTPError => the_error
-                  # some clean up work goes here and then..
                   the_status = the_error.io.status[0] # => 3xx, 4xx, or 5xx
                 end
 
