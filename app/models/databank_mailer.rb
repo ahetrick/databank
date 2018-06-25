@@ -157,40 +157,35 @@ class DatabankMailer < ActionMailer::Base
 
               the_status = ""
 
+
               begin
-                uri = URI(material.link)
-                begin
-                  io_thing = open(uri)
+                io_thing = open(material.link)
 
-                  # The text of the status code is in [1]
-                  the_status = io_thing.status[0]
+                # The text of the status code is in [1]
+                the_status = io_thing.status[0]
 
-                rescue OpenURI::HTTPError => the_error
-                  # some clean up work goes here and then..
+              rescue OpenURI::HTTPError => the_error
+                # some clean up work goes here and then..
 
-                  the_status = the_error.io.status[0] # => 3xx, 4xx, or 5xx
+                the_status = the_error.io.status[0] # => 3xx, 4xx, or 5xx
 
-                rescue Exception => ex
+              rescue Exception => ex
 
-                  puts ex.message
-                  puts ex.class
+                puts ex.message
+                puts ex.class
 
-                  raise ex
-
-                end
+                raise ex
 
               end
 
-              @report = @report + "<tr><td>#{dataset.identifier}</td><td>#{IDB_CONFIG[:root_url_text]}/datasets/#{dataset.key}</td><td>#{material.selected_type}</td><td>#{relationship}</td><td>#{material.link}</td><td>#{the_status}</td></tr>"
-
             end
+
+            @report = @report + "<tr><td>#{dataset.identifier}</td><td>#{IDB_CONFIG[:root_url_text]}/datasets/#{dataset.key}</td><td>#{material.selected_type}</td><td>#{relationship}</td><td>#{material.link}</td><td>#{the_status}</td></tr>"
 
           end
 
         end
-
-
-
+        
       end
 
     end
