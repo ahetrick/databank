@@ -173,6 +173,10 @@ class DatabankMailer < ActionMailer::Base
 
                 the_status = "malformed url"
 
+              rescue OpenUri::RuntimeError => run_err
+
+                the_status = "miscongured target"
+
               end
 
             end
