@@ -9,17 +9,17 @@ module Datacite
         raise "cannot create doi for imported dataset doi"
       end
 
-      host = IDB_CONFIG[:ezid_host]
+      host = IDB_CONFIG[:ez_host]
       uri = nil
 
       if dataset.is_test?
-        shoulder = '10.5072/FK2'
-        user = 'apitest'
-        password = 'apitest'
+        shoulder = IDB_CONFIG[:test_ez_shoulder]
+        user = IDB_CONFIG[:test_ez_username]
+        password = IDB_CONFIG[:test_ez_password]
       else
-        shoulder = IDB_CONFIG[:ezid_shoulder]
-        user = IDB_CONFIG[:ezid_username]
-        password = IDB_CONFIG[:ezid_password]
+        shoulder = IDB_CONFIG[:ez_shoulder]
+        user = IDB_CONFIG[:ez_username]
+        password = IDB_CONFIG[:ez_password]
       end
 
       # use specified DOI if provided
@@ -103,7 +103,7 @@ module Datacite
 
         user = nil
         password = nil
-        host = IDB_CONFIG[:ezid_host]
+        host = IDB_CONFIG[:ez_host]
 
         if dataset.is_test?
           user = 'apitest'
@@ -221,7 +221,7 @@ module Datacite
 
     def ezid_metadata_response(dataset)
 
-      host = IDB_CONFIG[:ezid_host]
+      host = IDB_CONFIG[:ez_host]
 
       begin
 
@@ -259,7 +259,7 @@ module Datacite
 
         user = nil
         password = nil
-        host = IDB_CONFIG[:ezid_host]
+        host = IDB_CONFIG[:ez_host]
 
         if dataset.is_test?
           user = 'apitest'

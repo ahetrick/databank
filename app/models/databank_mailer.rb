@@ -169,12 +169,14 @@ class DatabankMailer < ActionMailer::Base
 
                 the_status = the_error.io.status[0] # => 3xx, 4xx, or 5xx
 
-              rescue Errno::ENOENT => err
+              rescue Errno::ENOENT, URI::InvalidURIError  => err
 
                 the_status = "malformed url"
 
-              rescue OpenUri::RuntimeError => run_err
+              rescue Exception => run_err
 
+                puts run_err.message
+                puts run_err.class
                 the_status = "miscongured target"
 
               end
