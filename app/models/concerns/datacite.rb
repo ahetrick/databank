@@ -197,7 +197,7 @@ module Datacite
         response_body_hash["#{split_line[0]}"] = "#{split_line[1]}"
       end
 
-      return nil unless response_body_hash["_created"]
+      return nil unless response_body_hash["_created"] and response_body_hash != ""
 
       response_hash["target"] = response_body_hash["_target"]
       response_hash["created"]= (Time.at(Integer(response_body_hash["_created"])).to_datetime).strftime("%Y-%m-%d at %I:%M%p")
