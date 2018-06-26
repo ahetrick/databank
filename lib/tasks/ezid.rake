@@ -42,7 +42,7 @@ namespace :ezid do
         when Databank::PublicationState::DRAFT
           if existing_datacite_record
             has_conflict = true
-            note = "EZID record exists for draft"
+            note = "DataCite record exists for draft"
           else
             has_conflict = false
           end
@@ -103,7 +103,7 @@ namespace :ezid do
           else
             #puts "inside released with no ezid record"
             has_conflict = true
-            note = "no EZID record found for published dataset"
+            note = "no DataCite record found for published dataset"
           end
 
         when Databank::PublicationState::Embargo::METADATA
@@ -125,7 +125,7 @@ namespace :ezid do
                   has_conflict = false
                 else
                   has_conflict = true
-                  note "check metadata on EZID for Metadata & File embargo"
+                  note "check metadata on DataCite for Metadata & File embargo"
 
                 end
 
@@ -135,7 +135,7 @@ namespace :ezid do
             end
           else
             has_conflict = true
-            note = "no EZID record for Embargo dataset"
+            note = "no DataCite record for Embargo dataset"
           end
 
         when Databank::PublicationState::Embargo::FILE
@@ -155,7 +155,7 @@ namespace :ezid do
             end
           else
             has_conflict = true
-            note = "no EZID record found for File Embargo"
+            note = "no DataCite record found for File Embargo"
           end
 
         when Databank::PublicationState::TempSuppress::METADATA
@@ -165,7 +165,7 @@ namespace :ezid do
               has_conflict = false
             else
               has_conflict = true
-              note = "check metadata on EZID for temporary Metadata & File hold"
+              note = "check metadata on DataCite for temporary Metadata & File hold"
 
             end
           else
@@ -189,7 +189,7 @@ namespace :ezid do
             end
           else
             has_conflict = true
-            note = "missing EZID record for File Only Embargo"
+            note = "missing DataCite record for File Only Embargo"
           end
 
         when Databank::PublicationState::PermSuppress::METADATA
@@ -199,12 +199,12 @@ namespace :ezid do
               has_conflict = false
             else
               has_conflict = true
-              note "check metadata on EZID for Metadata & File embargo"
+              note "check metadata on DataCite for Metadata & File embargo"
 
             end
           else
             has_conflict = true
-            note = "check metadata on EZID for Metadata & File hold"
+            note = "check metadata on DataCite for Metadata & File hold"
           end
 
         when Databank::PublicationState::PermSuppress::FILE
@@ -224,7 +224,7 @@ namespace :ezid do
             end
           else
             has_conflict = true
-            note = "no EZID record found for permenantly File Only suppressed"
+            note = "no DataCite record found for permenantly File Only suppressed"
           end
 
       end

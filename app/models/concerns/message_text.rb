@@ -134,7 +134,7 @@ module MessageText
           elsif [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::RELEASED].include?(dataset.publication_state)
             msg << "<h3>This action will remove your dataset from <strong>public</strong> availability.</h3>"
             msg << "<ul>"
-            msg << "<li>The DOI link will resolve to an EZID tombestone page until #{effective_release_date}.</li>"
+            msg << "<li>The DOI link will resolve to an DataCite generic invalid tombstone page until #{effective_release_date}.</li>"
             msg << "<li>The record for your dataset is not visible, nor are your data files available until #{effective_release_date}.</li>"
           else
             msg << "<h4>Unexpected Error: Please contact the <a href='/help'>Research Data Service Team</a>.</h4><hr/>"

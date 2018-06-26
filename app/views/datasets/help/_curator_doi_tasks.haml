@@ -5,7 +5,7 @@
 
   %h4 Summary
   .indent
-    %p Only include the prefix/suffix in this field. This means do not put http or doi.org, etc. in the field. 10.13012 must remain our prefix. Only change suffix content when you are creating a new version of a dataset. Encoding semantic information into a DOI suffix other than the version number is not standard practice and must be discussed with the team. Check “Imported DOI” if you’re overwriting an existing EZID/DataCite record with an IDB dataset.
+    %p Only include the prefix/suffix in this field. This means do not put http or doi.org, etc. in the field. 10.13012 must remain our prefix. Only change suffix content when you are creating a new version of a dataset. Encoding semantic information into a DOI suffix other than the version number is not standard practice and must be discussed with the team. Check “Imported DOI” if you’re overwriting an existing DataCite record with an IDB dataset.
 
   %h4 Details
   .indent
@@ -13,7 +13,7 @@
 
     %p If you place a DOI in this box, Illinois Data Bank will register or reserve that specific DOI with DataCite and associate it with that IDB record. This will create a new record if that DOI does not already exist in DataCite, or it will overwrite an existing record it if does exist in DataCite and you check the “Imported DOI” box.
 
-    %p If you check the Imported DOI box, then in the confirm/publish step Illinois Data Bank will try to update the DataCite record for the DOI you enter here. Imported DOIs are used when an IDB deposit is taking over the record of a DataCite DOI that has already been registered or reserved. So far, we have only imported DOIs when we have deposited data into the Illinois Data Bank that already has a DOI minted through our EZID system. Example: Dan Work’s original taxi dataset. In both cases, use the 10.13012 prefix, which is our PURDUE.UIUCLIB prefix. No need to specify a DOI when creating a test deposit. Just checking the box will cause the correct prefix to be used.
+    %p If you check the Imported DOI box, then in the confirm/publish step Illinois Data Bank will try to update the DataCite record for the DOI you enter here. Imported DOIs are used when an IDB deposit is taking over the record of a DataCite DOI that has already been registered or reserved. So far, we have only imported DOIs when we have deposited data into the Illinois Data Bank that already has a DOI minted through our DataCite API system. Example: Dan Work’s original taxi dataset. In both cases, use the 10.13012 prefix, which is our PURDUE.UIUCLIB prefix. No need to specify a DOI when creating a test deposit. Just checking the box will cause the correct prefix to be used.
 
     %p If you do not check the Imported DOI box, the Illinois Data Bank will try to create a record in DataCite with this DOI. The DOI you enter here must be within our registered shoulders. So far, we have only specified new DOIs when we are creating a new version. To use this in versioning, copy and paste the identifier from the previous version, and then just change the last number after the “v”. Any proposed new use case for specifying a new DOI should be discussed with the RDS team.
 
@@ -22,7 +22,7 @@
 
   %h3 Imported DOI checkbox
   .indent
-    %p Used to indicate if this dataset is receiving an imported DOI, which means that the EZID/DataCite record already exists and it will be overwritten with the IDB generated metadata upon confirmation of publication.
+    %p Used to indicate if this dataset is receiving an imported DOI, which means that the DataCite record already exists and it will be overwritten with the IDB generated metadata upon confirmation of publication.
 
   %h3 Test DOI checkbox
   .indent
