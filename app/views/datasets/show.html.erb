@@ -151,7 +151,14 @@
 <% if can? :manage, @dataset && @dataset.publication_state != Databank::PublicationState::DRAFT %>
   <div class="container-fluid">
     <div class="curator-only">
-      <p><a href="https://api.datacite.org/works/<%= @dataset.identifier %>" target="_blank">DataCite Metadata in JSON format</a></p>
+      <p><a href="http://ezid.lib.purdue.edu/manage/display_xml/doi:<%= @dataset.identifier %>" target="_blank">DataCite
+        Metadata in XML format (via EZID)</a></p>
+
+      <p>
+        <a href="http://ezid.lib.purdue.edu/id/doi:<%= @dataset.identifier %>" target="_blank">DataCite Metadata on
+          EZID
+          page</a>
+      </p>
 
       <p>To see this dataset in Medusa, go to
         <% if @dataset.medusa_dataset_dir && @dataset.medusa_dataset_dir != '' %>
