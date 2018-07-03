@@ -162,8 +162,6 @@ Rails.application.routes.draw do
 
   get "/datasets/:id/changelog", to: 'changelogs#edit'
 
-  get "/sitemaps/sitemap.xml.gz", to: 'welcome#sitemap'
-
   get "/metrics/dataset_downloads", to: 'metrics#dataset_downloads', defaults: {format: 'json'}
 
   get "/metrics/file_downloads", to: 'metrics#file_downloads', defaults: {format: 'json'}
