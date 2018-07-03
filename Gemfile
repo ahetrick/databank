@@ -133,9 +133,6 @@ gem 'google-analytics-rails', '1.1.0'
 # Use builder to support sitemaps generator
 gem 'builder', '~> 3.2', '>= 3.2.2'
 
-# Use SitemapGenerator to generate sitemaps
-gem 'sitemap_generator', '~> 5.1'
-
 # Use curb to wrap curl
 gem 'curb', '~> 0.9.4'
 
