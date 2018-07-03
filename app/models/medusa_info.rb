@@ -49,7 +49,13 @@ class MedusaInfo
 
       if datafile_category == 'dataset_files'
         doi_uri = path_arr[2]
+
         doi_string = "10.#{doi_uri[7..10]}/#{doi_uri[12..31]}"
+
+        if doi_uri[12] != 'f'
+          doi_string = "10.#{doi_uri[7..11]}/#{doi_uri[13..32]}"
+        end
+        
         bytestream_name = path_arr[4]
         hash_key = "#{doi_string}_#{bytestream_name}".downcase
 
