@@ -37,13 +37,56 @@ namespace :databank do
 
     doc = Nokogiri::XML::Document.parse(%Q(<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"></urlset>))
 
-    puts doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
+    resourceNode = doc.first_element_child
+
+    welcomeNode = doc.create_element('url')
+    locNode = doc.create_element('loc')
+    locNode.content = IDB_CONFIG[:root_url_text]
+    locNode.parent = welcomeNode
+    welcomeNode.parent = resourceNode
+
+    policiesNode = doc.create_element('url')
+    locNode = doc.create_element('loc')
+    locNode.content = "#{IDB_CONFIG[:root_url_text]}/policies"
+    locNode.parent = policiesNode
+    policiesNode.parent = resourceNode
+
+
+    helpNode = doc.create_element('url')
+    locNode = doc.create_element('loc')
+    locNode.content = "#{IDB_CONFIG[:root_url_text]}/help"
+    locNode.parent = helpNode
+    helpNode.parent = resourceNode
 
     released_datasets = Dataset.where(:publication_state => Databank::PublicationState::RELEASED )
 
-    released_datasets.each do |d|
-      puts d.title
+    released_datasets.each do |dataset|
+      urlNode = doc.create_element('url')
+
+      locNode = doc.create_element('loc')
+      locNode.content = "#{IDB_CONFIG[:root_url_text]}/datasets/#{dataset.key}"
+      locNode.parent = urlNode
+
+      priorityNode = doc.create_element('priority')
+      priorityNode.content = "0.80"
+      priorityNode.parent = urlNode
+
+      updateNode = doc.create_element('lastmod')
+      updateNode.content = dataset.updated_at.iso8601
+      updateNode.parent = urlNode
+
+
+      urlNode.parent = resourceNode
     end
+
+    puts doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
+
+    sitemap_path = Rails.root.join('public', 'sitemaps', 'sitemap.xml')
+
+
+    File.open(sitemap_path,'w') {|f| doc.write_xml_to f}
+
+
 
   end
 
