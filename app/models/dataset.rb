@@ -223,7 +223,7 @@ class Dataset < ActiveRecord::Base
       if self.identifier && self.identifier != ''
         identifierNode.content = self.identifier
       else
-        identifierNode.content = "#{IDB_CONFIG[:ez_placeholder_identifier]}#{self.key}_v1"
+        identifierNode.content = "#{IDB_CONFIG[:ezid_placeholder_identifier]}#{self.key}_v1"
       end
       identifierNode.parent = resourceNode
 
@@ -674,7 +674,7 @@ class Dataset < ActiveRecord::Base
     if self.identifier && self.identifier != ''
       identifierNode.content = self.identifier
     else
-      identifierNode.content = "#{IDB_CONFIG[:ez_placeholder_identifier]}#{self.key}_v1"
+      identifierNode.content = "#{IDB_CONFIG[:ezid_placeholder_identifier]}#{self.key}_v1"
     end
     identifierNode.parent = resourceNode
 
@@ -733,7 +733,7 @@ class Dataset < ActiveRecord::Base
     if self.identifier && self.identifier != ''
       identifierNode.content = self.identifier
     else
-      identifierNode.content = "#{IDB_CONFIG[:ez_placeholder_identifier]}#{self.key}_v1"
+      identifierNode.content = "#{IDB_CONFIG[:ezid_placeholder_identifier]}#{self.key}_v1"
     end
     identifierNode.parent = resourceNode
 
