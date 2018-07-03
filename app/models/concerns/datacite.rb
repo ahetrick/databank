@@ -9,13 +9,24 @@ module Datacite
         raise "cannot create doi for imported dataset doi"
       end
 
-      api_config = api_config(dataset.is_test?)
+      host = IDB_CONFIG[:ezid_host]
+      uri = nil
+
+      if dataset.is_test?
+        shoulder = '10.5072/FK2'
+        user = 'apitest'
+        password = 'apitest'
+      else
+        shoulder = IDB_CONFIG[:ezid_shoulder]
+        user = IDB_CONFIG[:ezid_username]
+        password = IDB_CONFIG[:ezid_password]
+      end
 
       # use specified DOI if provided
       # this temporary identifier also helps to handle previous failed or partial publication
 
       if !dataset.identifier || dataset.identifier == ''
-        dataset.identifier = "#{api_config['shoulder']}#{dataset.key}_V1"
+        dataset.identifier = "#{shoulder}#{dataset.key}_V1"
       end
 
       existing_datacite_record = Dataset.datacite_record_hash(dataset)
@@ -35,13 +46,12 @@ module Datacite
       else
         metadata['_status'] = 'public'
         metadata['datacite'] = dataset.to_datacite_xml
-
       end
 
-      uri = URI.parse("https://#{api_config['host']}/id/doi:#{dataset.identifier}")
+      uri = URI.parse("https://#{host}/id/doi:#{dataset.identifier}")
 
       request = Net::HTTP::Put.new(uri.request_uri)
-      request.basic_auth(api_config['user'], api_config['password'])
+      request.basic_auth(user, password)
       request.content_type = "text/plain;charset=UTF-8"
       request.body = Dataset.make_anvl(metadata)
 
@@ -57,21 +67,20 @@ module Datacite
         response = sock.start { |http| http.request(request) }
 
       rescue Net::HTTPBadResponse, Net::HTTPServerError => error
+        Rails.logger.warn error.message
         Rails.logger.warn response.body
-        raise "system unable to create DOI at this time #{error.message}"
-
       end
 
       case response
-        when Net::HTTPSuccess, Net::HTTPRedirection
-          response_split = response.body.split(" ")
-          response_split2 = response_split[1].split(":")
-          doi = response_split2[1]
-          return doi
+      when Net::HTTPSuccess, Net::HTTPRedirection
+        response_split = response.body.split(" ")
+        response_split2 = response_split[1].split(":")
+        doi = response_split2[1]
+        return doi
 
-        else
-          Rails.logger.warn response.to_yaml
-          raise "error creating DOI"
+      else
+        Rails.logger.warn response.to_yaml
+        raise "error creating DOI"
       end
     end
 
@@ -91,7 +100,17 @@ module Datacite
           end
         end
 
-        api_config = api_config(dataset.is_test?)
+        user = nil
+        password = nil
+        host = IDB_CONFIG[:ezid_host]
+
+        if dataset.is_test?
+          user = 'apitest'
+          password = 'apitest'
+        else
+          user = IDB_CONFIG[:ezid_username]
+          password = IDB_CONFIG[:ezid_password]
+        end
 
         target = "#{IDB_CONFIG[:root_url_text]}/datasets/#{dataset.key}"
 
@@ -121,10 +140,10 @@ module Datacite
           metadata['datacite'] = metadata['datacite'] = dataset.to_datacite_xml
         end
 
-        uri = URI.parse("https://#{api_config['host']}/id/doi:#{dataset.identifier}")
+        uri = URI.parse("https://#{host}/id/doi:#{dataset.identifier}")
 
         request = Net::HTTP::Post.new(uri.request_uri)
-        request.basic_auth(api_config['user'], api_config['password'])
+        request.basic_auth(user, password)
         request.content_type = "text/plain;charset=UTF-8"
         request.body = Dataset.make_anvl(metadata)
 
@@ -138,19 +157,18 @@ module Datacite
 
           response = sock.start { |http| http.request(request) }
           case response
-            when Net::HTTPSuccess, Net::HTTPRedirection
-              return true
+          when Net::HTTPSuccess, Net::HTTPRedirection
+            return true
 
-            else
-              Rails.logger.warn response.to_yaml
-              return false
+          else
+            Rails.logger.warn response.to_yaml
+            return false
           end
 
         rescue Net::HTTPBadResponse, Net::HTTPServerError => error
           Rails.logger.warn "bad response when trying to update DataCite metadata for dataset #{dataset.key}"
           Rails.logger.warn error.message
           Rails.logger.warn response.body
-          return false
         end
 
 
@@ -168,7 +186,7 @@ module Datacite
 
       return nil unless response
 
-      Rails.logger.warn response.to_yaml
+      #Rails.logger.warn response.to_yaml
 
       response_hash = Hash.new
       response_body_hash = Hash.new
@@ -178,7 +196,7 @@ module Datacite
         response_body_hash["#{split_line[0]}"] = "#{split_line[1]}"
       end
 
-      return nil unless response_body_hash["_created"] and response_body_hash != ""
+      return nil unless response_body_hash["_created"]
 
       response_hash["target"] = response_body_hash["_target"]
       response_hash["created"]= (Time.at(Integer(response_body_hash["_created"])).to_datetime).strftime("%Y-%m-%d at %I:%M%p")
@@ -202,16 +220,11 @@ module Datacite
 
     def ezid_metadata_response(dataset)
 
-      api_config = api_config(dataset.is_test?)
-
-      Rails.logger.warn "api_config['host']: #{api_config['host']}"
+      host = IDB_CONFIG[:ezid_host]
 
       begin
 
-        uri = URI.parse("https://#{api_config['host']}/id/doi:#{dataset.identifier}")
-
-        Rails.logger.warn uri.to_s
-
+        uri = URI.parse("https://#{host}/id/doi:#{dataset.identifier}")
         response = Net::HTTP.get_response(uri)
 
         case response
@@ -225,9 +238,10 @@ module Datacite
         end
 
       rescue StandardError => error
-        Rails.logger.warn "error attempting to get DataCite EZ API response for dataset #{dataset.key}"
+        Rails.logger.warn "error attempting to get ezid response for dataset #{dataset.key}"
         raise error
       end
+
 
     end
 
@@ -242,9 +256,19 @@ module Datacite
 
       if existing_datacite_record[:status] == 'reserved'
 
-        api_config = api_config(dataset.is_test?)
+        user = nil
+        password = nil
+        host = IDB_CONFIG[:ezid_host]
 
-        uri = URI.parse("https://#{api_config['host']}/id/doi:#{dataset.identifier}")
+        if dataset.is_test?
+          user = 'apitest'
+          password = 'apitest'
+        else
+          user = IDB_CONFIG[:ezid_username]
+          password = IDB_CONFIG[:ezid_password]
+        end
+
+        uri = URI.parse("https://#{host}/id/doi:#{dataset.identifier}")
 
         request = Net::HTTP::Delete.new(uri.request_uri)
         request.basic_auth(user, password)
@@ -269,12 +293,12 @@ module Datacite
         end
 
         case response
-          when Net::HTTPSuccess, Net::HTTPRedirection
-            return true
+        when Net::HTTPSuccess, Net::HTTPRedirection
+          return true
 
-          else
-            Rails.logger.warn response.to_yaml
-            return false
+        else
+          Rails.logger.warn response.to_yaml
+          return false
         end
 
       else
@@ -283,27 +307,6 @@ module Datacite
         Dataset.update_datacite_metadata(dataset, current_user)
         return true
       end
-
-    end
-
-    def api_config(is_test)
-
-      config_hash = Hash.new
-      config_hash['host'] = IDB_CONFIG[:ez_host]
-
-      if is_test
-        config_hash['user'] = IDB_CONFIG[:test_ez_username]
-        config_hash['password'] = IDB_CONFIG[:test_ez_password]
-        config_hash['shoulder'] = IDB_CONFIG[:test_ez_shoulder]
-        config_hash['placeholder_identifier'] = IDB_CONFIG[:tests_ez_placeholder_identifier]
-      else
-        config_hash['user'] = IDB_CONFIG[:ez_username]
-        config_hash['password'] = IDB_CONFIG[:ez_password]
-        config_hash['shoulder'] = IDB_CONFIG[:ez_shoulder]
-        config_hash['placeholder_identifier'] = IDB_CONFIG[:ez_placeholder_identifier]
-      end
-
-      return config_hash
 
     end
 
