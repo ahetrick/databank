@@ -56,7 +56,7 @@ class MetricsController < ApplicationController
 
     datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT)
 
-    Tempfile.open("datafiles_csv", "w") do |t|
+    Tempfile.open("datafiles_csv") do |t|
 
       CSV.open(t, 'w') do |report|
 
