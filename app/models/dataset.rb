@@ -1022,14 +1022,24 @@ class Dataset < ActiveRecord::Base
 
     external_relationship_count = 0
 
-    relationship_count = self.related_materials.length
 
-    other_version_count = (version_group.length) - 1
+    self.related_materials.each do |material|
 
-    if relationship_count > 0
+      datacite_arr = Array.new
 
-      external_relationship_count = relationship_count - other_version_count
+      if material.datacite_list && material.datacite_list != ''
+        datacite_arr = material.datacite_list.split(',')
+        # else
+        #   report << ["#{dataset.identifier}", "", "#{material.uri_type}", "#{material.uri}", "#{material.selected_type}"]
+      end
 
+      datacite_arr.each do |relationship|
+
+        if ['IsPreviousVersionOf','IsNewVersionOf'].exclude?(relationship)
+          external_relationship_count = external_relationship_count + 1
+        end
+
+      end
     end
 
     return external_relationship_count
