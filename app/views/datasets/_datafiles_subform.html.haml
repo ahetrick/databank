@@ -57,7 +57,7 @@
               %tbody
                 - if @ordered_datafiles
 
-                  - if ( (@dataset.publication_state == Databank::PublicationState::DRAFT) && ((can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?))) )
+                  - if ( (@dataset.publication_state == Databank::PublicationState::DRAFT) && ( (can? :manage, @dataset ) ||  (can? :update, @dataset) ) )
                     .row
                       %span(class="col-md-4" )
                         %button(class="btn btn-danger" type="button" onclick="deleteSelected()")
@@ -82,7 +82,7 @@
                               %td
                                 .row.checkbox
                                   %span(class="col-md-8")
-                                    - if ( (@dataset.publication_state == Databank::PublicationState::DRAFT) && ((can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?))) )
+                                    - if ( (@dataset.publication_state == Databank::PublicationState::DRAFT) && ( (can? :manage, @dataset ) ||  (can? :update, @dataset) ) )
                                       %label
                                         %input(type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="#{i}" onchange="handleCheckFileGroupChange()" )
                                           = datafile.bytestream_name
@@ -92,7 +92,7 @@
                                   %span(class="col-md-2")
                                     = number_to_human_size(datafile.bytestream_size)
                                   %span(class="col-md-2")
-                                    - if ( (@dataset.publication_state == Databank::PublicationState::DRAFT) && ((can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?))) )
+                                    - if ( (@dataset.publication_state == Databank::PublicationState::DRAFT) && ( (can? :manage, @dataset ) ||  (can? :update, @dataset) ) )
                                       %button(type="button" id="remove_#{i}" class="btn btn-danger btn-sm" onclick="remove_file_row(#{i})")
                                         %span(class="glyphicon glyphicon-trash")
                                   = df.hidden_field :_destroy, value: false
@@ -117,7 +117,7 @@
                                     %span(class="metadata-note" )
                                       (refresh page to update)
                                   %span(class="col-md-2")
-                                    - if ((can? :manage, @dataset) || (can? :update, @dataset) && (!@dataset.complete?))
+                                    - if ( (can? :manage, @dataset ) ||  (can? :update, @dataset) )
                                       %button(class="cancel-upload-btn btn btn-danger btn-sm" onclick="cancelUpload('#{datafile.web_id}', '#{datafile.job_id}')") Cancel
 
             %div(id="datafiles_upload_progress")
