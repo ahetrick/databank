@@ -219,7 +219,7 @@
 
       = render partial: 'datafiles_subform', locals: {f: f}
 
-  - if ( (@dataset.publication_state == Databank::PublicationState::DRAFT) && ((can? :manage, @dataset ) || ((can? :update, @dataset) && (!@dataset.complete?))) )
+  - if (@dataset.publication_state == Databank::PublicationState::DRAFT) && ( (can? :manage, @dataset ) ||  (can? :update, @dataset) )
 
     .container-fluid
 
