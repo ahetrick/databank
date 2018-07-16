@@ -195,7 +195,7 @@ class DatabankMailer < ActionMailer::Base
 
     @report = @report + "</table>"
 
-    mail(to: "#{IDB_CONFIG[:tech_error_mail_list]}", subject: subject)
+    mail(to: "#{IDB_CONFIG[:related_materials_report_list]}", subject: subject)
 
   end
 
