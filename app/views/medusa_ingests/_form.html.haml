@@ -1,0 +1,13 @@
+= simple_form_for(@medusa_ingest) do |f|
+  = f.error_notification
+  .form-inputs
+    = f.input :idb_class
+    = f.input :idb_identifier
+    = f.input :staging_path
+    = f.input :request_status
+    = f.input :medusa_path
+    = f.input :medusa_uuid
+    = f.input :response_time
+    = f.input :error_text
+  .form-actions
+    = f.button :submit

@@ -55,6 +55,7 @@ gem 'font-awesome-sass', '~> 4.3.0'
 gem 'autoprefixer-rails'
 
 gem 'haml'
+gem 'haml-rails'
 
 gem 'uuid'
 

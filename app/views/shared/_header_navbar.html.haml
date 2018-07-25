@@ -1,0 +1,67 @@
+%div>
+hide-when-printing&gt;
+/ Static navbar
+%nav.navbar.navbar-default
+  .navbar-header
+    %button.navbar-toggle.collapsed{"aria-controls" => "navbar", "aria-expanded" => "false", "data-target" => "#navbar", "data-toggle" => "collapse", :type => "button"}
+      %span.sr-only Toggle navigation
+      %span.icon-bar
+      %span.icon-bar
+      %span.icon-bar
+    %a.navbar-brand{:href => "/"} Illinois Data Bank
+  #navbar.navbar-collapse.collapse
+    %ul.nav.navbar-nav
+      %li
+        %a{:href => "/datasets/pre_deposit"}
+          %span.glyphicon.glyphicon-plus
+          Deposit Dataset
+      %li
+        %a{:href => "/datasets"}
+          %span.glyphicon.glyphicon-search
+          Find Data
+      %li
+        %a{:href => "/policies"}
+          %span.glyphicon.glyphicon-info-sign
+          Policies
+      %li
+        %a{:href => "/help"}
+          %span.glyphicon.glyphicon-question-sign
+          Help
+    %ul.nav.navbar-nav.navbar-right
+      / <li>
+      / <a class="idb beta-block" href="/help#contact?context=feedback">
+      / BETA<br/><small>feedback</small>
+      / </a>
+      - if current_user
+        %li
+          %a{:href => "/datasets?q="}
+          = URI.encode('depositors[]')
+          \=#{current_user.username}"&gt; #{current_user.name}
+      %li= link_to Log out, :logout
+    - else
+      - if IDB_CONFIG.has_key?(:local_mode)  IDB_CONFIG[:local_mode]
+        %li.dropdown
+          %a.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+            Log
+            In
+            %span.caret
+          %ul.dropdown-menu.login-form
+            = form_tag /auth/identity/callback do
+              %li
+                .form-group
+                  = label_tag :auth_key, Email, :class = control-label
+                  %br/
+                  = text_field_tag :auth_key
+              %li
+                .form-group
+                  = label_tag :password, Password, :class = control-label
+                  %br/
+                  = password_field_tag :password
+              %li
+                .actions
+                  = submit_tag Log In
+                  %br/
+                  = link_to Create Account, /auth/identity/register
+      - else
+        %li= link_to Log in with NetID, :login
+/ /.nav-collapse

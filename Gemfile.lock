@@ -416,6 +416,7 @@ DEPENDENCIES
   font-awesome-sass (~> 4.3.0)
   google-analytics-rails (= 1.1.0)
   haml
+  haml-rails
   highcharts-rails
   jbuilder (~> 2.0)
   jquery-datatables-rails

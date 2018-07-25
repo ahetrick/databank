@@ -1,0 +1,28 @@
+%p#notice= notice
+%p
+  %strong Idb class:
+  = @medusa_ingest.idb_class
+%p
+  %strong Idb identifier:
+  = @medusa_ingest.idb_identifier
+%p
+  %strong Staging path:
+  = @medusa_ingest.staging_path
+%p
+  %strong Request status:
+  = @medusa_ingest.request_status
+%p
+  %strong Medusa path:
+  = @medusa_ingest.medusa_path
+%p
+  %strong Medusa uuid:
+  = @medusa_ingest.medusa_uuid
+%p
+  %strong Response time:
+  = @medusa_ingest.response_time
+%p
+  %strong Error text:
+  = @medusa_ingest.error_text
+= link_to 'Edit', edit_medusa_ingest_path(@medusa_ingest)
+|
+= link_to 'Back', medusa_ingests_path

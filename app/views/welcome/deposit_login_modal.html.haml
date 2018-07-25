@@ -1,0 +1,23 @@
+- if can? :create, Dataset
+  :javascript
+    window.location.href = "/datasets/new"
+- else
+  = render partial: 'welcome'
+  / Modal
+  #login-prompt.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "agreement-label", :role => "dialog", :tabindex => "-1"}
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %h4#prompt-title.modal-title Log in required to Deposit Dataset
+        .modal-footer.container-fluid
+          %button{:onclick => "window.location = \"/login\""}>
+          , type="button" class="btn btn-primary" data-dismiss="modal" id="login-button"&gt;
+          Log in with NetID
+        = succeed "," do
+          %button{:onclick => "window.location = \"/help\""}
+        %span.glyphicon.glyphicon-question-sign
+        Get Help
+      = succeed "," do
+        %button{:onclick => "window.location = \"/\""}
+      %span.glyphicon.glyphicon-remove
+      Cancel

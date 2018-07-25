@@ -1,0 +1,25 @@
+/ Modal
+#incomplete.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "agreement-label", :role => "dialog", :tabindex => "-1"}
+  .modal-dialog.modal-lg
+    .modal-content
+      .modal-body
+        .completion-warning
+          %p.ds-paragraph
+            %span.glyphicon.glyphicon-alert
+            = @completion_check
+            Edit to complete dataset.
+      .modal-footer.container-fluid
+        %button{:onclick => "window.location = \"/datasets/"}
+        = @dataset.key
+        \/edit"' , type="button" class="btn btn-primary" data-dismiss="modal" id="edit-button"&gt;
+        %span.glyphicon.glyphicon-edit
+        Edit
+      = succeed "," do
+        %button{:onclick => "window.open(\"/help\")"}
+      %span.glyphicon.glyphicon-question-sign
+      Get Help
+    %button{:onclick => "window.location = \"/datasets/"}
+    = @dataset.key
+    "' , type="button" class="btn btn-info" data-dismiss="modal" id="cancel-button"&gt;
+    %span.glyphicon.glyphicon-remove
+    Close
