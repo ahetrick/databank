@@ -14,62 +14,55 @@
   - if version_group && version_group[:entries] && version_group[:entries].length > 1 && @dataset.dataset_version.to_i > 0 && (version_group[:entries][0][:version]).to_i > @dataset.dataset_version.to_i
     .selected-version.boxed-alert
       A newer version of this dataset is available.
-      %a{:href => "https://doi.org/"}
-      = version_group[:entries][0][:doi]
-      "&gt;View the latest version.
+      %a{:href => "https://doi.org/#{version_group[:entries][0][:doi]}"}
+        View the latest version.
 = render partial: 'metadata_restriction_alert', locals: {dataset: @dataset}
-/
-  \- show metadata section if curator OR published and not held OR depositor and not permenantly suppressed --->
-  <!--- inefficiently verbose consditional for readabilty  --->
+
+-# show metadata section if curator OR published and not held OR depositor and not permenantly suppressed --->
+-# inefficiently verbose consditional for readabilty
   
-  <haml_silent>   if (can? :manage, @dataset)
-  </haml_silent><haml_block>    <haml_loud> render partial: &#39;show_metadata&#39;, locals: {dataset: @dataset} </haml_loud>
-  
-  </haml_block><haml_silent>   elsif ([Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE].include? @dataset.publication_state) &amp;&amp;
-  (@dataset.hold_state != Databank::PublicationState::TempSuppress::METADATA)
-  </haml_silent><haml_block>    <haml_loud> render partial: &#39;show_metadata&#39;, locals: {dataset: @dataset, license_name: @license_name} </haml_loud>
-  
-  </haml_block><haml_silent>   elsif (can? :edit, @dataset) &amp;&amp; (@dataset.publication_state != Databank::PublicationState::PermSuppress::METADATA)
-  </haml_silent><haml_block>
-  <haml_loud> render partial: &#39;show_metadata&#39;, locals: {dataset: @dataset} </haml_loud>
-  
-  </haml_block>
-  <!-- END metadata section
+- if (can? :manage, @dataset)
+  =render partial: 'show_metadata', locals: {dataset: @dataset}
+- elsif ([Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE].include? @dataset.publication_state) && (@dataset.hold_state != Databank::PublicationState::TempSuppress::METADATA)
+  =render partial: 'show_metadata', locals: {dataset: @dataset, license_name: @license_name}
+- elsif (can? :edit, @dataset) && (@dataset.publication_state != Databank::PublicationState::PermSuppress::METADATA)
+  =render partial: 'show_metadata', locals: {dataset: @dataset}
+
 #versionGroup.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
   .panel.panel-default
     #versionGroupHeading.panel-heading{:role => "tab"}
       %h4.panel-title
-        - if version_group  version_group[:entries]  version_group[:entries].length  1
+        - if version_group && version_group[:entries] && version_group[:entries].length > 1
           %a.accordion-toggle{"aria-controls" => "versionGroupPanel", "aria-expanded" => "true", "data-parent" => "#versionGroup", "data-toggle" => "collapse", :href => "#versionGroupPanel", :role => "button"}
             %span.metadata-label Versions in Illinois Data Bank
         - else
           %a.accordion-toggle.collapsed{"aria-controls" => "versionGroupPanel", "aria-expanded" => "false", "data-parent" => "#versionGroup", "data-toggle" => "collapse", :href => "#versionGroupPanel", :role => "button"}
             %span.metadata-label Versions
-    .panel-collapse.collapse
-    - if version_group  version_group[:entries]  version_group[:entries].length  1
-      in
-    " id="versionGroupPanel" role="tabpanel" aria-labelledby="changelogHeading"&gt;
-    .panel-body
-      - if version_group[:status] == 'error'
-        = version_group[:error]
-      - else
-        %table.table.table-striped
-          %thead
-            %tr
-              %th.text-center Version
-              %th DOI
-              %th Comment
-              %th Publication Date
-          %tbody
-            - version_group[:entries].each do |entry|
+
+    .panel-collapse.collapse{:class => ("in" if (version_group && version_group[:entries] && version_group[:entries].length > 1 ))}(id="versionGroupPanel" role="tabpanel" aria-labelledby="changelogHeading")
+
+      .panel-body
+        - if version_group[:status] == 'error'
+          = version_group[:error]
+        - else
+          %table.table.table-striped
+            %thead
               %tr
-              - if entry[:selected]
-                class="selected-version"
-              \&gt;
-              %td.text-center= entry[:version]
-              %td
-                %a{:href => "https://doi.org/"}
-                = entry[:doi]
-                "&gt;#{entry[:doi]}
-            %td= entry[:version_comment]
-            %td= entry[:publication_date]
+                %th.text-center Version
+                %th DOI
+                %th Comment
+                %th Publication Date
+            %tbody
+              - version_group[:entries].each do |entry|
+                %tr
+                - if entry[:selected]
+                  class="selected-version"
+                \&gt;
+                %td.text-center= entry[:version]
+                %td
+                  %a{:href => "https://doi.org/#{entry[:doi]}"}
+                    = entry[:doi]
+                %td
+                  = entry[:version_comment]
+                %td
+                  = entry[:publication_date]

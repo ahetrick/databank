@@ -7,7 +7,7 @@
         %strong Illinois Data Bank Deposit Agreement
         (click to expand)
   #collapseOne.panel-collapse.collapse
-  - if @dataset  @dataset.depositor_email
+  - if @dataset && @dataset.depositor_email
     in
   "&gt;
   .panel-body.idb-help

@@ -1,59 +1,57 @@
-%div>
-hide-when-printing&gt;
-/ Static navbar
-%div{"aria-hidden" => "true"}
-  %nav.navbar.navbar-mini
-    #minibar
-      %ul.nav.navbar-nav
-        %li.minibar-brand
-          %a{:href => "/"} Illinois Data Bank
-        %li
-          %a{:href => "/datasets/new"}
-            %span.glyphicon.glyphicon-plus
-            Deposit Dataset
-        %li
-          %a{:href => "/datasets"}
-            %span.glyphicon.glyphicon-search
-            Find Data
-        %li
-          %a{:href => "/policies"}
-            %span.glyphicon.glyphicon-info-sign
-            Policies
-        %li
-          %a{:href => "/help"}
-            %span.glyphicon.glyphicon-question-sign
-            Help
-      %ul.nav.navbar-nav.navbar-right
-        - if current_user
+.hide-when-printing
+  / Static navbar
+  %div{"aria-hidden" => "true"}
+    %nav.navbar.navbar-mini
+      #minibar
+        %ul.nav.navbar-nav
+          %li.minibar-brand
+            %a{:href => "/"} Illinois Data Bank
           %li
-            %a{:href => "/datasets?q="}
-            = URI.encode('depositors[]')
-            \=#{current_user.username}"&gt; #{current_user.name}
-        %li= link_to Log out, :logout
-      - else
-        - if IDB_CONFIG.has_key?(:local_mode)  IDB_CONFIG[:local_mode]
-          %li.dropdown
-            %a.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :href => "#", :role => "button"}
-              Log
-              In
-              %span.caret
-            %ul.dropdown-menu.login-form
-              = form_tag /auth/identity/callback do
-                %li
-                  .form-group
-                    = label_tag :auth_key, Email, :class = control-label
-                    %br/
-                    = text_field_tag :auth_key
-                %li
-                  .form-group
-                    = label_tag :password, Password, :class = control-label
-                    %br/
-                    = password_field_tag :password
-                %li
-                  .actions
-                    = submit_tag Log In
-                    %br/
-                    = link_to Create Account, /auth/identity/register
-        - else
-          %li= link_to Log in with NetID, :login
-  / /.nav-collapse
+            %a{:href => "/datasets/new"}
+              %span.glyphicon.glyphicon-plus
+              Deposit Dataset
+          %li
+            %a{:href => "/datasets"}
+              %span.glyphicon.glyphicon-search
+              Find Data
+          %li
+            %a{:href => "/policies"}
+              %span.glyphicon.glyphicon-info-sign
+              Policies
+          %li
+            %a{:href => "/help"}
+              %span.glyphicon.glyphicon-question-sign
+              Help
+        %ul.nav.navbar-nav.navbar-right
+          - if current_user
+            %li
+              %a{:href => "/datasets?q="}
+              = URI.encode('depositors[]')
+              \=#{current_user.username}"&gt; #{current_user.name}
+            %li= link_to Log out, :logout
+          - else
+            - if IDB_CONFIG.has_key?(:local_mode) && IDB_CONFIG[:local_mode]
+              %li.dropdown
+                %a.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+                  Log In
+                  %span.caret
+                %ul.dropdown-menu.login-form
+                  = form_tag '/auth/identity/callback' do
+                    %li
+                      .form-group
+                        = label_tag :auth_key, 'Email', class: 'control-label'
+                        %br/
+                        = text_field_tag :auth_key
+                    %li
+                      .form-group
+                        = label_tag :password, 'Password', class: 'control-label'
+                        %br/
+                        = password_field_tag :password
+                    %li
+                      .actions
+                        = submit_tag 'Log In'
+                        %br/
+                        = link_to 'Create Account', '/auth/identity/register'
+            - else
+              %li= link_to 'Log in with NetID', :login
+    / /.nav-collapse
