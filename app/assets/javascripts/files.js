@@ -3,6 +3,13 @@
 var files_ready;
 files_ready = function () {
     $('.view-load-spinner').hide();
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    initFileUpload();
 
     //alert("files.js javascript working");
 }
@@ -315,6 +322,161 @@ function restore_deckfile(deckfile_id, deckfile_index){
     $('#dataset_deckfiles_attributes_'+ deckfile_index +'_remove').val("false");
     $('.deckfile_restore_btn').hide();
     $('.deckfile_remove_btn').show();
+}
+
+function initFileUpload() {
+    var bHaveFileAPI = (window.File && window.FileReader);
+
+    if (!bHaveFileAPI) {
+        $(".fileselect").html("<p class='notice'>This browser does not support the HTML 5 File API required to upload files. Current versions of Chrome do, as do most modern browsers.</p>")
+        return;
+    }
+
+    $("#selectedFiles").on("change", onFileChanged);
+}
+
+function onFileChanged(theEvt) {
+    var files = theEvt.target.files;
+
+    $('#files').css("display", "block");
+    $('#collapseFiles').collapse('show');
+
+    $('#divFiles').html('');
+    for (var i = 0; i < files.length; i++) { //Progress bar and status label's for each file genarate dynamically
+        var fileId = i;
+
+        $('#datafiles_upload_progress').append('<div class="col-md-12" id="progress_' + fileId + '">' +
+            '<div class="bytestream_name"'+ files[i].name.toString() + '</div>' +
+            '<div class="progress">' +
+            '<div class="progress-bar progress-bar-striped active" id="progressbar_' + fileId + '" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:0%"></div>' +
+            '</div></div>' +
+            '<div class="col-md-12">' +
+            '<div class="col-md-6">' +
+            '<input type="button" class="btn btn-danger" id="cancel_' + fileId + '" value="cancel">' +
+            '</div>' +
+            '<div class="col-md-6">' +
+            '<p class="progress-status" id="status_' + fileId + '"></p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="col-md-12">' +
+            '<p id="notify_' + fileId + '" style="text-align: right;"></p>' +
+            '</div>');
+    }
+
+    for (var i = 0; i < files.length; i++) {
+        uploadSingleFile(files[i], i);
+    }
+
+}
+
+function uploadSingleFile(file, i) {
+
+    console.log("inside uploadSingleFile");
+
+    var fileId = i;
+    var ajax = new XMLHttpRequest();
+    //Progress Listener
+    ajax.upload.addEventListener("progress", function (e) {
+        var percent = (e.loaded / e.total) * 100;
+        $("#status_" + fileId).text(Math.round(percent) + "% uploaded, please wait...");
+        $('#progressbar_' + fileId).css("width", percent + "%")
+        $("#notify_" + fileId).text("Uploaded " + (e.loaded / 1048576).toFixed(2) + " MB of " + (e.total / 1048576).toFixed(2) + " MB ");
+    }, false);
+    //Load Listener
+    ajax.addEventListener("load", function (e) {
+
+        //console.log(event.target.responseText);
+
+        var response = JSON.parse(event.target.responseText);
+
+        var newFile = response.files[0];
+
+        console.log(newFile.name);
+
+        // $("#status_" + fileId).text(event.target.responseText);
+        $('#progressbar_' + fileId).css("width", "100%");
+
+        appendFileRow(newFile);
+
+        $("#progress_" + fileId).remove();
+
+        //Hide cancel button
+        var _cancel = $('#cancel_' + fileId);
+        _cancel.hide();
+    }, false);
+    //Error Listener
+    ajax.addEventListener("error", function (e) {
+        $("#status_" + fileId).text("Upload Failed");
+    }, false);
+    //Abort Listener
+    ajax.addEventListener("abort", function (e) {
+        $("#status_" + fileId).text("Upload Aborted");
+    }, false);
+
+    ajax.open("POST", "/datafiles");
+
+    var uploaderForm = new FormData();
+
+    uploaderForm.append('datafile[dataset_id]', dataset_id);
+    uploaderForm.append('datafile[upload]', file);
+
+    var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+    ajax.setRequestHeader('X-CSRF-Token', csrfToken);
+    ajax.setRequestHeader('Accept', 'application/json');
+
+    ajax.send(uploaderForm);
+
+    //Cancel button
+    var _cancel = $('#cancel_' + fileId);
+    _cancel.show();
+
+    _cancel.on('click', function () {
+        ajax.abort();
+    })
+}
+
+
+function appendFileRow(newFile){
+    var maxId = Number($('#datafile_index_max').val());
+    var newId = 1;
+
+    if (maxId != NaN) {
+        newId = maxId + 1;
+    }
+    $('#datafile_index_max').val(newId);
+
+    var file = newFile;
+
+    //console.log(file);
+
+    var row =
+        '<tr id="datafile_index_' + newId + '"><td><div class = "row checkbox">' +
+        '<input value="false" type="hidden" name="dataset[datafiles_attributes][' + newId + '][_destroy]" id="dataset_datafiles_attributes_' + newId + '__destroy" />' +
+        '<input type="hidden" value="'+ file.webId +'" name="dataset[datafiles_attributes]['+ newId +'][web_id]" id="dataset_datafiles_attributes_'+ newId +'_web_id" />' +
+        '<input type="hidden"  value="' + file.datafileId + '" name="dataset[datafiles_attributes][' + newId + '][id]" id="dataset_datafiles_attributes_' + newId + '_id" />' +
+
+        '<span class="col-md-8">' +
+        '<label>' +
+        '<input class="checkFile checkFileGroup" name="selected_files[]" type="checkbox" value="' + newId + '" onchange="handleCheckFileGroupChange()">' +
+        file.name +
+        '</input>' +
+        '</label>' +
+        '<input class="bytestream_name" value="' + file.name + '" style="visibility: hidden;"/></span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
+    if (file.error) {
+        row = row + '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-warning-sign"></span>';
+    } else {
+        row = row + '<button type="button" class="btn btn-danger btn-sm" onclick="remove_file_row(' + newId + ')"><span class="glyphicon glyphicon-trash"></span></button></span>';
+    }
+
+    row = row + '</span></div></td></tr>';
+    if (file.error) {
+        $("#datafiles > tbody:last-child").append('<tr><td><div class="row"><p>' + file.name + ': ' + file.error + '</p></div></td></tr>');
+    } else {
+        var old_count = Number($("#datafiles-count").html());
+        $("#datafiles-count").html(String(old_count + 1));
+        $("#datafiles > tbody:last-child").append(row);
+    }
 }
 
 $(document).ready(files_ready);

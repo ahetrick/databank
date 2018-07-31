@@ -103,6 +103,7 @@ namespace :databank do
 
     if IDB_CONFIG[:local_mode] == true
       Dataset.all.each do |dataset|
+        puts dataset.title
         dataset.destroy
       end
     else

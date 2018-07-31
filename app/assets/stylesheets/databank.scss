@@ -286,6 +286,11 @@ div.row.checkbox {
   position: relative;
   top: 3px;
 }
+
+#selectedFiles{
+ display: none;
+}
+
 .inline_formatted_text{
   display:inline-block;
   vertical-align: text-top;

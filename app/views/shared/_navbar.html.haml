@@ -29,8 +29,8 @@
       %ul.nav.navbar-nav.navbar-right
         - if current_user
           %li
-            %a{:href => "/datasets?depositor_email=#{current_user.email}"}
-              = current_user.name
+            %a(href="/datasets?q=#{URI.encode('depositors[]=')}#{current_user.username}" )
+              =current_user.name
           %li= link_to "Log out", :logout
         - else
           - if IDB_CONFIG.has_key?(:local_mode) && IDB_CONFIG[:local_mode]

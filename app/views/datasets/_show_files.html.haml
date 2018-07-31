@@ -43,7 +43,7 @@
                     -if dataset.ordered_datafiles
 
                       - dataset.ordered_datafiles.each do |datafile|
-                        -if (datafile.bytestream_size > 0) && (datafile.job_status == :complete) && ((datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != ""))
+                        -if (datafile.bytestream_size > 0) && (datafile.job_status == :complete) && datafile.storage_root && datafile.storage_key
                           %tr.row
                             %td
                               .row.checkbox

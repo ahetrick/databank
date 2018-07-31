@@ -49,6 +49,7 @@
     - if @dataset
       = javascript_tag do
         window.dataset_key = '#{j @dataset.key}';
+        window.dataset_id = '#{j @dataset.id.to_s}';
     - if @datafile
       = javascript_tag do
         window.datafile_web_id = '#{j @datafile.web_id}';

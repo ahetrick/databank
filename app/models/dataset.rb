@@ -929,10 +929,10 @@ class Dataset < ActiveRecord::Base
   def remove_invalid_datafiles
     begin
       self.datafiles.each do |datafile|
-        datafile.destroy unless ((datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != ""))
+        datafile.destroy unless ((datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != "") || (datafile.storage_root && datafile.storage_root != ""))
       end
     rescue StandardError => ex
-      Rails.logger.warn "unable to remove invalid datafile"
+      Rails.logger.warn "unable to remove invalid datafile #{datafile.web_id}"
     end
   end
 
@@ -1062,8 +1062,7 @@ class Dataset < ActiveRecord::Base
 
     self.datafiles.each do |df|
 
-      if !df.medusa_path || df.medusa_path == ""
-        # Rails.logger.warn "no path found for #{df.to_yaml}"
+      if df.storage_root != Application.storage_manager.medusa_root.name
         fileset_preserved = false
       end
     end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180601185122) do
+ActiveRecord::Schema.define(version: 20180726153921) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,6 +21,12 @@ ActiveRecord::Schema.define(version: 20180601185122) do
     t.integer  "singleton_guard"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
+  end
+
+  create_table "ar_internal_metadata", primary_key: "key", force: :cascade do |t|
+    t.string   "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "audits", force: :cascade do |t|
@@ -80,6 +86,9 @@ ActiveRecord::Schema.define(version: 20180601185122) do
     t.string   "upload_status"
     t.string   "peek_type"
     t.text     "peek_text"
+    t.string   "storage_root"
+    t.string   "storage_prefix"
+    t.string   "storage_key"
   end
 
   create_table "dataset_download_tallies", force: :cascade do |t|

@@ -9,7 +9,7 @@ OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
 class DatafilesController < ApplicationController
 
-  before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download, :record_download,
+  before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download, :record_download, :download_url,
                                       :upload, :do_upload, :reset_upload, :resume_upload, :update_status,
                                       :preview, :display, :peek_text, :filepath, :iiif_filepath]
 
@@ -39,6 +39,7 @@ class DatafilesController < ApplicationController
   def new
     @dataset = Dataset.find_by_key(params[:dataset_id])
     @datafile = Datafile.new
+    @datafile.web_id ||= @datafile.generate_web_id
   end
 
   # GET /datafiles/1/edit
@@ -67,21 +68,34 @@ class DatafilesController < ApplicationController
   def create
 
     @dataset = nil
-    # Rails.logger.warn datafile_params
-    if params && params.has_key?(:dataset_id)
+
+    if params.has_key?(:datafile)
+      @dataset = Dataset.find(params[:datafile][:dataset_id])
+    elsif params && params.has_key?(:dataset_id)
       @dataset = Dataset.find_by_key(params[:dataset_id])
     end
 
-    if datafile_params
-      @datafile = Datafile.new(datafile_params)
-      @dataset = Dataset.where("id = ?", @datafile.dataset_id).first
-    else
-      if @dataset
-        @datafile = Datafile.new(dataset_id: @dataset.id)
-      end
-    end
-
     raise "A datafile can only be created in association with a dataset." unless @dataset
+
+    # at this point, we have a dataset
+
+    @datafile = Datafile.new(dataset_id: @dataset.id)
+
+    @datafile.save
+
+    if params.has_key?(:datafile) && params[:datafile].has_key?(:upload)
+
+      uploaded_io = params[:datafile][:upload]
+
+      @datafile.storage_root = Application.storage_manager.draft_root.name
+      @datafile.binary_name = uploaded_io.original_filename
+      @datafile.storage_key = File.join(@datafile.web_id, @datafile.binary_name)
+      @datafile.binary_size = uploaded_io.size
+
+      # Moving the file to some safe place; as tmp files will be flushed timely
+      Application.storage_manager.draft_root.copy_io_to(@datafile.storage_key, uploaded_io, nil, uploaded_io.size)
+
+    end
 
     respond_to do |format|
       if @datafile.save
@@ -226,11 +240,21 @@ class DatafilesController < ApplicationController
   end
 
   def download
-    @datafile.record_download(request.remote_ip)
-    path = @datafile.bytestream_path
-    if path
+
+    current_root = Application.storage_manager.root_set.at(@datafile.storage_root)
+
+    if current_root.root_type == :filesystem
+      path = current_root.path_to(@datafile.storage_key, check_path: true)
       send_file path
+
+    else
+
+      url = Application.aws_signer.presigned_url(:get_object, bucket: @datafile.storage_bucket, key: @datafile.storage_key)
+
+      redirect_to url
+
     end
+
   end
 
   def to_fileupload
@@ -243,8 +267,8 @@ class DatafilesController < ApplicationController
                     url: "datafiles/#{@datafile.web_id}",
                     delete_url: "datafiles/#{@datafile.web_id}",
                     delete_type: "DELETE",
-                    name: "#{@datafile.binary.file.filename}",
-                    size: "#{number_to_human_size(@datafile.binary.size)}"
+                    name: "#{@datafile.binary_name}",
+                    size: "#{number_to_human_size(@datafile.binary_size)}"
                 }
             ]
     }
@@ -267,7 +291,6 @@ class DatafilesController < ApplicationController
   def iiif_filepath
     render json: {filepath: @datafile.iiif_bytestream_path}
   end
-
 
   def create_from_url
 

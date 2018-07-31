@@ -27,15 +27,10 @@
             %span.glyphicon.glyphicon-question-sign
             Help
       %ul.nav.navbar-nav.navbar-right
-        / <li>
-        / <a class="idb beta-block" href="/help#contact?context=feedback">
-        / BETA<br/><small>feedback</small>
-        / </a>
         - if current_user
           %li
-            %a{:href => "/datasets?q="}
-            = URI.encode('depositors[]')
-            \=#{current_user.username}"&gt; #{current_user.name}
+            %a(href="/datasets?q=#{URI.encode('depositors[]=')}#{current_user.username}" )
+              =current_user.name
           %li= link_to 'Log out', :logout
         - else
           - if IDB_CONFIG.has_key?(:local_mode) && IDB_CONFIG[:local_mode]

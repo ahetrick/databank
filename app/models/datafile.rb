@@ -45,7 +45,6 @@ class Datafile < ActiveRecord::Base
       return_name = self.binary_name
     elsif self.binary && self.binary.file
       return_name = self.binary.file.filename
-
     else
       return "error: filename not found"
     end
@@ -64,6 +63,26 @@ class Datafile < ActiveRecord::Base
 
   end
 
+  def storage_root_bucket
+    if IDB_CONFIG[:aws][:s3_mode] == 'true'
+
+      return self.root_set.at(self.storage_root)[:bucket]
+
+    else
+      return nil
+    end
+  end
+
+  def storage_root_path
+    if IDB_CONFIG[:aws][:s3_mode] == 'false'
+
+      return self.root_set.at(self.storage_root)[:real_path]
+
+    else
+      return nil
+    end
+  end
+
   def file_extension
     filename_split = self.bytestream_name.split(".")
 
@@ -79,10 +98,20 @@ class Datafile < ActiveRecord::Base
   end
 
   def bytestream_path
-    if self.medusa_path.nil? || self.medusa_path.empty?
-      self.binary.path
-    else
-      "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{self.medusa_path}"
+    if (self.medusa_path.nil? || self.medusa_path.empty?) && self.binary && self.binary.path
+      return self.binary.path
+
+    elsif !self.medusa_path.nil? && !self.medusa_path.empty?
+      return "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{self.medusa_path}"
+
+    elsif self.storage_root && self.storage_root !=''
+
+      if self.storage_prefix && self.storage_prefix != ''
+        return join(self.storage_root, self.storage_prefix, self.storage_key)
+      else
+        return join(self.storage_root, self.storage_key)
+      end
+
     end
   end
 
@@ -107,6 +136,7 @@ class Datafile < ActiveRecord::Base
     end
   end
 
+
   def content_files
 
     content_files_array = Array.new
@@ -122,6 +152,12 @@ class Datafile < ActiveRecord::Base
       end
     content_files_array
 
+  end
+
+  def has_bytestream
+    (self.binary && self.binary.file  && self.binary.size > 0 ) ||
+        (self.medusa_path && self.medusa_path != "") ||
+        (self.storage_root && self.storage_root != "")
   end
 
   def tar_contents()
@@ -221,10 +257,8 @@ class Datafile < ActiveRecord::Base
   end
 
   def remove_directory
-    dir = "#{IDB_CONFIG[:datafile_store_dir]}/#{self.web_id}"
-    if Dir.exists? dir
-      FileUtils.rm_rf(dir)
-    end
+    Application.storage_manager.draft_root.delete_content(self.storage_key)
+    Application.storage_manager.draft_root.delete_tree(self.web_id)
   end
 
   def job

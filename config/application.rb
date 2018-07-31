@@ -73,6 +73,10 @@ module Databank
 
     attr_accessor :settings
 
+    attr_accessor :storage_manager
+
+    attr_accessor :aws_signer
+
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -98,3 +102,6 @@ module Databank
 
   end
 end
+
+#establish a short cut for the Application object
+Application = Databank::Application

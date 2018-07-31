@@ -14,3 +14,6 @@ set :ssh_options, {
 
 # Default deploy_to directory is /var/www/my_app_name
 set :deploy_to, '/home/centos'
+
+# Ask which branch to deploy
+ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call

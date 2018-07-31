@@ -15,7 +15,6 @@
 //= require jquery-ui/widgets/datepicker
 //= require jquery-ui/widgets/sortable
 //= require jquery-ui/effects/effect-highlight
-//= require jquery-fileupload
 //= require zeroclipboard
 //= require bootstrap-sprockets
 //= require effective_datatables

@@ -13,9 +13,14 @@ gem 'coffee-rails', '~> 4.1.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
+# Use in-house storage gem to manage flexible storage on filesystems and s3 buckets
+gem 'medusa_storage', git: 'https://github.com/medusa-project/medusa_storage.git', branch: 'master'
+
+# Use aws-sdk to manage signed urls for downloads
+gem 'aws-sdk'
+
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
-gem 'jquery-fileupload-rails'
 gem 'jquery-datatables-rails'
 gem 'jquery-ui-rails'
 gem 'highcharts-rails'

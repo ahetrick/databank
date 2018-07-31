@@ -332,120 +332,6 @@ ready = function () {
 
     });
 
-    $("#new_datafile").fileupload({
-
-        downloadTemplate: null,
-        downloadTemplateId: null,
-        uploadTemplate: null,
-        uploadTemplateId: null,
-
-        add: function (e, data) {
-
-            $('#files').css("display", "block");
-            $('#collapseFiles').collapse('show');
-
-            var cancelBtn = $('<a/>')
-                .attr('href', 'javascript:void(0)')
-                .addClass('btn')
-                .addClass('btn-danger')
-                .addClass('idb')
-                .append('<span class="glyphicon glyphicon-remove"/>')
-                .append('Cancel Upload')
-                .click(function () {
-                    data.abort();
-                    data.context.remove();
-                });
-
-
-            file = data.files[0];
-
-            var uploadRow = $('<div class="upload"><div class="progress"><div class="bar progress-bar" style="width: 0%;"></div></div></div>');
-
-            num_bytes = file.size || file.fileSize;
-            //check filesize and check for duplicate filename
-            if (num_bytes < 4194304000) {
-                if (filename_isdup(file.name)) {
-                    alert("Duplicate file error: A file named " + file.name + " detected in this dataset.  For help, please contact the Research Data Service.");
-                } else if (file.name == ".DS_Store"){
-                    //ignore
-                }
-                else  if (!file.type && num_bytes%4096 == 0) {
-                    alert(file.name + " detected as a folder - Illinois Data Bank supports file uploads only.");
-                } else {
-                    data.context = uploadRow;
-                    data.context.prepend('<span class="bytestream_name">' + file.name.toString()) + '</span>';
-                    data.context.prepend("  ");
-                    data.context.prepend(cancelBtn);
-                    $('#datafiles_upload_progress').append(data.context);
-                    window.onbeforeunload = confirmOnPageExit;
-                    return data.submit();
-                }
-            } else  if (typeof num_bytes === "undefined" && !file.type) {
-                alert(file.name + " detected as a folder - Illinois Data Bank supports file uploads only.");
-            }  else if (typeof num_bytes === "undefined" && (file.type) ) {
-                console.log(num_bytes);
-                console.log("file type:  " + file.type);
-                alert("No file contents were detected for file named " + file.name + ".  For help, please contact the Research Data Service.");
-            }
-            else {
-                //alert('num_bytes: ' + num_bytes);
-                alert("For files larger than 4GB, use an alternative upload method.");
-            }
-        },
-        progress: function (e, data) {
-            var progress;
-            if (data.context) {
-                progress = parseInt(data.loaded / data.total * 100, 10);
-                if (progress > 99) {
-                    data.context.prepend("processing...");
-                }
-                return data.context.find('.bar').css('width', progress + '%');
-            }
-        },
-
-        downloadTemplate: function (o) {
-
-            var maxId = Number($('#datafile_index_max').val());
-            var newId = 1;
-
-            if (maxId != NaN) {
-                newId = maxId + 1;
-            }
-            $('#datafile_index_max').val(newId);
-
-            var file = o.files[0];
-
-            //console.log(file);
-
-            var row =
-                '<tr id="datafile_index_' + newId + '"><td><div class = "row checkbox">' +
-                '<input value="false" type="hidden" name="dataset[datafiles_attributes][' + newId + '][_destroy]" id="dataset_datafiles_attributes_' + newId + '__destroy" />' +
-                '<input type="hidden" value="'+ file.webId +'" name="dataset[datafiles_attributes]['+ newId +'][web_id]" id="dataset_datafiles_attributes_'+ newId +'_web_id" />' +
-                '<input type="hidden"  value="' + file.datafileId + '" name="dataset[datafiles_attributes][' + newId + '][id]" id="dataset_datafiles_attributes_' + newId + '_id" />' +
-
-                '<span class="col-md-8">' +
-                '<label>' +
-                '<input class="checkFile checkFileGroup" name="selected_files[]" type="checkbox" value="' + newId + '" onchange="handleCheckFileGroupChange()">' +
-                file.name +
-                '</input>' +
-                '</label>' +
-                '<input class="bytestream_name" value="' + file.name + '" style="visibility: hidden;"/></span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
-            if (file.error) {
-                row = row + '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-warning-sign"></span>';
-            } else {
-                row = row + '<button type="button" class="btn btn-danger btn-sm" onclick="remove_file_row(' + newId + ')"><span class="glyphicon glyphicon-trash"></span></button></span>';
-            }
-
-            row = row + '</span></div></td></tr>';
-            if (file.error) {
-                $("#datafiles > tbody:last-child").append('<tr><td><div class="row"><p>' + file.name + ': ' + file.error + '</p></div></td></tr>');
-            } else {
-                var old_count = Number($("#datafiles-count").html());
-                $("#datafiles-count").html(String(old_count + 1));
-                $("#datafiles > tbody:last-child").append(row);
-            }
-        }
-    });
 
     var boxSelect = new BoxSelect();
     // Register a success callback handler
@@ -486,7 +372,6 @@ ready = function () {
     $('#box-upload-in-progress').hide();
 
 
-    //alert("dataset.js javascript working");
 
 }
 
