@@ -932,7 +932,8 @@ class Dataset < ActiveRecord::Base
         datafile.destroy unless ((datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != "") || (datafile.storage_root && datafile.storage_root != ""))
       end
     rescue StandardError => ex
-      Rails.logger.warn "unable to remove invalid datafile #{datafile.web_id}"
+      notification = DatabankMailer.error("Unable to remove invalid datafiles for #{self.key}")
+      notification.deliver_now
     end
   end
 
