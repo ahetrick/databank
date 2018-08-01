@@ -385,20 +385,20 @@ function uploadSingleFile(file, i) {
     //Load Listener
     ajax.addEventListener("load", function (e) {
 
-        console.log(event.target.responseText);
+        //console.log(event.target.responseText);
 
-        //var response = JSON.parse(event.target.responseText);
+        var response = JSON.parse(event.target.responseText);
 
-        //var newFile = response.files[0];
+        var newFile = response.files[0];
 
         //console.log(newFile.name);
 
-        // $("#status_" + fileId).text(event.target.responseText);
-        //$('#progressbar_' + fileId).css("width", "100%");
+        $("#status_" + fileId).text(event.target.responseText);
+        $('#progressbar_' + fileId).css("width", "100%");
 
-        //appendFileRow(newFile);
+        appendFileRow(newFile);
 
-        //$("#progress_" + fileId).remove();
+        $("#progress_" + fileId).remove();
 
         //Hide cancel button
         var _cancel = $('#cancel_' + fileId);

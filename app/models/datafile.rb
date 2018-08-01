@@ -257,8 +257,10 @@ class Datafile < ActiveRecord::Base
   end
 
   def remove_directory
-    Application.storage_manager.draft_root.delete_content(self.storage_key)
-    Application.storage_manager.draft_root.delete_tree(self.web_id)
+    if self.storage_key && self.storage_key !=''
+      Application.storage_manager.draft_root.delete_content(self.storage_key)
+      Application.storage_manager.draft_root.delete_tree(self.web_id)
+    end
   end
 
   def job
