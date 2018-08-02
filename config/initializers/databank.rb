@@ -6,7 +6,7 @@ IDB_CONFIG = YAML.load_file(File.join(Rails.root, 'config', 'databank.yml'))[Rai
 
 Application.storage_manager = StorageManager.new
 
-if IDB_CONFIG[:aws][:s3_mode] == 'true'
+if IDB_CONFIG[:aws][:s3_mode] == true
   Aws.config.update({
                         region: IDB_CONFIG[:aws][:region],
                         credentials: Aws::Credentials.new(IDB_CONFIG[:aws][:access_key_id], IDB_CONFIG[:aws][:secret_access_key])
@@ -22,6 +22,7 @@ if IDB_CONFIG[:aws][:s3_mode] == 'true'
       )
 
 else
+  Rails.logger.warn IDB_CONFIG[:aws][:s3_mode]
   Rails.logger.warn IDB_CONFIG[:storage][0][:path]
   Tus::Server.opts[:storage] = Tus::Storage::Filesystem.new("#{IDB_CONFIG[:storage][0][:path]}/cache" )
 end
