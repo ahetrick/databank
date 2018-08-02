@@ -19,6 +19,9 @@ gem 'medusa_storage', git: 'https://github.com/medusa-project/medusa_storage.git
 # Use aws-sdk to manage signed urls for downloads
 gem 'aws-sdk'
 
+# Use tus-server to support chunked uploads of large files
+gem "tus-server"
+
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 gem 'jquery-datatables-rails'

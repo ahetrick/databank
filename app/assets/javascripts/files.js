@@ -369,73 +369,32 @@ function onFileChanged(theEvt) {
 
 }
 
-function uploadSingleFile(file, i) {
+function uploadSingleFile(file){
 
-    console.log("inside uploadSingleFile");
-
-    var fileId = i;
-    var ajax = new XMLHttpRequest();
-    //Progress Listener
-    ajax.upload.addEventListener("progress", function (e) {
-        var percent = (e.loaded / e.total) * 100;
-        $("#status_" + fileId).text(Math.round(percent) + "% uploaded, please wait...");
-        $('#progressbar_' + fileId).css("width", percent + "%")
-        $("#notify_" + fileId).text("Uploaded " + (e.loaded / 1048576).toFixed(2) + " MB of " + (e.total / 1048576).toFixed(2) + " MB ");
-    }, false);
-    //Load Listener
-    ajax.addEventListener("load", function (e) {
-
-        //console.log(event.target.responseText);
-
-        var response = JSON.parse(event.target.responseText);
-
-        var newFile = response.files[0];
-
-        //console.log(newFile.name);
-
-        $("#status_" + fileId).text(event.target.responseText);
-        $('#progressbar_' + fileId).css("width", "100%");
-
-        appendFileRow(newFile);
-
-        $("#progress_" + fileId).remove();
-
-        //Hide cancel button
-        var _cancel = $('#cancel_' + fileId);
-        _cancel.hide();
-    }, false);
-    //Error Listener
-    ajax.addEventListener("error", function (e) {
-        $("#status_" + fileId).text("Upload Failed");
-    }, false);
-    //Abort Listener
-    ajax.addEventListener("abort", function (e) {
-        $("#status_" + fileId).text("Upload Aborted");
-    }, false);
-
-    ajax.open("POST", "/datafiles");
-
-    var uploaderForm = new FormData();
-
-    uploaderForm.append('datafile[dataset_id]', dataset_id);
-    uploaderForm.append('datafile[upload]', file);
-
-    var csrfToken = $('meta[name="csrf-token"]').attr('content');
-
-    ajax.setRequestHeader('X-CSRF-Token', csrfToken);
-    ajax.setRequestHeader('Accept', 'application/json');
-
-    ajax.send(uploaderForm);
-
-    //Cancel button
-    var _cancel = $('#cancel_' + fileId);
-    _cancel.show();
-
-    _cancel.on('click', function () {
-        ajax.abort();
+    // Create a new tus upload
+    var upload = new tus.Upload(file, {
+        endpoint: "/files/",
+        retryDelays: [0, 1000, 3000, 5000],
+        chunkSize: 5*1024*1024, // 1MB
+        metadata: {
+            filename: file.name,
+            filetype: file.type
+        },
+        onError: function(error) {
+            console.log("Failed because: " + error)
+        },
+        onProgress: function(bytesUploaded, bytesTotal) {
+            var percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
+            console.log(bytesUploaded, bytesTotal, percentage + "%")
+        },
+        onSuccess: function() {
+            console.log("Download %s from %s", upload.file.name, upload.url)
+        }
     })
-}
 
+    // Start the upload
+    upload.start()
+}
 
 function appendFileRow(newFile){
     var maxId = Number($('#datafile_index_max').val());

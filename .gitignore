@@ -51,3 +51,4 @@ dj_stop.sh
 /public/deck
 /public/assets
 /dataset_staging
+/data
