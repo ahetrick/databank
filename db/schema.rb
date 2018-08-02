@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180726153921) do
+ActiveRecord::Schema.define(version: 20180802201740) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -89,6 +89,7 @@ ActiveRecord::Schema.define(version: 20180726153921) do
     t.string   "storage_root"
     t.string   "storage_prefix"
     t.string   "storage_key"
+    t.string   "mime_type"
   end
 
   create_table "dataset_download_tallies", force: :cascade do |t|

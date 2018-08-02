@@ -14,7 +14,7 @@ if IDB_CONFIG[:aws][:s3_mode] == true
 
   Application.aws_signer = Aws::S3::Presigner.new
 
-  Tus::Server.opts[:storage] = Tus::Storage::S3.new(
+  Tus::Server.opts[:storage] = Tus::Storage::S3.new(prefix: 'tus',
       bucket:            IDB_CONFIG[:storage][0][:bucket], # required
       access_key_id:     IDB_CONFIG[:aws][:access_key_id],
       secret_access_key: IDB_CONFIG[:aws][:secret_access_key],
@@ -22,8 +22,8 @@ if IDB_CONFIG[:aws][:s3_mode] == true
       )
 
 else
-  Rails.logger.warn IDB_CONFIG[:aws][:s3_mode]
-  Rails.logger.warn IDB_CONFIG[:storage][0][:path]
-  Tus::Server.opts[:storage] = Tus::Storage::Filesystem.new("#{IDB_CONFIG[:storage][0][:path]}/cache" )
+
+  Tus::Server.opts[:storage] = Tus::Storage::Filesystem.new("#{IDB_CONFIG[:storage][0][:path]}/tus" )
+
 end
 

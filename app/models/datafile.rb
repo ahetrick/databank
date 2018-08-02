@@ -64,7 +64,7 @@ class Datafile < ActiveRecord::Base
   end
 
   def storage_root_bucket
-    if IDB_CONFIG[:aws][:s3_mode] == 'true'
+    if IDB_CONFIG[:aws][:s3_mode] == true
 
       return self.root_set.at(self.storage_root)[:bucket]
 
@@ -74,7 +74,7 @@ class Datafile < ActiveRecord::Base
   end
 
   def storage_root_path
-    if IDB_CONFIG[:aws][:s3_mode] == 'false'
+    if IDB_CONFIG[:aws][:s3_mode] == false
 
       return self.root_set.at(self.storage_root)[:real_path]
 
@@ -257,9 +257,27 @@ class Datafile < ActiveRecord::Base
   end
 
   def remove_directory
+
+
+    if self.storage_key && self.storage_key[0,3] == 'tus'
+      key_parts = self.storage_key.split('/')
+      name_part = key_parts[-1]
+      begin
+        Application.storage_manager.draft_root.delete_content("tus/#{name_part}.info")
+      rescue StandardError => err
+        Rails.logger.warn("remove error 1: #{err.message}")
+      end
+
+    end
+
     if self.storage_key && self.storage_key !=''
-      Application.storage_manager.draft_root.delete_content(self.storage_key)
-      Application.storage_manager.draft_root.delete_tree(self.web_id)
+      begin
+        Application.storage_manager.draft_root.delete_content(self.storage_key)
+      rescue StandardError => err
+        Rails.logger.warn("remove error 2: #{err.message}")
+      end
+
+      #Application.storage_manager.draft_root.delete_tree(self.web_id)
     end
   end
 

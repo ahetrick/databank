@@ -83,7 +83,19 @@ class DatafilesController < ApplicationController
 
     @datafile.save
 
-    if params.has_key?(:datafile) && params[:datafile].has_key?(:upload)
+    if params.has_key?(:datafile) && params[:datafile].has_key?(:tus_url)
+
+      tus_url = params[:datafile][:tus_url]
+      tus_url_arr = tus_url.split('/')
+      tus_key = tus_url_arr[-1]
+
+      @datafile.storage_root = Application.storage_manager.draft_root.name
+      @datafile.binary_name = params[:datafile][:filename]
+      @datafile.storage_key = File.join('tus', tus_key )
+      @datafile.binary_size = params[:datafile][:size]
+      @datafile.mime_type = params[:datafile][:mime_type]
+
+    elsif params.has_key?(:datafile) && params[:datafile].has_key?(:upload)
 
       uploaded_io = params[:datafile][:upload]
 
@@ -91,6 +103,7 @@ class DatafilesController < ApplicationController
       @datafile.binary_name = uploaded_io.original_filename
       @datafile.storage_key = File.join(@datafile.web_id, @datafile.binary_name)
       @datafile.binary_size = uploaded_io.size
+      @datafile.mime_type = uploaded_io.content_type
 
       # Moving the file to some safe place; as tmp files will be flushed timely
       Application.storage_manager.draft_root.copy_io_to(@datafile.storage_key, uploaded_io, nil, uploaded_io.size)
@@ -245,7 +258,8 @@ class DatafilesController < ApplicationController
 
     if current_root.root_type == :filesystem
       path = current_root.path_to(@datafile.storage_key, check_path: true)
-      send_file path
+      send_file path, filename: @datafile.binary_name, type: @datafile.mime_type || ‘application/octet-stream’
+
 
     else
 

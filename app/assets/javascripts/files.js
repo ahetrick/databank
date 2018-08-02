@@ -345,22 +345,24 @@ function onFileChanged(theEvt) {
     for (var i = 0; i < files.length; i++) { //Progress bar and status label's for each file genarate dynamically
         var fileId = i;
 
-        $('#datafiles_upload_progress').append('<div class="col-md-12" id="progress_' + fileId + '">' +
-            '<div class="bytestream_name"'+ files[i].name.toString() + '</div>' +
-            '<div class="progress">' +
+        console.log(files[i].name.toString());
+
+        $('#datafiles_upload_progress').append('<div class="container-fluid" id="progress_' + fileId + '">' +
+            '<div class="row">' +
+            '<div class="col-md-6">' +
+            '<p class="progress-status" id="status_' + fileId + '">' + files[i].name.toString() + '</p>' +
+            '</div>' +
+            '<div class="col-md-6">' +
+            '<input type="button" class="btn btn-danger" id="cancel_' + fileId + '" value="cancel">' +
+            '</div></div>' +
+
+            '<div class="row">' +
+            '<div class="progress col-md-12">' +
             '<div class="progress-bar progress-bar-striped active" id="progressbar_' + fileId + '" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:0%"></div>' +
             '</div></div>' +
             '<div class="col-md-12">' +
-            '<div class="col-md-6">' +
-            '<input type="button" class="btn btn-danger" id="cancel_' + fileId + '" value="cancel">' +
-            '</div>' +
-            '<div class="col-md-6">' +
-            '<p class="progress-status" id="status_' + fileId + '"></p>' +
-            '</div>' +
-            '</div>' +
-            '<div class="col-md-12">' +
             '<p id="notify_' + fileId + '" style="text-align: right;"></p>' +
-            '</div>');
+            '</div></div>');
     }
 
     for (var i = 0; i < files.length; i++) {
@@ -369,25 +371,86 @@ function onFileChanged(theEvt) {
 
 }
 
-function uploadSingleFile(file){
+function uploadSingleFile(file, i){
+
+    var fileId = i;
 
     // Create a new tus upload
     var upload = new tus.Upload(file, {
         endpoint: "/files/",
         retryDelays: [0, 1000, 3000, 5000],
-        chunkSize: 5*1024*1024, // 1MB
+        chunkSize: 5*1024*1024, // 5MB
         metadata: {
             filename: file.name,
-            filetype: file.type
+            filetype: file.type,
+            size: file.size
         },
         onError: function(error) {
-            console.log("Failed because: " + error)
+            $("#status_" + fileId).text("Upload Failed because: " + error);
+            //console.log("Failed because: " + error)
         },
         onProgress: function(bytesUploaded, bytesTotal) {
             var percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
-            console.log(bytesUploaded, bytesTotal, percentage + "%")
+            $('#progressbar_' + fileId).css("width", percentage + "%")
+            //console.log(bytesUploaded, bytesTotal, percentage + "%")
         },
         onSuccess: function() {
+
+            var ajax = new XMLHttpRequest();
+            ajax.addEventListener("load", function (e) {
+
+                console.log(event.target.responseText);
+
+                var response = JSON.parse(event.target.responseText);
+
+                var newFile = response.files[0];
+
+                //console.log(newFile.name);
+
+                $("#status_" + fileId).text(event.target.responseText);
+                $('#progressbar_' + fileId).css("width", "100%");
+
+                appendFileRow(newFile);
+
+                $("#progress_" + fileId).remove();
+
+                //Hide cancel button
+                var _cancel = $('#cancel_' + fileId);
+                _cancel.hide();
+            }, false);
+
+            ajax.addEventListener("error", function (e) {
+                $("#status_" + fileId).text("Upload Failed");
+            }, false);
+            //Abort Listener
+            ajax.addEventListener("abort", function (e) {
+                $("#status_" + fileId).text("Upload Aborted");
+            }, false);
+
+            ajax.open("POST", "/datafiles");
+
+            var uploaderForm = new FormData();
+            uploaderForm.append('datafile[dataset_id]', dataset_id);
+            uploaderForm.append('datafile[tus_url]', upload.url);
+            uploaderForm.append('datafile[filename]', upload.file.name);
+            uploaderForm.append('datafile[size]', upload.file.size);
+            uploaderForm.append('datafile[mime_type]', upload.file.type);
+
+            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+            ajax.setRequestHeader('X-CSRF-Token', csrfToken);
+            ajax.setRequestHeader('Accept', 'application/json');
+
+            ajax.send(uploaderForm);
+
+            //Cancel button
+            var _cancel = $('#cancel_' + fileId);
+            _cancel.show();
+
+            _cancel.on('click', function () {
+                ajax.abort();
+            })
+
             console.log("Download %s from %s", upload.file.name, upload.url)
         }
     })
