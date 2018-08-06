@@ -349,11 +349,11 @@ function onFileChanged(theEvt) {
 
         $('#datafiles_upload_progress').append('<div class="container-fluid" id="progress_' + fileId + '">' +
             '<div class="row">' +
-            '<div class="col-md-6">' +
+            '<div class="col-md-10">' +
             '<p class="progress-status" id="status_' + fileId + '">' + files[i].name.toString() + '</p>' +
             '</div>' +
-            '<div class="col-md-6">' +
-            '<input type="button" class="btn btn-danger" id="cancel_' + fileId + '" value="cancel">' +
+            '<div class="col-md-2">' +
+            '<input type="button" class="btn btn-block btn-danger" id="cancel_' + fileId + '" value="cancel">' +
             '</div></div>' +
 
             '<div class="row">' +

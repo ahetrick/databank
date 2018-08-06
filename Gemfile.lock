@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/medusa-project/medusa_storage.git
-  revision: c5bb2db512ef1fcaf84102211d4023437112eea3
+  revision: 6dd67d07bc460b939032e50b455be52b535098b5
   branch: master
   specs:
     medusa_storage (0.1.8)
@@ -59,7 +59,7 @@ GEM
     autoprefixer-rails (7.2.5)
       execjs
     aws-eventstream (1.0.1)
-    aws-partitions (1.96.0)
+    aws-partitions (1.97.0)
     aws-sdk (3.0.1)
       aws-sdk-resources (~> 3)
     aws-sdk-acm (1.9.0)
@@ -170,7 +170,7 @@ GEM
     aws-sdk-connect (1.1.0)
       aws-sdk-core (~> 3)
       aws-sigv4 (~> 1.0)
-    aws-sdk-core (3.22.1)
+    aws-sdk-core (3.24.0)
       aws-eventstream (~> 1.0)
       aws-partitions (~> 1.0)
       aws-sigv4 (~> 1.0)
@@ -310,7 +310,7 @@ GEM
     aws-sdk-kinesisvideomedia (1.1.0)
       aws-sdk-core (~> 3)
       aws-sigv4 (~> 1.0)
-    aws-sdk-kms (1.6.0)
+    aws-sdk-kms (1.7.0)
       aws-sdk-core (~> 3)
       aws-sigv4 (~> 1.0)
     aws-sdk-lambda (1.8.0)

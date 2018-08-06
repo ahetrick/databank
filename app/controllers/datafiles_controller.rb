@@ -21,7 +21,7 @@ class DatafilesController < ApplicationController
       @dataset = Dataset.find_by_key(params[:dataset_id])
       @datafiles = Datafile.all
       @datafiles.each do |datafile|
-        datafile.destroy unless ((datafile.binary&.file) || (datafile.medusa_path && datafile.medusa_path != ""))
+        datafile.destroy unless ((datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != ""))
       end
       authorize! :edit, @dataset
     end
