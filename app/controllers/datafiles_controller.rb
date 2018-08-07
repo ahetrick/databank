@@ -95,9 +95,9 @@ class DatafilesController < ApplicationController
       @datafile.binary_size = params[:datafile][:size]
       @datafile.mime_type = params[:datafile][:mime_type]
 
-    elsif params.has_key?(:datafile) && params[:datafile].has_key?(:upload)
+    elsif params.has_key?(:datafile) && params[:datafile].has_key?(:binary)
 
-      uploaded_io = params[:datafile][:upload]
+      uploaded_io = params[:datafile][:binary]
 
       @datafile.storage_root = Application.storage_manager.draft_root.name
       @datafile.binary_name = uploaded_io.original_filename
