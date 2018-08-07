@@ -31,7 +31,7 @@ class ApiDatasetController < ApplicationController
 
           df.save
 
-          render json: "successfully uploaded #{df.binary.file.filename}\nsee in dataset at #{IDB_CONFIG[:root_url_text]}/datasets/#{@dataset.key} \n", status: 200
+          render json: "successfully uploaded #{df.binary_name}\nsee in dataset at #{IDB_CONFIG[:root_url_text]}/datasets/#{@dataset.key} \n", status: 200
         rescue Exception => ex
           Rails.logger.warn ex.message
           render json: "#{ex.message}\n", status: 500
