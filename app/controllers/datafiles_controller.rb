@@ -106,7 +106,8 @@ class DatafilesController < ApplicationController
       @datafile.mime_type = uploaded_io.content_type
 
       # Moving the file to some safe place; as tmp files will be flushed timely
-      Application.storage_manager.draft_root.copy_io_to(@datafile.storage_key, uploaded_io, nil, uploaded_io.size)
+      result = Application.storage_manager.draft_root.copy_io_to(@datafile.storage_key, uploaded_io, nil, uploaded_io.size)
+      Rails.logger.warn result.to_s
 
     end
 
