@@ -91,7 +91,7 @@ class DatafilesController < ApplicationController
 
       @datafile.storage_root = Application.storage_manager.draft_root.name
       @datafile.binary_name = params[:datafile][:filename]
-      @datafile.storage_key = File.join('tus', tus_key )
+      @datafile.storage_key = File.join(tus_key )
       @datafile.binary_size = params[:datafile][:size]
       @datafile.mime_type = params[:datafile][:mime_type]
 
