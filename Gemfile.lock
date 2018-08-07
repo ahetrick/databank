@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/medusa-project/medusa_storage.git
-  revision: 6dd67d07bc460b939032e50b455be52b535098b5
+  revision: a3c8b7c29fcec840e412d514f442824185dcbbeb
   branch: master
   specs:
-    medusa_storage (0.1.8)
+    medusa_storage (0.1.9)
       aws-sdk-s3
       hex_string
       parallel (~> 1.12)
