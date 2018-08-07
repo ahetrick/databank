@@ -16,12 +16,20 @@ class ApiDatasetController < ApplicationController
     if params.has_key?('binary')
 
       begin
-          df = Datafile.create(dataset_id: @dataset.id, binary: params['binary'])
+          df = Datafile.create(dataset_id: @dataset.id)
 
-          unless df && df.binary && df.binary.file && df.binary.file.size > 0
-            raise 'Error uploading file. If error persists, please contact the Research Data Service.'
-            df.destroy if df
-          end
+          uploaded_io = params['binary']
+
+          df.storage_root = Application.storage_manager.draft_root.name
+          df.binary_name = uploaded_io.original_filename
+          df.storage_key = File.join(df.web_id, df.binary_name)
+          df.binary_size = uploaded_io.size
+          df.mime_type = uploaded_io.content_type
+
+          # Moving the file to some safe place; as tmp files will be flushed timely
+          Application.storage_manager.draft_root.copy_io_to(df.storage_key, uploaded_io, nil, uploaded_io.size)
+
+          df.save
 
           render json: "successfully uploaded #{df.binary.file.filename}\nsee in dataset at #{IDB_CONFIG[:root_url_text]}/datasets/#{@dataset.key} \n", status: 200
         rescue Exception => ex

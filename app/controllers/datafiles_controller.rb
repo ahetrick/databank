@@ -95,19 +95,6 @@ class DatafilesController < ApplicationController
       @datafile.binary_size = params[:datafile][:size]
       @datafile.mime_type = params[:datafile][:mime_type]
 
-    elsif params.has_key?(:datafile) && params[:datafile].has_key?(:binary)
-
-      uploaded_io = params[:datafile][:binary]
-
-      @datafile.storage_root = Application.storage_manager.draft_root.name
-      @datafile.binary_name = uploaded_io.original_filename
-      @datafile.storage_key = File.join(@datafile.web_id, @datafile.binary_name)
-      @datafile.binary_size = uploaded_io.size
-      @datafile.mime_type = uploaded_io.content_type
-
-      # Moving the file to some safe place; as tmp files will be flushed timely
-      result = Application.storage_manager.draft_root.copy_io_to(@datafile.storage_key, uploaded_io, nil, uploaded_io.size)
-      Rails.logger.warn result.to_s
 
     end
 
