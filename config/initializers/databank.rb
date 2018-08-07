@@ -14,7 +14,7 @@ if IDB_CONFIG[:aws][:s3_mode] == true
 
   Application.aws_signer = Aws::S3::Presigner.new
 
-  Tus::Server.opts[:storage] = Tus::Storage::S3.new(prefix: 'tus',
+  Tus::Server.opts[:storage] = Tus::Storage::S3.new(prefix: 'uploads/',
       bucket:            IDB_CONFIG[:storage][0][:bucket], # required
       access_key_id:     IDB_CONFIG[:aws][:access_key_id],
       secret_access_key: IDB_CONFIG[:aws][:secret_access_key],
