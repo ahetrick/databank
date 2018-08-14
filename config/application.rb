@@ -96,6 +96,7 @@ module Databank
     config.autoload_paths << File.join(Rails.root, 'helpers/admin')
     config.autoload_paths << File.join(Rails.root, 'jobs')
     config.autoload_paths << File.join(Rails.root, 'lib')
+    config.autoload_paths << File.join(Rails.root, 'lib', 'api')
     config.autoload_once_paths << File.join(Rails.root, 'app/models')
     config.autoload_once_paths << File.join(Rails.root, 'app/models/concerns')
     config.active_job.queue_adapter = :delayed_job

@@ -6,6 +6,8 @@ IDB_CONFIG = YAML.load_file(File.join(Rails.root, 'config', 'databank.yml'))[Rai
 
 Application.storage_manager = StorageManager.new
 
+Tus::Server.opts[:max_size] = 2 * 1024*1024*1024*1024 # 2TB
+
 if IDB_CONFIG[:aws][:s3_mode] == true
   Aws.config.update({
                         region: IDB_CONFIG[:aws][:region],

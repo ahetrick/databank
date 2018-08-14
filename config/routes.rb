@@ -1,4 +1,10 @@
+# config/routes.rb
+require './lib/api/base'
+
+
 Rails.application.routes.draw do
+
+  #mount API::Base => '/api'
 
   resources :nested_items
   get '/featured_researchers/feature_none', to: 'featured_researchers#feature_none'
@@ -60,6 +66,8 @@ Rails.application.routes.draw do
   root 'welcome#index'
 
   get '/', to: 'welcome#index'
+
+  get '/check_token', to: 'welcome#check_token'
 
   get '/restoration_events', to: 'restoration_events#index'
 

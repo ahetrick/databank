@@ -3,6 +3,8 @@ require 'digest/md5'
 
 class ApiDatasetController < ApplicationController
 
+  before_action :authenticate, only: [:datafile]
+
   skip_before_action :verify_authenticity_token, only: [:datafile]
 
   def datafile
@@ -35,6 +37,27 @@ class ApiDatasetController < ApplicationController
         rescue Exception => ex
           Rails.logger.warn ex.message
           render json: "#{ex.message}\n", status: 500
+      end
+
+    elsif params.has_key?('tus_url') && params.has_key?('filename') && params.has_key?('size')
+
+      begin
+        df = Datafile.create(dataset_id: @dataset.id)
+        tus_url = params[:tus_url]
+        tus_url_arr = tus_url.split('/')
+        tus_key = tus_url_arr[-1]
+
+        df.storage_root = Application.storage_manager.draft_root.name
+        df.binary_name = params[:filename]
+        df.storage_key = tus_key
+        df.binary_size = params[:size]
+
+        df.save
+
+        render json: "successfully uploaded #{df.binary_name}\nsee in dataset at #{IDB_CONFIG[:root_url_text]}/datasets/#{@dataset.key} \n", status: 200
+      rescue Exception => ex
+        Rails.logger.warn ex.message
+        render json: "#{ex.message}\n", status: 500
       end
 
     elsif params.has_key?('phase')
