@@ -64,7 +64,7 @@ class Dataset < ActiveRecord::Base
   before_create 'set_key'
   after_create 'store_agreement'
   before_save 'set_primary_contact'
-  after_save 'remove_invalid_datafiles'
+  #after_save 'remove_invalid_datafiles'
   before_destroy 'destroy_audit'
 
   def to_param
@@ -1052,7 +1052,7 @@ class Dataset < ActiveRecord::Base
   end
 
   def ordered_datafiles
-    self.datafiles.sort_by { |obj| obj.bytestream_name }
+    self.datafiles.where(storage_root: [nil, ""]).sort_by { |obj| obj.bytestream_name }
   end
 
   def fileset_preserved?

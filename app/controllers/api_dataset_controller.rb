@@ -73,7 +73,7 @@ class ApiDatasetController < ApplicationController
         case params['phase']
           when 'setup'
 
-            @dataset.datafiles.each do |datafile|
+            @dataset.ordered_datafiles.each do |datafile|
               if datafile.bytestream_name == params['filename']
                 raise "File with the name #{params['filename']} already exists in this dataset."
               end

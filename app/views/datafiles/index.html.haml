@@ -5,7 +5,7 @@
     =link_to "#{@dataset.plain_text_citation}", dataset_path(@dataset.key)
 
   %hr
-  -@dataset.datafiles.each do |datafile|
+  -@dataset.ordered_datafiles.each do |datafile|
     .row
       .col-md-5.col-md-offset-1
         =link_to datafile.bytestream_name, "/datasets/#{@dataset.key}/datafiles/#{datafile.web_id}"
