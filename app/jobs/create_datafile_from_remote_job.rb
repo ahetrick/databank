@@ -27,11 +27,11 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
   def perform
 
-    queue = Queue.new
-
     @datafile.storage_key = File.join(@datafile.web_id, @filename)
 
     if IDB_CONFIG[:aws][:s3_mode] == true
+
+      queue = Queue.new
 
       upload_key = @datafile.storage_key
       upload_bucket = Application.storage_manager.draft_root.bucket
@@ -121,7 +121,12 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
         rescue Exception => ex
           # ..|..
           Rails.logger.warn("something went wrong during multipart upload")
+          Rails.logger.warn(ex.class)
           Rails.logger.warn(ex.message)
+
+          queue.close if queue
+
+
 
           client.abort_multipart_upload({
                                             bucket: upload_bucket,
@@ -129,12 +134,14 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
                                             upload_id: upload_id,
                                         })
 
+          raise ex
+
         end
 
 
       end
 
-      queue.close
+      queue.close if queue
 
     else
 
