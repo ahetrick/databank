@@ -16,10 +16,10 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
     @filename = filename
     @filesize = filesize
 
-    if filesize.to_f < 10000
+    if filesize.to_f < 4000
       progress_max = 2
     else
-      progress_max = (filesize.to_f / 10000).to_i + 1
+      progress_max = (filesize.to_f / 4000).to_i + 1
     end
 
     super progress_max: progress_max
@@ -27,7 +27,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
   def perform
 
-    @datafile.storage_key = join(@datafile.web_id, @filename)
+    @datafile.storage_key = File.join(@datafile.web_id, @filename)
 
     if IDB_CONFIG[:aws][:s3_mode] == true
 
@@ -126,7 +126,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
                                             key: upload_key,
                                             upload_id: upload_id,
                                         })
-          
+
         end
 
 
@@ -159,7 +159,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
     if Application.storage_manager.draft_root.exist?(@datafile.storage_key)
 
       @datafile.binary_name = @filename
-      @datafile.storage_key = join(@datafile.web_id, @filename)
+      @datafile.storage_root = Application.storage_manager.draft_root.name
+      @datafile.storage_key = File.join(@datafile.web_id, @filename)
       @datafile.binary_size = @filesize
       @datafile.save!
     end
