@@ -3,8 +3,11 @@ require 'open-uri'
 require 'fileutils'
 require 'net/http'
 require 'aws-sdk-s3'
+require 'stringio'
 
 class CreateDatafileFromRemoteJob < ProgressJob::Base
+
+  FIVE_MB = 1024 * 1024 * 5
 
   def initialize(dataset_id, datafile, remote_url, filename, filesize)
     @remote_url = remote_url
@@ -28,11 +31,21 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
     if IDB_CONFIG[:aws][:s3_mode] == true
 
-      # This sets up the aws s3 pre-signed url
-      queue = Queue.new
-      s3 = Aws::S3::Resource.new(region: IDB_CONFIG[:aws][:region])
-      obj = s3.bucket(IDB_CONFIG[:storage][0][:bucket]).object(@datafile.storage_key)
-      up_url = URI.parse(obj.presigned_url(:put))
+      upload_key = @datafile.storage_key
+      upload_bucket = Application.storage_manager.draft_root.bucket
+
+
+      if Application.storage_manager.draft_root.storage_prefix
+        upload_key = "#{Application.storage_manager.draft_root.storage_prefix}#{@datafile.storage_key}"
+      end
+
+      response = Application.aws_client.create_multipart_upload({
+                                                                    bucket: upload_bucket,
+                                                                    key: upload_key,
+                                                                })
+
+      upload_id = response.upload_id
+
 
       # This is the remote url that was passed in, the source of the file to upload
       down_uri = URI.parse(@remote_url)
@@ -48,20 +61,78 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
             }
           }
         }
+
       end
 
       consumer = Thread.new do
-        # turn queue input into body_stream ?
+
+        begin
+
+          parts = Array.new
+
+          buffer = StringIO.new
+          part_number = 1
+
+          while seg = queue.deq # wait for nil to break loop
+
+            buffer.write(seg)
+            if buffer.size > FIVE_MB
+
+              part_response = client.upload_part({
+                                                     body: buffer,
+                                                     bucket: upload_bucket,
+                                                     key: upload_key,
+                                                     part_number: part_number,
+                                                     upload_id: upload_id,
+                                                 })
+
+              parts.push({etag: part_response.etag, part_number: part_number})
+              buffer.truncate(0)
+              part_number = part_number + 1
+
+            end
+          end
+
+          if buffer.size > 0
+
+            # send the last part, which can be any size
+            part_response = client.upload_part({
+                                                   body: buffer,
+                                                   bucket: upload_bucket,
+                                                   key: upload_key,
+                                                   part_number: part_number,
+                                                   upload_id: upload_id,
+                                               })
+            parts.push({etag: part_response.etag, part_number: part_number})
+            buffer.truncate(0)
+          end
+
+          # complete upload
+          response = client.complete_multipart_upload({
+                                                          bucket: upload_bucket,
+                                                          key: upload_key,
+                                                          multipart_upload: {
+                                                              parts: parts,
+                                                          },
+                                                          upload_id: upload_id,
+                                                      })
+        rescue Exception => ex
+          # ..|..
+          Rails.logger.warn("something went wrong during multipart upload")
+          Rails.logger.warn(ex.message)
+
+          client.abort_multipart_upload({
+                                            bucket: upload_bucket,
+                                            key: upload_key,
+                                            upload_id: upload_id,
+                                        })
+          
+        end
+
+
       end
 
-      # This block is based on documenation for using pre-signed URLs to upload to aws
-      Net::HTTP.start(up_url.host) do |http|
-        http.send_request("PUT", up_url.request_uri, body_stream, {
-            # This is required, or Net::HTTP will add a default unsigned content-type.
-            "content-type" => "",
-        })
-      end
-
+      queue.close
 
     else
 

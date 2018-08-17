@@ -77,6 +77,8 @@ module Databank
 
     attr_accessor :aws_signer
 
+    attr_accessor :aws_client
+
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
