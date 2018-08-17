@@ -35,8 +35,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
       upload_bucket = Application.storage_manager.draft_root.bucket
 
 
-      if Application.storage_manager.draft_root.storage_prefix
-        upload_key = "#{Application.storage_manager.draft_root.storage_prefix}#{@datafile.storage_key}"
+      if Application.storage_manager.draft_root.prefix
+        upload_key = "#{Application.storage_manager.draft_root.prefix}#{@datafile.storage_key}"
       end
 
       response = Application.aws_client.create_multipart_upload({
