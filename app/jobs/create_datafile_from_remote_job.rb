@@ -27,6 +27,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
   def perform
 
+    encountered_error = false
+
     @datafile.storage_key = File.join(@datafile.web_id, @filename)
 
     if IDB_CONFIG[:aws][:s3_mode]
@@ -47,9 +49,6 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
       done_reading = false
 
       done_writing = false
-
-      encountered_error = false
-
 
       # This is the remote url that was passed in, the source of the file to upload
       down_uri = URI.parse(@remote_url)
@@ -106,13 +105,18 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
             buffer.write(seg)
             if buffer.size > FIVE_MB
 
+              part_file = Tempfile.new('part')
+              part_file.write.buffer
+
               part_response = client.upload_part({
-                                                     body: buffer,
+                                                     body: part_file,
                                                      bucket: upload_bucket,
                                                      key: upload_key,
                                                      part_number: part_number,
                                                      upload_id: upload_id,
                                                  })
+
+              part_file.delete
 
               parts.push({etag: part_response.etag, part_number: part_number})
               buffer.truncate(0)
@@ -153,17 +157,13 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
         rescue Exception => ex
           # ..|..
           #
-          encountered_error = true
+
           Rails.logger.warn("something went wrong during multipart upload")
           Rails.logger.warn(ex.class)
+          Rails.logger.warn(ex.message)
           ex.backtrace.each do |line|
             Rails.logger.warn(line)
           end
-          Rails.logger.warn(ex.backtrace)
-
-          queue.close if queue
-
-
 
           Application.aws_client.abort_multipart_upload({
                                             bucket: upload_bucket,
@@ -171,20 +171,14 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
                                             upload_id: upload_id,
                                         })
 
+          queue.close if queue
+
           raise ex
 
         end
 
 
       end
-
-      monitor = Thread.new do
-        until (done_reading && done_writing) || encountered_error
-          sleep 0.25
-        end
-        queue.close if queue
-      end
-
 
 
     else
