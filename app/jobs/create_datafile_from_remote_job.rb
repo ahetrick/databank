@@ -97,7 +97,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
           while seg !=nil   # wait for nil to break loop
 
-            Rails.warn("buffer size: #{buffer.size.to_s}")
+            Rails.logger.warn("buffer size: #{buffer.size.to_s}")
 
             seg = queue.deq
 
@@ -156,7 +156,9 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
           encountered_error = true
           Rails.logger.warn("something went wrong during multipart upload")
           Rails.logger.warn(ex.class)
-          Rails.logger.warn(ex.message)
+          ex.backtrace.each do |line|
+            Rails.logger.warn(line)
+          end
           Rails.logger.warn(ex.backtrace)
 
           queue.close if queue
