@@ -75,7 +75,9 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
         begin
 
-          Rails.logger.warn ("creating mulitpart upload")
+          Rails.logger.warn("creating mulitpart upload")
+          Rails.logger.warn("upload_key: #{upload_key}")
+          Rails.logger.warn("upload bucket: #{upload_bucket}")
 
           response = client.create_multipart_upload({
                                                         bucket: upload_bucket,
@@ -83,6 +85,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
                                                     })
 
           upload_id = response.upload_id
+
+          Rails.logger.warn("upload_id: #{upload_id}")
 
           parts = Array.new
 
