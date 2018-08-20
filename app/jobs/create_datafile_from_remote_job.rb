@@ -160,7 +160,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
       monitor = Thread.new do
         until (done_reading && done_writing) || encountered_error
-          sleep .25
+          sleep 0.25
         end
         queue.close if queue
       end
