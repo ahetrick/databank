@@ -105,18 +105,20 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
           parts = Array.new
 
-          buffer = StringIO.new
+
           part_number = 1
-          seg = queue.deq
-          buffer.write(seg)
 
-          while seg != nil # wait for nil to break loop
-
-            seg = queue.deq
+          while seg = queue.deq # wait for nil to break loop
 
             buffer.write(seg)
             #Rails.logger.warn("buffer size: #{buffer.size.to_s}")
             if buffer.size > FIVE_MB
+
+              buffer.close_write unless buffer.closed_write?
+
+              if buffer.closed_read?
+                Rail.logger.warn("There is your trouble.")
+              end
 
               part_response = client.upload_part({
                                                      body: buffer.read,
@@ -130,7 +132,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
               Rails.logger.warn("part_response.etag: #{part_response.etag}")
 
               parts.push({etag: part_response.etag, part_number: part_number})
-              buffer.truncate(0)
+              buffer = StringIO.new
               part_number = part_number + 1
               Rails.logger.warn("Another part bites the dust: #{part_number}")
 
@@ -150,8 +152,10 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
                                                })
             parts.push({etag: part_response.etag, part_number: part_number})
             Rails.logger.warn("last part_response.etag: #{part_response.etag}")
-            buffer.truncate(0)
+
           end
+
+          buffer.close
 
           Rails.logger.warn ("completing upload")
 
