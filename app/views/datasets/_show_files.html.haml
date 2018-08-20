@@ -38,9 +38,9 @@
                                 %input(type="checkbox" id="checkAllFiles" value="checkAllFiles")
                                 Select all
 
-                                ="(#{dataset.datafiles.count})"
+                                ="(#{dataset.ordered_datafiles.count})"
 
-                    -if dataset.ordered_datafiles
+                    -if dataset.ordered_datafiles.count > 0
 
                       - dataset.ordered_datafiles.each do |datafile|
                         -if (datafile.bytestream_size > 0) && (datafile.job_status == :complete) && datafile.storage_root && datafile.storage_key

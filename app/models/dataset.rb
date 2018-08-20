@@ -1052,7 +1052,7 @@ class Dataset < ActiveRecord::Base
   end
 
   def ordered_datafiles
-    self.datafiles.where(storage_root: [nil, ""]).sort_by { |obj| obj.bytestream_name }
+    self.datafiles.where.not(storage_root: [nil, ""]).sort_by { |obj| obj.bytestream_name }
   end
 
   def fileset_preserved?

@@ -103,7 +103,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
             end
           end
 
-          done_writing = true
+
 
           if buffer.size > 0
 
@@ -128,6 +128,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
                                                           },
                                                           upload_id: upload_id,
                                                       })
+          done_writing = true
+
         rescue Exception => ex
           # ..|..
           Rails.logger.warn("something went wrong during multipart upload")
