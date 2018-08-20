@@ -43,12 +43,6 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
       client = Application.aws_client
 
-      response = client.create_multipart_upload({
-                                                                    bucket: upload_bucket,
-                                                                    key: upload_key,
-                                                                })
-
-      upload_id = response.upload_id
 
       done_reading = false
 
@@ -78,7 +72,17 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
       consumer = Thread.new do
 
+
         begin
+
+          Rails.logger.warn ("creating mulitpart upload")
+
+          response = client.create_multipart_upload({
+                                                        bucket: upload_bucket,
+                                                        key: upload_key,
+                                                    })
+
+          upload_id = response.upload_id
 
           parts = Array.new
 
@@ -101,13 +105,13 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
               parts.push({etag: part_response.etag, part_number: part_number})
               buffer.truncate(0)
               part_number = part_number + 1
+              Rails.logger.warn("Another part bites the dust: #{part_number}")
 
             end
           end
 
 
-
-          if buffer.size > 0
+          unless buffer.size <= 0
 
             # send the last part, which can be any size
             part_response = client.upload_part({
@@ -120,6 +124,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
             parts.push({etag: part_response.etag, part_number: part_number})
             buffer.truncate(0)
           end
+
+          Rails.logger.warn ("completing upload")
 
           # complete upload
           response = client.complete_multipart_upload({
@@ -145,7 +151,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
 
 
-          client.abort_multipart_upload({
+          Application.aws_client.abort_multipart_upload({
                                             bucket: upload_bucket,
                                             key: upload_key,
                                             upload_id: upload_id,
