@@ -92,8 +92,16 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
           buffer = StringIO.new
           part_number = 1
+          seg = queue.deq
+          buffer.write(seg)
 
-          while seg = queue.deq # wait for nil to break loop
+          while seg !=nil   # wait for nil to break loop
+
+            Rails.warn("buffer size: #{buffer.size.to_s}")
+
+            seg = queue.deq
+
+            Rails.logger.warn("Starting part: #{part_number}")
 
             buffer.write(seg)
             if buffer.size > FIVE_MB
