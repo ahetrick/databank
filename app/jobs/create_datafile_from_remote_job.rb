@@ -61,6 +61,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
               }
             }
           }
+
         rescue Exception => ex
           # ..|..
           #
@@ -104,12 +105,14 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
           Rails.logger.warn("upload_id: #{upload_id}")
 
           parts = Array.new
-          
+
           buffer = StringIO.new
 
           part_number = 1
 
-          while seg = queue.deq # wait for nil to break loop
+          until queue.empty?
+
+            seg = queue.deq
 
             buffer.write(seg)
             #Rails.logger.warn("buffer size: #{buffer.size.to_s}")
@@ -140,6 +143,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
             end
           end
 
+          Rails.logger.warn("after until loop")
+          Rails.logger.warn(buffer.size.to_s)
 
           unless buffer.size <= 0
 
@@ -157,6 +162,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
           end
 
           buffer.close
+          queue.close
 
           Rails.logger.warn ("completing upload")
 
