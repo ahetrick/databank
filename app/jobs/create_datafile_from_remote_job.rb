@@ -104,7 +104,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
           Rails.logger.warn("upload_id: #{upload_id}")
 
-          parts = "{ parts: ["
+          parts = []
 
           buffer = StringIO.new
 
@@ -135,7 +135,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
               Rails.logger.warn("part_response.etag: #{part_response.etag}")
 
-              parts = parts + %Q[{etag: "\"#{part_response.etag}\"", part_number: #{part_number},},]
+              part_hash = {etag: "\"#{part_response.etag}\"", part_number: part_number,}
+              parts.push(part_hash)
               buffer = StringIO.new
               part_number = part_number + 1
               Rails.logger.warn("Another part bites the dust: #{part_number}")
@@ -156,12 +157,12 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
                                                    part_number: part_number,
                                                    upload_id: upload_id,
                                                })
-            parts = parts + %Q[{etag: "\"#{part_response.etag}\"", part_number: #{part_number},},]
+
+            part_hash = {etag: "\"#{part_response.etag}\"", part_number: part_number,}
+            parts.push(part_hash)
             Rails.logger.warn("last part_response.etag: #{part_response.etag}")
 
           end
-
-          parts = parts + "],}"
 
           buffer.close
           queue.close
@@ -173,7 +174,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
           response = client.complete_multipart_upload({
                                                           bucket: upload_bucket,
                                                           key: upload_key,
-                                                          multipart_upload: parts,
+                                                          multipart_upload: {parts: parts,},
                                                           upload_id: upload_id,
                                                       })
 
