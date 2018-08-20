@@ -104,7 +104,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
           Rails.logger.warn("upload_id: #{upload_id}")
 
-          parts = Array.new
+          parts = "{ parts: ["
 
           buffer = StringIO.new
 
@@ -135,7 +135,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
               Rails.logger.warn("part_response.etag: #{part_response.etag}")
 
-              parts.push({etag: part_response.etag, part_number: part_number})
+              parts = parts + %Q[{etag: "\"#{part_response.etag}\"", part_number: #{part_number},},]
               buffer = StringIO.new
               part_number = part_number + 1
               Rails.logger.warn("Another part bites the dust: #{part_number}")
@@ -144,7 +144,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
           end
 
           Rails.logger.warn("after until loop")
-          Rails.logger.warn(buffer.size.to_s)
+          Rails.logger.warn("buffer size: #{buffer.size.to_s}")
 
           unless buffer.size <= 0
 
@@ -156,25 +156,28 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
                                                    part_number: part_number,
                                                    upload_id: upload_id,
                                                })
-            parts.push({etag: part_response.etag, part_number: part_number})
+            parts = parts + %Q[{etag: "\"#{part_response.etag}\"", part_number: #{part_number},},]
             Rails.logger.warn("last part_response.etag: #{part_response.etag}")
 
           end
+
+          parts = parts + "],}"
 
           buffer.close
           queue.close
 
           Rails.logger.warn ("completing upload")
+          Rails.logger.warn(parts)
 
           # complete upload
           response = client.complete_multipart_upload({
                                                           bucket: upload_bucket,
                                                           key: upload_key,
-                                                          multipart_upload: {
-                                                              parts: parts,
-                                                          },
+                                                          multipart_upload: parts,
                                                           upload_id: upload_id,
                                                       })
+
+          Rails.logger.warn(response.to_h)
 
         rescue Exception => ex
           # ..|..
