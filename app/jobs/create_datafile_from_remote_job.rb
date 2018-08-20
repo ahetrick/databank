@@ -105,12 +105,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
             buffer.write(seg)
             if buffer.size > FIVE_MB
 
-              part_file = Tempfile.new('part')
-              part_file.binmode
-              part_file.write buffer.read
-
               part_response = client.upload_part({
-                                                     body: part_file,
+                                                     body: buffer.read,
                                                      bucket: upload_bucket,
                                                      key: upload_key,
                                                      part_number: part_number,
