@@ -45,32 +45,48 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
       client = Application.aws_client
 
-
-      done_reading = false
-
-      done_writing = false
-
       # This is the remote url that was passed in, the source of the file to upload
       down_uri = URI.parse(@remote_url)
 
       producer = Thread.new do
-        # This is how I stream the file from the url, this code is based on something currently working
-        Net::HTTP.start(down_uri.host, down_uri.port, :use_ssl => (down_uri.scheme == 'https')) {|http|
-          http.request_get(down_uri.path) {|res|
 
-            res.read_body {|seg|
-              queue << seg
-              update_progress
+        begin
+
+          # This is how I stream the file from the url, this code is based on something currently working
+          Net::HTTP.start(down_uri.host, down_uri.port, :use_ssl => (down_uri.scheme == 'https')) {|http|
+            http.request_get(down_uri.path) {|res|
+
+              res.read_body {|seg|
+                queue << seg
+              }
             }
           }
-        }
+        rescue Exception => ex
+          # ..|..
+          #
 
-        done_reading = true
+          Rails.logger.warn("something went wrong during multipart upload")
+          Rails.logger.warn(ex.class)
+          Rails.logger.warn(ex.message)
+          ex.backtrace.each do |line|
+            Rails.logger.warn(line)
+          end
+
+          Application.aws_client.abort_multipart_upload({
+                                                            bucket: upload_bucket,
+                                                            key: upload_key,
+                                                            upload_id: upload_id,
+                                                        })
+
+          queue.close if queue
+
+          raise ex
+
+        end
 
       end
 
       consumer = Thread.new do
-
 
         begin
 
@@ -94,7 +110,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
           seg = queue.deq
           buffer.write(seg)
 
-          while seg !=nil   # wait for nil to break loop
+          while seg != nil # wait for nil to break loop
 
             Rails.logger.warn("buffer size: #{buffer.size.to_s}")
 
@@ -112,8 +128,6 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
                                                      part_number: part_number,
                                                      upload_id: upload_id,
                                                  })
-
-              part_file.delete
 
               parts.push({etag: part_response.etag, part_number: part_number})
               buffer.truncate(0)
@@ -163,10 +177,10 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
           end
 
           Application.aws_client.abort_multipart_upload({
-                                            bucket: upload_bucket,
-                                            key: upload_key,
-                                            upload_id: upload_id,
-                                        })
+                                                            bucket: upload_bucket,
+                                                            key: upload_key,
+                                                            upload_id: upload_id,
+                                                        })
 
           queue.close if queue
 
