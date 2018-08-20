@@ -104,7 +104,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
           Rails.logger.warn("upload_id: #{upload_id}")
 
           parts = Array.new
-
+          
+          buffer = StringIO.new
 
           part_number = 1
 
