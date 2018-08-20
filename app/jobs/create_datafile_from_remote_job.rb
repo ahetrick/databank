@@ -29,9 +29,9 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
     @datafile.storage_key = File.join(@datafile.web_id, @filename)
 
-    if IDB_CONFIG[:aws][:s3_mode] == true
+    if IDB_CONFIG[:aws][:s3_mode]
 
-      queue = Queue.new
+      queue = SizedQueue.new(FIVE_MB * 2)
 
       upload_key = @datafile.storage_key
       upload_bucket = Application.storage_manager.draft_root.bucket
@@ -50,6 +50,10 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
       upload_id = response.upload_id
 
+      done_reading = false
+
+      done_writing = false
+
 
       # This is the remote url that was passed in, the source of the file to upload
       down_uri = URI.parse(@remote_url)
@@ -61,10 +65,12 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
             res.read_body {|seg|
               queue << seg
-              update_progress()
+              update_progress
             }
           }
         }
+
+        done_reading = true
 
       end
 
@@ -97,6 +103,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
             end
           end
 
+          done_writing = true
+
           if buffer.size > 0
 
             # send the last part, which can be any size
@@ -125,6 +133,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
           Rails.logger.warn("something went wrong during multipart upload")
           Rails.logger.warn(ex.class)
           Rails.logger.warn(ex.message)
+          Rails.logger.warn(ex.backtrace)
 
           queue.close if queue
 
@@ -143,7 +152,14 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
       end
 
-      queue.close if queue
+      monitor = Thread.new do
+        until done_reading && done_writing
+          sleep 1
+        end
+        queue.close if queue
+      end
+
+
 
     else
 
