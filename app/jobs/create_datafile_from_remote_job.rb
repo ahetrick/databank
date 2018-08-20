@@ -54,6 +54,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
       done_writing = false
 
+      encountered_error = false
+
 
       # This is the remote url that was passed in, the source of the file to upload
       down_uri = URI.parse(@remote_url)
@@ -132,6 +134,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
         rescue Exception => ex
           # ..|..
+          #
+          encountered_error = true
           Rails.logger.warn("something went wrong during multipart upload")
           Rails.logger.warn(ex.class)
           Rails.logger.warn(ex.message)
@@ -155,8 +159,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
       end
 
       monitor = Thread.new do
-        until done_reading && done_writing
-          sleep 1
+        until (done_reading && done_writing) || encountered_error
+          sleep .25
         end
         queue.close if queue
       end
