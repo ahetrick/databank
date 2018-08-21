@@ -110,7 +110,9 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
           part_number = 1
 
-          while seg = queue.deq # break when queue.deq is nil
+          while !queue.empty?  # break when queue.deq is nil
+
+            seg = queue.deq
 
             buffer.write(seg)
             #Rails.logger.warn("buffer size: #{buffer.size.to_s}")
