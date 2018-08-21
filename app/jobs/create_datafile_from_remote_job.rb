@@ -14,7 +14,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
     @dataset_id = dataset_id
     @datafile = datafile
     @filename = filename
-    @filesize = filesize
+    @filesize = filesize #string because it is used in display
 
     if filesize.to_f < 4000
       progress_max = 2
@@ -44,7 +44,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
       if @filesize.to_f < FIVE_MB
         web_contents  = open(@remote_url) {|f| f.read }
-        Application.storage_manager.draft_root.copy_io_to(upload_key, web_contents, nil, @filesize)
+        Application.storage_manager.draft_root.copy_io_to(upload_key, web_contents, nil, @filesize.to_f)
 
       else
 
@@ -56,24 +56,29 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
           upload_id = aws_mulitpart_start(client, upload_bucket, upload_key)
 
-          file_parts[part_number] = Tempfile.new("part#{part_number}")
+          file_parts[part_number] = File.new("/tmp/#{@datafile.web_id}_part_#{part_number}", "wb+")
 
           uri = URI.parse(@remote_url)
           Net::HTTP.start(uri.host, uri.port, :use_ssl => (uri.scheme == 'https')) {|http|
             http.request_get(uri.path) {|res|
 
               res.read_body {|seg|
-                file_parts[part_number] << seg
+                file_parts[part_number].write(seg)
 
-                if file_parts[part_number].size.to_f > FIVE_MB
+                if file_parts[part_number].size > FIVE_MB
+
+
+                  etag = aws_upload_part(client, file_parts[part_number], upload_bucket, upload_key, part_number, upload_id)
 
                   file_parts[part_number].close
-                  etag = aws_upload_part(client, file_parts[part_number], upload_bucket, upload_key, part_number, upload_id)
+                  file_parts[part_number].unlink
+
                   part_hash = {etag: "\"#{etag}\"", part_number: part_number,}
                   parts.push(part_hash)
                   Rails.logger.warn("Another part bites the dust: #{part_number}")
                   part_number = part_number + 1
-                  file_parts[part_number] = Tempfile.new("part#{part_number}")
+                  file_parts[part_number] = File.new("/tmp/#{@datafile.web_id}_part_#{part_number}", "wb+")
+
 
                 end
 
@@ -81,8 +86,9 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
               }
 
               # handle last part, which does not have to be 5 MB
-              file_parts[part_number].close
               etag = aws_upload_part(client, file_parts[part_number], upload_bucket, upload_key, part_number, upload_id)
+              file_parts[part_number].close
+              file_parts[part_number].unlink
               part_hash = {etag: "\"#{etag}\"", part_number: part_number,}
               parts.push(part_hash)
               Rails.logger.warn("Another part bites the dust: #{part_number}")
