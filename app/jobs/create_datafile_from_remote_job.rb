@@ -42,7 +42,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
       client = Application.aws_client
 
-      if @filesize < FIVE_MB
+      if @filesize.to_f < FIVE_MB
         web_contents  = open(@remote_url) {|f| f.read }
         Application.storage_manager.draft_root.copy_io_to(upload_key, web_contents, nil, @filesize)
 
@@ -116,20 +116,44 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
       end
 
+    else
 
-      # confirm upload, and update datafile fields
 
-      if Application.storage_manager.draft_root.exist?(@datafile.storage_key)
+      filepath = "#{Application.storage_manager.draft_root.path}/#{@datafile.storage_key}"
 
-        @datafile.binary_name = @filename
-        @datafile.storage_root = Application.storage_manager.draft_root.name
-        @datafile.storage_key = File.join(@datafile.web_id, @filename)
-        @datafile.binary_size = @filesize
-        @datafile.save!
-      end
+      dir_name = File.dirname(filepath)
+
+      FileUtils.mkdir_p(dir_name) unless File.directory?(dir_name)
+
+      File.open(filepath, 'wb+') do |outfile|
+        uri = URI.parse(@remote_url)
+        Net::HTTP.start(uri.host, uri.port, :use_ssl => (uri.scheme == 'https')) { |http|
+          http.request_get(uri.path) { |res|
+
+            res.read_body { |seg|
+              outfile << seg
+              update_progress()
+            }
+          }
+        }
+
+        end
+
 
 
     end
+
+    # confirm upload, and update datafile fields
+
+    if Application.storage_manager.draft_root.exist?(@datafile.storage_key)
+
+      @datafile.binary_name = @filename
+      @datafile.storage_root = Application.storage_manager.draft_root.name
+      @datafile.storage_key = File.join(@datafile.web_id, @filename)
+      @datafile.binary_size = @filesize
+      @datafile.save!
+    end
+
   end
 
   def aws_mulitpart_start(client, upload_bucket, upload_key)
