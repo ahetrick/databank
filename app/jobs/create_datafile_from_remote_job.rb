@@ -79,7 +79,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
                                                             upload_id: upload_id,
                                                         })
 
-          queue.close if queue
+          queue.close if queue && !queue.closed?
 
           raise ex
 
@@ -110,9 +110,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
           part_number = 1
 
-          until queue.empty?
-
-            seg = queue.deq
+          while seg = queue.deq # break when queue.deq is nil
 
             buffer.write(seg)
             #Rails.logger.warn("buffer size: #{buffer.size.to_s}")
@@ -165,7 +163,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
           end
 
           buffer.close
-          queue.close
+          queue.close if queue && !queue.closed?
 
           Rails.logger.warn ("completing upload")
           Rails.logger.warn(parts)
@@ -197,7 +195,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
                                                             upload_id: upload_id,
                                                         })
 
-          queue.close if queue
+          queue.close if queue && !queue.closed?
 
           raise ex
 
@@ -206,6 +204,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
       end
 
+      producer.join
+      consumer.join
 
     else
 
