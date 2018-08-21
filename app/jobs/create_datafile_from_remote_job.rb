@@ -27,8 +27,6 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
   def perform
 
-    encountered_error = false
-
     @datafile.storage_key = File.join(@datafile.web_id, @filename)
 
     if IDB_CONFIG[:aws][:s3_mode]
