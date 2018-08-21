@@ -3,7 +3,7 @@ require 'open-uri'
 require 'fileutils'
 require 'net/http'
 require 'aws-sdk-s3'
-require 'stringio'
+
 
 class CreateDatafileFromRemoteJob < ProgressJob::Base
 
@@ -33,13 +33,6 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
     if IDB_CONFIG[:aws][:s3_mode]
 
-      queue = SizedQueue.new(FIVE_MB * 2)
-
-      mutex = Mutex.new
-
-      num_segs_in = 0
-      num_segs_out = 0
-      segs_in_done = false
 
       upload_key = @datafile.storage_key
       upload_bucket = Application.storage_manager.draft_root.bucket
@@ -51,165 +44,55 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
       client = Application.aws_client
 
-      # This is the remote url that was passed in, the source of the file to upload
-      down_uri = URI.parse(@remote_url)
+      if @filesize < FIVE_MB
+        web_contents  = open(@remote_url) {|f| f.read }
+        Application.storage_manager.draft_root.copy_io_to(upload_key, web_contents, nil, @filesize)
 
-      producer = Thread.new do
+      else
+
+        parts = []
+        part_number = 1
+        file_parts = {}
 
         begin
 
-          # This is how I stream the file from the url, this code is based on something currently working
-          Net::HTTP.start(down_uri.host, down_uri.port, :use_ssl => (down_uri.scheme == 'https')) {|http|
-            http.request_get(down_uri.path) {|res|
+          upload_id = aws_mulitpart_start(client, upload_bucket, upload_key)
+
+          file_parts[part_number] = Tempfile.new("part#{part_number}")
+
+          uri = URI.parse(@remote_url)
+          Net::HTTP.start(uri.host, uri.port, :use_ssl => (uri.scheme == 'https')) {|http|
+            http.request_get(uri.path) {|res|
 
               res.read_body {|seg|
-                queue << seg
-                mutex.synchronize do
-                  num_segs_in = num_segs_in + 1
+                file_parts[part_number] << seg
+
+                if file_parts[part_number].size > FIVE_MB
+
+                  file_parts[part_number].close
+                  etag = aws_upload_part(client, file_parts[part_number], upload_bucket, upload_key, part_number, upload_id)
+                  part_hash = {etag: "\"#{etag}\"", part_number: part_number,}
+                  parts.push(part_hash)
+                  Rails.logger.warn("Another part bites the dust: #{part_number}")
+                  part_number = part_number + 1
+                  file_parts[part_number] = Tempfile.new("part#{part_number}")
+
                 end
+
+                update_progress
               }
-            }
-          }
 
-          mutex.synchronize do
-            segs_in_done = true
-          end
-
-        rescue Exception => ex
-          # ..|..
-          #
-
-          Rails.logger.warn("something went wrong during multipart upload")
-          Rails.logger.warn(ex.class)
-          Rails.logger.warn(ex.message)
-          ex.backtrace.each do |line|
-            Rails.logger.warn(line)
-          end
-
-          Application.aws_client.abort_multipart_upload({
-                                                            bucket: upload_bucket,
-                                                            key: upload_key,
-                                                            upload_id: upload_id,
-                                                        })
-
-          queue.close if queue && !queue.closed?
-
-          raise ex
-
-        end
-
-      end
-
-      consumer = Thread.new do
-
-        begin
-
-          done = false
-
-          Rails.logger.warn("creating mulitpart upload")
-          Rails.logger.warn("upload_key: #{upload_key}")
-          Rails.logger.warn("upload bucket: #{upload_bucket}")
-
-          response = client.create_multipart_upload({
-                                                        bucket: upload_bucket,
-                                                        key: upload_key,
-                                                    })
-
-          upload_id = response.upload_id
-
-          Rails.logger.warn("upload_id: #{upload_id}")
-
-          parts = []
-
-          buffer = StringIO.new
-
-          part_number = 1
-
-          loop do
-            mutex.synchronize do
-              if (segs_in_done && (num_segs_in == num_segs_out))
-                done = true
-              end
-            end
-
-            break if done
-            
-            seg = queue.deq
-
-            mutex.synchronize do
-              num_segs_out = num_segs_out + 1
-            end
-
-            buffer.write(seg)
-            #Rails.logger.warn("buffer size: #{buffer.size.to_s}")
-            if buffer.size > FIVE_MB
-
-              buffer.close_write unless buffer.closed_write?
-
-              if buffer.closed_read?
-                Rail.logger.warn("There is your trouble.")
-              end
-
-              file_part = buffer.read
-
-              Rails.logger.warn("file_part size: #{file_part.size}, class: #{file_part.class}")
-
-              part_response = client.upload_part({
-                                                     body: file_part,
-                                                     bucket: upload_bucket,
-                                                     key: upload_key,
-                                                     part_number: part_number,
-                                                     upload_id: upload_id,
-                                                 })
-
-
-              Rails.logger.warn("part_response.etag: #{part_response.etag}")
-
-              part_hash = {etag: "\"#{part_response.etag}\"", part_number: part_number,}
+              # handle last part, which does not have to be 5 MB
+              file_parts[part_number].close
+              etag = aws_upload_part(client, file_parts[part_number], upload_bucket, upload_key, part_number, upload_id)
+              part_hash = {etag: "\"#{etag}\"", part_number: part_number,}
               parts.push(part_hash)
-              buffer = StringIO.new
-              part_number = part_number + 1
               Rails.logger.warn("Another part bites the dust: #{part_number}")
 
-            end
-          end
+              aws_complete_upload(client, upload_bucket, upload_key, parts, upload_id)
 
-          unless buffer.size <= 0
-
-            file_part = buffer.read
-
-            Rails.logger.warn("file_part size: #{file_part.size}, class: #{file_part.class}")
-
-            # send the last part, which can be any size
-            part_response = client.upload_part({
-                                                   body: file_part,
-                                                   bucket: upload_bucket,
-                                                   key: upload_key,
-                                                   part_number: part_number,
-                                                   upload_id: upload_id,
-                                               })
-
-            part_hash = {etag: "\"#{part_response.etag}\"", part_number: part_number,}
-            parts.push(part_hash)
-            Rails.logger.warn("last part_response.etag: #{part_response.etag}")
-
-          end
-
-          buffer.close
-          queue.close if queue && !queue.closed?
-
-          Rails.logger.warn ("completing upload")
-          Rails.logger.warn(parts)
-
-          # complete upload
-          response = client.complete_multipart_upload({
-                                                          bucket: upload_bucket,
-                                                          key: upload_key,
-                                                          multipart_upload: {parts: parts,},
-                                                          upload_id: upload_id,
-                                                      })
-
-          Rails.logger.warn(response.to_h)
+            }
+          }
 
         rescue Exception => ex
           # ..|..
@@ -228,49 +111,66 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
                                                             upload_id: upload_id,
                                                         })
 
-          queue.close if queue && !queue.closed?
 
           raise ex
 
         end
 
-
       end
 
-      producer.join
-      consumer.join
 
-    else
+      # confirm upload, and update datafile fields
 
-      filepath = Pathname.new(File.join(Application.storage_manager.draft_root.path, @datafile.storage_key))
-      dirname = File.dirname(filepath)
+      if Application.storage_manager.draft_root.exist?(@datafile.storage_key)
 
-      FileUtils.mkdir_p(dirname) unless File.directory?(dirname)
-
-      File.open(filepath, 'wb+') do |outfile|
-        uri = URI.parse(@remote_url)
-        Net::HTTP.start(uri.host, uri.port, :use_ssl => (uri.scheme == 'https')) {|http|
-          http.request_get(uri.path) {|res|
-
-            res.read_body {|seg|
-              outfile << seg
-              update_progress()
-            }
-          }
-        }
-
+        @datafile.binary_name = @filename
+        @datafile.storage_root = Application.storage_manager.draft_root.name
+        @datafile.storage_key = File.join(@datafile.web_id, @filename)
+        @datafile.binary_size = @filesize
+        @datafile.save!
       end
+
+
     end
+  end
 
-    if Application.storage_manager.draft_root.exist?(@datafile.storage_key)
+  def aws_mulitpart_start(client, upload_bucket, upload_key)
+    start_response = client.create_multipart_upload({
+                                       bucket: upload_bucket,
+                                       key: upload_key,
+                                   })
 
-      @datafile.binary_name = @filename
-      @datafile.storage_root = Application.storage_manager.draft_root.name
-      @datafile.storage_key = File.join(@datafile.web_id, @filename)
-      @datafile.binary_size = @filesize
-      @datafile.save!
-    end
+    start_response.upload_id
 
+  end
+
+  def aws_upload_part(client, file_part, upload_bucket, upload_key, part_number, upload_id)
+
+    part_response = client.upload_part({
+                                           body: file_part,
+                                           bucket: upload_bucket,
+                                           key: upload_key,
+                                           part_number: part_number,
+                                           upload_id: upload_id,
+                                       })
+
+    part_response.etag
+
+  end
+
+  def aws_complete_upload(client, upload_bucket, upload_key, parts, upload_id)
+    Rails.logger.warn ("completing upload")
+    Rails.logger.warn(parts)
+
+    # complete upload
+    response = client.complete_multipart_upload({
+                                                    bucket: upload_bucket,
+                                                    key: upload_key,
+                                                    multipart_upload: {parts: parts,},
+                                                    upload_id: upload_id,
+                                                })
+
+    Rails.logger.warn(response.to_h)
   end
 
 end
