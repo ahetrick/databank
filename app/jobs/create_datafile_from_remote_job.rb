@@ -65,7 +65,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
               res.read_body {|seg|
                 file_parts[part_number] << seg
 
-                if file_parts[part_number].size > FIVE_MB
+                if file_parts[part_number].size.to_f > FIVE_MB
 
                   file_parts[part_number].close
                   etag = aws_upload_part(client, file_parts[part_number], upload_bucket, upload_key, part_number, upload_id)
