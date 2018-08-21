@@ -124,7 +124,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
           buffer = StringIO.new
 
           part_number = 1
-          
+
           loop do
             mutex.synchronize do
               if (segs_in_done && (num_segs_in == num_segs_out))
@@ -175,6 +175,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
           end
 
           unless buffer.size <= 0
+
+            file_part = buffer.read
 
             Rails.logger.warn("file_part size: #{file_part.size}, class: #{file_part.class}")
 
