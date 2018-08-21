@@ -129,7 +129,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
           loop do
             mutex.synchronize do
-              if (segs_in_done && num_segs_in == num_segs_out)
+              if (segs_in_done && (num_segs_in == num_segs_out))
                 done = true
               end
             end
