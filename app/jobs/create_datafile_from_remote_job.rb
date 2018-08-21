@@ -35,6 +35,12 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
       queue = SizedQueue.new(FIVE_MB * 2)
 
+      mutex = Mutex.new
+
+      num_segs_in = 0
+      num_segs_out = 0
+      segs_in_done = false
+
       upload_key = @datafile.storage_key
       upload_bucket = Application.storage_manager.draft_root.bucket
 
@@ -58,9 +64,16 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
               res.read_body {|seg|
                 queue << seg
+                mutex.synchronize do
+                  num_segs_in = num_segs_in + 1
+                end
               }
             }
           }
+
+          mutex.synchronize do
+            segs_in_done = true
+          end
 
         rescue Exception => ex
           # ..|..
@@ -91,6 +104,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
         begin
 
+          done = false
+
           Rails.logger.warn("creating mulitpart upload")
           Rails.logger.warn("upload_key: #{upload_key}")
           Rails.logger.warn("upload bucket: #{upload_bucket}")
@@ -110,9 +125,22 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
           part_number = 1
 
-          while !queue.empty?  # break when queue.deq is nil
 
+
+          loop do
+            mutex.synchronize do
+              if (segs_in_done && num_segs_in == num_segs_out)
+                done = true
+              end
+            end
+
+            break if done
+            
             seg = queue.deq
+
+            mutex.synchronize do
+              num_segs_out = num_segs_out + 1
+            end
 
             buffer.write(seg)
             #Rails.logger.warn("buffer size: #{buffer.size.to_s}")
@@ -143,9 +171,6 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
             end
           end
-
-          Rails.logger.warn("after until loop")
-          Rails.logger.warn("buffer size: #{buffer.size.to_s}")
 
           unless buffer.size <= 0
 
