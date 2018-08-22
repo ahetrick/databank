@@ -50,7 +50,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
       else
 
-        parts = "["
+        # parts = "["
+        parts = []
 
         file_parts = {}
 
@@ -117,7 +118,11 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
                 mutex.synchronize {
                   etag = aws_upload_part(client, tmp_file, upload_bucket, upload_key, part_number, upload_id)
-                  parts = %Q[#{parts}{etag: "\\"#{etag}\\"", part_number: #{part_number},},]
+                  # parts = %Q[#{parts}{etag: "\\"#{etag}\\"", part_number: #{part_number},},]
+
+                  parts_hash = {etag: etag, part_number: part_number}
+
+                  parts.push(parts_hash)
 
                   Rails.logger.warn("Another part bites the dust: #{part_number}")
                   part_number = part_number + 1
@@ -144,14 +149,20 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
             end
             mutex.synchronize {
               etag = aws_upload_part(client, tmp_file, upload_bucket, upload_key, part_number, upload_id)
-              parts = %Q[#{parts}{etag: "\\"#{etag}\\"", part_number: #{part_number},},]
+
+              parts_hash = {etag: etag, part_number: part_number}
+
+              parts.push(parts_hash)
+
+              # parts = %Q[#{parts}{etag: "\\"#{etag}\\"", part_number: #{part_number},},]
               Rails.logger.warn("Another part bites the dust: #{part_number}")
               part_number = part_number + 1
             }
 
             mutex.synchronize do
               Rails.logger.warn("done with parts")
-              parts = %Q(#{parts}])
+
+              # parts = %Q(#{parts}])
               aws_complete_upload(client, upload_bucket, upload_key, parts, upload_id)
             end
 
@@ -262,16 +273,17 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
     etag = part_response.etag
 
-    etag.delete! '"'
-
     etag
+
+    #etag.delete! '"'
+
+    #etag
 
   end
 
   def aws_complete_upload(client, upload_bucket, upload_key, parts, upload_id)
     Rails.logger.warn ("completing upload")
-    Rails.logger.warn(parts)
-
+    
     # complete upload
     response = client.complete_multipart_upload({
                                                     bucket: upload_bucket,
