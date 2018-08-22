@@ -88,24 +88,20 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
             part_number = 1
 
-            filepart_path = "/tmp/part_#{part_number}"
-
-            f = File.open(filepart_path, "wb")
+            partio = StringIO.new("", 'wb+')
 
             while seg = seg_queue.deq # wait for queue to be closed in controller thread
 
-              f << seg
+              partio << seg
 
               if f.size > FIVE_MB
                 mutex.synchronize {
-                  Rails.logger.warn("f.size: #{f.size}")
+                  Rails.logger.warn("f.size: #{partio.size}")
                 }
-
-                f.close
 
                 mutex.synchronize {
 
-                  etag = aws_upload_part(client, filepart_path, upload_bucket, upload_key, part_number, upload_id)
+                  etag = aws_upload_part(client, partio.string, upload_bucket, upload_key, part_number, upload_id)
 
                   parts_hash = {etag: etag, part_number: part_number}
 
@@ -117,9 +113,9 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
                 part_number = part_number + 1
 
-                filepart_path = "/tmp/part_#{part_number}"
+                partio.close if partio&.closed?
 
-                f = File.open(filepart_path, "wb")
+                partio = StringIO.new("", 'wb+')
 
               end
 
@@ -131,17 +127,18 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
             # upload last part, less than 5 MB
 
-            f.close
 
             mutex.synchronize {
 
-              etag = aws_upload_part(client, filepart_path, upload_bucket, upload_key, part_number, upload_id)
+              etag = aws_upload_part(client, partio.string, upload_bucket, upload_key, part_number, upload_id)
 
               parts_hash = {etag: etag, part_number: part_number}
 
               parts.push(parts_hash)
 
               Rails.logger.warn("Another part bites the dust: #{part_number}")
+
+              partio.close if partio&.closed?
 
             }
 
