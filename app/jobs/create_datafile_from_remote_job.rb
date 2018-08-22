@@ -72,7 +72,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
                 res.read_body {|seg|
                   mutex.synchronize {
-                    parts_done = parts_done + 1
+                    parts_todo = parts_todo + 1
                     Rails.logger.warn("seg class: #{seg.class}")
                     Rails.logger.warn("seg #{parts_todo} produced")
                   }
@@ -108,6 +108,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
               mutex.synchronize {
                 if complete && (parts_done == parts_todo)
                   stop = true
+                  Rails.logger.warn("Time to end this.")
                 end
               }
             end
