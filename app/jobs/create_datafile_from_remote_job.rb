@@ -71,26 +71,31 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
               http.request_get(uri.path) {|res|
 
                 res.read_body {|seg|
-                  outfile << seg
+                  mutex.synchronize {
+                    parts_done = parts_done + 1
+                    Rails.logger.warn("seg class: #{seg.class}")
+                    Rails.logger.warn("seg #{parts_todo} produced")
+                  }
+                  queue << seg
                   update_progress
-                  Rails.logger.warn("seg class: #{seg.class}")
-                  parts_todo = parts_todo + 1
                 }
               }
             }
-
-            complete = true
+            mutex.synchronize {
+              complete = true
+            }
 
           end
 
           consumer = Thread.new do
             while seg = queue.deq # wait for nil to break loop
 
-              Rails.logger.warn("seg class: #{seg.class}")
-              Rails.logger.warn("#{seg} consumed")
               mutex.synchronize {
                 parts_done = parts_done + 1
+                Rails.logger.warn("seg #{parts_done} consumed")
+                Rails.logger.warn("seg class: #{seg.class}")
               }
+
             end
           end
 
