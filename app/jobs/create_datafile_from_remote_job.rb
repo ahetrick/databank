@@ -94,14 +94,17 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
               partio << seg
 
-              if f.size > FIVE_MB
+              if partio.size > FIVE_MB
+
+                partio.rewind
+
                 mutex.synchronize {
                   Rails.logger.warn("f.size: #{partio.size}")
                 }
 
                 mutex.synchronize {
 
-                  etag = aws_upload_part(client, partio.string, upload_bucket, upload_key, part_number, upload_id)
+                  etag = aws_upload_part(client, partio, upload_bucket, upload_key, part_number, upload_id)
 
                   parts_hash = {etag: etag, part_number: part_number}
 
@@ -130,7 +133,9 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
             mutex.synchronize {
 
-              etag = aws_upload_part(client, partio.string, upload_bucket, upload_key, part_number, upload_id)
+              partio.rewind
+
+              etag = aws_upload_part(client, partio, upload_bucket, upload_key, part_number, upload_id)
 
               parts_hash = {etag: etag, part_number: part_number}
 
@@ -238,10 +243,10 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
   end
 
-  def aws_upload_part(client, filepart_path, upload_bucket, upload_key, part_number, upload_id)
+  def aws_upload_part(client, partio, upload_bucket, upload_key, part_number, upload_id)
 
     part_response = client.upload_part({
-                                           body: filepart_path,
+                                           body: partio,
                                            bucket: upload_bucket,
                                            key: upload_key,
                                            part_number: part_number,
@@ -249,8 +254,6 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
                                        })
 
     Rails.logger.warn(part_response.to_h)
-
-    File.delete(filepart_path) if File.exist?(filepart_path)
 
     part_response.etag
 
