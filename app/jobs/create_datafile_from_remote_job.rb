@@ -48,7 +48,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
       else
 
-        parts = []
+        parts = "["
 
         file_parts = {}
 
@@ -115,8 +115,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
                 mutex.synchronize {
                   etag = aws_upload_part(client, tmp_file, upload_bucket, upload_key, part_number, upload_id)
-                  part_hash = {etag: "\"#{etag}\"", part_number: part_number,}
-                  parts.push(part_hash)
+                  parts = %Q[#{parts}{etag: "\\"#{etag}\\"", part_number: #{part_number},},]
+
                   Rails.logger.warn("Another part bites the dust: #{part_number}")
                   part_number = part_number + 1
                 }
@@ -142,16 +142,16 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
             end
             mutex.synchronize {
               etag = aws_upload_part(client, tmp_file, upload_bucket, upload_key, part_number, upload_id)
-              part_hash = {etag: "\"#{etag}\"", part_number: part_number,}
-              parts.push(part_hash)
+              parts = %Q[#{parts}{etag: "\\"#{etag}\\"", part_number: #{part_number},},]
               Rails.logger.warn("Another part bites the dust: #{part_number}")
               part_number = part_number + 1
             }
 
             mutex.synchronize do
               Rails.logger.warn("done with parts")
+              parts = %Q(#{parts}])
+              Rails.logger.warn(parts)
               final_response = aws_complete_upload(client, upload_bucket, upload_key, parts, upload_id)
-              Rails.logger.warn(final_response.to_h)
             end
 
           end
@@ -188,13 +188,11 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
             Rails.logger.warn(line)
           end
 
-=begin
           Application.aws_client.abort_multipart_upload({
                                                             bucket: upload_bucket,
                                                             key: upload_key,
                                                             upload_id: upload_id,
                                                         })
-=end
 
 
           raise ex
