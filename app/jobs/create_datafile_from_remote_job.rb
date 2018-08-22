@@ -7,6 +7,8 @@ require 'aws-sdk-s3'
 
 class CreateDatafileFromRemoteJob < ProgressJob::Base
 
+  Thread.abort_on_exception=true
+
   FIVE_MB = 1024 * 1024 * 5
 
   def initialize(dataset_id, datafile, remote_url, filename, filesize)
@@ -150,8 +152,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
             mutex.synchronize do
               Rails.logger.warn("done with parts")
               parts = %Q(#{parts}])
-              Rails.logger.warn(parts)
-              final_response = aws_complete_upload(client, upload_bucket, upload_key, parts, upload_id)
+              aws_complete_upload(client, upload_bucket, upload_key, parts, upload_id)
             end
 
           end
