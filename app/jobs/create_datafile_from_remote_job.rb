@@ -111,8 +111,6 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
                   part_IO.close
                 end
 
-                part_number = part_number + 1
-
                 part_IO = StringIO.new('', 'wb+')
 
                 mutex.synchronize {
@@ -122,9 +120,6 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
                   Rails.logger.warn("Another part bites the dust: #{part_number}")
                   part_number = part_number + 1
                 }
-
-                #TODO upload part
-
 
               end
 
@@ -155,7 +150,8 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
             mutex.synchronize do
               Rails.logger.warn("done with parts")
-              aws_complete_upload(client, upload_bucket, upload_key, parts, upload_id)
+              final_response = aws_complete_upload(client, upload_bucket, upload_key, parts, upload_id)
+              Rails.logger.warn(final_response.to_h)
             end
 
           end
