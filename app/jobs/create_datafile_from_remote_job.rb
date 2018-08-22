@@ -44,7 +44,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
       if @filesize.to_f < FIVE_MB
         web_contents = open(@remote_url) {|f| f.read}
-        Application.storage_manager.draft_root.copy_io_to(upload_key, web_contents, nil, @filesize.to_f)
+        Application.storage_manager.draft_root.copy_io_to(@datafile.storage_key, web_contents, nil, @filesize.to_f)
 
       else
 
