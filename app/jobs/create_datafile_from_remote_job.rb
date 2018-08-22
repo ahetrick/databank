@@ -115,6 +115,11 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
                 mutex.synchronize {
                   etag = aws_upload_part(client, tmp_file, upload_bucket, upload_key, part_number, upload_id)
+
+                  Rails.logger.warn("etag: #{etag}")
+                  Rails.logger.warn(%Q[etag: #{etag}])
+                  Rails.logger.warn(etag)
+
                   parts = %Q[#{parts}{etag: "\\"#{etag}\\"", part_number: #{part_number},},]
 
                   Rails.logger.warn("Another part bites the dust: #{part_number}")
