@@ -43,60 +43,76 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
       client = Application.aws_client
 
       if @filesize.to_f < FIVE_MB
-        web_contents  = open(@remote_url) {|f| f.read }
+        web_contents = open(@remote_url) {|f| f.read}
         Application.storage_manager.draft_root.copy_io_to(upload_key, web_contents, nil, @filesize.to_f)
 
       else
+
+        queue = Queue.new
+        mutex = Mutex.new
 
         parts = []
         part_number = 1
         file_parts = {}
 
+        complete = false
+        parts_todo = 0
+        parts_done = 0
+
         begin
 
-          upload_id = aws_mulitpart_start(client, upload_bucket, upload_key)
-
-          file_parts[part_number] = File.new("/tmp/#{@datafile.web_id}_part_#{part_number}", "wb+")
+          # upload_id = aws_mulitpart_start(client, upload_bucket, upload_key)
 
           uri = URI.parse(@remote_url)
-          Net::HTTP.start(uri.host, uri.port, :use_ssl => (uri.scheme == 'https')) {|http|
-            http.request_get(uri.path) {|res|
 
-              res.read_body {|seg|
-                file_parts[part_number].write(seg)
+          producer = Thread.new do
 
-                if file_parts[part_number].size > FIVE_MB
+            Net::HTTP.start(uri.host, uri.port, :use_ssl => (uri.scheme == 'https')) {|http|
+              http.request_get(uri.path) {|res|
 
-
-                  etag = aws_upload_part(client, file_parts[part_number], upload_bucket, upload_key, part_number, upload_id)
-
-                  file_parts[part_number].close
-                  file_parts[part_number].unlink
-
-                  part_hash = {etag: "\"#{etag}\"", part_number: part_number,}
-                  parts.push(part_hash)
-                  Rails.logger.warn("Another part bites the dust: #{part_number}")
-                  part_number = part_number + 1
-                  file_parts[part_number] = File.new("/tmp/#{@datafile.web_id}_part_#{part_number}", "wb+")
-
-
-                end
-
-                update_progress
+                res.read_body {|seg|
+                  outfile << seg
+                  update_progress
+                  Rails.logger.warn("seg class: #{seg.class}")
+                  parts_todo = parts_todo + 1
+                }
               }
-
-              # handle last part, which does not have to be 5 MB
-              etag = aws_upload_part(client, file_parts[part_number], upload_bucket, upload_key, part_number, upload_id)
-              file_parts[part_number].close
-              file_parts[part_number].unlink
-              part_hash = {etag: "\"#{etag}\"", part_number: part_number,}
-              parts.push(part_hash)
-              Rails.logger.warn("Another part bites the dust: #{part_number}")
-
-              aws_complete_upload(client, upload_bucket, upload_key, parts, upload_id)
-
             }
-          }
+
+            complete = true
+
+          end
+
+          consumer = Thread.new do
+            while seg = queue.deq # wait for nil to break loop
+
+              Rails.logger.warn("seg class: #{seg.class}")
+              Rails.logger.warn("#{seg} consumed")
+              mutex.synchronize {
+                parts_done = parts_done + 1
+              }
+            end
+          end
+
+          controller = Thread.new do
+
+            stop = false
+
+            while !stop
+              sleep 1
+              mutex.synchronize {
+                if complete && (parts_done == parts_todo)
+                  stop = true
+                end
+              }
+            end
+
+            queue.close
+
+          end
+
+
+
 
         rescue Exception => ex
           # ..|..
@@ -109,11 +125,13 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
             Rails.logger.warn(line)
           end
 
+=begin
           Application.aws_client.abort_multipart_upload({
                                                             bucket: upload_bucket,
                                                             key: upload_key,
                                                             upload_id: upload_id,
                                                         })
+=end
 
 
           raise ex
@@ -124,7 +142,6 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
     else
 
-
       filepath = "#{Application.storage_manager.draft_root.path}/#{@datafile.storage_key}"
 
       dir_name = File.dirname(filepath)
@@ -133,18 +150,17 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
       File.open(filepath, 'wb+') do |outfile|
         uri = URI.parse(@remote_url)
-        Net::HTTP.start(uri.host, uri.port, :use_ssl => (uri.scheme == 'https')) { |http|
-          http.request_get(uri.path) { |res|
+        Net::HTTP.start(uri.host, uri.port, :use_ssl => (uri.scheme == 'https')) {|http|
+          http.request_get(uri.path) {|res|
 
-            res.read_body { |seg|
+            res.read_body {|seg|
               outfile << seg
               update_progress()
             }
           }
         }
 
-        end
-
+      end
 
 
     end
@@ -164,9 +180,9 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
   def aws_mulitpart_start(client, upload_bucket, upload_key)
     start_response = client.create_multipart_upload({
-                                       bucket: upload_bucket,
-                                       key: upload_key,
-                                   })
+                                                        bucket: upload_bucket,
+                                                        key: upload_key,
+                                                    })
 
     start_response.upload_id
 
@@ -194,7 +210,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
     response = client.complete_multipart_upload({
                                                     bucket: upload_bucket,
                                                     key: upload_key,
-                                                    multipart_upload: {parts: parts,},
+                                                    multipart_upload: {parts: parts, },
                                                     upload_id: upload_id,
                                                 })
 
