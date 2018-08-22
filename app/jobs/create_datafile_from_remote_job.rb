@@ -48,55 +48,116 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
       else
 
-        queue = Queue.new
-        mutex = Mutex.new
-
         parts = []
-        part_number = 1
+
         file_parts = {}
 
-        complete = false
-        parts_todo = 0
-        parts_done = 0
+        seg_queue = Queue.new
+
+        mutex = Mutex.new
+
+        segs_complete = false
+        segs_todo = 0
+        segs_done = 0
+
+
 
         begin
 
-          # upload_id = aws_mulitpart_start(client, upload_bucket, upload_key)
+          upload_id = aws_mulitpart_start(client, upload_bucket, upload_key)
 
-          uri = URI.parse(@remote_url)
+          seg_producer = Thread.new do
 
-          producer = Thread.new do
+            uri = URI.parse(@remote_url)
 
             Net::HTTP.start(uri.host, uri.port, :use_ssl => (uri.scheme == 'https')) {|http|
               http.request_get(uri.path) {|res|
 
                 res.read_body {|seg|
                   mutex.synchronize {
-                    parts_todo = parts_todo + 1
-                    Rails.logger.warn("seg class: #{seg.class}")
-                    Rails.logger.warn("seg #{parts_todo} produced")
+                    segs_todo = segs_todo + 1
+                    # Rails.logger.warn("seg class: #{seg.class}")
+                    # Rails.logger.warn("seg #{parts_todo} produced")
                   }
-                  queue << seg
-                  update_progress
+                  seg_queue << seg
                 }
               }
             }
             mutex.synchronize {
-              complete = true
+              segs_complete = true
+              Rails.logger.warn("done with request")
             }
 
           end
 
-          consumer = Thread.new do
-            while seg = queue.deq # wait for nil to break loop
+          seg_consumer = Thread.new do
+
+            part_number = 1
+
+            part_IO = StringIO.new('', 'wb+')
+
+            while seg = seg_queue.deq # wait for nil to break loop
+
+              part_IO << seg
+
+              if part_IO.size > FIVE_MB
+                mutex.synchronize {
+                  Rails.logger.warn("part_IO.size: #{part_IO.size}")
+                }
+                tmp_file = Tempfile.new("part_#{part_number}")
+                tmp_file.binmode
+                tmp_file.write part_IO.read
+                if part_IO && !part_IO.closed?
+                  part_IO.close
+                end
+
+                part_number = part_number + 1
+
+                part_IO = StringIO.new('', 'wb+')
+
+                mutex.synchronize {
+                  etag = aws_upload_part(client, tmp_file, upload_bucket, upload_key, part_number, upload_id)
+                  part_hash = {etag: "\"#{etag}\"", part_number: part_number,}
+                  parts.push(part_hash)
+                  Rails.logger.warn("Another part bites the dust: #{part_number}")
+                  part_number = part_number + 1
+                }
+
+                #TODO upload part
+
+
+              end
+
+
 
               mutex.synchronize {
-                parts_done = parts_done + 1
-                Rails.logger.warn("seg #{parts_done} consumed")
-                Rails.logger.warn("seg class: #{seg.class}")
+                segs_done = segs_done + 1
+                # Rails.logger.warn("seg #{parts_done} consumed")
+                # Rails.logger.warn("seg class: #{seg.class}")
               }
 
             end
+
+            # upload last part, less than 5 MB
+            tmp_file = Tempfile.new("part_#{part_number}")
+            tmp_file.binmode
+            tmp_file.write part_IO.read
+            if part_IO && !part_IO.closed?
+              part_IO.close
+            end
+            mutex.synchronize {
+              etag = aws_upload_part(client, tmp_file, upload_bucket, upload_key, part_number, upload_id)
+              part_hash = {etag: "\"#{etag}\"", part_number: part_number,}
+              parts.push(part_hash)
+              Rails.logger.warn("Another part bites the dust: #{part_number}")
+              part_number = part_number + 1
+            }
+
+            mutex.synchronize do
+              Rails.logger.warn("done with parts")
+              aws_complete_upload(client, upload_bucket, upload_key, parts, upload_id)
+            end
+
           end
 
           controller = Thread.new do
@@ -106,14 +167,14 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
             while !stop
               sleep 1
               mutex.synchronize {
-                if complete && (parts_done == parts_todo)
+                if segs_complete && ( segs_done == segs_todo)
                   stop = true
                   Rails.logger.warn("Time to end this.")
                 end
               }
             end
 
-            queue.close
+            seg_queue.close
 
           end
 
