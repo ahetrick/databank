@@ -28,6 +28,9 @@ class MedusaIngest < ActiveRecord::Base
 
   def self.send_dataset_to_medusa(dataset, old_publication_state)
 
+    # TODO: adapt to medusa_storage, meanwhile skip
+    return true
+
     # if Rails.env.test?
     #   return true
     # end
