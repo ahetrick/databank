@@ -29,7 +29,14 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
   def perform
 
+    more_segs_to_do = true
+    upload_incomplete = true
+
+    @datafile.binary_name = @filename
+    @datafile.storage_root = Application.storage_manager.draft_root.name
     @datafile.storage_key = File.join(@datafile.web_id, @filename)
+    @datafile.binary_size = @filesize
+    @datafile.save!
 
     if IDB_CONFIG[:aws][:s3_mode]
 
@@ -45,6 +52,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
       if @filesize.to_f < FIVE_MB
         web_contents = open(@remote_url) {|f| f.read}
         Application.storage_manager.draft_root.copy_io_to(@datafile.storage_key, web_contents, nil, @filesize.to_f)
+        upload_incomplete = false
 
       else
 
@@ -72,9 +80,9 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
                 res.read_body {|seg|
                   mutex.synchronize {
                     segs_todo = segs_todo + 1
-                    update_progress
                   }
                   seg_queue << seg
+                  update_progress
                 }
               }
             }
@@ -137,23 +145,20 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
               partio.close if partio&.closed?
 
-            }
-
-            mutex.synchronize do
               aws_complete_upload(client, upload_bucket, upload_key, parts, upload_id)
-            end
+
+              upload_incomplete = false
+            }
 
           end
 
           controller = Thread.new do
 
-            more_to_do = true
-
-            while more_to_do
-              sleep 1
+            while more_segs_to_do
+              sleep 0.9
               mutex.synchronize {
                 if segs_complete && ( segs_done == segs_todo)
-                  more_to_do = false
+                  more_segs_to_do = false
                 end
               }
             end
@@ -206,21 +211,12 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
       end
 
+      upload_incomplete = false
 
     end
 
-    # confirm upload, and update datafile fields
-
-    if Application.storage_manager.draft_root.exist?(@datafile.storage_key)
-
-      @datafile.binary_name = @filename
-      @datafile.storage_root = Application.storage_manager.draft_root.name
-      @datafile.storage_key = File.join(@datafile.web_id, @filename)
-      @datafile.binary_size = @filesize
-      @datafile.save!
-
-    else
-      Rails.logger.warn("did not find object")
+    while upload_incomplete
+      sleep 1.3
     end
 
   end
