@@ -72,6 +72,7 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
                 res.read_body {|seg|
                   mutex.synchronize {
                     segs_todo = segs_todo + 1
+                    update_progress
                   }
                   seg_queue << seg
                 }
@@ -79,7 +80,6 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
             }
             mutex.synchronize {
               segs_complete = true
-              Rails.logger.warn("done with request")
             }
 
           end
@@ -99,18 +99,12 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
                 partio.rewind
 
                 mutex.synchronize {
-                  Rails.logger.warn("f.size: #{partio.size}")
-                }
-
-                mutex.synchronize {
 
                   etag = aws_upload_part(client, partio, upload_bucket, upload_key, part_number, upload_id)
 
                   parts_hash = {etag: etag, part_number: part_number}
 
                   parts.push(parts_hash)
-
-                  Rails.logger.warn("Another part bites the dust: #{part_number}")
 
                 }
 
@@ -129,8 +123,6 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
             end
 
             # upload last part, less than 5 MB
-
-
             mutex.synchronize {
 
               partio.rewind
@@ -148,8 +140,6 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
             }
 
             mutex.synchronize do
-              Rails.logger.warn("done with parts")
-
               aws_complete_upload(client, upload_bucket, upload_key, parts, upload_id)
             end
 
@@ -157,14 +147,13 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
 
           controller = Thread.new do
 
-            stop = false
+            more_to_do = true
 
-            while !stop
+            while more_to_do
               sleep 1
               mutex.synchronize {
                 if segs_complete && ( segs_done == segs_todo)
-                  stop = true
-                  Rails.logger.warn("Time to end this.")
+                  more_to_do = false
                 end
               }
             end
