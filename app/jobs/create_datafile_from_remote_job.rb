@@ -4,7 +4,6 @@ require 'fileutils'
 require 'net/http'
 require 'aws-sdk-s3'
 
-
 class CreateDatafileFromRemoteJob < ProgressJob::Base
 
   Thread.abort_on_exception=true
@@ -241,25 +240,19 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
                                            upload_id: upload_id,
                                        })
 
-    Rails.logger.warn(part_response.to_h)
-
     part_response.etag
 
 
   end
 
   def aws_complete_upload(client, upload_bucket, upload_key, parts, upload_id)
-    Rails.logger.warn ("completing upload")
 
-    # complete upload
     response = client.complete_multipart_upload({
                                                     bucket: upload_bucket,
                                                     key: upload_key,
                                                     multipart_upload: {parts: parts, },
                                                     upload_id: upload_id,
                                                 })
-
-    Rails.logger.warn(response.to_h)
   end
 
 end
