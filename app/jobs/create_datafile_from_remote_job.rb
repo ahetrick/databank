@@ -218,6 +218,9 @@ class CreateDatafileFromRemoteJob < ProgressJob::Base
       @datafile.storage_key = File.join(@datafile.web_id, @filename)
       @datafile.binary_size = @filesize
       @datafile.save!
+
+    else
+      Rails.logger.warn("did not find object")
     end
 
   end
