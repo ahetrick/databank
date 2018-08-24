@@ -1,2 +1,26 @@
-.jumbo
-  Placeholder
+%table.table.table-striped
+  %thead
+    %tr
+      %th identifier
+      %th sent time
+      %th response time
+      %th response status
+      %th error_text
+
+  %tbody
+    -@dataset.medusa_ingests.each do |ingest|
+      %tr
+        %td(colspan="5")
+          =ingest.staging_path
+      %tr
+        %td
+          ="#{ingest.idb_class}:#{ingest.idb_identifier}"
+        %td
+          =ingest.created_at.iso8601
+        %td
+          =ingest.response_time
+        %td
+          =ingest.request_status
+        %td
+          =ingest.error_text
+

@@ -18,24 +18,25 @@
 <div id="main-show-div">
 
   <!-- BEGIN metadata section-->
-  <% if version_group && version_group[:entries] && version_group[:entries].length > 1 && @dataset.dataset_version.to_i > 0 && (version_group[:entries][0][:version]).to_i > @dataset.dataset_version.to_i  %>
+  <% if version_group && version_group[:entries] && version_group[:entries].length > 1 && @dataset.dataset_version.to_i > 0 && (version_group[:entries][0][:version]).to_i > @dataset.dataset_version.to_i %>
 
     <div class="selected-version boxed-alert">
-      A newer version of this dataset is available. <a href="https://doi.org/<%= version_group[:entries][0][:doi] %>">View the latest version.</a>
+      A newer version of this dataset is available.
+      <a href="https://doi.org/<%= version_group[:entries][0][:doi] %>">View the latest version.</a>
     </div>
 
   <% end %>
 
-  <%= render partial: 'metadata_restriction_alert', locals: {dataset: @dataset}%>
+  <%= render partial: 'metadata_restriction_alert', locals: {dataset: @dataset} %>
 
   <!--- show metadata section if curator OR published and not held OR depositor and not permenantly suppressed --->
   <!--- inefficiently verbose consditional for readabilty  --->
 
-  <% if (can? :manage, @dataset)  %>
+  <% if (can? :manage, @dataset) %>
     <%= render partial: 'show_metadata', locals: {dataset: @dataset} %>
 
   <% elsif ([Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE].include? @dataset.publication_state) &&
-      (@dataset.hold_state != Databank::PublicationState::TempSuppress::METADATA)%>
+      (@dataset.hold_state != Databank::PublicationState::TempSuppress::METADATA) %>
     <%= render partial: 'show_metadata', locals: {dataset: @dataset, license_name: @license_name} %>
 
   <% elsif (can? :edit, @dataset) && (@dataset.publication_state != Databank::PublicationState::PermSuppress::METADATA) %>
@@ -63,17 +64,19 @@
           <% end %>
         </h4>
       </div>
-      <div class="panel-collapse collapse<%if version_group && version_group[:entries] && version_group[:entries].length > 1 %> in<% end %>" id="versionGroupPanel" role="tabpanel" aria-labelledby="changelogHeading">
+      <div class="panel-collapse collapse
+        <% if version_group && version_group[:entries] && version_group[:entries].length > 1 %> in
+        <% end %>" id="versionGroupPanel" role="tabpanel" aria-labelledby="changelogHeading">
         <div class="panel-body">
 
           <% if version_group[:status] == 'error' %>
             <%= version_group[:error] %>
           <% else %>
 
-            <table class="table table-striped" >
+            <table class="table table-striped">
               <thead>
               <tr>
-                <th class="text-center" >Version</th>
+                <th class="text-center">Version</th>
                 <th>DOI</th>
                 <th>Comment</th>
                 <th>Publication Date</th>
@@ -83,10 +86,12 @@
 
               <% version_group[:entries].each do |entry| %>
 
-                <tr<% if entry[:selected] %> class="selected-version"<% end %> >
+                <tr
+                <% if entry[:selected] %> class="selected-version"
+                <% end %> >
                   <td class="text-center"><%= entry[:version] %></td>
-                  <td><a href="https://doi.org/<%= entry[:doi]%>"><%= entry[:doi] %></a></td>
-                  <td><%= entry[:version_comment]%></td>
+                  <td><a href="https://doi.org/<%= entry[:doi] %>"><%= entry[:doi] %></a></td>
+                  <td><%= entry[:version_comment] %></td>
                   <td><%= entry[:publication_date] %></td>
                 </tr>
 
@@ -113,9 +118,9 @@
 
 
 
-  <% if @dataset.publication_state != Databank::PublicationState::DRAFT%>
+  <% if @dataset.publication_state != Databank::PublicationState::DRAFT %>
 
-    <% if (can? :manage, @dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::PermSuppress::FILE, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state) && @dataset.hold_state != Databank::PublicationState::TempSuppress::METADATA && !@dataset.suppress_changelog)  %>
+    <% if (can? :manage, @dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::PermSuppress::FILE, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state) && @dataset.hold_state != Databank::PublicationState::TempSuppress::METADATA && !@dataset.suppress_changelog) %>
       <div class="panel-group" id="changelog" role="tablist" aria-multiselectable="true">
         <div class="panel panel-default">
           <div class="panel-heading" role="tab" id="changelogHeading">
@@ -127,7 +132,8 @@
           </div>
           <div class="panel-collapse collapse" id="changelogPanel" role="tabpanel" aria-labelledby="changelogHeading">
             <div class="panel-body">
-              <p><a href="/help?context=changelog&key=<%= @dataset.key %>">Contact the Research Data Service</a> for help interpreting this log.</p>
+              <p><a href="/help?context=changelog&key=<%= @dataset.key %>">Contact the Research Data Service</a> for
+                help interpreting this log.</p>
 
               <%= render partial: "show_changelog" %>
 
@@ -146,28 +152,45 @@
 
 </div>
 
-<% if (can? :manage, @dataset) %>
-  <p>To see this dataset in Medusa, go to
-    <% if @dataset.medusa_dataset_dir && @dataset.medusa_dataset_dir != '' %>
+<% if can? :manage, @dataset && @dataset.publication_state != Databank::PublicationState::DRAFT %>
 
-      <a href="<%= IDB_CONFIG['medusa']['datasets_url_base'] %><%= @dataset.medusa_dataset_dir %>" target="_blank"><%= IDB_CONFIG['medusa']['datasets_url_base'] %><%= @dataset.medusa_dataset_dir %></a>
-    <% else %>
-      <a href="<%= IDB_CONFIG['medusa']['file_group_url'] %>" target="_blank">IDB File Group</a> and filter
-      by: <%= @dataset.key %>
-    <% end %>
-  </p>
-  <div class="panel-group" id="medusa" role="tablist" aria-multiselectable="true">
-    <div class="panel panel-default">
-      <div class="panel-heading" role="tab" id="medusaHeading">
-        <h4 class="panel-title">
-          <a role="button" data-toggle="collapse" data-parent="#medusa" href="#medusaPanel" aria-expanded="false" aria-controls="medusaPanel" class="accordion-toggle collapsed">
-            <span class="metadata-label">Medusa Ingest Details</span>
-          </a>
-        </h4>
-      </div>
-      <div class="panel-collapse collapse" id="medusaPanel" role="tabpanel" aria-labelledby="medusaHeading">
-        <div class="panel-body">
-          <%= render partial: "show_medusa" %>
+  <div class="curator-only">
+    <p><a href="http://ezid.lib.purdue.edu/manage/display_xml/doi:<%= @dataset.identifier %>" target="_blank">DataCite
+      Metadata in XML format (via EZID)</a></p>
+
+    <p>
+      <a href="http://ezid.lib.purdue.edu/id/doi:<%= @dataset.identifier %>" target="_blank">DataCite Metadata on
+        EZID
+        page</a>
+    </p>
+  </div>
+
+<% end %>
+
+<% if (can? :manage, @dataset) %>
+  <div class="curator-only">
+    <p>To see this dataset in Medusa, go to
+      <% if @dataset.medusa_dataset_dir && @dataset.medusa_dataset_dir != '' %>
+
+        <a href="<%= IDB_CONFIG['medusa']['datasets_url_base'] %><%= @dataset.medusa_dataset_dir %>" target="_blank"><%= IDB_CONFIG['medusa']['datasets_url_base'] %><%= @dataset.medusa_dataset_dir %></a>
+      <% else %>
+        <a href="<%= IDB_CONFIG['medusa']['file_group_url'] %>" target="_blank">IDB File Group</a> and filter
+        by: <%= @dataset.key %>
+      <% end %>
+    </p>
+    <div class="panel-group" id="medusa" role="tablist" aria-multiselectable="true">
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="medusaHeading">
+          <h4 class="panel-title">
+            <a role="button" data-toggle="collapse" data-parent="#medusa" href="#medusaPanel" aria-expanded="false" aria-controls="medusaPanel" class="accordion-toggle collapsed">
+              <span class="metadata-label">Medusa Ingest Details</span>
+            </a>
+          </h4>
+        </div>
+        <div class="panel-collapse collapse" id="medusaPanel" role="tabpanel" aria-labelledby="medusaHeading">
+          <div class="panel-body">
+            <%= render partial: "show_medusa" %>
+          </div>
         </div>
       </div>
     </div>
@@ -175,20 +198,6 @@
 
 <% end %>
 
-<% if can? :manage, @dataset && @dataset.publication_state != Databank::PublicationState::DRAFT %>
-  <div class="container-fluid">
-    <div class="curator-only">
-      <p><a href="http://ezid.lib.purdue.edu/manage/display_xml/doi:<%= @dataset.identifier %>" target="_blank">DataCite
-        Metadata in XML format (via EZID)</a></p>
-
-      <p>
-        <a href="http://ezid.lib.purdue.edu/id/doi:<%= @dataset.identifier %>" target="_blank">DataCite Metadata on
-          EZID
-          page</a>
-      </p>
-    </div>
-  </div>
-<% end %>
 
 <% if (@dataset.title) && (@dataset.title.downcase.include? 'unicorn') && ((can? :edit, @dataset) && [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state)) %>
   <div class="pull-right">
