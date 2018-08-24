@@ -1,18 +1,17 @@
-%hr
 -@dataset.medusa_ingests.each do |ingest|
   %strong staging path:
   =ingest.staging_path
   %br
-  %strong identifier:
-  ="#{ingest.idb_class}:#{ingest.idb_identifier}"
+  %strong filetype | identifier:
+  ="#{ingest.idb_class} | #{ingest.idb_identifier}"
   %br
   %strong time request sent:
-  =ingest.created_at.iso8601
+  =ingest.created_at.to_time.iso8601
 
-  -if ingest.response_time & ingest.response_time != ''
+  -if ingest.response_time && ingest.response_time != ''
     %br
     %strong time response received:
-    =ingest.response_time
+    =ingest.response_time.to_time.iso8601
     %br
     %strong response status:
     =ingest.request_status
@@ -20,5 +19,9 @@
       %br
       %strong response error:
       =ingest.error_text
-  %hr
+
+  -else
+    %br
+    %strong no response yet
+  %br
 

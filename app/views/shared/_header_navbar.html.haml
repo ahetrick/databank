@@ -29,7 +29,7 @@
       %ul.nav.navbar-nav.navbar-right
         - if current_user
           %li
-            %a(href="/datasets?q=#{URI.encode('depositors[]=')}#{current_user.username}" )
+            %a{:href => "/datasets?q=#{URI.encode('depositors[]=')}#{current_user.username}"}
               =current_user.name
           %li= link_to 'Log out', :logout
         - else
