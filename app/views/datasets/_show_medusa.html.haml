@@ -12,11 +12,11 @@
   -if ingest.response_time & ingest.response_time != ''
     %br
     %strong time response received:
-    =ingest.response_timecd
+    =ingest.response_time
     %br
     %strong response status:
     =ingest.request_status
-    -if ingest.response_error
+    -if ingest.error_text
       %br
       %strong response error:
       =ingest.error_text
