@@ -1587,6 +1587,11 @@ class DatasetsController < ApplicationController
   def temporary_error
   end
 
+  def medusa_info_list
+    @datasets = Dataset.all
+  end
+
+
   private
 
   # Use callbacks to share common setup or constraints between actions.

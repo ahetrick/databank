@@ -120,7 +120,7 @@
         <div class="panel panel-default">
           <div class="panel-heading" role="tab" id="changelogHeading">
             <h4 class="panel-title">
-              <a role="button" data-toggle="collapse" data-parent="#funder" href="#changelogPanel" aria-expanded="false" aria-controls="funderPanel" class="accordion-toggle collapsed">
+              <a role="button" data-toggle="collapse" data-parent="#changelog" href="#changelogPanel" aria-expanded="false" aria-controls="changelogPanel" class="accordion-toggle collapsed">
                 <span class="metadata-label">Change Log</span>
               </a>
             </h4>
@@ -146,7 +146,34 @@
 
 </div>
 
+<% if (can? :manage, @dataset) %>
+  <p>To see this dataset in Medusa, go to
+    <% if @dataset.medusa_dataset_dir && @dataset.medusa_dataset_dir != '' %>
 
+      <a href="<%= IDB_CONFIG['medusa']['datasets_url_base'] %><%= @dataset.medusa_dataset_dir %>" target="_blank"><%= IDB_CONFIG['medusa']['datasets_url_base'] %><%= @dataset.medusa_dataset_dir %></a>
+    <% else %>
+      <a href="<%= IDB_CONFIG['medusa']['file_group_url'] %>" target="_blank">IDB File Group</a> and filter
+      by: <%= @dataset.key %>
+    <% end %>
+  </p>
+  <div class="panel-group" id="medusa" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-default">
+      <div class="panel-heading" role="tab" id="medusaHeading">
+        <h4 class="panel-title">
+          <a role="button" data-toggle="collapse" data-parent="#medusa" href="#medusaPanel" aria-expanded="false" aria-controls="medusaPanel" class="accordion-toggle collapsed">
+            <span class="metadata-label">Medusa Ingest Details</span>
+          </a>
+        </h4>
+      </div>
+      <div class="panel-collapse collapse" id="medusaPanel" role="tabpanel" aria-labelledby="medusaHeading">
+        <div class="panel-body">
+          <%= render partial: "show_medusa" %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<% end %>
 
 <% if can? :manage, @dataset && @dataset.publication_state != Databank::PublicationState::DRAFT %>
   <div class="container-fluid">
@@ -158,16 +185,6 @@
         <a href="http://ezid.lib.purdue.edu/id/doi:<%= @dataset.identifier %>" target="_blank">DataCite Metadata on
           EZID
           page</a>
-      </p>
-
-      <p>To see this dataset in Medusa, go to
-        <% if @dataset.medusa_dataset_dir && @dataset.medusa_dataset_dir != '' %>
-
-          <a href="<%= IDB_CONFIG['medusa']['datasets_url_base'] %><%= @dataset.medusa_dataset_dir %>" target="_blank"><%= IDB_CONFIG['medusa']['datasets_url_base'] %><%= @dataset.medusa_dataset_dir %></a>
-        <% else %>
-          <a href="<%= IDB_CONFIG['medusa']['file_group_url'] %>" target="_blank">IDB File Group</a> and filter
-          by: <%= @dataset.key %>
-        <% end %>
       </p>
     </div>
   </div>

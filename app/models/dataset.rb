@@ -1055,6 +1055,17 @@ class Dataset < ActiveRecord::Base
     self.datafiles.where.not(storage_root: [nil, ""]).sort_by { |obj| obj.bytestream_name }
   end
 
+  def medusa_ingests
+    identifiers = Datafile.where(dataset_id: self.id).pluck(:web_id)
+    identifiers.push(self.key)
+    MedusaIngest.where(idb_identifier: identifiers)
+  end
+
+  def medusa_status
+    ingests = medusa_ingests
+    return "unknown"
+  end
+
   def fileset_preserved?
 
     # assume all are preserved unless a file is found that is not preserved
