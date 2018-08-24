@@ -8,13 +8,17 @@
   %br
   %strong time request sent:
   =ingest.created_at.iso8601
-  %br
-  %strong time response received:
-  =ingest.response_time.iso8601 || "na"
-  %br
-  %strong resonse status:
-  =ingest.request_status || "na"
-  %strong response error:
-  =ingest.error_text || "na"
+
+  -if ingest.response_time & ingest.response_time != ''
+    %br
+    %strong time response received:
+    =ingest.response_time.iso8601
+    %br
+    %strong response status:
+    =ingest.request_status
+    -if ingest.response_error
+      %br
+      %strong response error:
+      =ingest.error_text
   %hr
 
