@@ -616,6 +616,13 @@ function offerDownloadLink() {
                     $('.download-link').html("An unexpected error occurred.<br/>Details have been logged for review.<br/><a href='/help' target='_blank'>Contact the Research Data Service Team</a> with any questions.");
                     $('#downloadLinkModal').modal('show');
                 }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+                $('.download-link').html("An unexpected error occurred.<br/>Details have been logged for review.<br/><a href='/help' target='_blank'>Contact the Research Data Service Team</a> with any questions.");
+                $('#downloadLinkModal').modal('show');
+
             }
             //context: document.body
         }).done(function () {
