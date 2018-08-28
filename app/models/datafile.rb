@@ -42,7 +42,10 @@ class Datafile < ActiveRecord::Base
   end
 
   def bytestream_size
-    self.current_root.size(self.storage_key)
+    Rails.logger.warn("inside bytestream_size self.storage_key: #{self.storage_key}")
+    Rails.logger.warn("current_root class: #{self.current_root.class}")
+    5
+    # self.current_root.size(self.storage_key)
   end
 
   def current_root

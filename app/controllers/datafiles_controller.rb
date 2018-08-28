@@ -302,12 +302,12 @@ class DatafilesController < ApplicationController
 
   def iiif_filepath
     if IDB_CONFIG[:aws][:s3_mode]
-      render json: {filepath: "",  error: "No filepath for object in s3 bucket."}, status: :bad_request
+      render json: {error: "No filepath for object in s3 bucket."}, status: :bad_request
     else
       if @datafile.filepath
         render json: {filepath: @datafile.iiif_bytestream_path}, status: ok
       else
-        render json: {filepath: "",  error: "No binary object found."}, status: :not_found
+        render json: {error: "No binary object found."}, status: :not_found
       end
     end
   end
@@ -316,7 +316,7 @@ class DatafilesController < ApplicationController
     if IDB_CONFIG[:aws][:s3_mode]
       render json: {bucket: @datafile.storage_root_bucket, key: @datafile.storage_key_with_prefix}, status: ok
     else
-      render json: {bucket: "", key:"", error: "No bucket for datafile stored on filesystem."}, status: :bad_request
+      render json: {error: "No bucket for datafile stored on filesystem."}, status: :bad_request
     end
   end
 
