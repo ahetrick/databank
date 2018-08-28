@@ -22,7 +22,7 @@ namespace :s3update do
 
           filename = datafile.binary_name.split("/")[-1]
 
-          draft_key = "#{datafile.web_id}/#{datafile.filename}"
+          draft_key = "#{datafile.web_id}/#{datafile.binary_name}"
 
           unless datafile.storage_root && datafile.storage_root != '' && datafile.storage_key && datafile.storage_key != ''
             if Application.storage_manager.draft_root.exist?(draft_key)
