@@ -12,7 +12,7 @@ namespace :s3update do
 
           if Application.storage_manager.medusa_root.exist?(datafile.medusa_path)
             datafile.storage_root = 'medusa'
-            datafile.storage_key = 'medusa_path'
+            datafile.storage_key = datafile.medusa_path
             datafile.save
           else
             puts("could not find bytestream for medusa datafile #{datafile.web_id} in dataset #{dataset.key}")
