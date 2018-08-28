@@ -54,7 +54,7 @@ class DownloaderClient
     recordfile_hash["type"]="literal"
     recordfile_hash["name"]="dataset_info.txt"
     recordfile_hash["content"]=dataset.recordtext
-    targets_arr.push(test_hash)
+    targets_arr.push(recordfile_hash)
 
     total_size = total_size + dataset.recordtext.bytesize
 
