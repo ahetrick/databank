@@ -26,146 +26,151 @@ class MedusaIngest < ActiveRecord::Base
 
   end
 
-  def self.send_dataset_to_medusa(dataset, old_publication_state)
+  def self.send_dataset_to_medusa(dataset)
 
     # TODO: adapt to medusa_storage, meanwhile skip
     return true
 
+    # put test datasets in Medusa -- may reconsider later.
     # if Rails.env.test?
     #   return true
     # end
 
-    # create or confirm dataset_staging directory for dataset
-    dataset_dirname = "DOI-#{(dataset.identifier).parameterize}"
-    staging_dir = "#{IDB_CONFIG[:staging_root]}/#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}"
-
-    FileUtils.mkdir_p "#{staging_dir}/system"
-    FileUtils.chmod "u=wrx,go=rx", File.dirname(staging_dir)
+    ### skip datafiles already ingested, but send new system files ###
 
     file_time = Time.now.strftime('%Y-%m-%d_%H-%M')
+    dataset_dirname = "DOI-#{(dataset.identifier).parameterize}"
+
+    # START description file
+    # always send a description file
     description_xml = dataset.to_datacite_xml
-    File.open("#{staging_dir}/system/description.#{file_time}.xml", "w") do |description_file|
-      description_file.puts(description_xml)
-    end
-    FileUtils.chmod 0755, "#{staging_dir}/system/description.#{file_time}.xml"
-
+    description_key = "#{dataset_dirname}/system/description.#{file_time}.xml"
+    Application.storage_manager.draft_root.write_string_to(description_key, description_xml)
     medusa_ingest = MedusaIngest.new
-    staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/description.#{file_time}.xml"
-    medusa_ingest.staging_path = staging_path
+    medusa_ingest.staging_key = description_key
+    medusa_ingest.target_key = description_key
     medusa_ingest.idb_class = 'description'
-    medusa_ingest.idb_identifier = dataset.key
-    medusa_ingest.send_medusa_ingest_message(staging_path)
+    medsua_ingest.idb_identifier = dataset.key
     medusa_ingest.save
+    medusa_ingest.send_medusa_ingest_message
+    # END description file
 
-    #if old_publication_state == Databank::PublicationState::DRAFT && !dataset.is_test?
+    # START datafiles
+    # send existing draft datafiles not yet in medusa
+    dataset.datafiles.each do |datafile|
 
-    # put test datasets in Medusa -- may reconsider later.
+      in_medusa = false # guess that datafile is not yet in medusa, but check and handle
 
-    if old_publication_state == Databank::PublicationState::DRAFT
+      dataset_dirname = "DOI-#{(dataset.identifier).parameterize}"
+      datafile_target_key = "#{dataset_dirname}/dataset_files/#{datafile.binary_name}"
 
-      FileUtils.mkdir_p "#{staging_dir}/dataset_files"
+      if Application.storage_manager.medusa_root.exist?(datafile_target_key)
 
-      dataset.datafiles.each do |datafile|
+        if datafile&.storage_root == 'draft' && datafile&.storage_key != ''
 
-        datafile.binary_name = datafile.binary.file.filename
-        datafile.binary_size = datafile.binary.size
-        medusa_ingest = MedusaIngest.new
-        full_path = datafile.binary.path
-        full_staging_path = "#{staging_dir}/dataset_files/#{datafile.binary_name}"
-        #make symlink
-        FileUtils.ln(full_path, full_staging_path)
-        FileUtils.chmod "u=wrx,go=rx", full_staging_path
-        #staging_path is different from full_staging_path because it is relative to a directory known to Medusa
-        staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/dataset_files/#{datafile.binary_name}"
-        #Rails.logger.warn "staging path: #{staging_path}"
-        medusa_ingest.staging_path = staging_path
-        medusa_ingest.idb_class = 'datafile'
-        medusa_ingest.idb_identifier = datafile.web_id
-        medusa_ingest.send_medusa_ingest_message(staging_path)
-        medusa_ingest.save
+          # If the binary object also exists in draft system, delete duplicate.
+          #  Can't do full equivalence check (S3 etag is not always MD5), so check sizes.
+          if Application.storage_manager.draft_root.exist?(datafile.storage_key)
+            draft_size = Application.storage_manager.draft_root.size(datafile.storage_key)
+            medusa_size = Application.storage_manager.medusa_root.size(datafile_storage_key)
+
+            if draft_size == medusa_size
+              # If the ingest into Medusa was successful,
+              # delete redundant binary object
+              # and update Illinois Data Bank datafile record
+              Application.storage_manager.draft_root.delete_content(dataset.storage_key)
+              in_medusa = true
+            else
+              exception_string("Datafile exists in both draft and medusa storage systems, but the sizes are different. Dataset: #{dataset.key}, Datafile: #{datafile.web_id}")
+              notification = DatabankMailer.error(exception_string)
+              notification.deliver_now
+            end
+          else
+            in_medusa = true
+          end
+
+          if in_medusa
+            datafile.storage_root = 'medusa'
+            datafile.storage_key = datafile_target_key
+            datafile.save
+          end
+
+        elsif datafile&.storage_root == 'draft' && datafile&.storage_key != '' && Application.storage_manager.draft_root.exist?(datafile.storage_key)
+
+          # send medusa ingest request if binary exists in draft storage but not medusa storage
+          medusa_ingest = MedusaIngest.new
+          medusa_ingest.staging_key = datafile.storage_key
+          medusa_ingest.target_key = datafile_target_key
+          medusa_ingest.idb_class = 'datafile'
+          medusa_ingest.idb_identifier = datafile.web_id
+          medusa_ingest.save
+          medusa_ingest.send_medusa_ingest_message
+        else
+          exception_string("Binary object not found for Dataset: #{dataset.key}, Datafile: #{datafile.web_id}")
+          notification = DatabankMailer.error(exception_string)
+          notification.deliver_now
+        end
       end
 
-      if File.exist?("#{IDB_CONFIG[:agreements_root_path]}/#{dataset.key}/deposit_agreement.txt")
-        medusa_ingest = MedusaIngest.new
-        full_path = "#{IDB_CONFIG[:agreements_root_path]}/#{dataset.key}/deposit_agreement.txt"
-        full_staging_path = "#{staging_dir}/system/deposit_agreement.txt"
-        # make symlink
-        FileUtils.ln(full_path, full_staging_path)
-        FileUtils.chmod "u=wrx,go=rx", full_staging_path
-        # point to link for path
-        staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/deposit_agreement.txt"
-        medusa_ingest.staging_path = staging_path
-        medusa_ingest.idb_class = 'agreement'
-        medusa_ingest.idb_identifier = dataset.key
-        medusa_ingest.send_medusa_ingest_message(staging_path)
-        medusa_ingest.save
+    end
+    # END datafiles
+
+    # START deposit agreement
+    draft_exists = Application.storage_manager.draft_root.exist?(dataset.agreement_key)
+    medusa_exists = Application.storage_manager.medusa_root.exist?(dataset.agreement_key)
+
+    if draft_exists && !medusa_exists
+      medusa_ingest = MedusaIngest.new
+      medusa_ingest.staging_key = dataset.agreement_key
+      medusa_ingest.target_key = dataset.agreement_key
+      medusa_ingest.idb_class = 'agreement'
+      medusa_ingest.idb_identifier = dataset.key
+      medusa_ingest.save
+      medusa_ingest.send_medusa_ingest_message
+    elsif draft_exists && medusa_exists
+      draft_size = Application.storage_manager.draft_root.size(dataset.agreement_key)
+      medusa_size = Application.storage_manager.medusa_root.size(dataset.agreement_key)
+      if draft_size == medusa_size
+        Application.storage_manager.draft_root.delete_content(dataset.agreement_key)
       else
-        raise "deposit agreement file not found for #{dataset.key}"
+        exception_string("Agreement file exists in both draft and medusa storage systems, but the sizes are different. Dataset: #{dataset.key}.")
+        notification = DatabankMailer.error(exception_string)
+        notification.deliver_now
       end
-
+    elsif !draft_exists && !medusa_exists
+      exception_string("Deposit agreement not found for Dataset: #{dataset.agreement_key}.")
+      notification = DatabankMailer.error(exception_string)
+      notification.deliver_now
     end
+    # END deposit agreement
 
+    # START serialization
+    # always send a serialization
     serialization_json = (dataset.recovery_serialization).to_json
-
-    writepath = "#{staging_dir}/system/serialization.#{file_time}.json"
-    File.open(writepath, "w") do |serialization_file|
-      serialization_file.puts(serialization_json)
-    end
-    FileUtils.chmod 0755, writepath
-
+    serialization_key = "#{dataset_dirname}/system/serialization.#{file_time}.json"
+    Application.storage_manager.draft_root.write_string_to(serialization_key, serialization_json)
     medusa_ingest = MedusaIngest.new
-    staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/serialization.#{file_time}.json"
-    medusa_ingest.staging_path = staging_path
+    medusa_ingest.staging_key = serialization_key
+    medusa_ingest.target_key = serialization_key
     medusa_ingest.idb_class = 'serialization'
     medusa_ingest.idb_identifier = dataset.key
-    medusa_ingest.send_medusa_ingest_message(staging_path)
+    medusa_ingest.send_medusa_ingest_message
     medusa_ingest.save
+    # END serialization
 
-
+    # START changelog
+    # always send a changelog
     changelog_json = (dataset.full_changelog).to_json
-    File.open("#{staging_dir}/system/changelog.#{file_time}.json", "w") do |changelog_file|
-      changelog_file.write(changelog_json)
-    end
-    FileUtils.chmod 0755, "#{staging_dir}/system/changelog.#{file_time}.json"
+    changelog_key = "#{dataset_dirname}/system/changelog.#{file_time}.json"
+    Application.storage_manager.draft_root.write_string_to(changelog_key, changelog_json)
     medusa_ingest = MedusaIngest.new
-    staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/changelog.#{file_time}.json"
-    medusa_ingest.staging_path = staging_path
+    medusa_ingest.staging_key = changelog_key
+    medusa_ingest.target_key = changelog_key
     medusa_ingest.idb_class = 'changelog'
     medusa_ingest.idb_identifier = dataset.key
-    medusa_ingest.send_medusa_ingest_message(staging_path)
+    medusa_ingest.send_medusa_ingest_message
     medusa_ingest.save
-
-    # remove old recordfile, if exists
-
-    dataset.recordfile.delete if dataset.recordfile
-
-    # write recordfile
-
-    recordfilename = "dataset_info_#{file_time}.txt"
-    record_filepath = "#{staging_dir}/system/#{recordfilename}"
-
-    File.open(record_filepath, "w") do |recordfile|
-      recordfile.puts(dataset.recordtext)
-    end
-
-    recordfile = Recordfile.create(dataset_id: dataset.id)
-    recordfile.binary = Pathname.new(record_filepath).open
-    recordfile.binary_name = recordfile.binary.file.filename
-    recordfile.binary_size = recordfile.binary.size
-    recordfile.save
-
-    # make symlink, because setting as binary removes the file and puts it in uploads
-
-    FileUtils.ln(recordfile.bytestream_path, record_filepath)
-    FileUtils.chmod "u=wrx,go=rx", recordfile.bytestream_path
-
-    medusa_ingest = MedusaIngest.new
-    staging_path = "#{IDB_CONFIG[:dataset_staging]}/#{dataset_dirname}/system/#{recordfilename}"
-    medusa_ingest.staging_path = staging_path
-    medusa_ingest.idb_class = 'recordfile'
-    medusa_ingest.idb_identifier = recordfile.web_id
-    medusa_ingest.send_medusa_ingest_message(staging_path)
-    medusa_ingest.save
+    # END changelog
 
   end
 
@@ -205,28 +210,13 @@ class MedusaIngest < ActiveRecord::Base
             dataset.save
           end
 
-          if datafile && datafile.binary
+          if datafile&.binary
             datafile.medusa_path = ingest.medusa_path
             datafile.medusa_id = ingest.medusa_uuid
             datafile.remove_binary!
             datafile.save
           else
             Rails.logger.warn "Datafile already gone for ingest #{ingest.id}"
-          end
-        elsif ingest.idb_class == 'recordfile'
-          Rails.logger.warn "recordfile ingest: #{ingest.to_yaml}"
-          recordfile = Recordfile.find_by_web_id(ingest.idb_identifier)
-          dataset = Dataset.where(id: recordfile.dataset_id).first
-          unless dataset
-            Rails.logger.warn "dataset not found for recordfile ingest #{ingest.to_yaml}"
-          end
-          if recordfile && recordfile.binary
-            recordfile.medusa_path = ingest.medusa_path
-            recordfile.medusa_id = ingest.medusa_uuid
-            recordfile.remove_binary!
-            recordfile.save
-          else
-            Rails.logger.warn "Recordfile already gone for ingest #{ingest.id}"
           end
         end
         # delete file or symlink from staging directory
@@ -244,9 +234,9 @@ class MedusaIngest < ActiveRecord::Base
   def self.on_medusa_failed_message(response_hash)
     Rails.logger.warn "medusa failed message:"
     Rails.logger.warn response_hash.to_yaml
-    ingestRelation = MedusaIngest.where(staging_path: response_hash['staging_path'])
-    if ingestRelation.count > 0
-      ingest = ingestRelation.first
+    ingest_relation = MedusaIngest.where(staging_path: response_hash['staging_path'])
+    if ingest_relation.count > 0
+      ingest = ingest_relation.first
       ingest.request_status = response_hash['status']
       ingest.error_text = response_hash['error']
       ingest.response_time = Time.now.utc.iso8601
@@ -263,12 +253,15 @@ class MedusaIngest < ActiveRecord::Base
     end
   end
 
-  def send_medusa_ingest_message(staging_path)
-    AmqpConnector.instance.send_message(MedusaIngest.outgoing_queue, create_medusa_ingest_message(staging_path))
+  def send_medusa_ingest_message()
+    AmqpConnector.instance.send_message(MedusaIngest.outgoing_queue, medusa_ingest_message)
   end
 
-  def create_medusa_ingest_message(staging_path)
-    {"operation" => "ingest", "staging_path" => "#{staging_path}"}
+  def medusa_ingest_message()
+    {"operation" => "ingest",
+     "draft_key" => self.draft_key,
+     "target_key" => self.target_key,
+     "pass_hash" => {class: self.idb_class, identifier: self.idb_identifier} }
   end
 
 end

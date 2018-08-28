@@ -1,9 +1,18 @@
+-if @dataset.medusa_ingests.count < 1
+  %p No Medusa ingest requests have been sent for this dataset.
+  -if @dataset.publication_state == Databank::PublicationState::DRAFT
+    %p This is because it is in a draft state.
+  -else
+    %p If you are sure the requests should have been sent, you can send them now.
+    =form_tag("/datasets/#{@datset.key}/send_to_medusa") do
+      =submit_tag("Send to Medusa")
+
 -@dataset.medusa_ingests.each do |ingest|
   %strong staging path:
   =ingest.staging_path
   %br
-  %strong filetype | identifier:
-  ="#{ingest.idb_class} | #{ingest.idb_identifier}"
+  %strong filetype - identifier:
+  ="#{ingest.idb_class} - #{ingest.idb_identifier}"
   %br
   %strong time request sent:
   =ingest.created_at.to_time.iso8601
@@ -25,4 +34,4 @@
     %strong no response yet
 
   %br
-
+  %br

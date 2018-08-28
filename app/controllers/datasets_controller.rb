@@ -28,7 +28,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :confirmation_message
   skip_load_and_authorize_resource :only => :validate_change2published
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :request_review, :reserve_doi, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message, :get_new_token]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :request_review, :reserve_doi, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message, :get_new_token, :resend_to_medusa]
 
   before_action :remove_empty_datafiles, only: [:show, :edit]
 
@@ -1292,6 +1292,10 @@ class DatasetsController < ApplicationController
 
   end
 
+  def send_to_medusa
+    MedusaIngest.send_dataset_to_medusa(@dataset)
+  end
+
   def review_deposit_agreement
     if params.has_key?(:id)
       set_dataset
@@ -1315,10 +1319,6 @@ class DatasetsController < ApplicationController
     datafiles = Datafile.where(web_id: params[:selected_files])
 
     datafiles = Array.new
-
-    if @dataset.recordfile && params[:selected_files].include?(@dataset.recordfile.web_id)
-      datafiles.append([@dataset.recordfile.bytestream_path, @dataset.recordfile.bytestream_name])
-    end
 
     web_ids = params[:selected_files]
 

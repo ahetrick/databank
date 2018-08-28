@@ -49,7 +49,6 @@ class Dataset < ActiveRecord::Base
   validates :dataset_version, presence: true
 
   has_many :datafiles, dependent: :destroy
-  has_one :recordfile, dependent: :destroy
   has_many :creators, dependent: :destroy
   has_many :funders, dependent: :destroy
   has_many :related_materials, dependent: :destroy
@@ -69,6 +68,16 @@ class Dataset < ActiveRecord::Base
 
   def to_param
     self.key
+  end
+
+  def storage_key_dirpart
+
+    if self.identifier && self.identifier != ''
+      "DOI-#{(self.identifier).parameterize}"
+    else
+      raise "Not valid for datasets without identifiers."
+    end
+
   end
 
   def version_group
@@ -1083,26 +1092,16 @@ class Dataset < ActiveRecord::Base
 
   end
 
+  def agreement_key
+    dataset_dirname = "DOI-#{(dataset.identifier).parameterize}"
+    "#{dataset_dirname}/system/deposit_agreement.txt"
+  end
+
   def store_agreement
-    dir_text = "#{IDB_CONFIG[:agreements_root_path]}/#{self.key}"
 
-    # agreement may exist during a restoration to database from medusa serialization
-    if File.exists? dir_text
-      return true
-    end
+    uri = URI.parse("#{IDB_CONFIG[:root_url_text]}/public/deposit_agreement.txt")
 
-    Dir.mkdir dir_text
-    FileUtils.chmod "u=wrx,go=rx", File.dirname(dir_text)
-    path = "#{dir_text}/deposit_agreement.txt"
-    unless File.exists? "#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.txt"
-      if File.exists? "#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.bk"
-        FileUtils.cp "#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.bk", "#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.txt"
-      else
-        raise "deposit agreement template not found"
-      end
-    end
-
-    base_content = File.read("#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.txt")
+    base_content = uri.read
     agent_text = "License granted by #{self.depositor_name} on #{self.created_at.iso8601}\n\n"
     agent_text << "=================================================================================================================\n\n"
     agent_text << "  Are you a creator of this dataset or have you been granted permission by the creator to deposit this dataset?\n"
@@ -1117,10 +1116,8 @@ class Dataset < ActiveRecord::Base
     agent_text << "  [ ] No\n\n"
     agent_text << "================================================================================================================="
     content = "#{agent_text}\n\n#{base_content}"
-    File.open(path, "w+") do |f|
-      f.write(content)
-    end
-    FileUtils.chmod "u=wrx,go=rx", path
+
+    Application.storage_manager.draft_key.write_string_to(datafile_target_key)
 
   end
 
