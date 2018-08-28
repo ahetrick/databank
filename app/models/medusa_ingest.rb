@@ -173,6 +173,9 @@ class MedusaIngest < ActiveRecord::Base
 
 
   def self.on_medusa_succeeded_message(response_hash)
+
+    # TODO adapt to medusa_storage
+
     staging_path_arr = (response_hash['staging_path']).split('/')
     # Rails.logger.warn response_hash['staging_path']
     # Rails.logger.warn "item_root_dir: #{response_hash['item_root_dir']}"
@@ -256,7 +259,7 @@ class MedusaIngest < ActiveRecord::Base
 
   def medusa_ingest_message()
     {"operation" => "ingest",
-     "draft_key" => self.draft_key,
+     "staging_key" => self.draft_key,
      "target_key" => self.target_key,
      "pass_hash" => {class: self.idb_class, identifier: self.idb_identifier} }
   end
