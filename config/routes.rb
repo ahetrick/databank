@@ -47,6 +47,7 @@ Rails.application.routes.draw do
         get 'preview', to: 'datafiles#preview'
         get 'display', to: 'datafiles#display'
         get 'filepath', to: 'datafiles#filepath', defaults: {format: 'json'}
+        get 'bucket_and_key', to: 'datafiles#bucket_and_key', defaults: {format: 'json'}
         get 'viewtext', to: 'datafiles#peek_text', defaults: {format: 'json'}
         get 'iiif_filepath', to: 'datafiles#iiif_filepath', defaults: {format: 'json'}
       end

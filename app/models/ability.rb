@@ -51,6 +51,7 @@ class Ability
 
       can :peek_text, Datafile
       can :filepath, Datafile
+      can :bucket_and_key, Datafile
       can :iiif_filepath, Datafile
       can :download_link, Dataset
       can :stream_file, Dataset
@@ -72,6 +73,7 @@ class Ability
 
     else
       can :peek_text, Datafile
+      can :bucket_and_key, Datafile
       can :filepath, Datafile
       can :iiif_filepath, Datafile
       can :download_citation_report, :all

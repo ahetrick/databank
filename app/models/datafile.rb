@@ -19,9 +19,7 @@ class Datafile < ActiveRecord::Base
   before_create { self.web_id ||= generate_web_id }
 
   before_destroy 'destroy_job'
-  before_destroy 'remove_directory'
-
-  # after_save 'chmod_binary_for_medusa'
+  before_destroy 'remove_binary'
 
   def to_param
     self.web_id
@@ -40,91 +38,76 @@ class Datafile < ActiveRecord::Base
   end
 
   def bytestream_name
-    return_name = ""
-    if self.binary_name && self.binary_name != ""
-      return_name = self.binary_name
-    elsif self.binary && self.binary.file
-      return_name = self.binary.file.filename
-    else
-      return "error: filename not found"
-    end
-    return_name
+    self.binary_name
   end
 
   def bytestream_size
+    self.current_root.size(self.storage_key)
+  end
 
-    if self.binary_size
-      self.binary_size
-    elsif self.binary
-      self.binary.size
-    else
-      0
-    end
-
+  def current_root
+    Application.storage_manager.root_set.at(self.storage_root)
   end
 
   def storage_root_bucket
-    if IDB_CONFIG[:aws][:s3_mode] == true
-
-      return self.root_set.at(self.storage_root)[:bucket]
-
+    if IDB_CONFIG[:aws][:s3_mode]
+      self.current_root[:bucket]
     else
-      return nil
+      nil
+    end
+  end
+
+  def storage_key_with_prefix
+    if IDB_CONFIG[:aws][:s3_mode]
+      "#{self.current_root[:prefix]}#{self.storage_key}"
+    else
+      self.storage_key
     end
   end
 
   def storage_root_path
-    if IDB_CONFIG[:aws][:s3_mode] == false
-
-      return self.root_set.at(self.storage_root)[:real_path]
-
+    if IDB_CONFIG[:aws][:s3_mode]
+      nil
     else
-      return nil
+      self.current_root[:real_path]
+    end
+  end
+
+  # within the context of the databank server mounts
+  def filepath
+    base = self.storage_root_path
+    if base
+      base.join("key")
+    else
+      raise("no filesystem path found for datafile: #{self.web_id}")
+    end
+  end
+
+  # medusa mounts are different on iiif server
+  def iiif_bytestream_path
+    if self.storage_key == 'draft'
+      self.filepath
+    elsif self.storage_key == 'medusa'
+      "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{IDB_CONFIG[:iiif_medusa_group]}/#{self.medusa_path}"
+    else
+      raise("invalid storage_key found for datafile: #{self.web_id}")
     end
   end
 
   def file_extension
     filename_split = self.bytestream_name.split(".")
-
     if filename_split.count > 1 # otherwise cannot determine extension
-
       return filename_split.last
-
     else
       return ""
-
-    end
-
-  end
-
-  def bytestream_path
-    if (self.medusa_path.nil? || self.medusa_path.empty?) && self.binary && self.binary.path
-      return self.binary.path
-
-    elsif !self.medusa_path.nil? && !self.medusa_path.empty?
-      return "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{self.medusa_path}"
-
-    elsif self.storage_root && self.storage_root !=''
-
-      if self.storage_prefix && self.storage_prefix != ''
-        return join(self.storage_root, self.storage_prefix, self.storage_key)
-      else
-        return join(self.storage_root, self.storage_key)
-      end
-
-    end
-  end
-
-  def iiif_bytestream_path
-    if self.medusa_path.nil? || self.medusa_path.empty?
-      self.binary.path
-    else
-      "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{IDB_CONFIG[:iiif_medusa_group]}/#{self.medusa_path}"
     end
   end
 
   def ip_downloaded_file_today(request_ip)
-    DayFileDownload.where(["ip_address = ? and file_web_id = ? and download_date = ?", request_ip, self.web_id, Date.current]).count > 0
+    DayFileDownload.where(["ip_address = ? and file_web_id = ? and download_date = ?",
+                           request_ip,
+                           self.web_id,
+                           Date.current]).count > 0
   end
 
   def dataset_key
@@ -136,69 +119,12 @@ class Datafile < ActiveRecord::Base
     end
   end
 
-
-  def content_files
-
-    content_files_array = Array.new
-    entries = self.nested_items
-      for entry in entries
-        if !entry.is_directory? && entry.item_name.strip() != '.DS_Store'
-          content_file_hash = {}
-          content_file_hash['content_filepath'] = entry.item_path
-          content_file_hash['content_filename'] = entry.item_name
-          content_file_hash['file_format'] = entry.media_type
-          content_files_array.push(content_file_hash)
-        end
-      end
-    content_files_array
-
-  end
-
   def has_bytestream
-    (self.binary && self.binary.file  && self.binary.size > 0 ) ||
-        (self.medusa_path && self.medusa_path != "") ||
-        (self.storage_root && self.storage_root != "")
-  end
-
-  def tar_contents()
-
-    entry_list_text = `tar -tf "#{self.bytestream_path}"`
-
-    entry_list = entry_list_text.split("\n")
-
-    content_list = []
-
-    entry_list.each do |entry|
-
-      if entry[-1] != "/" # means directory
-
-        content_path_array = entry.split("/")
-
-        if content_path_array[-1] && (content_path_array[-1]).exclude?('.DS_Store') && (content_path_array[-1]).exclude?('__MACOSX')
-
-          content_file_hash = {}
-          content_file_hash['content_filename']=content_path_array[-1]
-
-          type_search_result = MIME::Types.type_for(content_file_hash['content_filename'])
-
-          if type_search_result.length > 0
-
-            content_file_hash['file_format'] = type_search_result.first.content_type
-
-          else
-            content_file_hash['file_format'] = 'application/unknown'
-
-          end
-
-          content_file_hash['determination'] = 'lookup'
-          content_list.push(content_file_hash)
-        end
-      end
-
-    end
-
-    content_list
-
+    self.storage_root &&
+        self.storage_root != "" &&
+        self.storage_key &&
+        self.storage_key != "" &&
+        current_root.exist?(self.storage_key)
   end
 
   def record_download(request_ip)
@@ -209,19 +135,24 @@ class Datafile < ActiveRecord::Base
 
     dataset = Dataset.find(self.dataset_id)
 
-    if dataset && dataset.identifier && dataset.identifier != "" # ignore draft datasets
+    if dataset&.identifier && dataset.identifier != "" # ignore draft datasets
 
       unless dataset.ip_downloaded_dataset_today(request_ip)
 
-        today_dataset_download_relation = DatasetDownloadTally.where(["dataset_key= ? and download_date = ?", dataset.key, Date.current])
+        day_ds_download_set = DatasetDownloadTally.where(["dataset_key= ? and download_date = ?",
+                                                          dataset.key,
+                                                          Date.current])
 
-        if today_dataset_download_relation.count == 1
+        if day_ds_download_set.count == 1
 
-          today_dataset_download = today_dataset_download_relation.first
+          today_dataset_download = day_ds_download_set.first
           today_dataset_download.tally = today_dataset_download.tally + 1
           today_dataset_download.save
-        elsif today_dataset_download_relation.count == 0
-          DatasetDownloadTally.create(tally: 1, download_date: Date.current, dataset_key: dataset.key, doi: dataset.identifier)
+        elsif day_ds_download_set.count == 0
+          DatasetDownloadTally.create(tally: 1,
+                                      download_date: Date.current,
+                                      dataset_key: dataset.key,
+                                      doi: dataset.identifier)
         else
           Rails.logger.warn "unexpected number of dataset tally records for download of #{self.web_id} on #{Date.current} from #{request_ip}"
         end
@@ -238,13 +169,15 @@ class Datafile < ActiveRecord::Base
                                dataset_key: dataset.key,
                                doi: dataset.identifier)
 
-        today_datatafile_download_relation = FileDownloadTally.where(["file_web_id = ? and download_date = ?", self.web_id, Date.current])
+        day_df_download_set = FileDownloadTally.where(["file_web_id = ? and download_date = ?",
+                                                       self.web_id,
+                                                       Date.current])
 
-        if today_datatafile_download_relation.count == 1
-          today_file_download = today_datatafile_download_relation.first
+        if day_df_download_set.count == 1
+          today_file_download = day_df_download_set.first
           today_file_download.tally = today_file_download.tally + 1
           today_file_download.save
-        elsif today_datatafile_download_relation.count == 0
+        elsif day_df_download_set.count == 0
           FileDownloadTally.create(tally: 1, download_date: Date.current, dataset_key: dataset.key, doi: dataset.identifier, file_web_id: self.web_id, filename: self.bytestream_name)
         else
           Rails.logger.warn "unexpected number of file tally records for download of #{self.web_id} on #{Date.current} from #{request_ip}"
@@ -256,29 +189,8 @@ class Datafile < ActiveRecord::Base
 
   end
 
-  def remove_directory
-
-
-    if self.storage_key && self.storage_key[0,3] == 'tus'
-      key_parts = self.storage_key.split('/')
-      name_part = key_parts[-1]
-      begin
-        Application.storage_manager.draft_root.delete_content("tus/#{name_part}.info")
-      rescue StandardError => err
-        Rails.logger.warn("remove error 1: #{err.message}")
-      end
-
-    end
-
-    if self.storage_key && self.storage_key !=''
-      begin
-        Application.storage_manager.draft_root.delete_content(self.storage_key)
-      rescue StandardError => err
-        Rails.logger.warn("remove error 2: #{err.message}")
-      end
-
-      #Application.storage_manager.draft_root.delete_tree(self.web_id)
-    end
+  def remove_binary
+    current_root.delete_content(self.storage_key)
   end
 
   def job
@@ -318,13 +230,5 @@ class Datafile < ActiveRecord::Base
     end
     proposed_id
   end
-
-  # def chmod_binary_for_medusa
-  #   if self.binary && self.binary.file
-  #     FileUtils.chmod "u=wrx,go=rx", File.dirname(self.binary.path)
-  #     FileUtils.chmod "u=wrx,go=rx", self.binary.path
-  #
-  #   end
-  # end
 
 end
