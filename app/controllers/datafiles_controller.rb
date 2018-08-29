@@ -305,7 +305,7 @@ class DatafilesController < ApplicationController
       render json: {error: "No filepath for object in s3 bucket."}, status: :bad_request
     else
       if @datafile.filepath
-        render json: {filepath: @datafile.iiif_bytestream_path}, status: ok
+        render json: {filepath: @datafile.iiif_bytestream_path}, status: :ok
       else
         render json: {error: "No binary object found."}, status: :not_found
       end
