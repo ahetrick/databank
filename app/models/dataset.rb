@@ -1,10 +1,12 @@
 require 'fileutils'
 require 'date'
 require 'open-uri'
+require 'uri'
 require 'net/http'
 require 'securerandom'
 require 'concerns/dataset/indexable'
 require 'action_pack'
+require 'openssl'
 
 class Dataset < ActiveRecord::Base
   include ActiveModel::Serialization
@@ -1105,7 +1107,14 @@ class Dataset < ActiveRecord::Base
 
     uri = URI.parse("#{IDB_CONFIG[:root_url_text]}/deposit_agreement.txt")
 
-    base_content = uri.read
+    base_content = nil
+
+    if IDB_CONFIG[:root_url_text].include?('dev') || IDB_CONFIG[:root_url_text].include?('pilot')
+      base_content = open(uri, {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE})
+    else
+      base_content = uri.read
+    end
+    
     agent_text = "License granted by #{self.depositor_name} on #{self.created_at.iso8601}\n\n"
     agent_text << "=================================================================================================================\n\n"
     agent_text << "  Are you a creator of this dataset or have you been granted permission by the creator to deposit this dataset?\n"
