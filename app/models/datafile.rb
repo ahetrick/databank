@@ -51,7 +51,7 @@ class Datafile < ActiveRecord::Base
 
   def storage_root_bucket
     if IDB_CONFIG[:aws][:s3_mode]
-      self.current_root[:bucket]
+      self.current_root.bucket
     else
       nil
     end
@@ -59,7 +59,7 @@ class Datafile < ActiveRecord::Base
 
   def storage_key_with_prefix
     if IDB_CONFIG[:aws][:s3_mode]
-      "#{self.current_root[:prefix]}#{self.storage_key}"
+      "#{self.current_root.prefix}#{self.storage_key}"
     else
       self.storage_key
     end
@@ -69,7 +69,7 @@ class Datafile < ActiveRecord::Base
     if IDB_CONFIG[:aws][:s3_mode]
       nil
     else
-      self.current_root[:real_path]
+      self.current_root.real_path
     end
   end
 
