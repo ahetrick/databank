@@ -77,7 +77,7 @@ class Datafile < ActiveRecord::Base
   def filepath
     base = self.storage_root_path
     if base
-      base.join("key")
+      File.join(base, "key")
     else
       raise("no filesystem path found for datafile: #{self.web_id}")
     end
