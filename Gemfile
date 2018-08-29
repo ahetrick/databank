@@ -24,7 +24,6 @@ gem "tus-server"
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
-gem 'jquery-datatables-rails'
 gem 'jquery-ui-rails'
 gem 'highcharts-rails'
 
@@ -83,16 +82,7 @@ gem 'simple_form'
 # Use ranked-model to support ordering resources
 # gem 'ranked-model'
 
-# use carrierwave for file upload
-gem 'carrierwave', '~> 1.0'
-
 gem 'mime-types', require: 'mime/types/full'
-
-# use will_paginate to handle paging results on datasets index
-# gem 'will_paginate', '~> 3.0.5'
-
-# use effective_datatables to handle sorting and pagination on datasets index page
-gem 'effective_datatables', '~> 2.6', '>= 2.6.14'
 
 #gem 'httpclient', git: 'git://github.com/medusa-project/httpclient.git'
 

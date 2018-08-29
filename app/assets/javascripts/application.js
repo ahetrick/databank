@@ -17,5 +17,4 @@
 //= require jquery-ui/effects/effect-highlight
 //= require zeroclipboard
 //= require bootstrap-sprockets
-//= require effective_datatables
 //= require_tree .

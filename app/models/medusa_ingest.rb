@@ -113,29 +113,29 @@ class MedusaIngest < ActiveRecord::Base
     # END datafiles
 
     # START deposit agreement
-    draft_exists = Application.storage_manager.draft_root.exist?(dataset.agreement_key)
-    medusa_exists = Application.storage_manager.medusa_root.exist?(dataset.agreement_key)
+    draft_exists = Application.storage_manager.draft_root.exist?(dataset.draft_agreement_key)
+    medusa_exists = Application.storage_manager.medusa_root.exist?(dataset.medusa_agreement_key)
 
     if draft_exists && !medusa_exists
       medusa_ingest = MedusaIngest.new
-      medusa_ingest.staging_key = dataset.agreement_key
-      medusa_ingest.target_key = dataset.agreement_key
+      medusa_ingest.staging_key = dataset.draft_agreement_key
+      medusa_ingest.target_key = dataset.medusa_agreement_key
       medusa_ingest.idb_class = 'agreement'
       medusa_ingest.idb_identifier = dataset.key
       medusa_ingest.save
       medusa_ingest.send_medusa_ingest_message
     elsif draft_exists && medusa_exists
-      draft_size = Application.storage_manager.draft_root.size(dataset.agreement_key)
-      medusa_size = Application.storage_manager.medusa_root.size(dataset.agreement_key)
+      draft_size = Application.storage_manager.draft_root.size(dataset.draft_agreement_key)
+      medusa_size = Application.storage_manager.medusa_root.size(dataset.medusa_agreement_key)
       if draft_size == medusa_size
-        Application.storage_manager.draft_root.delete_content(dataset.agreement_key)
+        Application.storage_manager.draft_root.delete_content(dataset.draft_agreement_key)
       else
         exception_string("Agreement file exists in both draft and medusa storage systems, but the sizes are different. Dataset: #{dataset.key}.")
         notification = DatabankMailer.error(exception_string)
         notification.deliver_now
       end
     elsif !draft_exists && !medusa_exists
-      exception_string("Deposit agreement not found for Dataset: #{dataset.agreement_key}.")
+      exception_string("Deposit agreement not found for Dataset: #{dataset.key}.")
       notification = DatabankMailer.error(exception_string)
       notification.deliver_now
     end

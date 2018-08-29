@@ -9,7 +9,6 @@ require 'zlib'
 class Datafile < ActiveRecord::Base
   include ActiveModel::Serialization
   include Viewable
-  mount_uploader :binary, BinaryUploader
   belongs_to :dataset
   has_many :nested_items, dependent: :destroy
   audited associated_with: :dataset

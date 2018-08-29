@@ -1092,14 +1092,18 @@ class Dataset < ActiveRecord::Base
 
   end
 
-  def agreement_key
-    dataset_dirname = "DOI-#{(dataset.identifier).parameterize}"
+  def draft_agreement_key
+    "drafts/#{self.key}/deposit_agreement.txt"
+  end
+
+  def medusa_agreement_key
+    dataset_dirname = "DOI-#{(self.identifier).parameterize}"
     "#{dataset_dirname}/system/deposit_agreement.txt"
   end
 
   def store_agreement
 
-    uri = URI.parse("#{IDB_CONFIG[:root_url_text]}/public/deposit_agreement.txt")
+    uri = URI.parse("#{IDB_CONFIG[:root_url_text]}/deposit_agreement.txt")
 
     base_content = uri.read
     agent_text = "License granted by #{self.depositor_name} on #{self.created_at.iso8601}\n\n"
@@ -1117,7 +1121,7 @@ class Dataset < ActiveRecord::Base
     agent_text << "================================================================================================================="
     content = "#{agent_text}\n\n#{base_content}"
 
-    Application.storage_manager.draft_key.write_string_to(datafile_target_key)
+    Application.storage_manager.draft_root.write_string_to(self.draft_agreement_key, content)
 
   end
 
