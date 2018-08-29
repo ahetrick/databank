@@ -1114,7 +1114,7 @@ class Dataset < ActiveRecord::Base
     else
       base_content = uri.read
     end
-    
+
     agent_text = "License granted by #{self.depositor_name} on #{self.created_at.iso8601}\n\n"
     agent_text << "=================================================================================================================\n\n"
     agent_text << "  Are you a creator of this dataset or have you been granted permission by the creator to deposit this dataset?\n"

@@ -41,7 +41,12 @@ class Datafile < ActiveRecord::Base
   end
 
   def bytestream_size
-    self.current_root.size(self.storage_key)
+
+    if self.current_root
+      self.current_root.size(self.storage_key)
+    else
+      0
+    end
   end
 
   def current_root
