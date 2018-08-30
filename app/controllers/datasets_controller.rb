@@ -607,7 +607,7 @@ class DatasetsController < ApplicationController
     end
 
     if params.has_key?(:suppression_action)
-      case params[:suppression_action]
+      case params[:suppression_action]cd
         when "temporarily_suppress_files"
           temporarily_suppress_files
         when "temporarily_suppress_metadata"
@@ -1293,7 +1293,7 @@ class DatasetsController < ApplicationController
   end
 
   def send_to_medusa
-    MedusaIngest.send_dataset_to_medusa(@dataset)
+    MedusaIngest.send_dataset_to_medusa(@dataset, "TODO")
   end
 
   def review_deposit_agreement
