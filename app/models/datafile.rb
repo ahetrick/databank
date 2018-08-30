@@ -194,7 +194,9 @@ class Datafile < ActiveRecord::Base
   end
 
   def remove_binary
-    current_root.delete_content(self.storage_key)
+    if current_root && storage_key
+      current_root.delete_content(storage_key)
+    end
   end
 
   def job
