@@ -3,7 +3,6 @@ require 'tempfile'
 require 'open-uri'
 require 'fileutils'
 require 'net/http'
-require Rails.root.join('app', 'uploaders', 'binary_uploader.rb')
 
 OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
