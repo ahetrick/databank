@@ -3,7 +3,7 @@
   -if @dataset.publication_state == Databank::PublicationState::DRAFT
     %p This is because it is in a draft state.
   -else
-    %p If you are sure the requests should have been sent, you can send them now.
+    %p You can send (or resend) them now.
     =form_tag("/datasets/#{@dataset.key}/send_to_medusa") do
       =submit_tag("Send to Medusa")
 

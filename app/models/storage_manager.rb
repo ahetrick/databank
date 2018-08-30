@@ -1,6 +1,6 @@
 class StorageManager
 
-  attr_accessor :draft_root, :medusa_root, :tmpdir, :root_set
+  attr_accessor :draft_root, :medusa_root, :root_set
 
   def initialize
 
@@ -8,9 +8,7 @@ class StorageManager
     self.root_set = MedusaStorage::RootSet.new(storage_config)
     self.draft_root = self.root_set.at('draft')
     self.medusa_root = self.root_set.at('medusa')
-
-    #TODO: deal with tmpdir
-
+    
   end
 
 end
