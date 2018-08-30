@@ -18,10 +18,7 @@ class DatafilesController < ApplicationController
 
     if params.has_key?(:dataset_id)
       @dataset = Dataset.find_by_key(params[:dataset_id])
-      @datafiles = Datafile.all
-      @datafiles.each do |datafile|
-        datafile.destroy unless ((datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != ""))
-      end
+      @datafiles = @dataset.ordered_datafiles
       authorize! :edit, @dataset
     end
 
