@@ -8,16 +8,6 @@ namespace :s3update do
 
       dataset.datafiles.each do |datafile|
 
-        if !datafile.binary_name || datafile.binary_name == ''
-          if datafile.storage_key
-            datafile.binary_name = datafile.storage_key.split("/")[-1]
-            datafile.save
-          else
-            puts("No binary_name for dataset: #{dataset.key} in datafile: #{datafile.web_id}")
-          end
-        end
-
-
         if datafile.medusa_path && datafile.medusa_path != ''
 
           datafile.binary_name = datafile.medusa_path.split("/")[-1]
@@ -30,6 +20,10 @@ namespace :s3update do
           else
             puts("could not find bytestream for medusa datafile #{datafile.web_id} in dataset #{dataset.key}")
           end
+
+        elsif datafile.binary && datafile.binary != ""
+          datafile.binary_name = datafile.binary
+          datafile.save
 
         elsif datafile.binary_name && datafile.binary_name != ""
 
