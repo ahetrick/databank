@@ -8,10 +8,15 @@ namespace :s3update do
 
       dataset.datafiles.each do |datafile|
 
-        if datafile.binary && self.binary.file
-          datafile.binary_name = datafile.binary.file.filename
-          datafile.save
+        if !datafile.binary_name || datafile.binary_name == ''
+          if datafile.storage_key
+            datafile.binary_name = datafile.storage_key.split("/")[-1]
+            datafile.save
+          else
+            puts("No binary_name for dataset: #{dataset.key} in datafile: #{datafile.web_id}")
+          end
         end
+
 
         if datafile.medusa_path && datafile.medusa_path != ''
 
