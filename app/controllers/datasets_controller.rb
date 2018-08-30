@@ -607,7 +607,7 @@ class DatasetsController < ApplicationController
     end
 
     if params.has_key?(:suppression_action)
-      case params[:suppression_action]cd
+      case params[:suppression_action]
         when "temporarily_suppress_files"
           temporarily_suppress_files
         when "temporarily_suppress_metadata"
