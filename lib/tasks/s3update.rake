@@ -8,7 +8,15 @@ namespace :s3update do
 
       dataset.datafiles.each do |datafile|
 
+        if datafile.binary && self.binary.file
+          datafile.binary_name = datafile.binary.file.filename
+          datafile.save
+        end
+
         if datafile.medusa_path && datafile.medusa_path != ''
+
+          datafile.binary_name = datafile.medusa_path.split("/")[-1]
+          datafile.save
 
           if Application.storage_manager.medusa_root.exist?(datafile.medusa_path)
             datafile.storage_root = 'medusa'
@@ -19,8 +27,6 @@ namespace :s3update do
           end
 
         elsif datafile.binary_name && datafile.binary_name != ""
-
-          filename = datafile.binary_name.split("/")[-1]
 
           draft_key = "#{datafile.web_id}/#{datafile.binary_name}"
 

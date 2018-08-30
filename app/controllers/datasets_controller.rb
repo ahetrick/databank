@@ -48,12 +48,6 @@ class DatasetsController < ApplicationController
     
     @my_datasets_count = 0
 
-    # @just_mine = false
-    # @selected_depositors = Array.new
-    # @selected_funders = Array.new
-    # @selected_licenses = Array.new
-    # @selected_states = Array.new
-
     @search = nil
     search_get_facets = nil
 
