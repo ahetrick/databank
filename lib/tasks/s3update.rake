@@ -21,11 +21,10 @@ namespace :s3update do
             puts("could not find bytestream for medusa datafile #{datafile.web_id} in dataset #{dataset.key}")
           end
 
-        elsif datafile.binary && datafile.binary != ""
-          datafile.binary_name = datafile.binary
-          datafile.save
-
-        elsif datafile.binary_name && datafile.binary_name != ""
+        else
+          if datafile.binary && datafile.binary != ""
+            datafile.binary_name = datafile.binary
+          end
 
           draft_key = "#{datafile.web_id}/#{datafile.binary_name}"
 
