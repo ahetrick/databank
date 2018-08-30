@@ -8,7 +8,7 @@ class StorageManager
     self.root_set = MedusaStorage::RootSet.new(storage_config)
     self.draft_root = self.root_set.at('draft')
     self.medusa_root = self.root_set.at('medusa')
-    
+
   end
 
 end
