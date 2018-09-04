@@ -8,8 +8,11 @@
       =submit_tag("Send to Medusa")
 
 -@dataset.medusa_ingests.each do |ingest|
-  %strong staging path:
-  =ingest.staging_path
+  %strong staging key:
+  =ingest.staging_key
+  %br
+  %strong target key:
+  =ingest.target_key
   %br
   %strong filetype - identifier:
   ="#{ingest.idb_class} - #{ingest.idb_identifier}"
