@@ -248,7 +248,7 @@ class MedusaIngest < ActiveRecord::Base
 
   def medusa_ingest_message()
     {"operation" => "ingest",
-     "staging_key" => self.draft_key,
+     "staging_key" => self.staging_key,
      "target_key" => self.target_key,
      "pass_through" => {class: self.idb_class, identifier: self.idb_identifier, ingest_request_id: self.id} }
   end
