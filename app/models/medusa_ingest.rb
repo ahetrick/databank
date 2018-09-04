@@ -112,7 +112,7 @@ class MedusaIngest < ActiveRecord::Base
     # START serialization
     # always send a serialization
     serialization_json = (dataset.recovery_serialization).to_json
-    serialization_key = "#{dataset_dirname}/system/serialization.#{file_time}.json"
+    serialization_key = "#{dataset.dirname}/system/serialization.#{file_time}.json"
     Application.storage_manager.draft_root.write_string_to(serialization_key, serialization_json)
     SystemFile.create(dataset_id: dataset.id, storage_root: 'draft', storage_key: serialization_key, file_type: 'serialization')
 
@@ -129,7 +129,7 @@ class MedusaIngest < ActiveRecord::Base
     # START changelog
     # always send a changelog
     changelog_json = (dataset.full_changelog).to_json
-    changelog_key = "#{dataset_dirname}/system/changelog.#{file_time}.json"
+    changelog_key = "#{dataset.dirname}/system/changelog.#{file_time}.json"
     Application.storage_manager.draft_root.write_string_to(changelog_key, changelog_json)
     SystemFile.create(dataset_id: dataset.id, storage_root: 'draft', storage_key: changelog_key, file_type: 'changelog')
 

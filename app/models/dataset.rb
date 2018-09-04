@@ -1106,7 +1106,7 @@ class Dataset < ActiveRecord::Base
   end
 
   def medusa_agreement_key
-    "#{self.dataset_dirname}/system/deposit_agreement.txt"
+    "#{self.dataset.dirname}/system/deposit_agreement.txt"
   end
 
   def store_agreement
