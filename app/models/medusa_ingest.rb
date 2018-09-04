@@ -204,6 +204,7 @@ class MedusaIngest < ActiveRecord::Base
         system_file = SystemFile.where(dataset_id: dataset.id, storage_key: response_hash['staging_key'])
         if system_file
           system_file.storage_root = 'medusa'
+          system_file.save
         else
           notification = DatabankMailer.error("System File record not found for ingest suceeded message from Medusa. #{response_hash.to_yaml}")
           notification.deliver_now
