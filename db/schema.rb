@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180828145415) do
+ActiveRecord::Schema.define(version: 20180904182242) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -289,6 +289,15 @@ ActiveRecord::Schema.define(version: 20180828145415) do
     t.string   "address"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "system_files", force: :cascade do |t|
+    t.integer  "dataset_id"
+    t.string   "storage_root"
+    t.string   "storage_key"
+    t.string   "file_type"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "tokens", force: :cascade do |t|

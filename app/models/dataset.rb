@@ -55,6 +55,7 @@ class Dataset < ActiveRecord::Base
   has_many :funders, dependent: :destroy
   has_many :related_materials, dependent: :destroy
   has_many :deckfiles, dependent: :destroy
+  has_many :system_files, dependent: :destroy
 
   accepts_nested_attributes_for :datafiles, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :deckfiles, reject_if: :all_blank, allow_destroy: true
@@ -62,11 +63,11 @@ class Dataset < ActiveRecord::Base
   accepts_nested_attributes_for :funders, reject_if: proc { |attributes| (attributes['name'].blank?) }, allow_destroy: true
   accepts_nested_attributes_for :related_materials, reject_if: proc { |attributes| ((attributes['link'].blank?) && (attributes['citation'].blank?)) }, allow_destroy: true
 
-  before_create 'set_key'
-  after_create 'store_agreement'
-  before_save 'set_primary_contact'
-  #after_save 'remove_invalid_datafiles'
-  before_destroy 'destroy_audit'
+  before_create :set_key
+  after_create :store_agreement
+  before_save :set_primary_contact
+  before_destroy :remove_system_files
+  before_destroy :destroy_audit
 
   def to_param
     self.key
@@ -940,7 +941,7 @@ class Dataset < ActiveRecord::Base
   def remove_invalid_datafiles
     begin
       self.datafiles.each do |datafile|
-        datafile.destroy unless ((datafile.binary && datafile.binary.file) || (datafile.medusa_path && datafile.medusa_path != "") || (datafile.storage_root && datafile.storage_root != ""))
+        datafile.destroy unless ((datafile.binary&.file) || (datafile.medusa_path && datafile.medusa_path != "") || (datafile.storage_root && datafile.storage_root != ""))
       end
     rescue StandardError => ex
       notification = DatabankMailer.error("Unable to remove invalid datafiles for #{self.key}")
@@ -1041,8 +1042,6 @@ class Dataset < ActiveRecord::Base
 
       if material.datacite_list && material.datacite_list != ''
         datacite_arr = material.datacite_list.split(',')
-        # else
-        #   report << ["#{dataset.identifier}", "", "#{material.uri_type}", "#{material.uri}", "#{material.selected_type}"]
       end
 
       datacite_arr.each do |relationship|
@@ -1094,13 +1093,20 @@ class Dataset < ActiveRecord::Base
 
   end
 
+  def dirname
+    if self.identifier && self.identifier != ""
+      "DOI-#{(self.identifier).parameterize}"
+    else
+      "DRAFT-#{self.key}"
+    end
+  end
+
   def draft_agreement_key
     "drafts/#{self.key}/deposit_agreement.txt"
   end
 
   def medusa_agreement_key
-    dataset_dirname = "DOI-#{(self.identifier).parameterize}"
-    "#{dataset_dirname}/system/deposit_agreement.txt"
+    "#{self.dataset_dirname}/system/deposit_agreement.txt"
   end
 
   def store_agreement
@@ -1131,6 +1137,7 @@ class Dataset < ActiveRecord::Base
     content = "#{agent_text}\n\n#{base_content}"
 
     Application.storage_manager.draft_root.write_string_to(self.draft_agreement_key, content)
+    SystemFile.create(dataset_id: self.id, storage_root: 'draft', storage_key: self.draft_agreement_key, file_type: 'agreement')
 
   end
 
@@ -1486,6 +1493,16 @@ class Dataset < ActiveRecord::Base
     changes.each do |change|
       change.destroy
     end
+  end
+
+  def remove_system_files
+    root = StorageManager.draft_root
+    system_files.each do |system_file|
+      if root.exist?(system_file)
+        root.delete_content(system_file)
+      end
+    end
+
   end
 
 end

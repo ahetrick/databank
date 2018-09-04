@@ -17,8 +17,8 @@ class Datafile < ActiveRecord::Base
 
   before_create { self.web_id ||= generate_web_id }
 
-  before_destroy 'destroy_job'
-  before_destroy 'remove_binary'
+  before_destroy :destroy_job
+  before_destroy :remove_binary
 
   def to_param
     self.web_id
@@ -121,6 +121,55 @@ class Datafile < ActiveRecord::Base
     else
       return nil
     end
+  end
+
+  # has side-effect of updating record if the bytestream is in medusa, but the record did not indicate
+  # if bytestream is found the same in draft and medusa roots, the draft bytestream is deleted
+  def in_medusa
+
+    dataset = Dataset.find(self.dataset_id)
+    return false unless dataset
+    return false unless (dataset.identifier && dataset.identifier != '')
+
+    in_medusa = false # start out with the assumption that it is not in medusa, then check and handle
+
+    datafile_target_key = "#{dataset.dirname}/dataset_files/#{datafile.binary_name}"
+
+    if Application.storage_manager.medusa_root.exist?(datafile_target_key)
+
+      if datafile&.storage_root == 'draft' && datafile&.storage_key != ''
+
+        # If the binary object also exists in draft system, delete duplicate.
+        #  Can't do full equivalence check (S3 etag is not always MD5), so check sizes.
+        if Application.storage_manager.draft_root.exist?(datafile.storage_key)
+          draft_size = Application.storage_manager.draft_root.size(datafile.storage_key)
+          medusa_size = Application.storage_manager.medusa_root.size(datafile_storage_key)
+
+          if draft_size == medusa_size
+            # If the ingest into Medusa was successful,
+            # delete redundant binary object
+            # and update Illinois Data Bank datafile record
+            Application.storage_manager.draft_root.delete_content(dataset.storage_key)
+            in_medusa = true
+          else
+            exception_string("Datafile exists in both draft and medusa storage systems, but the sizes are different. Dataset: #{dataset.key}, Datafile: #{datafile.web_id}")
+            notification = DatabankMailer.error(exception_string)
+            notification.deliver_now
+          end
+        else
+          in_medusa = true
+        end
+      else
+        in_medusa = true
+      end
+
+      if in_medusa
+        datafile.storage_root = 'medusa'
+        datafile.storage_key = datafile_target_key
+        datafile.save
+      end
+    end
+      in_medusa
   end
 
   def has_bytestream
