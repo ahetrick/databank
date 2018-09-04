@@ -1498,8 +1498,8 @@ class Dataset < ActiveRecord::Base
   def remove_system_files
     root = StorageManager.draft_root
     system_files.each do |system_file|
-      if root.exist?(system_file)
-        root.delete_content(system_file)
+      if root.exist?(system_file.storage_key)
+        root.delete_content(system_file.storage_key)
       end
     end
 

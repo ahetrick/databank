@@ -19,7 +19,7 @@ namespace :fix do
   desc 'pretend some dev datasets never happened'
   task :fix_dev => :environment do
 
-    datasets_to_destroy = Dataset.where(key: ['IDBDEV-0676618', 'IDBDEV-5323357', 'IDBDEV-0499734', 'IDBDEV-6510671'])
+    datasets_to_destroy = Dataset.where(key: ['IDBDEV-2854952', 'IDBDEV-8850190', 'IDBDEV-9886884'])
 
     datasets_to_destroy.each do |doomed|
       doomed.destroy!
