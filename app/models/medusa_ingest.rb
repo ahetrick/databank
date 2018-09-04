@@ -201,7 +201,8 @@ class MedusaIngest < ActiveRecord::Base
           end
         end
 
-        system_file = SystemFile.where(dataset_id: dataset.id, storage_key: response_hash['staging_key'])
+        system_file = SystemFile.where(dataset_id: dataset.id, storage_key: response_hash['staging_key']).first
+
         if system_file
           system_file.storage_root = 'medusa'
           system_file.save
