@@ -133,16 +133,16 @@ class Datafile < ActiveRecord::Base
 
     in_medusa = false # start out with the assumption that it is not in medusa, then check and handle
 
-    datafile_target_key = "#{dataset.dirname}/dataset_files/#{datafile.binary_name}"
+    datafile_target_key = "#{dataset.dirname}/dataset_files/#{self.binary_name}"
 
     if Application.storage_manager.medusa_root.exist?(datafile_target_key)
 
-      if datafile&.storage_root == 'draft' && datafile&.storage_key != ''
+      if storage_root && storage_key && storage_root == 'draft' && storage_key != ''
 
         # If the binary object also exists in draft system, delete duplicate.
         #  Can't do full equivalence check (S3 etag is not always MD5), so check sizes.
-        if Application.storage_manager.draft_root.exist?(datafile.storage_key)
-          draft_size = Application.storage_manager.draft_root.size(datafile.storage_key)
+        if Application.storage_manager.draft_root.exist?(self.storage_key)
+          draft_size = Application.storage_manager.draft_root.size(self.storage_key)
           medusa_size = Application.storage_manager.medusa_root.size(datafile_storage_key)
 
           if draft_size == medusa_size
