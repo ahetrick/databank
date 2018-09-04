@@ -143,7 +143,7 @@ class Datafile < ActiveRecord::Base
         #  Can't do full equivalence check (S3 etag is not always MD5), so check sizes.
         if Application.storage_manager.draft_root.exist?(self.storage_key)
           draft_size = Application.storage_manager.draft_root.size(self.storage_key)
-          medusa_size = Application.storage_manager.medusa_root.size(datafile_storage_key)
+          medusa_size = Application.storage_manager.medusa_root.size(datafile_target_key)
 
           if draft_size == medusa_size
             # If the ingest into Medusa was successful,
