@@ -48,7 +48,7 @@ class MedusaIngest < ActiveRecord::Base
     medusa_ingest.staging_key = description_key
     medusa_ingest.target_key = description_key
     medusa_ingest.idb_class = 'description'
-    medsua_ingest.idb_identifier = dataset.key
+    medusa_ingest.idb_identifier = dataset.key
     medusa_ingest.save
     medusa_ingest.send_medusa_ingest_message
 
