@@ -250,7 +250,7 @@ class MedusaIngest < ActiveRecord::Base
     {"operation" => "ingest",
      "staging_key" => self.staging_key,
      "target_key" => self.target_key,
-     "pass_through" => {class: self.idb_class, identifier: self.idb_identifier, ingest_request_id: self.id} }
+     "pass_through" => {class: self.idb_class, identifier: self.idb_identifier, ingest_request_id: self.id.to_s} }
   end
 
 end
