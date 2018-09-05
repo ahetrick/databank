@@ -156,6 +156,10 @@ class MedusaIngest < ActiveRecord::Base
 
     if ingest_relation.count > 0
       ingest = ingest_relation.first
+    else
+      notification = DatabankMailer.error("Ingest not found. response_hash['pass_through']#{response_hash['pass_through']} #{response_hash.to_yaml}")
+      notification.deliver_now
+      return false
     end
 
     unless ingest
