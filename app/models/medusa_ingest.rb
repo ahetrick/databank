@@ -152,12 +152,12 @@ class MedusaIngest < ActiveRecord::Base
 
     ingest = nil
 
-    ingest_relation = MedusaIngest.where(idb_class: response_hash['pass_through']['class'], idb_identifier: response_hash['pass_through']['class'])
+    ingest_relation = MedusaIngest.where(staging_key: response_hash['staging_key'])
 
     if ingest_relation.count > 0
       ingest = ingest_relation.first
     else
-      notification = DatabankMailer.error("Ingest not found. response_hash['pass_through']#{response_hash['pass_through']} #{response_hash.to_yaml}")
+      notification = DatabankMailer.error("Ingest not found. response_hash['pass_through'] #{response_hash['pass_through']} #{response_hash.to_yaml}")
       notification.deliver_now
       return false
     end
