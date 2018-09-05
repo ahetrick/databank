@@ -172,6 +172,7 @@ class MedusaIngest < ActiveRecord::Base
     ingest.medusa_path = response_hash['medusa_path']
     ingest.medusa_uuid = response_hash['uuid']
     ingest.response_time = Time.now.utc.iso8601
+    ingest.request_status = response_hash['status']
     ingest.save!
 
     file_class = response_hash['pass_through']['class']
