@@ -150,7 +150,7 @@ class MedusaIngest < ActiveRecord::Base
     draft_root = Application.storage_manager.draft_root
     medusa_root = Application.storage_manager.medusa_root
 
-    ingest = MedusaIngest.find(response_hash['pass_through']['ingest_request_id'])
+    ingest = MedusaIngest.find((response_hash['pass_through']['ingest_request_id']).to_i)
 
     unless ingest
       notification = DatabankMailer.error("Ingest not found for ingest suceeded message from Medusa. #{response_hash.to_yaml}")
