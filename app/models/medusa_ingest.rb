@@ -150,15 +150,12 @@ class MedusaIngest < ActiveRecord::Base
     draft_root = Application.storage_manager.draft_root
     medusa_root = Application.storage_manager.medusa_root
 
-    ingest_id = (response_hash['pass_through']['ingest_request_id']).to_i
-
     ingest = nil
 
-    if ingest_id > 0
-      ingest = MedusaIngest.find(ingest_id)
-    else
-      notification = DatabankMailer.error("Invalid ingest response. #{response_hash.to_yaml}")
-      notification.deliver_now
+    ingest_relation = MedusaIngest.where(idb_class: response_hash['pass_through']['class'], idb_identifier: response_hash['pass_through']['class'])
+
+    if ingest_relation.count > 0
+      ingest = ingest_relation.first
     end
 
     unless ingest
@@ -260,7 +257,7 @@ class MedusaIngest < ActiveRecord::Base
     {"operation" => "ingest",
      "staging_key" => self.staging_key,
      "target_key" => self.target_key,
-     "pass_through" => {class: self.idb_class, identifier: self.idb_identifier, ingest_request_id: self.id.to_s} }
+     "pass_through" => {class: self.idb_class, identifier: self.idb_identifier} }
   end
 
 end
