@@ -143,6 +143,8 @@ class Datafile < ActiveRecord::Base
     datafile_target_key = "#{dataset.dirname}/dataset_files/#{self.binary_name}"
     Rails.logger.warn("datafile target key: #{datafile_target_key}")
 
+    Rails.logger.warn(Application.storage_manager.medusa_root.path)
+
     if Application.storage_manager.medusa_root.exist?(datafile_target_key)
 
       Rails.logger.warn("found in medusa")
