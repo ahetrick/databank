@@ -162,7 +162,7 @@ class Datafile < ActiveRecord::Base
             # If the ingest into Medusa was successful,
             # delete redundant binary object
             # and update Illinois Data Bank datafile record
-            Application.storage_manager.draft_root.delete_content(dataset.storage_key)
+            Application.storage_manager.draft_root.delete_content(self.storage_key)
             in_medusa = true
           else
             in_medusa = false
