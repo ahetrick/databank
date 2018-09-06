@@ -1,5 +1,6 @@
 class IngestResponsesController < ApplicationController
   before_action :set_ingest_response, only: [:show, :edit, :update, :destroy]
+  authorize_resource
 
   # GET /ingest_responses
   # GET /ingest_responses.json
