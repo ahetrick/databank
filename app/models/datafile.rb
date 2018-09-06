@@ -134,25 +134,14 @@ class Datafile < ActiveRecord::Base
 
     dataset = Dataset.find(self.dataset_id)
 
-    if dataset
-      Rails.logger.warn("Found dataset")
-    else
-      Rails.logger.warn("Did not find dataset")
-    end
-
     return false unless dataset
     return false unless (dataset.identifier && dataset.identifier != '')
 
     in_medusa = false # start out with the assumption that it is not in medusa, then check and handle
 
     datafile_target_key = "#{dataset.dirname}/dataset_files/#{self.binary_name}"
-    Rails.logger.warn("datafile target key: #{datafile_target_key}")
-
-    Rails.logger.warn(Application.storage_manager.medusa_root.path)
 
     if Application.storage_manager.medusa_root.exist?(datafile_target_key)
-
-      Rails.logger.warn("found in medusa")
       in_medusa = true
 
       if storage_root && storage_key && storage_root == 'draft' && storage_key != ''
