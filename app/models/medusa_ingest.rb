@@ -176,7 +176,13 @@ class MedusaIngest < ActiveRecord::Base
     ingest.save!
 
     file_class = response_hash['pass_through']['class']
+
+    Rails.logger.warn(file_class)
+
     if file_class == 'datafile'
+
+      Rails.logger.warn("ingest: #{ingest.to_yaml}")
+
       datafile = Datafile.find_by_web_id(response_hash['pass_through']['identifier'])
       unless datafile
         notification = DatabankMailer.error("Datafile not found for ingest suceeded message from Medusa. #{response_hash.to_yaml}")
