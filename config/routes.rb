@@ -4,6 +4,7 @@ require './lib/api/base'
 
 Rails.application.routes.draw do
 
+  resources :ingest_responses
   #mount API::Base => '/api'
 
   resources :nested_items

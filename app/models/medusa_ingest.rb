@@ -11,6 +11,19 @@ class MedusaIngest < ActiveRecord::Base
   def self.on_medusa_message (response)
     response_hash = JSON.parse(response)
     if response_hash.has_key? 'status'
+
+      ingest_response = IngestResponse.new(as_text: response,  status:response_hash['status'])
+      if response_hash.has_key?('staging_key')
+        ingest_response.staging_key = response_hash['staging_key']
+      end
+      if response_hash.has_key?('medusa_key')
+        ingest_response.medusa_key = response_hash['medusa_key']
+      end
+      if response_hash.has_key?('uuid')
+        ingest_response.uuid = response_hash['uuic']
+      end
+      ingest_response.save
+
       #Rails.logger.warn("medusa message resopnse: #{response_hash.to_yaml}")
       case response_hash['status']
         when 'ok'
@@ -171,7 +184,7 @@ class MedusaIngest < ActiveRecord::Base
     end
 
     # update ingest record to reflect the response
-    ingest.medusa_path = response_hash['medusa_path']
+    ingest.medusa_path = response_hash['medusa_key']
     ingest.medusa_uuid = response_hash['uuid']
     ingest.response_time = Time.now.utc.iso8601
     ingest.request_status = response_hash['status']
@@ -201,7 +214,7 @@ class MedusaIngest < ActiveRecord::Base
       end
 
       datafile.medusa_id = response_hash['uuid']
-      datafile.medusa_path = response_hash['medusa_path']
+      datafile.medusa_path = response_hash['medusa_key']
       datafile.save
 
     else
