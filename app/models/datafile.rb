@@ -178,9 +178,9 @@ class Datafile < ActiveRecord::Base
       end
 
       if in_medusa
-        datafile.storage_root = 'medusa'
-        datafile.storage_key = datafile_target_key
-        datafile.save
+        self.storage_root = 'medusa'
+        self.storage_key = datafile_target_key
+        self.save
       end
     else
       Rails.logger.warn("Did not find in medusa")

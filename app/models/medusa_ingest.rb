@@ -181,7 +181,7 @@ class MedusaIngest < ActiveRecord::Base
 
     if file_class == 'datafile'
 
-      Rails.logger.warn("ingest: #{ingest.to_yaml}")
+      Rails.logger.warn("ingest: #{ingest.staging_key}, #{ingest.request_status}, #{ingest.medusa_uuid}")
 
       datafile = Datafile.find_by_web_id(response_hash['pass_through']['identifier'])
       unless datafile
@@ -197,6 +197,10 @@ class MedusaIngest < ActiveRecord::Base
         notification.deliver_now
         return false
       end
+
+      datafile.medusa_id = response_hash['uuid']
+      datafile.medusa_path = response_hash['medusa_path']
+      datafile.save
 
     else
       dataset = Dataset.find_by_key(response_hash['pass_through']['identifier'])
