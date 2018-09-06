@@ -42,9 +42,14 @@ class Datafile < ActiveRecord::Base
 
   def bytestream_size
 
-    if self.current_root
-      self.current_root.size(self.storage_key)
+    if binary_size
+      binary_size
+    elsif self.current_root && current_root.exist?(self.storage_key)
+      self.binary_size = self.current_root.size(self.storage_key)
+      self.save
+      binary_size
     else
+      Rails.logger.warn("binary not found for datafile: #{self.web_id} root: #{self.storage_root}, key: #{self.storage_key}")
       0
     end
   end
