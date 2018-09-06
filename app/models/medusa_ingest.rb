@@ -162,7 +162,7 @@ class MedusaIngest < ActiveRecord::Base
       return false
     end
 
-    unless ingest
+    unless ingest&.staging_key && ingest.staging_key!=''
       notification = DatabankMailer.error("Ingest not found for ingest suceeded message from Medusa. #{response_hash.to_yaml}")
       notification.deliver_now
       return false
