@@ -148,6 +148,7 @@ class Datafile < ActiveRecord::Base
     if Application.storage_manager.medusa_root.exist?(datafile_target_key)
 
       Rails.logger.warn("found in medusa")
+      in_medusa = true
 
       if storage_root && storage_key && storage_root == 'draft' && storage_key != ''
 
@@ -164,6 +165,7 @@ class Datafile < ActiveRecord::Base
             Application.storage_manager.draft_root.delete_content(dataset.storage_key)
             in_medusa = true
           else
+            in_medusa = false
             exception_string("Datafile exists in both draft and medusa storage systems, but the sizes are different. Dataset: #{dataset.key}, Datafile: #{datafile.web_id}")
             notification = DatabankMailer.error(exception_string)
             notification.deliver_now
