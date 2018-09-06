@@ -162,7 +162,9 @@ class MedusaIngest < ActiveRecord::Base
       return false
     end
 
-    unless ingest&.staging_key && ingest.staging_key!=''
+    if ingest&.staging_key && ingest.staging_key!=''
+      Rails.logger.warn("ingest.staging_key: #{ingest.staging_key}")
+    else
       notification = DatabankMailer.error("Ingest not found for ingest suceeded message from Medusa. #{response_hash.to_yaml}")
       notification.deliver_now
       return false
@@ -181,7 +183,7 @@ class MedusaIngest < ActiveRecord::Base
 
     if file_class == 'datafile'
 
-      Rails.logger.warn("ingest: #{ingest.staging_key}, #{ingest.request_status}, #{ingest.medusa_uuid}")
+      Rails.logger.warn("ingest: #{ingest.staging_key}, #{ingest.request_status}, #{ingest.medusa_uuid}, #{ingest.response_time}")
 
       datafile = Datafile.find_by_web_id(response_hash['pass_through']['identifier'])
       unless datafile
