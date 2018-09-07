@@ -938,17 +938,6 @@ class Dataset < ActiveRecord::Base
     end
   end
 
-  def remove_invalid_datafiles
-    begin
-      self.datafiles.each do |datafile|
-        datafile.destroy unless ((datafile.binary&.file) || (datafile.medusa_path && datafile.medusa_path != "") || (datafile.storage_root && datafile.storage_root != ""))
-      end
-    rescue StandardError => ex
-      notification = DatabankMailer.error("Unable to remove invalid datafiles for #{self.key}")
-      notification.deliver_now
-    end
-  end
-
   def published_datasets_must_remain_complete
     if publication_state != Databank::PublicationState::DRAFT
       if !title || title == ''
@@ -1191,7 +1180,7 @@ class Dataset < ActiveRecord::Base
 
     changes.each do |change|
 
-      if (change.audited_changes.has_key?('medusa_path')) || (change.audited_changes.has_key?('binary_name')) || (change.audited_changes.has_key?('medusa_dataset_dir'))
+      if (change.audited_changes.has_key?('medusa_uuid')) || (change.audited_changes.has_key?('binary_name')) || (change.audited_changes.has_key?('medusa_dataset_dir'))
         medusaChangesArr << change.id
       end
       if (change.audited_changes.keys.include?("publication_state"))
@@ -1201,7 +1190,6 @@ class Dataset < ActiveRecord::Base
         if pub_change.class == Array && pub_change[0] == Databank::PublicationState::DRAFT
           publication = change.created_at
         end
-
       end
     end
 
