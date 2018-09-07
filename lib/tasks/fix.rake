@@ -19,7 +19,7 @@ namespace :fix do
   desc 'pretend some dev datasets never happened'
   task :fix_dev => :environment do
 
-    datasets_to_destroy = Dataset.where(key: )
+    datasets_to_destroy = Dataset.where(key: ['abc123'])
 
     datasets_to_destroy.each do |doomed|
       doomed.destroy!
