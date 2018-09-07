@@ -1193,7 +1193,7 @@ class Dataset < ActiveRecord::Base
       end
     end
 
-    rescue StandardException => ex
+    rescue StandardError => ex
       raise ex unless ex.message.include?('BinaryUploader')
     end
 
