@@ -253,12 +253,12 @@ class Datafile < ActiveRecord::Base
   end
 
   def remove_binary
-    if current_root && storage_key
-      if current_root.exist?(storage_key)
-       current_root.delete_content(storage_key)
+    if storage_key
+      if Application.storage_manager.draft_root.exist?(storage_key)
+        Application.storage_manager.draft_root.delete_content(storage_key)
       end
-      if current_root.exist?("#{storage_key}.info")
-        current_root.delete_content("#{storage_key}.info")
+      if Application.storage_manager.draft_root.exist?("#{storage_key}.info")
+        Application.storage_manager.draft_root.delete_content("#{storage_key}.info")
       end
     end
   end
