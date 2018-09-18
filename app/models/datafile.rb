@@ -78,7 +78,11 @@ class Datafile < ActiveRecord::Base
     if IDB_CONFIG[:aws][:s3_mode]
       nil
     else
-      self.current_root.real_path
+      if current_root
+        current_root.real_path
+      else
+        nil
+      end
     end
   end
 

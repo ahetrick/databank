@@ -30,7 +30,14 @@ namespace :fix do
   desc 'report top level mime types for datafiles on filesystem'
   task :datafile_mimes => :environment do
     Datafile.all.each do |datafile|
-      puts `file --mime "#{datafile.filepath}"`
+      begin
+        file_info = `file --mime "#{datafile.filepath}"`
+        puts file_info
+      rescue StandardError => ex
+        puts ex.message
+      end
+
+
     end
   end
 
