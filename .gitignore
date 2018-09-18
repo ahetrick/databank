@@ -52,3 +52,4 @@ dj_stop.sh
 /public/assets
 /dataset_staging
 /data
+/extractions

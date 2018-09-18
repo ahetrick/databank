@@ -19,12 +19,19 @@ namespace :fix do
   desc 'pretend some dev datasets never happened'
   task :fix_dev => :environment do
 
-    datasets_to_destroy = Dataset.where(key: ['abc123'])
+    datasets_to_destroy = Dataset.where(key: ['IDBDEV-4257527', 'IDBDEV-5614232', 'IDBDEV-5614232'])
 
     datasets_to_destroy.each do |doomed|
       doomed.destroy!
     end
 
+  end
+
+  desc 'report top level mime types for datafiles on filesystem'
+  task :datafile_mimes => :environment do
+    Datafile.all.each do |datafile|
+      puts `file --mime "#{datafile.filepath}"`
+    end
   end
 
 end

@@ -2,7 +2,7 @@ require 'rake'
 require 'bunny'
 require 'json'
 
-namespace :test do
+namespace :testing do
 
   desc 'send a RabbitMQ message'
   task :send_msg => :environment do
