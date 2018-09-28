@@ -3,7 +3,6 @@ lock '3.11.0'
 
 set :application, 'databank'
 set :repo_url, 'https://github.com/medusa-project/databank.git'
-set :rvm_ruby_version, '2.5.0@idb'
 
 set :passenger_restart_with_touch, true
 

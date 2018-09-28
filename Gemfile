@@ -182,7 +182,7 @@ gem 'database_cleaner'
 
 gem 'capistrano-rails'
 gem 'capistrano-bundler'
-gem 'capistrano-rvm'
+gem 'capistrano-rbenv'
 gem 'capistrano-passenger'
 
 
