@@ -28,3 +28,12 @@
 %strong Peek Text
 %br
 = simple_format(@datafile.peek_text)
+
+-if @datafile.task_id
+  %br
+  %strong File Processing Task
+  %br
+
+  %a(href="http://localhost:3040/tasks/#{@datafile.task_id.to_s}")
+    File Processor Task
+    =@datafile.task_id.to_s

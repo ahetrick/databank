@@ -1,4 +1,5 @@
 source 'http://rubygems.org'
+ruby '2.5.1'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 4.2', '>= 4.2.10'
@@ -83,6 +84,9 @@ gem 'simple_form'
 # gem 'ranked-model'
 
 gem 'mime-types', require: 'mime/types/full'
+
+# Use 'rest-client' to interaction with file processor api
+gem 'rest-client'
 
 #gem 'httpclient', git: 'git://github.com/medusa-project/httpclient.git'
 

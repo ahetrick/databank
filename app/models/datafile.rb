@@ -4,6 +4,7 @@ require 'filemagic'
 require 'mime/types'
 require 'minitar'
 require 'zlib'
+require 'rest-client'
 
 
 class Datafile < ActiveRecord::Base
@@ -265,6 +266,28 @@ class Datafile < ActiveRecord::Base
         Application.storage_manager.draft_root.delete_content("#{storage_key}.info")
       end
     end
+  end
+
+  def create_processor_task
+    endpoint = "localhost:3040/tasks"
+    payload = {task:{web_id: self.web_id, storage_root: self.storage_root, storage_key: self.storage_key, binary_name: self.binary_name}}
+    response = RestClient.post endpoint, payload
+
+    if response.code == 201
+      response_hash = JSON.parse(response)
+
+      if response_hash.has_key?('id')
+        self.task_id = response_hash['id']
+        self.save
+      else
+        Rails.logger.warn(response_hash.keys)
+      end
+    else
+      Rails.logger.warn("task response: #{response}")
+    end
+
+
+
   end
 
   def job

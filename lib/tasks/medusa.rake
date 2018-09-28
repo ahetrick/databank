@@ -27,10 +27,6 @@ namespace :medusa do
     q = ch.queue("medusa_to_idb", :durable => true)
     x = ch.default_exchange
 
-    # q.subscribe do |delivery_info, metadata, payload|
-    #   puts "Received #{payload}"
-    # end
-
     msg_hash = {status: 'ok',
                 operation: 'ingest',
                 staging_path: 'uploads/file.txt',
