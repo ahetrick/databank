@@ -100,7 +100,7 @@ gem 'sunspot_solr'
 gem 'progress_bar'
 
 # Use ActiveModel has_secure_password
-gem 'bcrypt', '~> 3.1.7'
+gem 'bcrypt', '~> 3.1.12'
 
 # Use Passenger standalone
 gem "passenger", ">= 5.0.25", require: "phusion_passenger/rack_handler"
