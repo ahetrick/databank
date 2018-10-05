@@ -23,9 +23,9 @@ namespace :databank_tasks do
   end
 
   desc 'import nested items and peek info from complete tasks'
-  task :handle_completed_tasks => :environment do
+  task :handle_ripe_tasks => :environment do
     Datafile.all.each do |datafile|
-      if datafile && datafile.task_id
+      if datafile&.task_id
         task_hash = DatabankTask.get_remote_task(datafile.task_id)
 
         if task_hash.has_key?('status') && task_hash['status'] == TaskStatus::RIPE
@@ -34,24 +34,36 @@ namespace :databank_tasks do
           DatabankTask.set_remote_task_status(datafile.task_id, TaskStatus::HARVESTING)
 
           if task_hash.has_key?('peek_type')
-            datafile.peek_type = item['peek_type']
+            datafile.peek_type = task_hash['peek_type']
           end
 
           if task_hash.has_key?('peek_text')
-            datafile.peek_text = item['peek_text'].encode('utf-8')
+            datafile.peek_text = task_hash['peek_text'].encode('utf-8')
           end
 
           datafile.save
 
-          remote_nested_items = DatabankTask.get_remote_items(datafile.task_id)
-          remote_nested_items.each do |item|
+          if datafile.peek_type == PeekType::LISTING
 
-            NestedItem.create(datafile_id: datafile.id,
-                              item_name: item['item_name'],
-                              item_path: item['item_path'],
-                              media_type: item['media_type'],
-                              size: item['item_size'],
-                              is_directory: item['is_directory'] )
+            remote_nested_items = DatabankTask.get_remote_items(datafile.task_id)
+            remote_nested_items.each do |item|
+
+              existing_items = NestedItem.where(datafile_id: datafile.id, item_path: item['item_path'])
+
+              if existing_items.count > 0
+                existing_items.each do |exising_item|
+                  exising_item.destroy
+                end
+              end
+
+              NestedItem.create(datafile_id: datafile.id,
+                                item_name: item['item_name'],
+                                item_path: item['item_path'],
+                                media_type: item['media_type'],
+                                size: item['item_size'],
+                                is_directory: item['is_directory'] == "true" )
+            end
+
           end
 
           # close tasks
