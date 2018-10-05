@@ -4,6 +4,7 @@ require './lib/api/base'
 
 Rails.application.routes.draw do
 
+  resources :databank_tasks, only: [:index, :show]
   resources :ingest_responses
   #mount API::Base => '/api'
 

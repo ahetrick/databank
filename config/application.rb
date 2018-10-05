@@ -65,6 +65,31 @@ module Databank
     ARTS_HUMANITIES = 'Arts and Humanities'
   end
 
+  class TaskStatus
+    PENDING = 'pending'
+    PROCESSING = 'processing'
+    ERROR = 'error'
+    RIPE = 'ripe'
+    HARVESTING = 'harvesting'
+    HARVESTED = 'harvested'
+  end
+
+  class ProblemStatus
+    REPORTED = 'reported'
+    EXAMINED = 'examined'
+    RESOLVED = 'resolved'
+  end
+
+  class PeekType
+    ALL_TEXT = 'all_text'
+    PART_TEXT = 'part_text'
+    IMAGE = 'image'
+    MICROSOFT = 'microsoft'
+    PDF = 'pdf'
+    LISTING = 'listing'
+    NONE = 'none'
+  end
+
   class Application < Rails::Application
 
     attr_accessor :shibboleth_host

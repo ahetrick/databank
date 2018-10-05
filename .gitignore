@@ -53,3 +53,4 @@ dj_stop.sh
 /dataset_staging
 /data
 /extractions
+nginx.conf.erb

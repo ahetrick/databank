@@ -268,25 +268,20 @@ class Datafile < ActiveRecord::Base
     end
   end
 
-  def create_processor_task
-    endpoint = "localhost:3040/tasks"
-    payload = {task:{web_id: self.web_id, storage_root: self.storage_root, storage_key: self.storage_key, binary_name: self.binary_name}}
-    response = RestClient.post endpoint, payload
+  def initiate_processing_task
 
-    if response.code == 201
-      response_hash = JSON.parse(response)
+    databank_task = DatabankTask.create_remote(self.web_id)
 
-      if response_hash.has_key?('id')
-        self.task_id = response_hash['id']
+    if databank_task
+      self.task_id = databank_task
+      if self.task_id
         self.save
       else
-        Rails.logger.warn(response_hash.keys)
+        raise("error attempting to create remote task: #{self.web_id}")
       end
     else
-      Rails.logger.warn("task response: #{response}")
+      raise("error attempting to send datafile for processing: #{self.web_id}")
     end
-
-
 
   end
 

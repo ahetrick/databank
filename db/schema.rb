@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180925205354) do
+ActiveRecord::Schema.define(version: 20181002154923) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,6 +66,13 @@ ActiveRecord::Schema.define(version: 20180925205354) do
     t.boolean  "is_contact",        default: false, null: false
     t.integer  "row_position"
     t.string   "identifier_scheme"
+  end
+
+  create_table "databank_tasks", force: :cascade do |t|
+    t.integer  "task_id"
+    t.text     "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "datafiles", force: :cascade do |t|
