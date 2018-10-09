@@ -425,21 +425,24 @@ class DatafilesController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_datafile
     @datafile = Datafile.find_by_web_id(params[:id])
+
     raise ActiveRecord::RecordNotFound unless @datafile
   end
 
   def set_dataset
+
     @dataset = nil
 
-    if !@datafile && params.has_key(:id)
+    if !@datafile && params.has_key?(:id)
       set_datafile
     end
 
     if @datafile
-      @datatset = Dataset.find(@datafile.dataset_id)
+      @dataset = Dataset.find(@datafile.dataset_id)
     elsif params.has_key?(:dataset_id)
       @dataset = Dataset.find_by_key(params[:dataset_id])
     end
+
     raise ActiveRecord::RecordNotFound unless @dataset
 
   end
