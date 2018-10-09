@@ -12,45 +12,33 @@ class DatafilesController < ApplicationController
                                       :upload, :do_upload, :reset_upload, :resume_upload, :update_status,
                                       :preview, :display, :peek_text, :filepath, :iiif_filepath]
 
+  before_action :set_dataset, only: [:index, :show, :edit, :new, :add, :create, :destroy, :upload, :do_upload]
+
   # GET /datafiles
   # GET /datafiles.json
   def index
-
-    if params.has_key?(:dataset_id)
-      @dataset = Dataset.find_by_key(params[:dataset_id])
-      @datafiles = @dataset.ordered_datafiles
-      authorize! :edit, @dataset
-    end
-
+    @datafiles = @dataset.ordered_datafiles
+    authorize! :edit, @dataset
   end
 
   # GET /datafiles/1
   # GET /datafiles/1.json
   def show
-    @dataset = Dataset.where("id = ?", @datafile.dataset_id).first
     authorize! :edit, @dataset
   end
 
   # GET /datafiles/new
   def new
-    @dataset = Dataset.find_by_key(params[:dataset_id])
     @datafile = Datafile.new
     @datafile.web_id ||= @datafile.generate_web_id
   end
 
   # GET /datafiles/1/edit
   def edit
-    @dataset = Dataset.find_by_key(params[:dataset_id])
     authorize! :edit, @dataset
-
-    if (@datafile.medusa_path && @datafile.medusa_path != "") || (@datafile.binary.path && @datafile.binary.path != "")
-      redirect_to "/datasets/#{@dataset.key}/datafiles/#{@datafile.web_id}"
-    end
-
   end
 
   def add
-    @dataset = Dataset.find_by_key(params[:dataset_id])
     @datafile = Datafile.create(dataset_id: @dataset.id)
     authorize! :edit, @dataset
     respond_to do |format|
@@ -62,18 +50,6 @@ class DatafilesController < ApplicationController
   # POST /datafiles
   # POST /datafiles.json
   def create
-
-    @dataset = nil
-
-    if params.has_key?(:datafile)
-      @dataset = Dataset.find(params[:datafile][:dataset_id])
-    elsif params && params.has_key?(:dataset_id)
-      @dataset = Dataset.find_by_key(params[:dataset_id])
-    end
-
-    raise "A datafile can only be created in association with a dataset." unless @dataset
-
-    # at this point, we have a dataset
 
     @datafile = Datafile.new(dataset_id: @dataset.id)
 
@@ -147,34 +123,25 @@ class DatafilesController < ApplicationController
   # DELETE /datafiles/1
   # DELETE /datafiles/1.json
   def destroy
-    @dataset = Dataset.find(@datafile.dataset_id)
-    @datafile.destroy
-    @dataset.save
 
     respond_to do |format|
 
-      if @dataset
+      if @datafile.destory && @dataset.save
         format.html {redirect_to edit_dataset_path(@dataset.key)}
         format.json {render json: {"confirmation" => "deleted"}, status: :ok}
       else
-        format.html {redirect_to "/datasets/edit"}
-        format.json {render json: {"confirmation" => "deleted"}, status: :ok}
+        format.html {redirect_to edit_dataset_path(@dataset.key)}
+        format.json {render json: @datafile.errors, status: :unprocessable_entity}
       end
-      format.json {render json: {"confirmation" => "deleted"}, status: :ok}
+
     end
 
   end
 
   def upload
-    @dataset = Dataset.find_by_key(params[:dataset_id])
-    raise "#{params.to_yaml}" unless @dataset
   end
 
   def do_upload
-    @dataset = Dataset.find_by_key(params[:dataset_id])
-    raise "#{params.to_yaml}" unless @dataset
-
-
     unpersisted_datafile = Datafile.new(upload_params)
     unpersisted_datafile.dataset_id = @dataset.id
 
@@ -459,6 +426,22 @@ class DatafilesController < ApplicationController
   def set_datafile
     @datafile = Datafile.find_by_web_id(params[:id])
     raise ActiveRecord::RecordNotFound unless @datafile
+  end
+
+  def set_dataset
+    @dataset = nil
+
+    if !@datafile && params.has_key(:id)
+      set_datafile
+    end
+
+    if @datafile
+      @datatset = Dataset.find(@datafile.dataset_id)
+    elsif params.has_key?(:dataset_id)
+      @dataset = Dataset.find_by_key(params[:dataset_id])
+    end
+    raise ActiveRecord::RecordNotFound unless @dataset
+
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
