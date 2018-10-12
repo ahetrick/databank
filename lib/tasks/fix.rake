@@ -41,4 +41,25 @@ namespace :fix do
     end
   end
 
+  desc 'remove orphan datafiles'
+  task :remove_orphan_datafiles => :environment do
+
+    Datafile.all.each do |datafile|
+      datasets = Dataset.where(id: datafile.dataset_id)
+
+      if datasets.count == 0
+
+        if Rails.env.production?
+          notification = DatabankMailer.error("orphan datafile found #{datafile.web_id}")
+          notification.deliver_now
+        else
+          datafile.destroy
+        end
+
+
+      end
+
+    end
+  end
+
 end
