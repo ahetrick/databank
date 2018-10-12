@@ -33,12 +33,16 @@ namespace :databank_tasks do
           # claim tasks
           DatabankTask.set_remote_task_status(datafile.task_id, TaskStatus::HARVESTING)
 
-          if task_hash.has_key?('peek_type')
+          if task_hash.has_key?('peek_type') && task_hash['peek_text'] != nil
             datafile.peek_type = task_hash['peek_type']
+          else
+            datafile.peek_type = PeekType::NONEcd
           end
 
-          if task_hash.has_key?('peek_text')
+          if task_hash.has_key?('peek_text') && task_hash['peek_text'] != nil
             datafile.peek_text = task_hash['peek_text'].encode('utf-8')
+          else
+            datafile.peek_text = ""
           end
 
           datafile.save
