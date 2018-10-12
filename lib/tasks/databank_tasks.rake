@@ -36,7 +36,7 @@ namespace :databank_tasks do
           if task_hash.has_key?('peek_type') && task_hash['peek_text'] != nil
             datafile.peek_type = task_hash['peek_type']
           else
-            datafile.peek_type = PeekType::NONEcd
+            datafile.peek_type = PeekType::NONE
           end
 
           if task_hash.has_key?('peek_text') && task_hash['peek_text'] != nil
