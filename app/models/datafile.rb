@@ -26,7 +26,7 @@ class Datafile < ActiveRecord::Base
   end
 
   def as_json(options={})
-    super(:only => [:web_id, :binary_name, :binary_size, :medusa_id, :created_at, :updated_at])
+    super(:only => [:web_id, :binary_name, :binary_size, :medusa_id, :storage_root, :storage_key, :created_at, :updated_at])
   end
 
   def file_download_tallies

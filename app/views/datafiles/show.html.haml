@@ -34,6 +34,6 @@
   %strong File Processing Task
   %br
 
-  %a(href="http://localhost:3040/tasks/#{@datafile.task_id.to_s}")
+  %a(href="#{IDB_CONFIG[:tasks_url]}/tasks/#{@datafile.task_id.to_s}")
     File Processor Task
     =@datafile.task_id.to_s
