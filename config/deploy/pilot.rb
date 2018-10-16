@@ -2,7 +2,7 @@
 # ======================
 # Defines a single server with a list of roles and multiple properties.
 
-server 'databank-pilot.library.illinois.edu', user: 'centos', roles: %w{app db web}
+server 'databank-pilot.library.illinois.edu', user: 'databank', roles: %w{app db web}
 
 set :rails_env, 'production'
 
@@ -14,5 +14,5 @@ set :ssh_options, {
 # Ask which branch to deploy
 ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
 # Default deploy_to directory is /var/www/my_app_name
-set :deploy_to, '/home/centos'
+set :deploy_to, '/home/databank'
 
