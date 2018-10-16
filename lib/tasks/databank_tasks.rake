@@ -22,6 +22,18 @@ namespace :databank_tasks do
     end
   end
 
+  desc 'reset test datafile'
+  task :reset_test_datafile => :environment do
+    datafile = Datafile.find_by_web_id('4ybb9')
+    raise RecordNotFound unless datafile
+
+    datafile.task_id = nil
+    datafile.peek_type = nil
+    datafile.peek_text = nil
+    datafile.save
+
+  end
+
   desc 'import nested items and peek info from complete tasks'
   task :handle_ripe_tasks => :environment do
     Datafile.all.each do |datafile|
