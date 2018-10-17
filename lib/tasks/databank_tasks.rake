@@ -45,6 +45,8 @@ namespace :databank_tasks do
           # claim tasks
           DatabankTask.set_remote_task_status(datafile.task_id, TaskStatus::HARVESTING)
 
+          Rails.logger.warn(task_hash)
+
           if task_hash.has_key?('peek_type') && task_hash['peek_text'] != nil
             datafile.peek_type = task_hash['peek_type']
           else
