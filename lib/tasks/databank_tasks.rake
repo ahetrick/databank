@@ -47,8 +47,11 @@ namespace :databank_tasks do
 
           Rails.logger.warn(task_hash)
 
-          if task_hash.has_key?('peek_type') && task_hash['peek_text'] != nil
-            Rails.logger.warn("inside non-nil peek_type")
+          if task_hash.has_key?('peek_type')
+            Rails.logger.warn("inside has peek_type key")
+            if task_hash['peek_type'].nil?
+              raise("hell")
+            end
             Rails.logger.warn("task_hash['peek_type'] #{task_hash['peek_type']}")
             datafile.peek_type = task_hash['peek_type']
             Rails.logger.warn("datafile.peek_type #{datafile.peek_type}")
