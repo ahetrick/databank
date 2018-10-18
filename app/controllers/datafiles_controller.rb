@@ -126,7 +126,7 @@ class DatafilesController < ApplicationController
 
     respond_to do |format|
 
-      if @datafile.destory && @dataset.save
+      if @datafile.destroy && @dataset.save
         format.html {redirect_to edit_dataset_path(@dataset.key)}
         format.json {render json: {"confirmation" => "deleted"}, status: :ok}
       else

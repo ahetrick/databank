@@ -63,9 +63,6 @@ class ApiDatasetController < ApplicationController
     elsif params.has_key?('phase')
       begin
 
-        unless params.has_key?('phase')
-          render json: "missing paramter: phase", status: 400
-        end
         unless params.has_key?('filename')
           render json: "missing paramter: filename", status: 400
         end
@@ -118,7 +115,7 @@ class ApiDatasetController < ApplicationController
               end
 
               render json: "successfully added chunk to #{params['filename']}", status: 200
-            rescue Exception::StandardError => ex
+            rescue StandardError => ex
               Rails.logger.warn ex.message
               render json: {error: "#{ex.message}\n", progress: File.size(writepath), status: 500}
             end
@@ -152,7 +149,7 @@ class ApiDatasetController < ApplicationController
         end
 
 
-      rescue Exception::StandardError => ex
+      rescue StandardError => ex
         Rails.logger.warn ex.message
         render json: "#{ex.message}\n", status: 500
       end
