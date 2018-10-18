@@ -121,28 +121,17 @@ class ApiDatasetController < ApplicationController
             end
 
           when 'verify'
-            #raise "missing checksum" unless params.has_key?('checksum')
 
             writepath = "#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}/#{params['filename']}"
 
-            #local_checksum = md5(writepath).to_s
+            df = Datafile.create(dataset_id: @dataset.id)
+            df.storage_root = 'draft'
+            df.storage_key = "/api/#{@dataset.key}/#{params['filename']}"
+            df.binary_name = params['filename']
+            df.binary_size = File.size(writepath)
+            df.save
 
-            #if (params['checksum']).to_s.eql?(local_checksum)
-            if true
-
-              df = Datafile.create(dataset_id: @dataset.id)
-              df.binary = Pathname.new(writepath).open
-              df.save
-
-              unless df && df.binary && df.binary.file && df.binary.file.size > 0
-                raise 'Error uploading file. If error persists, please contact the Research Data Service.'
-                df.destroy if df
-              end
-
-              render json: "#{params['filename']} successfully uploaded.  Refresh dataset page to see newly uploaded file. #{IDB_CONFIG[:root_url_text]}/datasets/#{@dataset.key}/edit", status: 200
-            # else
-            #   render json: {error: "upload error, checksum verification failed", checksum: local_checksum,  progress: File.size(writepath), status: 500}
-            end
+            render json: "#{params['filename']} successfully uploaded.  Refresh dataset page to see newly uploaded file. #{IDB_CONFIG[:root_url_text]}/datasets/#{@dataset.key}/edit", status: 200
 
           else
             render json: "invalid phase parameter: #{params['phase']}", status: 400
