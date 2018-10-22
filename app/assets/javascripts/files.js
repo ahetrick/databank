@@ -451,7 +451,7 @@ function uploadSingleFile(file, i){
                 ajax.abort();
             })
 
-            console.log("Download %s from %s", upload.file.name, upload.url)
+            //console.log("Download %s from %s", upload.file.name, upload.url)
         }
     })
 
