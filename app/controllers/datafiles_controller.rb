@@ -424,6 +424,9 @@ class DatafilesController < ApplicationController
 
   def set_dataset
 
+    Rails.logger.warn("inside set_dataset")
+    Rails.logger.warn(params)
+    
     @dataset = nil
 
     if !@datafile && params.has_key?(:id)
