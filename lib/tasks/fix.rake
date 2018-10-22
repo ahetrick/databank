@@ -49,14 +49,8 @@ namespace :fix do
 
       if datasets.count == 0
 
-        if Rails.env.production?
-          notification = DatabankMailer.error("orphan datafile found #{datafile.web_id}")
-          notification.deliver_now
-        else
-          datafile.destroy
-        end
-
-
+        datafile.destroy
+        
       end
 
     end
