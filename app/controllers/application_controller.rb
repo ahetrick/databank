@@ -49,7 +49,7 @@ class ApplicationController < ActionController::Base
     elsif exception.class == ActiveRecord::RecordNotFound
       respond_to do |format|
         format.html { render ('errors/error404'), status: 404}
-        format.json { render :nothing, status: 404 }
+        format.json { render nothing: true, status: 404 }
         format.all { render ('errors/error404'), status: 404}
       end
 
