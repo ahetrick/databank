@@ -53,8 +53,6 @@ class DatafilesController < ApplicationController
 
     @datafile = Datafile.new(dataset_id: @dataset.id)
 
-    @datafile.save
-
     if params.has_key?(:datafile) && params[:datafile].has_key?(:tus_url)
 
       tus_url = params[:datafile][:tus_url]
@@ -67,17 +65,12 @@ class DatafilesController < ApplicationController
       @datafile.binary_size = params[:datafile][:size]
       @datafile.mime_type = params[:datafile][:mime_type]
 
-
     end
 
-    respond_to do |format|
-      if @datafile.save
-        format.html {redirect_to "/datasets/#{@dataset.key}/datafiles/#{@datafile.web_id}/upload"}
-        format.json {render json: to_fileupload, content_type: request.format, :layout => false}
-      else
-        format.html {render :new}
-        format.json {render json: @datafile.errors, status: :unprocessable_entity}
-      end
+    if @datafile.save
+      render json: to_fileupload, content_type: request.format, :layout => false
+    else
+      render json: @datafile.errors, status: :unprocessable_entity
     end
 
   end
@@ -430,9 +423,6 @@ class DatafilesController < ApplicationController
   end
 
   def set_dataset
-
-    Rails.logger.warn("inside set_dataset")
-    Rails.logger.warn(params)
 
     @dataset = nil
 
