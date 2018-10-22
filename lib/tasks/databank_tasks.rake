@@ -11,7 +11,6 @@ namespace :databank_tasks do
     Datafile.where(task_id: nil).each do |datafile|
       datafile.initiate_processing_task
     end
-
   end
 
   desc 'remove tasks from datafiles'
@@ -20,18 +19,6 @@ namespace :databank_tasks do
       datafile.task_id = nil
       datafile.save
     end
-  end
-
-  desc 'reset test datafile'
-  task :reset_test_datafile => :environment do
-    datafile = Datafile.find_by_web_id('4ybb9')
-    raise RecordNotFound unless datafile
-
-    datafile.task_id = nil
-    datafile.peek_type = nil
-    datafile.peek_text = nil
-    datafile.save
-
   end
 
   desc 'import nested items and peek info from complete tasks'
@@ -45,18 +32,9 @@ namespace :databank_tasks do
           # claim tasks
           DatabankTask.set_remote_task_status(datafile.task_id, TaskStatus::HARVESTING)
 
-          Rails.logger.warn(task_hash)
-
           if task_hash.has_key?('peek_type')
-            Rails.logger.warn("inside has peek_type key")
-            if task_hash['peek_type'].nil?
-              raise("hell")
-            end
-            Rails.logger.warn("task_hash['peek_type'] #{task_hash['peek_type']}")
             datafile.peek_type = task_hash['peek_type']
-            Rails.logger.warn("datafile.peek_type #{datafile.peek_type}")
           else
-            Rails.logger.warn("no peek_type key or nil value")
             datafile.peek_type = PeekType::NONE
           end
 
