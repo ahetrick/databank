@@ -1227,7 +1227,7 @@ class Dataset < ActiveRecord::Base
           agent = {"user_id" => change.user_id}
         end
         changesArr << {"change" => change_hash, "agent" => agent}
-      rescue ArgumentErrror
+      rescue ArgumentError
         Rails.logger.warn("ArgumentError in changelog: #{ex.message}\n#{change.to_yaml}")
       end
     end
