@@ -398,12 +398,13 @@ function uploadSingleFile(file, i){
         },
         onSuccess: function() {
 
-            console.log("Download %s from %s", upload.file.name, upload.url)
+            console.log("Download %s from %s", upload.file.name, upload.url);
             console.log("inside uploadSingleFile onSuccess");
-            console.log(event.target.responseText);
-
+            
             var ajax = new XMLHttpRequest();
             ajax.addEventListener("load", function (e) {
+
+                console.log(event.target.responseText);
 
                 var response = JSON.parse(event.target.responseText);
 
