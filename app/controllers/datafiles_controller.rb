@@ -430,8 +430,6 @@ class DatafilesController < ApplicationController
 
   def set_dataset
 
-    Rails.logger.warn(params)
-
     @dataset = nil
 
     if !@datafile && params.has_key?(:id)
@@ -448,9 +446,7 @@ class DatafilesController < ApplicationController
       @dataset = Dataset.find(params['datafile']['dataset_id'])
     end
 
-    #raise ActiveRecord::RecordNotFound unless @dataset
-
-    raise("cannot set dataset") unless @dataset
+    raise ActiveRecord::RecordNotFound unless @dataset
 
   end
 

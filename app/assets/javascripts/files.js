@@ -373,8 +373,6 @@ function onFileChanged(theEvt) {
 
 function uploadSingleFile(file, i){
 
-    console.log("inside uploadSingleFile");
-
     var fileId = i;
 
     // Create a new tus upload
@@ -397,9 +395,6 @@ function uploadSingleFile(file, i){
             console.log(bytesUploaded, bytesTotal, percentage + "%")
         },
         onSuccess: function() {
-
-            console.log("Download %s from %s", upload.file.name, upload.url);
-            console.log("inside uploadSingleFile onSuccess");
 
             var ajax = new XMLHttpRequest();
             ajax.addEventListener("load", function (e) {
