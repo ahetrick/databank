@@ -443,9 +443,9 @@ class DatafilesController < ApplicationController
     elsif params.has_key?(:dataset_id)
       @dataset = Dataset.find_by_key(params[:dataset_id])
     elsif params.has_key?(:datafile) && params[:datafile].has_key?(:dataset_id)
-      @dataset = Dataset.find_by_key(params[:datafile][:dataset_id])
+      @dataset = Dataset.find(params[:datafile][:dataset_id])
     elsif params.has_key?('datafile') && params['datafile'].has_key?('dataset_id')
-      @dataset = Dataset.find_by_key(params['datafile']['dataset_id'])
+      @dataset = Dataset.find(params['datafile']['dataset_id'])
     end
 
     #raise ActiveRecord::RecordNotFound unless @dataset
