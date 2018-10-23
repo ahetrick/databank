@@ -444,7 +444,9 @@ class DatafilesController < ApplicationController
       @dataset = Dataset.find_by_key(params[:datafile][:dataset_id])
     end
 
-    raise ActiveRecord::RecordNotFound unless @dataset
+    #raise ActiveRecord::RecordNotFound unless @dataset
+
+    raise("cannot set dataset") unless @dataset
 
   end
 

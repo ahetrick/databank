@@ -400,7 +400,7 @@ function uploadSingleFile(file, i){
 
             console.log("Download %s from %s", upload.file.name, upload.url);
             console.log("inside uploadSingleFile onSuccess");
-            
+
             var ajax = new XMLHttpRequest();
             ajax.addEventListener("load", function (e) {
 
