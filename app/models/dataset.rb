@@ -1211,21 +1211,25 @@ class Dataset < ActiveRecord::Base
     changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', self.id, self.id)
     changesArr = Array.new
     changes.each do |change|
-      change_hash = change.serializable_hash
+      begin
+        change_hash = change.serializable_hash
 
-      change_hash.delete("remote_address")
-      change_hash.delete("request_uuid")
-      agent = nil
-      user = nil
-      if change.user_id && change.user_id != ''
-        user = User.find(Integer(change.user_id))
+        change_hash.delete("remote_address")
+        change_hash.delete("request_uuid")
+        agent = nil
+        user = nil
+        if change.user_id && change.user_id != ''
+          user = User.find(Integer(change.user_id))
+        end
+        if user
+          agent = user.serializable_hash
+        else
+          agent = {"user_id" => change.user_id}
+        end
+        changesArr << {"change" => change_hash, "agent" => agent}
+      rescue ArgumentErrror
+        Rails.logger.warn("ArgumentError in changelog: #{ex.message}\n#{change.to_yaml}")
       end
-      if user
-        agent = user.serializable_hash
-      else
-        agent = {"user_id" => change.user_id}
-      end
-      changesArr << {"change" => change_hash, "agent" => agent}
     end
     changesHash = {"changes" => changesArr, "model" => "#{IDB_CONFIG[:model]}"}
     changesHash
