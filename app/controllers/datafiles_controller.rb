@@ -51,9 +51,13 @@ class DatafilesController < ApplicationController
   # POST /datafiles.json
   def create
 
+    Rails.logger.warn("inside create datafile")
+
     @datafile = Datafile.new(dataset_id: @dataset.id)
 
     if params.has_key?(:datafile) && params[:datafile].has_key?(:tus_url)
+
+      Rails.logger.warn("inside tus_url detected")
 
       tus_url = params[:datafile][:tus_url]
       tus_url_arr = tus_url.split('/')
@@ -66,6 +70,8 @@ class DatafilesController < ApplicationController
       @datafile.mime_type = params[:datafile][:mime_type]
 
     end
+
+    Rails.logger.warn("just before datafile save")
 
     if @datafile.save
       render json: to_fileupload, content_type: request.format, :layout => false
