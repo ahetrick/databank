@@ -1208,6 +1208,9 @@ class Dataset < ActiveRecord::Base
   end
 
   def full_changelog
+    {}
+    
+=begin
     changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', self.id, self.id)
     changesArr = Array.new
     changes.each do |change|
@@ -1233,6 +1236,7 @@ class Dataset < ActiveRecord::Base
     end
     changesHash = {"changes" => changesArr, "model" => "#{IDB_CONFIG[:model]}"}
     changesHash
+=end
   end
 
   def persistent_url
