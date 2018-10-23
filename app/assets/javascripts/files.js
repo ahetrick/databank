@@ -409,7 +409,7 @@ function uploadSingleFile(file, i){
 
                 var newFile = response.files[0];
 
-                //console.log(newFile.name);
+                console.log(newFile.name);
 
                 $("#status_" + fileId).text(event.target.responseText);
                 $('#progressbar_' + fileId).css("width", "100%");
