@@ -81,24 +81,20 @@ class DatafilesController < ApplicationController
 
   end
 
-  def preview
-    @datafile.record_download(request.remote_ip)
-    respond_to do |format|
-      format.html {render :preview}
-      format.json {render json: {filename: @datafile.bytestream_name, body: @datafile.preview, status: :ok}}
-    end
-  end
-
   def display
-    @datafile.record_download(request.remote_ip)
-    respond_to do |format|
-      format.html {
-        send_file(@datafile.bytestream_path,
-                  :disposition => 'inline',
-                  :type => @datafile.mime_type,
-                  :x_sendfile => true)
-      }
-      format.json {render json: {filename: @datafile.bytestream_name, body: @datafile.preview, status: :ok}}
+    current_root = Application.storage_manager.root_set.at(@datafile.storage_root)
+
+    if current_root.root_type == :filesystem
+      path = current_root.path_to(@datafile.storage_key, check_path: true)
+      send_file path, filename: @datafile.binary_name, type: @datafile.mime_type || ‘application/octet-stream’
+
+
+    else
+
+      url = Application.aws_signer.presigned_url(:get_object, bucket: @datafile.storage_bucket, key: @datafile.storage_key)
+
+      redirect_to url
+
     end
   end
 

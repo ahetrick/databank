@@ -111,12 +111,12 @@ class MedusaIngest < ActiveRecord::Base
       if draft_size == medusa_size
         Application.storage_manager.draft_root.delete_content(dataset.draft_agreement_key)
       else
-        exception_string("Agreement file exists in both draft and medusa storage systems, but the sizes are different. Dataset: #{dataset.key}.")
+        exception_string = "Agreement file exists in both draft and medusa storage systems, but the sizes are different. Dataset: #{dataset.key}."
         notification = DatabankMailer.error(exception_string)
         notification.deliver_now
       end
     elsif !draft_exists && !medusa_exists
-      exception_string("Deposit agreement not found for Dataset: #{dataset.key}.")
+      exception_string = "Deposit agreement not found for Dataset: #{dataset.key}."
       notification = DatabankMailer.error(exception_string)
       notification.deliver_now
     end
