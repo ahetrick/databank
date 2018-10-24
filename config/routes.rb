@@ -118,10 +118,7 @@ Rails.application.routes.draw do
 
   # route binary downloads
   get "/datafiles/:id/download", to: "datafiles#download"
-
-  # direct preview
-  get '/datafiles/:id/preview', to: "datafiles#preview"
-
+  
   # direct display
   get '/datafiles/:id/display', to: "datafiles#display"
 
