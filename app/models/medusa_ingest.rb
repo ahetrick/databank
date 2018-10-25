@@ -26,12 +26,12 @@ class MedusaIngest < ActiveRecord::Base
 
       #Rails.logger.warn("medusa message resopnse: #{response_hash.to_yaml}")
       case response_hash['status']
-        when 'ok'
-          self.on_medusa_succeeded_message(response_hash)
-        when 'error'
-          self.on_medusa_failed_message(response_hash)
-        else
-          raise RuntimeError, "Unrecognized status #{response.status} for medusa ingest response"
+      when 'ok'
+        self.on_medusa_succeeded_message(response_hash)
+      when 'error'
+        self.on_medusa_failed_message(response_hash)
+      else
+        raise RuntimeError, "Unrecognized status #{response.status} for medusa ingest response"
       end
     else
       raise RuntimeError, "Unrecognized format for medusa ingest response: #{response.to_yaml}"
@@ -52,7 +52,7 @@ class MedusaIngest < ActiveRecord::Base
 
     # START description file
     # always send a description file
-    description_xml = dataset.to_datacite_xml
+    description_xml = Dataset.to_datacite_xml(dataset)
     description_key = "#{dataset.dirname}/system/description.#{file_time}.xml"
     Application.storage_manager.draft_root.write_string_to(description_key, description_xml)
     SystemFile.create(dataset_id: dataset.id, storage_root: 'draft', storage_key: description_key, file_type: 'description')
@@ -111,12 +111,12 @@ class MedusaIngest < ActiveRecord::Base
       if draft_size == medusa_size
         Application.storage_manager.draft_root.delete_content(dataset.draft_agreement_key)
       else
-        exception_string = "Agreement file exists in both draft and medusa storage systems, but the sizes are different. Dataset: #{dataset.key}."
+        exception_string("Agreement file exists in both draft and medusa storage systems, but the sizes are different. Dataset: #{dataset.key}.")
         notification = DatabankMailer.error(exception_string)
         notification.deliver_now
       end
     elsif !draft_exists && !medusa_exists
-      exception_string = "Deposit agreement not found for Dataset: #{dataset.key}."
+      exception_string("Deposit agreement not found for Dataset: #{dataset.key}.")
       notification = DatabankMailer.error(exception_string)
       notification.deliver_now
     end

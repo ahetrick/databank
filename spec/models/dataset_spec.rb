@@ -14,7 +14,7 @@ RSpec.describe Dataset, type: :model do
     FileUtils::mkdir_p dir unless Dir.exists?(dir)
 
     # write description file
-    description_xml = dataset.to_datacite_xml
+    description_xml = Dataset.to_datacite_xml(dataset)
     File.open("#{dir}/description.#{file_time}.xml", "w") do |description_file|
       description_file.puts(description_xml)
     end

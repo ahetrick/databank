@@ -824,10 +824,15 @@ class DatasetsController < ApplicationController
             @dataset.save
             # send_dataset_to_medusa only sends metadata files unless old_publication_state is draft
             MedusaIngest.send_dataset_to_medusa(@dataset, old_publication_state)
-            Dataset.update_datacite_metadata(@dataset, current_user)
+            if Dataset.post_doi_metadata(@dataset, current_user)
 
-            format.html { redirect_to dataset_path(@dataset.key)}
-            format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+              format.html { redirect_to dataset_path(@dataset.key)}
+              format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+            else
+              format.html { redirect_to dataset_path(@dataset.key), notice: 'Error updating DataCite Metadata, details have been logged.'}
+              format.json { render json: @dataset.errors, status: :unprocessable_entity}
+            end
+
 
           else #this else means completion_check was not ok within publish context
             # Rails.logger.warn Dataset.completion_check(@dataset, current_user)
@@ -986,7 +991,7 @@ class DatasetsController < ApplicationController
         format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
       else
         format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
-        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        format.json { render json: @dataset.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -999,7 +1004,7 @@ class DatasetsController < ApplicationController
         format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
       else
         format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
-        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        format.json { render json: @dataset.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -1014,7 +1019,7 @@ class DatasetsController < ApplicationController
         format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
       else
         format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
-        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        format.json { render json: @dataset.errors, status: :unprocessable_entity }
       end
     end
 
@@ -1028,8 +1033,7 @@ class DatasetsController < ApplicationController
 
       if @dataset.save
 
-        if Dataset.update_datacite_metadata(@dataset, current_user)
-          @dataset.save
+        if Dataset.post_doi_metadata(@dataset, current_user)
           format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been temporarily suppressed.] }
           format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
         else
@@ -1038,7 +1042,7 @@ class DatasetsController < ApplicationController
         end
       else
         format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
-        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        format.json { render json: @dataset.errors, status: :unprocessable_entity }
 
       end
     end
@@ -1052,8 +1056,7 @@ class DatasetsController < ApplicationController
 
       if @dataset.save
 
-        if Dataset.update_datacite_metadata(@dataset, current_user)
-          @dataset.save
+        if Dataset.post_doi_metadata(@dataset, current_user)
           format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset has been unsuppressed.] }
           format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
         else
@@ -1062,7 +1065,7 @@ class DatasetsController < ApplicationController
         end
       else
         format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
-        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        format.json { render json: @dataset.errors, status: :unprocessable_entity }
 
       end
     end
@@ -1071,6 +1074,7 @@ class DatasetsController < ApplicationController
   def permanently_suppress_files
 
     @dataset.publication_state = Databank::PublicationState::PermSuppress::FILE
+    @dataset.hold_state = Databank::PublicationState::PermSuppress::FILE
     @dataset.tombstone_date = Date.current
 
     respond_to do |format|
@@ -1080,7 +1084,7 @@ class DatasetsController < ApplicationController
         format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
       else
         format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
-        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        format.json { render json: @dataset.errors, status: :unprocessable_entity }
       end
 
     end
@@ -1089,15 +1093,31 @@ class DatasetsController < ApplicationController
 
   def permanently_suppress_metadata
 
-    old_state = @dataset.publication_state
+    @dataset.hold_state = Databank::PublicationState::PermSuppress::METADATA
     @dataset.publication_state = Databank::PublicationState::PermSuppress::METADATA
     @dataset.tombstone_date = Date.current.iso8601
+    @dataset.save
+
+    if Dataset.get_doi_metadata(@dataset)
+      respond_to do |format|
+        if Dataset.delete_doi_metadata(@dataset, current_user)
+          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been permenantly suppressed in IDB, and the DOI has been marked inactive in DataCite's Metadata Store.] }
+          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        else
+          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
+          format.json { render json: @dataset.errors, status: :unprocessable_entity }
+        end
+      end
+    else
+      format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been permenantly suppressed in IDB, and the DOI was not registered in DataCite's Metadata Store.] }
+      format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+    end
 
     if old_state == Databank::PublicationState::Embargo::METADATA
       respond_to do |format|
 
         if @dataset.save
-          if Dataset.delete_datacite_id(@dataset, current_user)
+          if Dataset.delete_doi_metadata(@dataset, current_user)
             @dataset.save
             format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Reserved DOI has been deleted and all files have been permanently supressed.] }
             format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
@@ -1115,7 +1135,7 @@ class DatasetsController < ApplicationController
       respond_to do |format|
 
         if @dataset.save
-          if Dataset.update_datacite_metadata(@dataset, current_user)
+          if Dataset.post_doi_metadata(@dataset, current_user)
             format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and all files have been permanently supressed.] }
             format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
           else
@@ -1140,14 +1160,22 @@ class DatasetsController < ApplicationController
     params['help-dataset'] = "#{request.base_url}#{dataset_path(@dataset.key)}"
     params['help-message'] = "Pre-deposit review request"
 
+    if @dataset.is_test?
+      shoulder = IDB_CONFIG[:test_datacite_shoulder]
+    else
+      shoulder = IDB_CONFIG[:datacite_shoulder]
+    end
+
+    if !@dataset.identifier || @dataset.identifier == ''
+      @dataset.identifier = "#{shoulder}#{@dataset.key}_V1"
+    end
+
+    help_request = DatabankMailer.contact_help(params)
+    help_request.deliver_now
+
     respond_to do |format|
 
-      help_request = DatabankMailer.contact_help(params)
-      help_request.deliver_now
-
-      reserved_doi = @dataset.reserve_doi
-
-      if reserved_doi && reserved_doi != ''
+      if @dataset.save
         format.html { redirect_to dataset_path(@dataset.key), notice: "Your request has been submitted. In the meantime, your DOI has been reserved and you can give your citation to your publisher as a placeholder:  #{@dataset.plain_text_citation}"}
         format.json { render json: {status: :ok }, content_type: request.format, :layout => false }
       else
@@ -1200,43 +1228,45 @@ class DatasetsController < ApplicationController
             FileUtils.rm_rf(@dataset.deck_location)
           end
 
-          # the create_doi method uses a given identifier if it has been specified
-          @dataset.identifier = Dataset.create_doi(@dataset, current_user)
-          MedusaIngest.send_dataset_to_medusa(@dataset, old_publication_state)
+          if Dataset.post_doi(@dataset, current_user)
+            Dataset.post_doi_metadata(@dataset, current_user)
+            MedusaIngest.send_dataset_to_medusa(@dataset, old_publication_state)
 
-          # strange double-save is because publication changes the dataset, but should not trigger change flag
-          # there is probably a better way to do this, and alternatives would be welcome
-          if @dataset.save
+            # strange double-save is because publication changes the dataset, but should not trigger change flag
+            # there is probably a better way to do this, and alternatives would be welcome
+            if @dataset.save
 
-            if IDB_CONFIG[:local_mode] && IDB_CONFIG[:local_mode] == true
-              Rails.logger.warn "Dataset #{@dataset.key} succesfully deposited."
-            else
-              begin
-                notification = DatabankMailer.confirm_deposit(@dataset.key)
-                notification.deliver_now
-              rescue Exception::StandardError => err
-                Rails.logger.warn "Confirmation email not sent for #{@dataset.key}"
-                Rails.logger.warn err.to_yaml
-                notification = DatabankMailer.confirmation_not_sent(@dataset.key, err)
-                notification.deliver_now
+              if IDB_CONFIG[:local_mode] && IDB_CONFIG[:local_mode] == true
+                Rails.logger.warn "Dataset #{@dataset.key} succesfully deposited."
+              else
+                begin
+                  notification = DatabankMailer.confirm_deposit(@dataset.key)
+                  notification.deliver_now
+                rescue Exception::StandardError => err
+                  Rails.logger.warn "Confirmation email not sent for #{@dataset.key}"
+                  Rails.logger.warn err.to_yaml
+                  notification = DatabankMailer.confirmation_not_sent(@dataset.key, err)
+                  notification.deliver_now
+                end
+
               end
-
+              @dataset.save
+              format.html { redirect_to dataset_path(@dataset.key), notice: Dataset.deposit_confirmation_notice(old_publication_state, @dataset) }
+              format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+            else
+              Rails.logger.warn "Error in saving dataset: #{@dataset.key}:"
+              Rails.logger.warn "Identifier created, but not saved: #{@dataset.identifier}. Messages sent to Medusa."
+              Rails.logger.warn @dataset.errors
+              format.html { redirect_to dataset_path(@dataset.key), notice: 'Error in saving dataset has been logged by the Research Data Service.' }
+              format.json { render json: @dataset.errors, status: :unprocessable_entity }
             end
-            @dataset.save
-            format.html { redirect_to dataset_path(@dataset.key), notice: Dataset.deposit_confirmation_notice(old_publication_state, @dataset) }
-            format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
-          else
-            Rails.logger.warn "Error in saving dataset: #{@dataset.key}:"
-            Rails.logger.warn "Identifier created, but not saved: #{@dataset.identifier}. Messages sent to Medusa."
-            Rails.logger.warn @dataset.errors
-            format.html { redirect_to dataset_path(@dataset.key), notice: 'Error in saving dataset has been logged by the Research Data Service.' }
-            format.json { render json: @dataset.errors, status: :unprocessable_entity }
           end
+
 
           # at this point, we are dealing with a published or imported dataset
         else
 
-          if Dataset.update_datacite_metadata(@dataset, current_user)
+          if Dataset.post_doi_metadata(@dataset, current_user)
             MedusaIngest.send_dataset_to_medusa(@dataset, old_publication_state)
 
             # strange double-save is because publication changes the dataset, but should not trigger change flag

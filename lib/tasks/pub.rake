@@ -18,7 +18,7 @@ namespace :pub do
         dataset.publication_state = Databank::PublicationState::RELEASED
         dataset.embargo = Databank::PublicationState::Embargo::NONE
         dataset.save
-        Dataset.update_datacite_metadata(dataset, @current_user)
+        Dataset.post_doi_metadata(dataset, @current_user)
       end
     end
   end
