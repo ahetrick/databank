@@ -261,7 +261,7 @@ module Datacite
       descriptionsNode.parent = resourceNode
       descriptionNode = doc.create_element('description')
       descriptionNode['descriptionType'] = "Other"
-      descriptionNode.content = "This dataset will be available #{dataset.release_date.iso8601}. Contact us for more information. #{ IDB_CONFIG[:root_url_text] }/help#contact"
+      descriptionNode.content = "This dataset will be available #{dataset.release_date.iso8601}. Contact us for more information. https://databank.illinois.edu/help#contact"
       descriptionNode.parent = descriptionsNode
 
       datesNode = doc.create_element('dates')
@@ -319,7 +319,7 @@ module Datacite
       descriptionsNode.parent = resourceNode
       descriptionNode = doc.create_element('description')
       descriptionNode['descriptionType'] = "Other"
-      descriptionNode.content = "Removed by Illinois Data Bank curators. Contact us for more information. #{ IDB_CONFIG[:root_url_text] }/help#contact"
+      descriptionNode.content = "Removed by Illinois Data Bank curators. Contact us for more information. https://databank.illinois.edu/help#contact"
       descriptionNode.parent = descriptionsNode
 
       doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
