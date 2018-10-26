@@ -155,8 +155,9 @@
 <% if can? :manage, @dataset && @dataset.publication_state != Databank::PublicationState::DRAFT %>
 
   <div class="curator-only">
-    <p><a href="https://search.datacite.org/works/<%= @dataset.identifier %>">See DataCite entry <%="https://search.datacite.org/works/#{@dataset.identifier}"%></a> </p>
-    <p><a href="https://doi.datacite.org/">Log into DataCite Fabrica interface for more details.</a> </p>
+    <p>DOIs will be indexed into DataCite Search 8 to 24 hrs after being created.</p>
+    <p>Once it is available, see DataCite Search result at: <a href="https://search.datacite.org/works/<%= @dataset.identifier %>"><%="https://search.datacite.org/works/#{@dataset.identifier}"%></a></p>
+    <p>Log into <a href="https://doi.datacite.org/">DataCite Fabrica interface</a> for more details about DataCite's record for this DOI.</p>
   </div>
 
   <!--<div class="curator-only">
