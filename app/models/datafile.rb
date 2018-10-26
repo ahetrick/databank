@@ -182,7 +182,7 @@ class Datafile < ActiveRecord::Base
         self.save
       end
     else
-      Rails.logger.warn("Did not find in medusa")
+      #Rails.logger.warn("Did not find in medusa")
     end
       in_medusa
   end

@@ -51,13 +51,13 @@ class DatafilesController < ApplicationController
   # POST /datafiles.json
   def create
 
-    Rails.logger.warn("inside create datafile")
+    # Rails.logger.warn("inside create datafile")
 
     @datafile = Datafile.new(dataset_id: @dataset.id)
 
     if params.has_key?(:datafile) && params[:datafile].has_key?(:tus_url)
 
-      Rails.logger.warn("inside tus_url detected")
+      # Rails.logger.warn("inside tus_url detected")
 
       tus_url = params[:datafile][:tus_url]
       tus_url_arr = tus_url.split('/')
@@ -71,7 +71,7 @@ class DatafilesController < ApplicationController
 
     end
 
-    Rails.logger.warn("just before datafile save")
+    # Rails.logger.warn("just before datafile save")
 
     if @datafile.save
       render json: to_fileupload, content_type: request.format, :layout => false
@@ -88,13 +88,9 @@ class DatafilesController < ApplicationController
       path = current_root.path_to(@datafile.storage_key, check_path: true)
       send_file path, filename: @datafile.binary_name, type: @datafile.mime_type || ‘application/octet-stream’
 
-
     else
-
       url = Application.aws_signer.presigned_url(:get_object, bucket: @datafile.storage_bucket, key: @datafile.storage_key)
-
       redirect_to url
-
     end
   end
 
@@ -380,14 +376,14 @@ class DatafilesController < ApplicationController
 
       File.open(filepath, 'wb+') do |outfile|
         uri = URI.parse(@remote_url)
-        Rails.logger.warn(uri.to_yaml)
+        # Rails.logger.warn(uri.to_yaml)
 
         Net::HTTP.start(uri.host, uri.port, :use_ssl => true) {|http|
           http.request_get(uri.path) {|res|
             res.read_body {|seg|
 
               if File.size(outfile) < 1000000000000
-                Rails.logger.warn(seg)
+                # Rails.logger.warn(seg)
                 outfile << seg
               else
                 @datafile.destroy
