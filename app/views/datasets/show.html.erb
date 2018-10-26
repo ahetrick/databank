@@ -155,15 +155,20 @@
 <% if can? :manage, @dataset && @dataset.publication_state != Databank::PublicationState::DRAFT %>
 
   <div class="curator-only">
-    <p><a href="http://ezid.lib.purdue.edu/manage/display_xml/doi:<%= @dataset.identifier %>" target="_blank">DataCite
+    <p><a href="https://search.datacite.org/works/#{@dataset.identifier}">See DataCite entry <%="https://search.datacite.org/works/#{@dataset.identifier}"%></a> </p>
+    <p><a href="https://doi.datacite.org/">Log into DataCite Fabrica interface for more details.</a> </p>
+  </div>
+
+  <!--<div class="curator-only">
+    <p><a href="http://ezid.lib.purdue.edu/manage/display_xml/doi:<%#= @dataset.identifier %>" target="_blank">DataCite
       Metadata in XML format (via EZID)</a></p>
 
     <p>
-      <a href="http://ezid.lib.purdue.edu/id/doi:<%= @dataset.identifier %>" target="_blank">DataCite Metadata on
+      <a href="http://ezid.lib.purdue.edu/id/doi:<%#= @dataset.identifier %>" target="_blank">DataCite Metadata on
         EZID
         page</a>
     </p>
-  </div>
+  </div>-->
 
 <% end %>
 
