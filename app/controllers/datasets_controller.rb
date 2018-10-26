@@ -1100,7 +1100,7 @@ class DatasetsController < ApplicationController
 
     if Dataset.get_doi_metadata(@dataset)
       respond_to do |format|
-        if Dataset.delete_doi_metadata(@dataset, current_user)
+        if Dataset.delete_doi_metadata(@dataset)
           format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been permenantly suppressed in IDB, and the DOI has been marked inactive in DataCite's Metadata Store.] }
           format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
         else
