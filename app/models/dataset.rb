@@ -818,9 +818,6 @@ class Dataset < ActiveRecord::Base
   end
 
   def full_changelog
-    {}
-    
-=begin
     changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', self.id, self.id)
     changesArr = Array.new
     changes.each do |change|
@@ -842,11 +839,12 @@ class Dataset < ActiveRecord::Base
         changesArr << {"change" => change_hash, "agent" => agent}
       rescue ArgumentError
         Rails.logger.warn("ArgumentError in changelog: #{ex.message}\n#{change.to_yaml}")
+      rescue StandardError => ex
+        raise ex unless ex.message.include?('BinaryUploader')
       end
     end
     changesHash = {"changes" => changesArr, "model" => "#{IDB_CONFIG[:model]}"}
     changesHash
-=end
   end
 
   def persistent_url
