@@ -1232,8 +1232,6 @@ class DatasetsController < ApplicationController
             Dataset.post_doi_metadata(@dataset, current_user)
             MedusaIngest.send_dataset_to_medusa(@dataset, old_publication_state)
 
-            # strange double-save is because publication changes the dataset, but should not trigger change flag
-            # there is probably a better way to do this, and alternatives would be welcome
             if @dataset.save
 
               if IDB_CONFIG[:local_mode] && IDB_CONFIG[:local_mode] == true

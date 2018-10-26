@@ -246,7 +246,7 @@ module Datacite
       titlesNode.parent = resourceNode
 
       titleNode = doc.create_element('title')
-      titleNode.content = "[This dataset will be available #{dataset.release_date.iso8601}. Contact us for more information. #{ IDB_CONFIG[:root_url_text] }/help#contact]"
+      titleNode.content = "[This dataset will be available #{dataset.release_date.iso8601}. Contact us for more information. https://databank.illinois.edu/help#contact]"
       titleNode.parent = titlesNode
 
       publisherNode = doc.create_element('publisher')
