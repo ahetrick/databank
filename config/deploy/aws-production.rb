@@ -6,14 +6,14 @@
 # server 'example.com', user: 'deploy', roles: %w{app db web}, my_property: :my_value
 # server 'example.com', user: 'deploy', roles: %w{app web}, other_property: :other_value
 # server 'db.example.com', user: 'deploy', roles: %w{db}
-server 'aws-databank-prod.illinois.edu', user: 'databank', roles: %w{app db web}
+server 'aws-databank-prod.library.illinois.edu', user: 'databank', roles: %w{app db web}
 
 set :rails_env, 'production'
 
 set :ssh_options, {
     forward_agent: true,
     auth_methods: ["publickey"],
-    keys: ["#{Dir.home}/.ssh/medusa-pilot.pem"]
+    keys: ["#{Dir.home}/.ssh/medusa_prod.pem"]
 }
 
 # Ask which branch to deploy
