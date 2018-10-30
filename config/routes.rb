@@ -5,6 +5,7 @@ require './lib/api/base'
 Rails.application.routes.draw do
 
   resources :databank_tasks, only: [:index, :show]
+  get '/databank_tasks/pending', to: 'databank_tasks#pending'
   resources :ingest_responses
   #mount API::Base => '/api'
 

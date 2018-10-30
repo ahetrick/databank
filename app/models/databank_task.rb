@@ -46,6 +46,22 @@ class DatabankTask
 
   end
 
+  def self.get_pending_tasks
+
+    endpoint = "#{TASKS_URL}/tasks?status=pending"
+
+    response = RestClient.get endpoint
+
+    if response.code == 200
+      response_hash = JSON.parse(response)
+      return response_hash
+    else
+      raise("problem getting pending tasks: #{response}")
+    end
+
+
+  end
+
   def self.get_remote_task(task_id)
 
     endpoint = "#{TASKS_URL}/tasks/#{task_id}"
