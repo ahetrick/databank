@@ -50,6 +50,8 @@ class User < ActiveRecord::Base
 
   def update_with_omniauth(auth)
 
+    Rails.logger.warn(auth)
+
     self.provider = auth["provider"]
     self.uid = auth["uid"]
     self.email = auth["info"]["email"]
