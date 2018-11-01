@@ -229,8 +229,6 @@
             %td.col-md-4
               %strong File Upload Options
             %td.col-md-1
-              < 500 MB
-            %td.col-md-1
               < 4 GB
             %td.col-md-1
               < 15 GB
@@ -242,33 +240,28 @@
         %tbody
           %tr.row
             %td
-              .file-drop-instruction
+              %div(id="file-drop-area")
                 %span(class="fa fa-cloud-upload fa-2x" )
-                Drop files anywhere on this page
+                Drop files in this area
             %td
-              %span(class="fa upload-consistent fa-circle")
+              %span(class="fa upload-inconsistent fa-circle")
             %td
-              %span(class="fa upload-inconsistent fa-adjust")
-            %td
-              %span(class="fa upload-unavailable fa-circle-o")
+              %span(class="fa upload-unavailable fa-adjust")
             %td
               %span(class="fa upload-unavailable fa-circle-o")
             %td
               %span(class="fa upload-unavailable fa-circle-o")
 
           %tr.row
-            %td.fileselect
+            %td.fileselect(id="file-select-area")
               %label(class="btn btn-success fileinput-button")
                 %span(class="fileinput-button-content" )
                   %span(class="fa fa-laptop fa-lg" )
                   Select files from your computer
-                  %input(type="file" name="selectedFiles" id="selectedFiles" multiple="multiple")
             %td
-              %span(class="fa upload-consistent fa-circle")
+              %span(class="fa upload-inconsistent fa-circle")
             %td
-              %span(class="fa upload-inconsistent fa-adjust")
-            %td
-              %span(class="fa upload-unavailable fa-circle-o")
+              %span(class="fa upload-unavailable fa-adjust")
             %td
               %span(class="fa upload-unavailable fa-circle-o")
             %td
@@ -277,8 +270,6 @@
           %tr.row
             %td
               %div(id="box-select" data-link-type="direct" data-multiselect="true" data-client-id="r5tgofc05460skm84yjepz1ck16ptotr" role="button" )
-            %td
-              %span(class="fa upload-consistent fa-circle")
             %td
               %span(class="fa upload-consistent fa-circle")
             %td
@@ -295,8 +286,6 @@
                 %button(type="button" class="btn btn-success fileinput-button" onclick="openRemoteFileModal()" )
                   %span(class="glyphicon glyphicon-link")
                   Provide a URL
-              %td.curator-only
-                %span(class="fa upload-consistent fa-circle")
               %td.curator-only
                 %span(class="fa upload-consistent fa-circle")
               %td.curator-only
@@ -327,8 +316,6 @@
             %td
               %span(class="fa upload-consistent fa-circle")
             %td
-              %span(class="fa upload-consistent fa-circle")
-            %td
               %span(class="fa upload-inconsistent fa-adjust")
 
           %tr.row
@@ -337,8 +324,6 @@
                 %span(class="large-text" )
                   &#x1f45f;
                 Request physical pickup
-            %td
-              %span(class="fa upload-consistent fa-circle")
             %td
               %span(class="fa upload-consistent fa-circle")
             %td

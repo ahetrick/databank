@@ -332,10 +332,102 @@ function initFileUpload() {
         return;
     }
 
-    $("#selectedFiles").on("change", onFileChanged);
+    // support drag-and-drop file upload
+
+    var dropElement = document.getElementById("file-drop-area");
+
+    if (dropElement !== null){
+      makeDroppable(dropElement, uploadSelectedFiles);
+    }
+
+    var selectElement = document.getElementById("file-select-area");
+
+    if (selectElement !== null){
+        makeDroppable(selectElement, uploadSelectedFiles);
+    }
+
 }
 
-function onFileChanged(theEvt) {
+function makeDroppable(element, callback) {
+
+    var input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('multiple', true);
+    input.style.display = 'none';
+
+    input.addEventListener('change', triggerCallback);
+    element.appendChild(input);
+
+    element.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        element.classList.add('dragover');
+    });
+
+    element.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        element.classList.remove('dragover');
+    });
+
+    element.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        element.classList.remove('dragover');
+        triggerCallback(e);
+    });
+
+    element.addEventListener('click', function() {
+        input.value = null;
+        input.click();
+    });
+
+    function triggerCallback(e) {
+        var files;
+        if(e.dataTransfer) {
+            files = e.dataTransfer.files;
+        } else if(e.target) {
+            files = e.target.files;
+        }
+        callback.call(null, files);
+    }
+}
+
+function uploadSelectedFiles(files){
+    $('#files').css("display", "block");
+    $('#collapseFiles').collapse('show');
+
+    $('#divFiles').html('');
+    for (var i = 0; i < files.length; i++) { //Progress bar and status label's for each file genarate dynamically
+        var fileId = i;
+
+        //console.log(files[i].name.toString());
+
+        $('#datafiles_upload_progress').append('<div class="container-fluid" id="progress_' + fileId + '">' +
+            '<div class="row">' +
+            '<div class="col-md-10">' +
+            '<p class="progress-status" id="status_' + fileId + '">' + files[i].name.toString() + '</p>' +
+            '</div>' +
+            '<div class="col-md-2">' +
+            '<input type="button" class="btn btn-block btn-danger" id="cancel_' + fileId + '" value="cancel">' +
+            '</div></div>' +
+
+            '<div class="row">' +
+            '<div class="progress col-md-12">' +
+            '<div class="progress-bar progress-bar-striped active" id="progressbar_' + fileId + '" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:0%"></div>' +
+            '</div></div>' +
+            '<div class="col-md-12">' +
+            '<p id="notify_' + fileId + '" style="text-align: right;"></p>' +
+            '</div></div>');
+    }
+
+    for (var i = 0; i < files.length; i++) {
+        uploadSingleFile(files[i], i);
+    }
+}
+
+
+/*function onFileChanged(theEvt) {
     var files = theEvt.target.files;
 
     $('#files').css("display", "block");
@@ -369,7 +461,7 @@ function onFileChanged(theEvt) {
         uploadSingleFile(files[i], i);
     }
 
-}
+}*/
 
 function uploadSingleFile(file, i){
 
