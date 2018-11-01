@@ -157,7 +157,10 @@ module Viewable
   end
 
   def is_image?
-    return self.peek_type == 'image'
+
+    supported_extensions = ['avi', 'bmp', 'jp2', 'jpg', 'jpeg', 'png', 'tif', 'tiff']
+
+    return self.peek_type == 'image' && self.file_extension && supported_extensions.include?(self.file_extension)
   end
 
   def is_microsoft?
