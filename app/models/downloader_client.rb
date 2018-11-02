@@ -35,9 +35,9 @@ class DownloaderClient
       df = Datafile.find_by_web_id(web_id)
 
       if df
-        if !df.medusa_path || df.medusa_path == ''
+        if !df.storage_root || !df.storage_root != 'medusa' || !df.storage_key || df.storage_key == ''
           # should not get here because of precondition
-          Rails.logger.warn "no medusa path for datafile #{df.to_yaml}"
+          Rails.logger.warn "invalid storage_root / storage_key for datafile #{df.to_yaml}"
           download_hash['status']='error'
           download_hash['error']='internal error file path not found'
           return download_hash
@@ -45,7 +45,7 @@ class DownloaderClient
         total_size = total_size + df.bytestream_size
         target_hash = Hash.new
         target_hash["type"]="file"
-        target_hash["path"]="#{df.medusa_path}"
+        target_hash["path"]="#{df.storage_key}"
         targets_arr.push(target_hash)
       end
     end
