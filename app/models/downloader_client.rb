@@ -35,7 +35,7 @@ class DownloaderClient
       df = Datafile.find_by_web_id(web_id)
 
       if df
-        if !df.storage_root || !df.storage_root != 'medusa' || !df.storage_key || df.storage_key == ''
+        if !df.storage_root || df.storage_root != 'medusa' || !df.storage_key || df.storage_key == ''
           # should not get here because of precondition
           Rails.logger.warn "invalid storage_root / storage_key for datafile #{df.to_yaml}"
           download_hash['status']='error'
