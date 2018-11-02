@@ -196,6 +196,8 @@ class DatafilesController < ApplicationController
 
   def download
 
+    @datafile.record_download(request.remote_ip)
+
     current_root = Application.storage_manager.root_set.at(@datafile.storage_root)
 
     if current_root.root_type == :filesystem
