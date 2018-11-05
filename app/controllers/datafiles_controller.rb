@@ -211,7 +211,7 @@ class DatafilesController < ApplicationController
 
     else
 
-      url = Application.aws_signer.presigned_url(:get_object, bucket: @datafile.storage_bucket, key: @datafile.storage_key)
+      url = Application.aws_signer.presigned_url(:get_object, bucket: @datafile.storage_root_bucket, key: @datafile.storage_key_with_prefix)
 
       redirect_to url
 
