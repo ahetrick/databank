@@ -1625,14 +1625,20 @@ class DatasetsController < ApplicationController
   end
 
   def set_file_mode
+    
     Databank::Application.file_mode = Databank::FileMode::WRITE_READ
 
-    mount_path = (Pathname.new(IDB_CONFIG[:storage_mount]).realpath).to_s.strip
-    read_only_path = (IDB_CONFIG[:read_only_realpath]).to_s.strip
+    if IDB_CONFIG[:aws][:s3_mode] == false
 
-    if (mount_path.casecmp(read_only_path) == 0)
-      Databank::Application.file_mode = Databank::FileMode::READ_ONLY
+      mount_path = (Pathname.new(IDB_CONFIG[:storage_mount]).realpath).to_s.strip
+      read_only_path = (IDB_CONFIG[:read_only_realpath]).to_s.strip
+
+      if (mount_path.casecmp(read_only_path) == 0)
+        Databank::Application.file_mode = Databank::FileMode::READ_ONLY
+      end
+
     end
+
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
