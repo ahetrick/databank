@@ -881,16 +881,18 @@ class DatasetsController < ApplicationController
           if datafile.bytestream_name && ((datafile.bytestream_name).downcase == "license.txt")
             has_license_file = true
             temporary_datafile = Datafile.create(dataset_id: proposed_dataset.id)
-            FileUtils.cp "#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.txt", "#{IDB_CONFIG[:agreements_root_path]}/new/license.txt"
-            temporary_datafile.binary = Pathname.new("#{IDB_CONFIG[:agreements_root_path]}/new/license.txt").open()
+            temporary_datafile.storage_root = 'draft'
+            temporary_datafile.storage_key = 'license.txt'
+            temporary_datafile.binary_name = 'license.txt'
             proposed_dataset.datafiles.push(temporary_datafile)
           end
         end
 
         unless has_license_file
           temporary_datafile = Datafile.create(dataset_id: proposed_dataset.id)
-          FileUtils.cp "#{IDB_CONFIG[:agreements_root_path]}/new/deposit_agreement.txt", "#{IDB_CONFIG[:agreements_root_path]}/new/placeholder.txt"
-          temporary_datafile.binary = Pathname.new("#{IDB_CONFIG[:agreements_root_path]}/new/placeholder.txt").open()
+          temporary_datafile.storage_root = 'draft'
+          temporary_datafile.storage_key = 'placeholder.txt'
+          temporary_datafile.binary_name = 'placeholder.txt'
           proposed_dataset.datafiles.push(temporary_datafile)
         end
 
@@ -1320,6 +1322,19 @@ class DatasetsController < ApplicationController
     if params.has_key?(:id)
       set_dataset
     end
+
+    if @dataset
+      if Application.storage_manager.draft_root.exist?(@dataset.draft_agreement_key)
+        @agreement_text = Application.storage_manager.draft_root.as_string(@dataset.draft_agreement_key)
+      elsif Application.storage_manager.medusa_root.exit?(@dataset.medusa_agreement_key)
+        @agreement_text = Application.storage_manager.medusa_root.as_string(@dataset.medusa_agreement_key)
+      else
+        raise("Deposit agreement not found for dataset #{@dataset.key}.")
+      end
+    else
+      @agreement_text = File.read(Rails.root.join("public", "deposit_agreement.txt"))
+    end
+
   end
 
   def zip_and_download_selected
