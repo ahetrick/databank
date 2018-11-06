@@ -56,4 +56,18 @@ namespace :fix do
     end
   end
 
+
+  desc 'find invalid datafiles'
+  task :find_invalid_datafiles => :environment do
+    Datafile.all.each do |datafile|
+      if !datafile.storage_root
+        puts "missing storage_root for datafile #{datafile.web_id}"
+      elsif !datafile.storage_key
+        puts "missing storage_key for datafile #{datafile.web_id}"
+      elsif !datafile.current_root.exist?(datafile.storage_key)
+        puts "missing binary for datafile #{datafile.web_id}, root: #{datafile.storage_root}, key: #{datafile.storage_key}"
+      end
+    end
+  end
+
 end
