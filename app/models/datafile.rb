@@ -203,7 +203,7 @@ class Datafile < ActiveRecord::Base
 
     dataset = Dataset.find(self.dataset_id)
 
-    if dataset&.identifier && dataset.identifier != "" # ignore draft datasets
+    if dataset.publication_state != Databank::PublicationState::DRAFT # ignore draft datasets
 
       unless dataset.ip_downloaded_dataset_today(request_ip)
 
