@@ -66,17 +66,14 @@ module Datacite
     end
 
     def post_doi_metadata(dataset, current_user)
+
+      return false unless Rails.env.production? && !@dataset.is_test
+
       raise("cannot create or update doi for incomplete dataset") unless Dataset.completion_check(dataset, current_user) == 'ok'
 
-      if dataset.is_test?
-        host = IDB_CONFIG[:test_datacite_endpoint]
-        user = IDB_CONFIG[:test_datacite_username]
-        password = IDB_CONFIG[:test_datacite_password]
-      else
-        host = IDB_CONFIG[:datacite_endpoint]
-        user = IDB_CONFIG[:datacite_username]
-        password = IDB_CONFIG[:datacite_password]
-      end
+      host = IDB_CONFIG[:datacite_endpoint]
+      user = IDB_CONFIG[:datacite_username]
+      password = IDB_CONFIG[:datacite_password]
 
       uri = URI.parse("https://#{host}/metadata")
 

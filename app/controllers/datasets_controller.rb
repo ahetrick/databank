@@ -1231,7 +1231,7 @@ class DatasetsController < ApplicationController
           end
 
           if Dataset.post_doi(@dataset, current_user)
-            if Rails.env.production? && ! @dataset.is_test &&
+            if Rails.env.production? && !@dataset.is_test
               Dataset.post_doi_metadata(@dataset, current_user)
             end
             MedusaIngest.send_dataset_to_medusa(@dataset, old_publication_state)
