@@ -274,7 +274,7 @@ class DatafilesController < ApplicationController
 
   def bucket_and_key
     if IDB_CONFIG[:aws][:s3_mode]
-      render json: {bucket: @datafile.storage_root_bucket, key: @datafile.storage_key_with_prefix}, status: ok
+      render json: {bucket: @datafile.storage_root_bucket, key: @datafile.storage_key_with_prefix}, status: :ok
     else
       render json: {error: "No bucket for datafile stored on filesystem."}, status: :bad_request
     end
