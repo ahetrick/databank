@@ -130,6 +130,9 @@ Rails.application.routes.draw do
 
   # iiif_filepath
   get '/datafiles/:id/iiif_filepath', to: "datafiles#iiif_filepath", defaults: {format: 'json'}
+  
+  # bucket and key for s3 iiif
+  get '/datafiles/:id/bucket_and_key', to: 'datafiles#bucket_and_key', defaults: {format: 'json'}
 
   # create from box file select widget
   post "/datafiles/create_from_url", to: 'datafiles#create_from_url'
