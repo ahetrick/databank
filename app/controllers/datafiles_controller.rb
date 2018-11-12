@@ -9,7 +9,7 @@ OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 class DatafilesController < ApplicationController
 
   before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download, :record_download, :download_url,
-                                      :upload, :do_upload, :reset_upload, :resume_upload, :update_status,
+                                      :upload, :do_upload, :reset_upload, :resume_upload, :update_status, :bucket_and_key,
                                       :preview, :display, :peek_text, :filepath, :iiif_filepath]
 
   before_action :set_dataset, only: [:index, :show, :edit, :new, :add, :create, :destroy, :upload, :do_upload]
