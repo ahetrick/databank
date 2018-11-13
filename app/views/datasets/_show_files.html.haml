@@ -26,19 +26,20 @@
                                   Get Custom Zip and Download Link for Selected
                                   %span.checkFileSelectedCount
 
-                              -else
-                                %button(class="btn btn-primary" type="submit")
-                                  %span.glyphicon.glyphicon-download
-                                  Zip and Download Selected
-                                  %span.checkFileSelectedCount
+                              -#-else
+                              -#  %button(class="btn btn-primary" type="submit")
+                              -#    %span.glyphicon.glyphicon-download
+                              -#    Zip and Download Selected
+                              -#    %span.checkFileSelectedCount
 
-                          .row
-                            .checkbox.col-md-4
-                              %label
-                                %input(type="checkbox" id="checkAllFiles" value="checkAllFiles")
-                                Select all
+                          -if dataset.fileset_preserved?
+                            .row
+                              .checkbox.col-md-4
+                                %label
+                                  %input(type="checkbox" id="checkAllFiles" value="checkAllFiles")
+                                  Select all
 
-                                ="(#{dataset.ordered_datafiles.count})"
+                                  ="(#{dataset.ordered_datafiles.count})"
 
                     -if dataset.ordered_datafiles.count > 0
 
@@ -49,7 +50,7 @@
                               .row.checkbox
 
                                 %span.col-md-6
-                                  -if dataset.fileset_preserved? || dataset.total_filesize < Dataset.local_zip_max_size
+                                  -if dataset.fileset_preserved? #|| dataset.total_filesize < Dataset.local_zip_max_size
                                     %label
                                       %input(type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="#{datafile.web_id}" onchange="handleCheckFileGroupChange()")
                                       = datafile.bytestream_name
@@ -79,11 +80,11 @@
                                         %span.glyphicon.glyphicon-eye-open(id="preview_glyph_#{datafile.web_id}")
                                         List Contents
 
-                                  -elsif datafile.is_image?
-                                    %span(id="preview_img_btn_#{datafile.web_id}")
-                                      %button(type='button' class='btn btn-sm btn-success' onclick='preview_image("#{IDB_CONFIG[:iiif_root]}","#{datafile.web_id}")')
-                                        %span.glyphicon.glyphicon-eye-open(id="preview_glyph_#{datafile.web_id}")
-                                        View
+                                  -#-elsif datafile.is_image?
+                                  -#  %span(id="preview_img_btn_#{datafile.web_id}")
+                                  -#    %button(type='button' class='btn btn-sm btn-success' onclick='preview_image("#{IDB_CONFIG[:iiif_root]}","#{datafile.web_id}")')
+                                  -#      %span.glyphicon.glyphicon-eye-open(id="preview_glyph_#{datafile.web_id}")
+                                  -#      View
 
                                   -elsif datafile.is_pdf?
                                     %span(id="preview_btn_#{datafile.web_id}")
