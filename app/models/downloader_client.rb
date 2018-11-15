@@ -82,14 +82,13 @@ class DownloaderClient
       user = IDB_CONFIG['downloader']['user']
       password = IDB_CONFIG['downloader']['password']
 
-      client = Curl::Easy.http_post(client_url, medusa_request_json
-      ) do |curl|
-        curl.headers['Accept'] = 'application/json'
-        curl.headers['Content-Type'] = 'application/json'
-        curl.username = user
-        curl.password = password
-        curl.http_auth_types = :digest
-      end
+      client = Curl::Easy.new(client_url)
+      client.http_auth_types = :digest
+      client.username = config.downloader_user
+      client.password = config.downloader_password
+      client.post_body = medusa_request_json
+      client.post
+      client.headers = { 'Content-Type': 'application/json' }
       client.perform
 
       response_hash = JSON.parse(client.body_str)
