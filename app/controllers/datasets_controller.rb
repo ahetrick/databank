@@ -150,6 +150,9 @@ class DatasetsController < ApplicationController
             facet(:hold_state)
             facet(:datafile_extensions)
             facet(:publication_year)
+
+            paginate(:page => params[:page])
+
           end
 
           # this makes a row for each category, even if the current search does not have any results in a category
@@ -317,6 +320,8 @@ class DatasetsController < ApplicationController
             facet(:datafile_extensions)
             facet(:publication_year)
 
+            paginate(:page => params[:page])
+
           end
 
           # this gets all categories for facets, even if current results do not have any instances
@@ -437,6 +442,8 @@ class DatasetsController < ApplicationController
             facet(:datafile_extensions)
             facet(:publication_year)
 
+            paginate(:page => params[:page])
+
           end
       end
 
@@ -543,6 +550,8 @@ class DatasetsController < ApplicationController
         facet(:datafile_extensions)
         facet(:publication_year)
 
+        paginate(:page => params[:page])
+
       end
 
     end
@@ -580,6 +589,12 @@ class DatasetsController < ApplicationController
         has_this_row = true if inner_row.value == outer_row.value
       end
       @search.facet(:funder_codes).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
+    end
+
+    if params.has_key?(:page)
+      @current_page = params[:page]
+    else
+      @current_page = 1
     end
 
     @report=Indexable.citation_report(@search, request.original_url, current_user)

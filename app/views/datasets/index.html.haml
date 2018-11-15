@@ -2,3 +2,4 @@
   =render partial: "citation_report"
 -else
   =render partial: "search"
+  =will_paginate(@search.hits)
