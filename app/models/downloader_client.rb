@@ -75,7 +75,7 @@ class DownloaderClient
     user = IDB_CONFIG['downloader']['user']
     password = IDB_CONFIG['downloader']['password']
 
-    client_url = "#{IDB_CONFIG['downloader']['host']}:#{IDB_CONFIG['downloader']['port']}/downloads/create"
+    client_url = "#{IDB_CONFIG['downloader']['endpoint']}"
 
     begin
 
