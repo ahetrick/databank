@@ -84,8 +84,8 @@ class DownloaderClient
 
       client = Curl::Easy.new(client_url)
       client.http_auth_types = :digest
-      client.username = config.downloader_user
-      client.password = config.downloader_password
+      client.username = user
+      client.password = password
       client.post_body = medusa_request_json
       client.post
       client.headers = { 'Content-Type': 'application/json' }
