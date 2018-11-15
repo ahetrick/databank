@@ -75,21 +75,22 @@ class DownloaderClient
     user = IDB_CONFIG['downloader']['user']
     password = IDB_CONFIG['downloader']['password']
 
-    client_url = "#{IDB_CONFIG['downloader']['host']}:#{IDB_CONFIG['downloader']['port']}/downloads/create"
+    client_url = "#{IDB_CONFIG['downloader']['endpoint']}"
 
     begin
 
-      client = Curl::Easy.new()
-      client.url = client_url
+      user = IDB_CONFIG['downloader']['user']
+      password = IDB_CONFIG['downloader']['password']
+
+      client = Curl::Easy.new(client_url)
       client.http_auth_types = :digest
       client.username = user
       client.password = password
       client.post_body = medusa_request_json
       client.post
-      client.headers = {'Content-Type' => 'application/json'}
-      response = client.perform
-      # Rails.logger.warn "downloader response: #{response.to_yaml}"
-      response_json = client.body_str
+      client.headers = { 'Content-Type': 'application/json' }
+      client.perform
+
       response_hash = JSON.parse(client.body_str)
       if response_hash.has_key?("download_url")
         # Rails.logger.warn "inside downloader client: #{response_hash["download_url"]}"
