@@ -287,20 +287,5 @@ class MedusaIngest < ActiveRecord::Base
      "pass_through" => {class: self.idb_class, identifier: self.idb_identifier}}
   end
 
-  def update_from_ingest
 
-
-    medusa_root = Application.storage_manager.medusa_root
-
-    MedusaIngest.where.not(medusa_path: nil) do |ingest|
-      if ingest.idb_class == 'dataset' && ingest.idb_identifier && ingest.idb_identifier != ''
-        dataset = Dataset.find_by_key(ingest.idb_identifier)
-
-        if dataset && medusa_root.exist?(ingest.medusa_path)
-          dataset.root = 'medusa'
-          dataset.key = ingest.medusa_path
-        end
-      end
-    end
-  end
 end
