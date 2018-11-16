@@ -12,7 +12,7 @@ class MedusaIngest < ActiveRecord::Base
     response_hash = JSON.parse(response)
     if response_hash.has_key? 'status'
 
-      ingest_response = IngestResponse.new(as_text: response,  status:response_hash['status'])
+      ingest_response = IngestResponse.new(as_text: response, status: response_hash['status'])
       if response_hash.has_key?('staging_key')
         ingest_response.staging_key = response_hash['staging_key']
       end
@@ -175,7 +175,7 @@ class MedusaIngest < ActiveRecord::Base
       return false
     end
 
-    unless ingest&.staging_key && ingest.staging_key!=''
+    unless ingest&.staging_key && ingest.staging_key != ''
       notification = DatabankMailer.error("Ingest not found for ingest suceeded message from Medusa. #{response_hash.to_yaml}")
       notification.deliver_now
       return false
@@ -284,7 +284,23 @@ class MedusaIngest < ActiveRecord::Base
     {"operation" => "ingest",
      "staging_key" => self.staging_key,
      "target_key" => self.target_key,
-     "pass_through" => {class: self.idb_class, identifier: self.idb_identifier} }
+     "pass_through" => {class: self.idb_class, identifier: self.idb_identifier}}
   end
 
+  def update_from_ingest
+
+
+    medusa_root = Application.storage_manager.medusa_root
+
+    MedusaIngest.where.not(medusa_path: nil) do |ingest|
+      if ingest.idb_class == 'dataset' && ingest.idb_identifier && ingest.idb_identifier != ''
+        dataset = Dataset.find_by_key(ingest.idb_identifier)
+
+        if dataset && medusa_root.exist?(ingest.medusa_path)
+          dataset.root = 'medusa'
+          dataset.key = ingest.medusa_path
+        end
+      end
+    end
+  end
 end
