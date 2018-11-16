@@ -320,7 +320,7 @@ class DatasetsController < ApplicationController
             facet(:datafile_extensions)
             facet(:publication_year)
 
-            paginate(:page => params[:page])
+            #paginate(:page => params[:page])
 
           end
 
@@ -442,7 +442,7 @@ class DatasetsController < ApplicationController
             facet(:datafile_extensions)
             facet(:publication_year)
 
-            paginate(:page => params[:page])
+            #paginate(:page => params[:page])
 
           end
       end
@@ -550,7 +550,7 @@ class DatasetsController < ApplicationController
         facet(:datafile_extensions)
         facet(:publication_year)
 
-        paginate(:page => params[:page])
+        #paginate(:page => params[:page])
 
       end
 
