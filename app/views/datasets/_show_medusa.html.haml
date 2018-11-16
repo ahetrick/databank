@@ -1,6 +1,7 @@
 -if @dataset.publication_state != Databank::PublicationState::DRAFT
   %p You can send (or resend) the dataset to medusa now. (Best to check will Colleen and/or Howard first.)
   =form_tag("/datasets/#{@dataset.key}/send_to_medusa") do
+    %input(type="hidden" value="placeholder" )
     =submit_tag("Send to Medusa")
 
 -if @dataset.medusa_ingests.count < 1

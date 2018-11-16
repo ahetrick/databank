@@ -1332,6 +1332,7 @@ class DatasetsController < ApplicationController
   end
 
   def send_to_medusa
+    Rails.logger.warn(params.to_yaml)
     MedusaIngest.send_dataset_to_medusa(@dataset)
     render json: {status: :ok} and return
   end
