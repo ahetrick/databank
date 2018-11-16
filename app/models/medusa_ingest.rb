@@ -219,13 +219,16 @@ class MedusaIngest < ActiveRecord::Base
         return false
       end
 
+      Rails.logger.warn
+
       # dataset found - do things with dataset and ingest response
       exists_in_draft = draft_root.exist?(response_hash['staging_key'])
-      exists_in_medusa = medusa_root.exist?(response_hash['target_key'])
+
+      exists_in_medusa = medusa_root.exist?(response_hash['medusa_key'])
       if exists_in_medusa
         if exists_in_draft
           draft_size = draft_root.size(response_hash['staging_key'])
-          medusa_size = medusa_root.size(response_hash['target_key'])
+          medusa_size = medusa_root.size(response_hash['medusa_key'])
           if draft_size == medusa_size
             draft_root.delete_content(response_hash['staging_key'])
           end
