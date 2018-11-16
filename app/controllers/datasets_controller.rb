@@ -1249,7 +1249,7 @@ class DatasetsController < ApplicationController
             if Rails.env.production? && !@dataset.is_test
               Dataset.post_doi_metadata(@dataset, current_user)
             end
-            MedusaIngest.send_dataset_to_medusa(@dataset, old_publication_state)
+            MedusaIngest.send_dataset_to_medusa(@dataset)
 
             if @dataset.save
 
@@ -1284,7 +1284,7 @@ class DatasetsController < ApplicationController
         else
 
           if Dataset.post_doi_metadata(@dataset, current_user)
-            MedusaIngest.send_dataset_to_medusa(@dataset, old_publication_state)
+            MedusaIngest.send_dataset_to_medusa(@dataset)
 
             # strange double-save is because publication changes the dataset, but should not trigger change flag
             # there is probably a better way to do this, and alternatives would be welcome
@@ -1332,7 +1332,7 @@ class DatasetsController < ApplicationController
   end
 
   def send_to_medusa
-    MedusaIngest.send_dataset_to_medusa(@dataset, "TODO")
+    MedusaIngest.send_dataset_to_medusa(@dataset, "na")
   end
 
   def review_deposit_agreement

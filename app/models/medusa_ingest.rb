@@ -39,7 +39,7 @@ class MedusaIngest < ActiveRecord::Base
 
   end
 
-  def self.send_dataset_to_medusa(dataset, old_publication_staterm )
+  def self.send_dataset_to_medusa(dataset)
 
     # put test datasets in Medusa -- may reconsider later.
     # if Rails.env.test?

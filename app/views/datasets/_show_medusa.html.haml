@@ -1,11 +1,12 @@
+-if @dataset.publication_state != Databank::PublicationState::DRAFT
+  %p You can send (or resend) the dataset to medusa now. (Best to check will Colleen and/or Howard first.)
+  =form_tag("/datasets/#{@dataset.key}/send_to_medusa") do
+    =submit_tag("Send to Medusa")
+
 -if @dataset.medusa_ingests.count < 1
   %p No Medusa ingest requests have been sent for this dataset.
   -if @dataset.publication_state == Databank::PublicationState::DRAFT
     %p This is because it is in a draft state.
-  -else
-    %p You can send (or resend) them now.
-    =form_tag("/datasets/#{@dataset.key}/send_to_medusa") do
-      =submit_tag("Send to Medusa")
 
 -@dataset.medusa_ingests.each do |ingest|
   %strong staging key:
