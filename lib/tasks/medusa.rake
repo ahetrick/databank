@@ -82,7 +82,7 @@ namespace :medusa do
     config = (idbconfig['amqp'] || {}).symbolize_keys
 
     config.merge!(recover_from_connection_close: true)
-    
+
     conn = Bunny.new(config)
     conn.start
 
@@ -186,7 +186,7 @@ namespace :medusa do
           Rails.logger.warn "dataset not found for ingest #{ingest.to_yaml}"
         end
 
-        medusa_dataset_dir_json = JSON.parse((ingest.medusa_dataset_dir).gsub("'",'"').gsub('=>',':'))
+        medusa_dataset_dir_json = JSON.parse((ingest.medusa_dataset_dir).gsub("'", '"').gsub('=>', ':'))
 
         if dataset && (!dataset.medusa_dataset_dir || dataset.medusa_dataset_dir == '')
           dataset.medusa_dataset_dir = medusa_dataset_dir_json['url_path']
@@ -205,20 +205,19 @@ namespace :medusa do
 
   desc 'update keys from ingests'
   task :update_keys_from_ingests => :environment do
-    def update_from_ingest
-      
-      medusa_root = Application.storage_manager.medusa_root
 
-      MedusaIngest.where.not(medusa_path: nil) do |ingest|
-        if ingest.idb_class == 'dataset' && ingest.idb_identifier && ingest.idb_identifier != ''
-          dataset = Dataset.find_by_key(ingest.idb_identifier)
+    medusa_root = Application.storage_manager.medusa_root
 
-          if dataset && medusa_root.exist?(ingest.medusa_path)
-            dataset.root = 'medusa'
-            dataset.key = ingest.medusa_path
-          end
+    MedusaIngest.where.not(medusa_path: nil) do |ingest|
+      if ingest.idb_class == 'dataset' && ingest.idb_identifier && ingest.idb_identifier != ''
+        dataset = Dataset.find_by_key(ingest.idb_identifier)
+
+        if dataset && medusa_root.exist?(ingest.medusa_path)
+          dataset.root = 'medusa'
+          dataset.key = ingest.medusa_path
         end
       end
     end
+    
   end
 end
