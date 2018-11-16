@@ -838,7 +838,7 @@ class Dataset < ActiveRecord::Base
         end
         changesArr << {"change" => change_hash, "agent" => agent}
       rescue ArgumentError
-        Rails.logger.warn("ArgumentError in changelog: #{ex.message}\n#{change.to_yaml}")
+        Rails.logger.warn("ArgumentError in changelog: #{change.to_yaml}")
       rescue StandardError => ex
         raise ex unless ex.message.include?('BinaryUploader')
       end
