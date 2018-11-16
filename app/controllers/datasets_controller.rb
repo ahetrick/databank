@@ -28,7 +28,7 @@ class DatasetsController < ApplicationController
   skip_load_and_authorize_resource :only => :confirmation_message
   skip_load_and_authorize_resource :only => :validate_change2published
 
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :request_review, :reserve_doi, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message, :get_new_token, :resend_to_medusa]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :request_review, :reserve_doi, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message, :get_new_token, :send_to_medusa]
 
   @@num_box_ingest_deamons = 10
 
@@ -1332,7 +1332,8 @@ class DatasetsController < ApplicationController
   end
 
   def send_to_medusa
-    MedusaIngest.send_dataset_to_medusa(@dataset, "na")
+    MedusaIngest.send_dataset_to_medusa(@dataset)
+    render json: {status: :ok} and return
   end
 
   def review_deposit_agreement
