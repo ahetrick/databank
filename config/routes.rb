@@ -84,7 +84,7 @@ Rails.application.routes.draw do
   get '/datasets/:id/download_plaintext_citation', to: 'datasets#download_plaintext_citation'
   get '/datasets/:id/download_plaintext_citation', to: 'datasets#download_plaintext_citation'
   get '/datasets/:id/download_box_file/:box_file_id', to: 'datasets#download_box_file'
-  post '/datasets/:id/send_to_medusa', to: 'datasets#send_to_medusa'
+  post '/datasets/:id/send_to_medusa', to: 'datasets#send_to_medusa', defaults: {format: 'json'}
 
   post 'api/dataset/:dataset_key/upload', to: 'api_dataset#upload', defaults: {format: 'json'}
   post 'api/dataset/:dataset_key/datafile', to: 'api_dataset#datafile', defaults: {format: 'json'}
