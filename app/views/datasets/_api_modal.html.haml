@@ -29,7 +29,7 @@
 
               %p
                 Download our sample python client
-                %a(href="#{IDB_CONFIG[:root_url_text]}/illinois_data_bank_datafile.py" target="_blank" ) illinois_data_bank_datafile.py
+                %a(href="#{IDB_CONFIG[:root_url_text]}/databank_api_client_v2.py" target="_blank" ) databank_api_client_v2.py
 
               %p
                 Requires recent version of
@@ -39,13 +39,18 @@
               %p Required Modules
               %pre
                 %code
-                  = simple_format("pip install docopt\npip install requests\npip install urllib3[secure]")
+                  = simple_format("pip install tuspy\npip install requests\npip install urllib3[secure]")
 
               %p Copy and paste this code example. Just change "myfile.csv" to your own data file's name.
               .command-to-copy
                 %pre
                   %code
-                    ="python illinois_data_bank_datafile.py #{@dataset.key} [TOKEN] #{IDB_CONFIG[:root_url_text].include?("dev") ? 'development':''} myfile.csv "
+                    -if IDB_CONFIG[:root_url_text].include?("dev")
+                      ="python databank_api_client.py #{@dataset.key} [TOKEN] myfile.csv development"
+                    -elsif IDB_CONFIG[:root_url_text].include?("aws")
+                      ="python databank_api_client.py #{@dataset.key} [TOKEN] myfile.csv aws_test"
+                    -else
+                      ="python databank_api_client.py #{@dataset.key} [TOKEN] myfile.csv "
 
               %p
                 For more help, and for notes on using this script on

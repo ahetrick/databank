@@ -794,11 +794,16 @@ function setTokenExamples(upload_token, token_expiration){
 
     if(window.location.href.indexOf("dev") > -1) {
 
-        $('.command-to-copy').html("<pre><code>python illinois_data_bank_datafile.py "+ dataset_key +" "+ upload_token +" myfile.csv development</code></pre>");
+        $('.command-to-copy').html("<pre><code>python databank_api_client_v2.py "+ dataset_key +" "+ upload_token +" myfile.csv development</code></pre>");
         $('.curl-to-copy').html("<pre><code>curl -F &quot;binary=@my_datafile.csv&quot; -H &quot;Authorization: Token token=" + upload_token + "&quot; -H &quot;Transfer-Encoding: chunked&quot; -X POST https://rds-dev.library.illinois.edu/api/dataset/"+ dataset_key +"/datafile -o output.txt -k</code></pre>");
-    }else {
+        
+    } else if(window.location.href.indexOf("aws") > -1) {
 
-        $('.command-to-copy').html("<pre><code>python illinois_data_bank_datafile.py "+ dataset_key +" "+ upload_token +" myfile.csv</code></pre>");
+        $('.command-to-copy').html("<pre><code>python databank_api_client_v2.py "+ dataset_key +" "+ upload_token +" myfile.csv aws_test</code></pre>");
+        $('.curl-to-copy').html("<pre><code>curl -F &quot;binary=@my_datafile.csv&quot; -H &quot;Authorization: Token token=" + upload_token + "&quot; -H &quot;Transfer-Encoding: chunked&quot; -X POST https://aws-databank-alb.library.illinois.edu/api/dataset/"+ dataset_key +"/datafile -o output.txt</code></pre>");
+    } else {
+
+        $('.command-to-copy').html("<pre><code>python databank_api_client_v2.py "+ dataset_key +" "+ upload_token +" myfile.csv</code></pre>");
         $('.curl-to-copy').html("<pre><code>curl -F &quot;binary=@my_datafile.csv&quot; -H &quot;Authorization: Token token=" + upload_token + "&quot; -H &quot;Transfer-Encoding: chunked&quot; -X POST https://databank.illinois.edu/api/dataset/" + dataset_key + "/datafile -o output.txt</code></pre>");
     }
 }
