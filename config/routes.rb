@@ -10,7 +10,6 @@ Rails.application.routes.draw do
   #mount API::Base => '/api'
 
   resources :nested_items
-  get '/featured_researchers/feature_none', to: 'featured_researchers#feature_none'
 
   get '/researcher_spotlights', to: 'featured_researchers#index'
 
@@ -18,6 +17,7 @@ Rails.application.routes.draw do
     member do
       get 'preview'
       get 'feature'
+      get 'show'
     end
   end
 

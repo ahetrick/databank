@@ -92,6 +92,7 @@ class Ability
       can :search, Dataset
       can :recordtext, Dataset
       can :temporary_error, Dataset
+      can :show, FeaturedResearcher
 
 
     end

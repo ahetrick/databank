@@ -20,7 +20,6 @@ class FeaturedResearchersController < ApplicationController
   # GET /featured_researchers/1
   # GET /featured_researchers/1.json
   def show
-    render :preview
   end
 
   def preview
