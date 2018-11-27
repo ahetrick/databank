@@ -104,7 +104,7 @@
                                    create_response = requests.post(create_endpoint,
                                                                    headers={'Authorization': 'Token token=' + token},
                                                                    data={'filename': filename, 'tus_url': tus_url, 'size': size,
-                                                                         'dataset_key': dataset_key}, verify=False)
+                                                                         'dataset_key': dataset_key}, verify=True)
                                    print(create_response.text)
 
 
