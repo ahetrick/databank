@@ -17,9 +17,10 @@ Rails.application.routes.draw do
     member do
       get 'preview'
       get 'feature'
-      get 'show'
     end
   end
+
+  get '/featured_researchers/:id', to: 'feaatured_researchers#show'
 
   get '/datasets/download_citation_report', to: 'datasets#download_citation_report'
 
