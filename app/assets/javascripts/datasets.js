@@ -796,7 +796,7 @@ function setTokenExamples(upload_token, token_expiration){
 
         $('.command-to-copy').html("<pre><code>python databank_api_client_v2.py "+ dataset_key +" "+ upload_token +" myfile.csv development</code></pre>");
         $('.curl-to-copy').html("<pre><code>curl -F &quot;binary=@my_datafile.csv&quot; -H &quot;Authorization: Token token=" + upload_token + "&quot; -H &quot;Transfer-Encoding: chunked&quot; -X POST https://rds-dev.library.illinois.edu/api/dataset/"+ dataset_key +"/datafile -o output.txt -k</code></pre>");
-        
+
     } else if(window.location.href.indexOf("aws") > -1) {
 
         $('.command-to-copy').html("<pre><code>python databank_api_client_v2.py "+ dataset_key +" "+ upload_token +" myfile.csv aws_test</code></pre>");

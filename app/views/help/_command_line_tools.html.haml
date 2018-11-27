@@ -50,7 +50,7 @@
 
           %p
             Download our sample python client
-            %a(href="#{IDB_CONFIG[:root_url_text]}/illinois_data_bank_datafile.py" target="_blank" ) illinois_data_bank_datafile.py
+            %a(href="#{IDB_CONFIG[:root_url_text]}/databank_api_client_v2.py" target="_blank" ) databank_api_client_v2.py
 
           %p
             Requires recent version of
@@ -59,7 +59,7 @@
             %em works on files up to 2 TB.
           %p Required Modules
           %pre
-            %code pip install docopt
+            %code pip install tuspy
           %pre
             %code pip install requests
           %pre
@@ -73,7 +73,7 @@
           .command-to-copy
             %pre
               %code
-                ="python illinois_data_bank_datafile.py [DATASET_IDENTIFIER] [TOKEN] [SYSTEM] [FILE_TO_UPLOAD] "
+                ="python databank_api_client_v2.py [DATASET_IDENTIFIER] [TOKEN] [SYSTEM] [FILE_TO_UPLOAD] "
 
 
           %p Arguments:
@@ -227,17 +227,14 @@
           .indent
 
             %p
-              The complex protocol, used by the sample python client above, requires several coordinated calls, but supports files
+              The complex protocol, used by the sample python client above, requires a tus protocal client, but supports files
               %em up to 2TB
               in size, to an existing draft dataset with an authentication token and dataset key as described above.
             %p
               An example of using the complex protocol in a python script can be found on GitHub at
               =succeed(".") do
                 %a(href="https://github.com/medusa-project/databank-client" target="_blank" ) https://github.com/medusa-project/databank-client
-            %p
-              Detailed documenatation is available in
-              =succeed(".") do
-                %a(href="/Illinois_Data_Bank_upload.pdf" target="_blank" ) Illinois_Data_Bank_upload.pdf
+
             %p
               For more help,
               =succeed(".") do
