@@ -37,14 +37,16 @@
           = @featured_researcher.bio.html_safe
 
         .featured-buttons
-          %button(type="button" class="btn btn-primary" onclick="window.open('#{@featured_researcher.dataset_url}')" )
-            %span(class="glyphicon glyphicon-tasks" )
-            &nbsp;
-            dataset
-          %button(type="button" class="btn btn-primary" onclick="window.open('#{@featured_researcher.article_url}')" )
-            %span(class="glyphicon glyphicon-file" )
-            &nbsp;
-            article
+          -if featured_researcher.dataset_url && featured_researcher.dataset_url != ''
+            %button(type="button" class="btn btn-primary btn-block" onclick="window.open('#{featured_researcher.dataset_url}')" )
+              %span(class="glyphicon glyphicon-tasks" )
+              &nbsp;
+              dataset
+          -if featured_researcher.article_url && featured_researcher.article_url != ''
+            %button(type="button" class="btn btn-primary btn-block" onclick="window.open('#{featured_researcher.article_url}')" )
+              %span(class="glyphicon glyphicon-file" )
+              &nbsp;
+              article
 
         .featured-comment
           %strong
