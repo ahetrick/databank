@@ -5,7 +5,7 @@
   -if @featured_researchers
 
     - @featured_researchers.each do |featured_researcher|
-      = render partial: 'individual'
+      = render 'individual', featured_researcher:featured_researcher
       %hr
 
 -if(can? :manage, FeaturedResearcher)

@@ -22,14 +22,16 @@
         = featured_researcher.testimonial.html_safe
 
   .col-md-2
-    %button(type="button" class="btn btn-primary btn-block" onclick="window.open('#{featured_researcher.dataset_url}')" )
-      %span(class="glyphicon glyphicon-tasks" )
-      &nbsp;
-      dataset
-    %button(type="button" class="btn btn-primary btn-block" onclick="window.open('#{featured_researcher.article_url}')" )
-      %span(class="glyphicon glyphicon-file" )
-      &nbsp;
-      article
+    -if featured_researcher.dataset_url && featured_researcher.dataset_url != ''
+      %button(type="button" class="btn btn-primary btn-block" onclick="window.open('#{featured_researcher.dataset_url}')" )
+        %span(class="glyphicon glyphicon-tasks" )
+        &nbsp;
+        dataset
+    -if featured_researcher.article_url && featured_researcher.article_url != ''
+      %button(type="button" class="btn btn-primary btn-block" onclick="window.open('#{featured_researcher.article_url}')" )
+        %span(class="glyphicon glyphicon-file" )
+        &nbsp;
+        article
   .col-md-2
     -if(can? :manage, featured_researcher)
       .curator-only
