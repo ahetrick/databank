@@ -10,7 +10,7 @@
   .col-md-6
     %h4
       %strong
-        =link_to featured_researcher_path, featured_researcher.name
+        =link_to featured_researcher.name, featured_researcher_path(featured_researcher)
     = featured_researcher.bio.html_safe
 
     .featured-comment
