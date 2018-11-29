@@ -102,7 +102,7 @@ function approve_deckfile(deckfile_id){
         datatype: 'json',
         success: function(data) {
 
-            console.log(data);
+            //console.log(data);
 
             var maxId = Number($('#datafile_index_max').val());
             var newId = 1;
@@ -160,7 +160,7 @@ function create_from_remote_unknown_size(){
         datatype: 'json',
         success: function (data) {
 
-            console.log(data);
+            //console.log(data);
 
             var maxId = Number($('#datafile_index_max').val());
             var newId = 1;
