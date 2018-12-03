@@ -484,20 +484,22 @@ function uploadSingleFile(file, i){
         onProgress: function(bytesUploaded, bytesTotal) {
             var percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
             $('#progressbar_' + fileId).css("width", percentage + "%")
-            console.log(bytesUploaded, bytesTotal, percentage + "%")
+            //console.log(bytesUploaded, bytesTotal, percentage + "%")
         },
         onSuccess: function() {
 
-            var ajax = new XMLHttpRequest();
-            ajax.addEventListener("load", function (e) {
+            //console.log("inside upload onsuccess");
 
-                console.log(event.target.responseText);
+            var ajax = new XMLHttpRequest();
+            ajax.addEventListener("load", function (event) {
+
+                //console.log(event.target.responseText);
 
                 var response = JSON.parse(event.target.responseText);
 
                 var newFile = response.files[0];
 
-                console.log(newFile.name);
+                //console.log(newFile.name);
 
                 $("#status_" + fileId).text(event.target.responseText);
                 $('#progressbar_' + fileId).css("width", "100%");
