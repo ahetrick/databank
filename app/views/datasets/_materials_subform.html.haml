@@ -43,7 +43,10 @@
                   =ff.hidden_field :datacite_list
                   - dataciteArr = nil
                   - if material.datacite_list && material.datacite_list != ''
-                    - dataciteArr = material.datacite_list.split(',')
+
+                    -dataciteArr = material.datacite_list.split(',')
+                    -dataciteArr.map! {|item| item.strip}
+
                   - if dataciteArr && dataciteArr.include?(Databank::Relationship::SUPPLEMENT_TO)
                     %input(type="checkbox" name="datacite_relation" value="#{Databank::Relationship::SUPPLEMENT_TO}" class="material_checkbox_#{i}" onchange="handle_relationship_box(#{i})" checked )
                       = Databank::Relationship::SUPPLEMENT_TO
