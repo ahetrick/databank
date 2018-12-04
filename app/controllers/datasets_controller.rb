@@ -838,7 +838,7 @@ class DatasetsController < ApplicationController
 
             @dataset.save
             # send_dataset_to_medusa only sends metadata files unless old_publication_state is draft
-            MedusaIngest.send_dataset_to_medusa(@dataset, old_publication_state)
+            MedusaIngest.send_dataset_to_medusa(@dataset)
             if Dataset.post_doi_metadata(@dataset, current_user)
 
               format.html { redirect_to dataset_path(@dataset.key)}
