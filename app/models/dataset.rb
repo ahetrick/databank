@@ -783,6 +783,7 @@ class Dataset < ActiveRecord::Base
   end
 
   def display_changelog
+
     changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) OR (associated_id=?)", 'Dataset', self.id, self.id)
 
     medusaChangesArr = Array.new

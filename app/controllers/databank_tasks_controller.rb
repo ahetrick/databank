@@ -16,4 +16,14 @@ class DatabankTasksController < ApplicationController
     @databank_tasks = DatabankTask.get_pending_tasks
   end
 
+  def update_status
+    if DatabankTask.set_remote_task_status(params[:id], params[:status])
+      render json: {status: :ok}
+    else
+      render json: {status: :unprocessable_entity}
+    end
+  end
+
+
+
 end

@@ -83,7 +83,7 @@ class DatabankTask
 
     response = RestClient.patch endpoint, payload
 
-    Rails.logger.warn("Problem setting status to #{new_status} for task #{task_id}.") unless response.code == 200
+    return response.code == 200
 
   end
 
@@ -98,9 +98,6 @@ class DatabankTask
     else
       Rails.logger.warn("Problem getting tasks for task #{task_id}.")
     end
-
-
-
 
   end
 
