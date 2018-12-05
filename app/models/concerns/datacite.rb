@@ -67,7 +67,7 @@ module Datacite
 
     def post_doi_metadata(dataset, current_user)
 
-      return false unless Rails.env.production? && !dataset.is_test
+      return false if dataset.is_test
 
       raise("cannot create or update doi for incomplete dataset") unless Dataset.completion_check(dataset, current_user) == 'ok'
 

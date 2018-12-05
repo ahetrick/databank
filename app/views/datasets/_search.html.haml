@@ -8,7 +8,7 @@
       %br
       .input-group
 
-        -if params.has_key?('q') && params['q'].length > 0
+        -if params.has_key?('q') && params['q'] && params['q'].length > 0
           %input(type="text" class="form-control q" name="q" aria-label="search input box" value="#{params['q']}" )
         -else
           %input(type="text" class="form-control q" name="q" aria-label="search input box" placeholder="search for datasets" )
