@@ -48,6 +48,7 @@ module Datacite
         response = sock.start { |http| http.request(request) }
 
       rescue Net::HTTPBadResponse, Net::HTTPServerError => error
+        Rails.logger.warn "bad or error response to datacite interaction"
         Rails.logger.warn error.message
         Rails.logger.warn response.body
         return false
