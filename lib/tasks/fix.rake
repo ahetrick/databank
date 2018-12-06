@@ -74,6 +74,18 @@ namespace :fix do
 
   end
 
+  desc 'reset peek_type of none to nil for re-evaluation'
+  task :reset_non_peek_info => :environment do
+
+    datafiles = Datafile.where(peek_type: PeekType::NONE)
+
+    datafiles.each do |datafile|
+      datafile.peek_type = nil
+      datafile.save
+    end
+
+  end
+
 
   desc 'find invalid datafiles'
   task :find_invalid_datafiles => :environment do
