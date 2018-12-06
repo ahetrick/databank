@@ -6,19 +6,36 @@ include Databank
 
 namespace :databank_tasks do
 
-  desc 'create tasks for datafiles that do not have one'
-  task :create_tasks => :environment do
-    Datafile.where(task_id: nil).each do |datafile|
-      datafile.initiate_processing_task
-    end
-  end
-
   desc 'remove tasks from datafiles'
   task :remove_all_tasks => :environment do
     Datafile.all.each do |datafile|
       datafile.task_id = nil
       datafile.save
     end
+  end
+
+  desc 'set missing peek_info from mime_type and size'
+  task :set_missing_peek_info => :environment do
+
+    datafiles = Datafile.where(peek_type: nil)
+
+    datafiles.each do |datafile|
+      initial_peek_type = Datafile.peek_type_from_mime(datafile.mime_type, datafile.binary_size)
+      if initial_peek_type
+        datafile.peek_type = initial_peek_type
+        if initial_peek_type == PeekType::ALL_TEXT
+          datafile.peek_text = Application.storage_manager.draft_root.as_string(tus_key)
+        elsif initial_peek_type == PeekType::PART_TEXT
+          datafile.peek_text = datafile.get_part_peek_text
+        elsif initial_peek_type == PeekType::LISTING
+          datafile.peek_type = PeekType::NONE
+          datafile.initiate_processing_task
+        end
+      else
+        datafile.peek_type = PeekType::NONE
+      end
+    end
+
   end
 
   desc 'import nested items and peek info from complete tasks'

@@ -36,8 +36,6 @@ namespace :fix do
       rescue StandardError => ex
         puts ex.message
       end
-
-
     end
   end
 
@@ -46,14 +44,33 @@ namespace :fix do
 
     Datafile.all.each do |datafile|
       datasets = Dataset.where(id: datafile.dataset_id)
-
       if datasets.count == 0
-
         datafile.destroy
-
       end
-
     end
+  end
+
+  desc 'correct peek type for unsupported image mime types'
+  task :correct_image_peek => :environment do
+
+    supported_image_subtypes = ['jp2', 'jpeg', 'dicom', 'gif', 'png', 'bmp']
+
+    image_datafiles = Datafile.where(peek_type: PeekType::IMAGE)
+
+    image_datafiles.each do |datafile|
+      if datafile.mime_type && datafile.length > 0 && datafile.mime_type.include?('/')
+        mime_parts = mime_type.split("/")
+
+        unless supported_image_subtypes.include? (subtype)
+          datafile.peek_type = PeekType::NONE
+          datafile.save
+        end
+      else
+        peek_type = PeekType::NONE
+        datafile.save
+      end
+    end
+
   end
 
 

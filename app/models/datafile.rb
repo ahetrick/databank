@@ -16,6 +16,9 @@ class Datafile < ActiveRecord::Base
 
   WEB_ID_LENGTH = 5
 
+  ALLOWED_CHAR_NUM = 1024 * 8
+  ALLOWED_DISPLAY_BYTES = ALLOWED_CHAR_NUM * 8
+
   before_create { self.web_id ||= generate_web_id }
 
   before_destroy :destroy_job
@@ -307,6 +310,87 @@ class Datafile < ActiveRecord::Base
     if self.job
       self.job.destroy
     end
+  end
+
+  def self.peek_type_from_mime(mime_type, num_bytes)
+=begin
+    class PeekType
+      ALL_TEXT = 'all_text'
+      PART_TEXT = 'part_text'
+      IMAGE = 'image'
+      MICROSOFT = 'microsoft'
+      PDF = 'pdf'
+      LISTING = 'listing'
+      NONE = 'none'
+    end
+=end
+
+    return PeekType::NONE unless mime_type && mime_type.length > 0
+
+    mime_parts = mime_type.split("/")
+
+    return PeekType::NONE unless mime_parts.length == 2
+
+    text_subtypes = ['csv', 'xml', 'x-sh', 'x-javascript', 'json', 'r', 'rb']
+
+    supported_image_subtypes = ['jp2', 'jpeg', 'dicom', 'gif', 'png', 'bmp']
+
+    nonzip_archive_subtypes = ['x-7z-compressed', 'x-tar']
+
+    pdf_subtypes = ['pdf', 'x-pdf']
+
+    microsoft_subtypes = ['msword',
+                          'vnd.openxmlformats-officedocument.wordprocessingml.document',
+                          'vnd.openxmlformats-officedocument.wordprocessingml.template',
+                          'vnd.ms-word.document.macroEnabled.12',
+                          'vnd.ms-word.template.macroEnabled.12',
+                          'vnd.ms-excel',
+                          'vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                          'vnd.openxmlformats-officedocument.spreadsheetml.template',
+                          'vnd.ms-excel.sheet.macroEnabled.12',
+                          'vnd.ms-excel.template.macroEnabled.12',
+                          'vnd.ms-excel.addin.macroEnabled.12',
+                          'vnd.ms-excel.sheet.binary.macroEnabled.12',
+                          'vnd.ms-powerpoint',
+                          'vnd.openxmlformats-officedocument.presentationml.presentation',
+                          'vnd.openxmlformats-officedocument.presentationml.template',
+                          'vnd.openxmlformats-officedocument.presentationml.slideshow',
+                          'vnd.ms-powerpoint.addin.macroEnabled.12',
+                          'vnd.ms-powerpoint.presentation.macroEnabled.12',
+                          'vnd.ms-powerpoint.template.macroEnabled.12',
+                          'vnd.ms-powerpoint.slideshow.macroEnabled.12']
+
+    subtype = mime_parts[1].downcase
+
+    if mime_parts[0] == 'text' || text_subtypes.include?(subtype)
+      if num_bytes > ALLOWED_DISPLAY_BYTES
+        return PeekType::PART_TEXT
+      else
+        return PeekType::ALL_TEXT
+      end
+    elsif mime_parts[0] == 'image'
+      if supported_image_subtypes.include?(subtype)
+        return PeekType::IMAGE
+      else
+        return PeekType::NONE
+      end
+    elsif microsoft_subtypes.include?(subtype)
+      return PeekType::MICROSOFT
+    elsif pdf_subtypes.include?(subtype)
+      return PeekType::PDF
+    elsif subtype == 'zip'
+      return PeekType::LISTING
+    elsif nonzip_archive_subtypes.include?(subtype)
+      return PeekType::LISTING
+    else
+      return PeekType::NONE
+    end
+
+  end
+
+  def get_part_peek_text
+    first_bytes = Application.storage_manager.draft_root.get_bytes(tus_key, 0, ALLOWED_DISPLAY_BYTES)
+    first_bytes.gets
   end
 
   ##
