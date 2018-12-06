@@ -378,7 +378,7 @@ class Datafile < ActiveRecord::Base
   end
 
   def get_part_peek_text
-    first_bytes = Application.storage_manager.draft_root.get_bytes(tus_key, 0, ALLOWED_DISPLAY_BYTES)
+    first_bytes = self.current_root.get_bytes(self.storage_key, 0, ALLOWED_DISPLAY_BYTES)
     first_bytes.gets
   end
 
