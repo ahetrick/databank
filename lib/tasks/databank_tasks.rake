@@ -24,10 +24,16 @@ namespace :databank_tasks do
       if initial_peek_type
         datafile.peek_type = initial_peek_type
         if initial_peek_type == PeekType::ALL_TEXT
-          #datafile.peek_text = Application.storage_manager.draft_root.as_string(tus_key)
-
+          datafile.peek_text = datafile.current_root.as_string(datafile.storage_key)
         elsif initial_peek_type == PeekType::PART_TEXT
           datafile.peek_text = datafile.get_part_peek_text
+        elsif initial_peek_type == PeekType::MICROSOFT
+          datafile.peek_type = initial_peek_type
+        elsif initial_peek_type == PeekType::PDF
+          datafile.peek_type = initial_peek_type
+        elsif initial_peek_type == PeekType::IMAGE
+          datafile.peek_type = initial_peek_type
+
         elsif initial_peek_type == PeekType::LISTING
           datafile.peek_type = PeekType::NONE
           datafile.initiate_processing_task

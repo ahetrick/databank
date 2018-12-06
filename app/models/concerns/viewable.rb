@@ -177,28 +177,4 @@ module Viewable
     end
   end
 
-  def mime_type
-    if self.bytestream_name == ""
-      return nil
-    else
-      filename_split = self.bytestream_name.split(".")
-      extension = filename_split.last
-      case extension
-        when 'png'
-          return 'image/png'
-        when 'jpg', 'jpeg', 'jpg2'
-          return 'image/jpeg'
-        when 'bmp'
-          return 'image/bmp'
-        when 'gif'
-          return 'image/gif'
-        when 'pdf'
-          return 'application/pdf'
-        else
-          return 'application/octet-stream'
-      end
-    end
-  end
-
-
 end

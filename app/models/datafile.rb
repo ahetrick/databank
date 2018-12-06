@@ -313,17 +313,6 @@ class Datafile < ActiveRecord::Base
   end
 
   def self.peek_type_from_mime(mime_type, num_bytes)
-=begin
-    class PeekType
-      ALL_TEXT = 'all_text'
-      PART_TEXT = 'part_text'
-      IMAGE = 'image'
-      MICROSOFT = 'microsoft'
-      PDF = 'pdf'
-      LISTING = 'listing'
-      NONE = 'none'
-    end
-=end
 
     return PeekType::NONE unless mime_type && mime_type.length > 0
 
