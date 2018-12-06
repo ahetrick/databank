@@ -103,7 +103,7 @@ class DatafilesController < ApplicationController
       send_file path, filename: @datafile.binary_name, type: @datafile.mime_type || ‘application/octet-stream’
 
     else
-      url = Application.aws_signer.presigned_url(:get_object, bucket: @datafile.storage_root_bucket, key: @datafile.storage_key)
+      url = Application.aws_signer.presigned_url(:get_object, bucket: @datafile.storage_root_bucket, key: @datafile.storage_key_with_prefix)
       redirect_to url
     end
   end
