@@ -58,7 +58,7 @@ namespace :fix do
     image_datafiles = Datafile.where(peek_type: PeekType::IMAGE)
 
     image_datafiles.each do |datafile|
-      if datafile.mime_type && datafile.length > 0 && datafile.mime_type.include?('/')
+      if datafile.mime_type && datafile.mime_type.length > 0 && datafile.mime_type.include?('/')
         mime_parts = mime_type.split("/")
 
         unless supported_image_subtypes.include? (subtype)
