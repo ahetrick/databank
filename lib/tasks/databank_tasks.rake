@@ -20,7 +20,9 @@ namespace :databank_tasks do
     datafiles = Datafile.where(peek_type: nil)
 
     datafiles.each do |datafile|
+      puts "processing #{datafile.binary_name}"
       initial_peek_type = Datafile.peek_type_from_mime(datafile.mime_type, datafile.binary_size)
+      puts initial_peek_type
       if initial_peek_type
         datafile.peek_type = initial_peek_type
         if initial_peek_type == PeekType::ALL_TEXT

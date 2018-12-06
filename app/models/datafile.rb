@@ -379,7 +379,14 @@ class Datafile < ActiveRecord::Base
 
   def get_part_peek_text
     first_bytes = self.current_root.get_bytes(self.storage_key, 0, ALLOWED_DISPLAY_BYTES)
-    first_bytes.gets
+    part_text_string = first_bytes.gets
+
+    puts "inside get part peek text"
+    puts "part_text_string class: #{part_text_string.class}"
+    puts "part_text_string encoding: #{part_text_string.encoding}"
+
+    return part_text_string
+
   end
 
   ##
