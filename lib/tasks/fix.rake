@@ -60,6 +60,7 @@ namespace :fix do
     image_datafiles.each do |datafile|
       if datafile.mime_type && datafile.mime_type.length > 0 && datafile.mime_type.include?('/')
         mime_parts = datafile.mime_type.split("/")
+        subtype = mime_parts[1].downcase
 
         unless supported_image_subtypes.include? (subtype)
           datafile.peek_type = PeekType::NONE
