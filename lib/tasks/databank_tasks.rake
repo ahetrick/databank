@@ -21,7 +21,7 @@ namespace :databank_tasks do
     datafiles = Datafile.where(peek_type: nil)
 
     datafiles.each do |datafile|
-      puts "processing #{datafile.binary_name}"
+      #puts "processing #{datafile.binary_name}"
       if !datafile.mime_type || datafile.mime_type == ''
         mime_guesses_set = MIME::Types.type_for(datafile.binary_name.downcase)
         if mime_guesses_set && mime_guesses_set.length > 0
@@ -34,7 +34,7 @@ namespace :databank_tasks do
 
       initial_peek_type = Datafile.peek_type_from_mime(datafile.mime_type, datafile.binary_size)
 
-      puts initial_peek_type
+      #puts initial_peek_type
       if initial_peek_type
         datafile.peek_type = initial_peek_type
         if initial_peek_type == PeekType::ALL_TEXT
