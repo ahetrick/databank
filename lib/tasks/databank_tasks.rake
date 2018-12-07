@@ -1,6 +1,7 @@
 require 'rake'
 require 'bunny'
 require 'json'
+require 'mime/types'
 
 include Databank
 
@@ -21,7 +22,17 @@ namespace :databank_tasks do
 
     datafiles.each do |datafile|
       puts "processing #{datafile.binary_name}"
+      if !datafile.mime_type || datafile.mime_type == ''
+        mime_guesses = MIME::Types.type_for(datafile.binary_name.downcase).first.content_type
+        if mime_guesses.length > 0
+          binary.mime_type = mime_guesses.first.content_type
+        else
+          binary.mime_type = 'application/octet-stream'
+        end
+      end
+
       initial_peek_type = Datafile.peek_type_from_mime(datafile.mime_type, datafile.binary_size)
+
       puts initial_peek_type
       if initial_peek_type
         datafile.peek_type = initial_peek_type
