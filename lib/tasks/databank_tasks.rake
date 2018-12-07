@@ -26,9 +26,9 @@ namespace :databank_tasks do
       if initial_peek_type
         datafile.peek_type = initial_peek_type
         if initial_peek_type == PeekType::ALL_TEXT
-          datafile.peek_text = datafile.current_root.as_string(datafile.storage_key)
+          datafile.peek_text = datafile.get_all_text_peek
         elsif initial_peek_type == PeekType::PART_TEXT
-          datafile.peek_text = datafile.get_part_peek_text
+          datafile.peek_text = datafile.get_part_text_peek
         elsif initial_peek_type == PeekType::MICROSOFT
           datafile.peek_type = initial_peek_type
         elsif initial_peek_type == PeekType::PDF
@@ -44,7 +44,14 @@ namespace :databank_tasks do
         datafile.peek_type = PeekType::NONE
       end
 
-      datafile.save
+      begin
+        datafile.save
+      rescue Encoding::UndefinedConversionError, Encoding::InvalidByteSequenceError
+        datafile.peek_type = PeekType::NONE
+        datafile.peek_text = nil
+        datafile.save
+      end
+
 
     end
 

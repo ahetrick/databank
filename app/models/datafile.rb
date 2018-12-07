@@ -377,7 +377,7 @@ class Datafile < ActiveRecord::Base
 
   end
 
-  def get_part_peek_text
+  def get_part_text_peek
     first_bytes = self.current_root.get_bytes(self.storage_key, 0, ALLOWED_DISPLAY_BYTES)
     part_text_string = first_bytes.gets
 
@@ -385,10 +385,24 @@ class Datafile < ActiveRecord::Base
     puts "part_text_string class: #{part_text_string.class}"
     puts "part_text_string encoding: #{part_text_string.encoding}"
 
-    return part_text_string
-
+    if part_text_string.encoding == Encoding::UTF_8
+      return part_text_string
+    else
+      part_text_string = part_text_string.encode("UTF-8",{invalid: :replace, undef: :replace})
+      return part_text_string
+    end
   end
 
+  def get_all_text_peek
+    all_text_string = current_root.as_string(datafile.storage_key)
+    if part_text_string.encoding == Encoding::UTF_8
+      return all_text_string
+    else
+      all_text_string = part_text_string.encode("UTF-8",{invalid: :replace, undef: :replace})
+      return all_text_string
+    end
+  end
+  
   ##
   # Generates a guaranteed-unique web ID, of which there are
   # 36^WEB_ID_LENGTH available.
