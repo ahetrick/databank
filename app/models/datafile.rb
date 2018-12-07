@@ -378,8 +378,11 @@ class Datafile < ActiveRecord::Base
   end
 
   def get_part_text_peek
-    begin
 
+    return nil unless self.current_root.exists?(self.storage_key)
+
+    begin
+      
       part_text_string = nil
 
       if IDB_CONFIG[:aws][:s3_mode]
@@ -390,7 +393,7 @@ class Datafile < ActiveRecord::Base
           part_text_string = file.read(ALLOWED_DISPLAY_BYTES)
         end
       end
-      
+
       if part_text_string.encoding == Encoding::UTF_8
         return part_text_string
       else
@@ -403,6 +406,9 @@ class Datafile < ActiveRecord::Base
   end
 
   def get_all_text_peek
+
+    return nil unless self.current_root.exists?(self.storage_key)
+
     begin
       all_text_string = current_root.as_string(self.storage_key)
       if all_text_string.encoding == Encoding::UTF_8
