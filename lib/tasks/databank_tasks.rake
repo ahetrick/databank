@@ -24,6 +24,9 @@ namespace :databank_tasks do
       puts "processing #{datafile.binary_name}"
       if !datafile.mime_type || datafile.mime_type == ''
         mime_guesses_set = MIME::Types.type_for(datafile.binary_name.downcase)
+        puts mime_guesses_set
+        puts mime_guesses_set.class
+        puts mime_guesses_set.length
         if mime_guesses_set && mime_guesses_set.length > 0
           mime_guesses = mime_guesses_set.first.content_type
           if mime_guesses.length > 0
