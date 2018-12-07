@@ -378,28 +378,36 @@ class Datafile < ActiveRecord::Base
   end
 
   def get_part_text_peek
-    first_bytes = self.current_root.get_bytes(self.storage_key, 0, ALLOWED_DISPLAY_BYTES)
-    part_text_string = first_bytes.gets
+    begin
+      first_bytes = self.current_root.get_bytes(self.storage_key, 0, ALLOWED_DISPLAY_BYTES)
+      part_text_string = first_bytes.gets
 
-    puts "inside get part peek text"
-    puts "part_text_string class: #{part_text_string.class}"
-    puts "part_text_string encoding: #{part_text_string.encoding}"
+      puts "inside get part peek text"
+      puts "part_text_string class: #{part_text_string.class}"
+      puts "part_text_string encoding: #{part_text_string.encoding}"
 
-    if part_text_string.encoding == Encoding::UTF_8
-      return part_text_string
-    else
-      part_text_string = part_text_string.encode("UTF-8",{invalid: :replace, undef: :replace})
-      return part_text_string
+      if part_text_string.encoding == Encoding::UTF_8
+        return part_text_string
+      else
+        part_text_string = part_text_string.encode("UTF-8",{invalid: :replace, undef: :replace})
+        return part_text_string
+      end
+    rescue Aws::S3::Errors::NotFound
+      return nil
     end
   end
 
   def get_all_text_peek
-    all_text_string = current_root.as_string(self.storage_key)
-    if all_text_string.encoding == Encoding::UTF_8
-      return all_text_string
-    else
-      all_text_string = part_text_string.encode("UTF-8",{invalid: :replace, undef: :replace})
-      return all_text_string
+    begin
+      all_text_string = current_root.as_string(self.storage_key)
+      if all_text_string.encoding == Encoding::UTF_8
+        return all_text_string
+      else
+        all_text_string = part_text_string.encode("UTF-8",{invalid: :replace, undef: :replace})
+        return all_text_string
+      end
+    rescue Aws::S3::Errors::NotFound
+      return nil
     end
   end
 
