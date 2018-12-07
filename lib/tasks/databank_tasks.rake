@@ -23,12 +23,18 @@ namespace :databank_tasks do
     datafiles.each do |datafile|
       puts "processing #{datafile.binary_name}"
       if !datafile.mime_type || datafile.mime_type == ''
-        mime_guesses = MIME::Types.type_for(datafile.binary_name.downcase).first.content_type
-        if mime_guesses.length > 0
-          binary.mime_type = mime_guesses.first.content_type
+        mime_guesses_set = MIME::Types.type_for(datafile.binary_name.downcase)
+        if mime_guesses_set && mime_guesses_set.length > 0
+          mime_guesses = mime_guesses_set.first.content_type
+          if mime_guesses.length > 0
+            binary.mime_type = mime_guesses.first.content_type
+          else
+            binary.mime_type = 'application/octet-stream'
+          end
         else
           binary.mime_type = 'application/octet-stream'
         end
+
       end
 
       initial_peek_type = Datafile.peek_type_from_mime(datafile.mime_type, datafile.binary_size)
