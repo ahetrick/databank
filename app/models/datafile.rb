@@ -403,7 +403,7 @@ class Datafile < ActiveRecord::Base
       if all_text_string.encoding == Encoding::UTF_8
         return all_text_string
       else
-        all_text_string = part_text_string.encode("UTF-8",{invalid: :replace, undef: :replace})
+        all_text_string = all_text_string.encode("UTF-8",{invalid: :replace, undef: :replace})
         return all_text_string
       end
     rescue Aws::S3::Errors::NotFound
