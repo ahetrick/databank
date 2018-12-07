@@ -379,7 +379,17 @@ class Datafile < ActiveRecord::Base
 
   def get_part_text_peek
     begin
-      first_bytes = self.current_root.get_bytes(self.storage_key, 0, ALLOWED_DISPLAY_BYTES)
+
+      first_bytes = nil
+
+      if IDB_CONFIG[:aws][:s3_mode]
+        first_bytes = self.current_root.get_bytes(self.storage_key, 0, ALLOWED_DISPLAY_BYTES)
+      else
+        File.open(self.filepath) do |file|
+          first_bytes = file.read(ALLOWED_DISPLAY_BYTES)
+        end
+      end
+
       part_text_string = first_bytes.gets
 
       puts "inside get part peek text"
