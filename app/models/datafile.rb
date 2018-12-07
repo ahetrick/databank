@@ -390,13 +390,7 @@ class Datafile < ActiveRecord::Base
           part_text_string = file.read(ALLOWED_DISPLAY_BYTES)
         end
       end
-
-      part_text_string = first_bytes.gets
-
-      puts "inside get part peek text"
-      puts "part_text_string class: #{part_text_string.class}"
-      puts "part_text_string encoding: #{part_text_string.encoding}"
-
+      
       if part_text_string.encoding == Encoding::UTF_8
         return part_text_string
       else
