@@ -27,12 +27,12 @@ namespace :databank_tasks do
         if mime_guesses_set && mime_guesses_set.length > 0
           mime_guesses = mime_guesses_set.first.content_type
           if mime_guesses.length > 0
-            binary.mime_type = mime_guesses.first.content_type
+            datafile.mime_type = mime_guesses.first.content_type
           else
-            binary.mime_type = 'application/octet-stream'
+            datafile.mime_type = 'application/octet-stream'
           end
         else
-          binary.mime_type = 'application/octet-stream'
+          datafile.mime_type = 'application/octet-stream'
         end
 
       end
