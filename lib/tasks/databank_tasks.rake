@@ -46,7 +46,7 @@ namespace :databank_tasks do
 
       begin
         datafile.save
-      rescue Encoding::UndefinedConversionError, Encoding::InvalidByteSequenceError
+      rescue Encoding::UndefinedConversionError, Encoding::InvalidByteSequenceError, ArgumentError
         datafile.peek_type = PeekType::NONE
         datafile.peek_text = nil
         datafile.save

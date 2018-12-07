@@ -394,15 +394,15 @@ class Datafile < ActiveRecord::Base
   end
 
   def get_all_text_peek
-    all_text_string = current_root.as_string(datafile.storage_key)
-    if part_text_string.encoding == Encoding::UTF_8
+    all_text_string = current_root.as_string(self.storage_key)
+    if all_text_string.encoding == Encoding::UTF_8
       return all_text_string
     else
       all_text_string = part_text_string.encode("UTF-8",{invalid: :replace, undef: :replace})
       return all_text_string
     end
   end
-  
+
   ##
   # Generates a guaranteed-unique web ID, of which there are
   # 36^WEB_ID_LENGTH available.
