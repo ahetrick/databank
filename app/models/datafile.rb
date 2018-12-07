@@ -314,7 +314,7 @@ class Datafile < ActiveRecord::Base
 
   def self.peek_type_from_mime(mime_type, num_bytes)
 
-    return PeekType::NONE unless mime_type && mime_type.length > 0
+    return PeekType::NONE unless num_bytes && mime_type && mime_type.length > 0
 
     mime_parts = mime_type.split("/")
 
@@ -382,7 +382,7 @@ class Datafile < ActiveRecord::Base
     return nil unless self.current_root.exists?(self.storage_key)
 
     begin
-      
+
       part_text_string = nil
 
       if IDB_CONFIG[:aws][:s3_mode]
