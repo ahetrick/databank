@@ -25,7 +25,7 @@ namespace :databank_tasks do
       if !datafile.mime_type || datafile.mime_type == ''
         mime_guesses_set = MIME::Types.type_for(datafile.binary_name.downcase)
         if mime_guesses_set && mime_guesses_set.length > 0
-          mime_guesses = mime_guesses_set[0].content_type
+          datafile.mime_type = mime_guesses_set[0].content_type
         else
           datafile.mime_type = 'application/octet-stream'
         end
