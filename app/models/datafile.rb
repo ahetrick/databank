@@ -318,7 +318,7 @@ class Datafile < ActiveRecord::Base
 
     mime_parts = mime_type.split("/")
 
-    return PeekType::NONE unless mime_parts.length == 2
+    return Databank::PeekType::NONE unless mime_parts.length == 2
 
     text_subtypes = ['csv', 'xml', 'x-sh', 'x-javascript', 'json', 'r', 'rb']
 
@@ -353,26 +353,26 @@ class Datafile < ActiveRecord::Base
 
     if mime_parts[0] == 'text' || text_subtypes.include?(subtype)
       if num_bytes > ALLOWED_DISPLAY_BYTES
-        return PeekType::PART_TEXT
+        return Databank::PeekType::PART_TEXT
       else
-        return PeekType::ALL_TEXT
+        return Databank::PeekType::ALL_TEXT
       end
     elsif mime_parts[0] == 'image'
       if supported_image_subtypes.include?(subtype)
-        return PeekType::IMAGE
+        return Databank::PeekType::IMAGE
       else
-        return PeekType::NONE
+        return Databank::PeekType::NONE
       end
     elsif microsoft_subtypes.include?(subtype)
-      return PeekType::MICROSOFT
+      return Databank::PeekType::MICROSOFT
     elsif pdf_subtypes.include?(subtype)
-      return PeekType::PDF
+      return Databank::PeekType::PDF
     elsif subtype == 'zip'
-      return PeekType::LISTING
+      return Databank::PeekType::LISTING
     elsif nonzip_archive_subtypes.include?(subtype)
-      return PeekType::LISTING
+      return Databank::PeekType::LISTING
     else
-      return PeekType::NONE
+      return Databank::PeekType::NONE
     end
 
   end
