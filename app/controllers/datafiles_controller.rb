@@ -74,7 +74,7 @@ class DatafilesController < ApplicationController
         if initial_peek_type == Databank::PeekType::ALL_TEXT
           @datafile.peek_text = Application.storage_manager.draft_root.as_string(tus_key)
         elsif initial_peek_type == Databank::PeekType::PART_TEXT
-          @datafile.peek_text = @datafile.get_part_peek_text
+          @datafile.peek_text = @datafile.get_part_text_peek
         elsif initial_peek_type == Databank::PeekType::LISTING
           @datafile.peek_type = Databank::PeekType::NONE
           @datafile.initiate_processing_task
