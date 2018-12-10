@@ -71,16 +71,16 @@ class DatafilesController < ApplicationController
       initial_peek_type = Datafile.peek_type_from_mime(@datafile.mime_type, @datafile.binary_size)
       if initial_peek_type
         @datafile.peek_type = initial_peek_type
-        if initial_peek_type == PeekType::ALL_TEXT
+        if initial_peek_type == Databank::PeekType::ALL_TEXT
           @datafile.peek_text = Application.storage_manager.draft_root.as_string(tus_key)
-        elsif initial_peek_type == PeekType::PART_TEXT
+        elsif initial_peek_type == Databank::PeekType::PART_TEXT
           @datafile.peek_text = @datafile.get_part_peek_text
-        elsif initial_peek_type == PeekType::LISTING
-          @datafile.peek_type = PeekType::NONE
+        elsif initial_peek_type == Databank::PeekType::LISTING
+          @datafile.peek_type = Databank::PeekType::NONE
           @datafile.initiate_processing_task
         end
       else
-        @datafile.peek_type = PeekType::NONE
+        @datafile.peek_type = Databank::PeekType::NONE
       end
 
     end

@@ -37,42 +37,42 @@ namespace :databank_tasks do
       #puts initial_peek_type
       if initial_peek_type
         datafile.peek_type = initial_peek_type
-        if initial_peek_type == PeekType::ALL_TEXT
+        if initial_peek_type == Databank::PeekType::ALL_TEXT
           all_text_peek = datafile.get_all_text_peek
           if all_text_peek
             datafile.peek_text = datafile.get_all_text_peek
           else
-            datafile.peek_type = PeekType::NONE
+            datafile.peek_type = Databank::PeekType::NONE
             datafile.peek_text = nil
           end
 
-        elsif initial_peek_type == PeekType::PART_TEXT
+        elsif initial_peek_type == Databank::PeekType::PART_TEXT
           part_text_peek = datafile.get_part_text_peek
           if part_text_peek
             datafile.peek_text = datafile.get_part_text_peek
           else
-            datafile.peek_type = PeekType::NONE
+            datafile.peek_type = Databank::PeekType::NONE
             datafile.peek_text = nil
           end
-        elsif initial_peek_type == PeekType::MICROSOFT
+        elsif initial_peek_type == Databank::PeekType::MICROSOFT
           datafile.peek_type = initial_peek_type
-        elsif initial_peek_type == PeekType::PDF
+        elsif initial_peek_type == Databank::PeekType::PDF
           datafile.peek_type = initial_peek_type
-        elsif initial_peek_type == PeekType::IMAGE
+        elsif initial_peek_type == Databank::PeekType::IMAGE
           datafile.peek_type = initial_peek_type
 
-        elsif initial_peek_type == PeekType::LISTING
-          datafile.peek_type = PeekType::NONE
+        elsif initial_peek_type == Databank::PeekType::LISTING
+          datafile.peek_type = Databank::PeekType::NONE
           datafile.initiate_processing_task
         end
       else
-        datafile.peek_type = PeekType::NONE
+        datafile.peek_type = Databank::PeekType::NONE
       end
 
       begin
         datafile.save
       rescue Encoding::UndefinedConversionError, Encoding::InvalidByteSequenceError, ArgumentError
-        datafile.peek_type = PeekType::NONE
+        datafile.peek_type = Databank::PeekType::NONE
         datafile.peek_text = nil
         datafile.save
       end
@@ -96,7 +96,7 @@ namespace :databank_tasks do
           if task_hash.has_key?('peek_type')
             datafile.peek_type = task_hash['peek_type']
           else
-            datafile.peek_type = PeekType::NONE
+            datafile.peek_type = Databank::PeekType::NONE
           end
 
           if task_hash.has_key?('peek_text') && task_hash['peek_text'] != nil
@@ -107,7 +107,7 @@ namespace :databank_tasks do
 
           datafile.save
 
-          if datafile.peek_type == PeekType::LISTING
+          if datafile.peek_type == Databank::PeekType::LISTING
 
             remote_nested_items = DatabankTask.get_remote_items(datafile.task_id)
             remote_nested_items.each do |item|

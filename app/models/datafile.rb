@@ -314,7 +314,7 @@ class Datafile < ActiveRecord::Base
 
   def self.peek_type_from_mime(mime_type, num_bytes)
 
-    return PeekType::NONE unless num_bytes && mime_type && mime_type.length > 0
+    return Databank::PeekType::NONE unless num_bytes && mime_type && mime_type.length > 0
 
     mime_parts = mime_type.split("/")
 

@@ -55,7 +55,7 @@ namespace :fix do
 
     supported_image_subtypes = ['jp2', 'jpeg', 'dicom', 'gif', 'png', 'bmp']
 
-    image_datafiles = Datafile.where(peek_type: PeekType::IMAGE)
+    image_datafiles = Datafile.where(peek_type: Databank::PeekType::IMAGE)
 
     image_datafiles.each do |datafile|
       if datafile.mime_type && datafile.mime_type.length > 0 && datafile.mime_type.include?('/')
@@ -63,11 +63,11 @@ namespace :fix do
         subtype = mime_parts[1].downcase
 
         unless supported_image_subtypes.include? (subtype)
-          datafile.peek_type = PeekType::NONE
+          datafile.peek_type = Databank::PeekType::NONE
           datafile.save
         end
       else
-        peek_type = PeekType::NONE
+        peek_type = Databank::PeekType::NONE
         datafile.save
       end
     end
@@ -77,7 +77,7 @@ namespace :fix do
   desc 'reset peek_type of none to nil for re-evaluation'
   task :reset_none_peek => :environment do
 
-    datafiles = Datafile.where(peek_type: PeekType::NONE)
+    datafiles = Datafile.where(peek_type: Databank::PeekType::NONE)
 
     datafiles.each do |datafile|
       datafile.peek_type = nil
@@ -89,7 +89,7 @@ namespace :fix do
   desc 'reset peek_type of all text to nil for re-evaluation'
   task :reset_text_peek => :environment do
 
-    datafiles = Datafile.where(peek_type: PeekType::ALL_TEXT)
+    datafiles = Datafile.where(peek_type: Databank::PeekType::ALL_TEXT)
 
     datafiles.each do |datafile|
       datafile.peek_type = nil

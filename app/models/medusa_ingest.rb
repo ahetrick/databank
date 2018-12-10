@@ -209,8 +209,8 @@ class MedusaIngest < ActiveRecord::Base
 
       datafile.medusa_id = response_hash['uuid']
       datafile.medusa_path = response_hash['medusa_key']
-      if datafile.peek_type == PeekType::NONE && datafile.peek_type_from_mime(datafile.mime_type, datafile.binary_size) == PeekType::LISTING
-        @datafile.initiate_processing_task
+      if datafile.peek_type == Databank::PeekType::NONE && datafile.peek_type_from_mime(datafile.mime_type, datafile.binary_size) == Databank::PeekType::LISTING
+        datafile.initiate_processing_task
       end
       datafile.save
 
