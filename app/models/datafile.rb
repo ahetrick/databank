@@ -388,11 +388,16 @@ class Datafile < ActiveRecord::Base
       if IDB_CONFIG[:aws][:s3_mode]
         first_bytes = self.current_root.get_bytes(self.storage_key, 0, ALLOWED_DISPLAY_BYTES)
 
-        Rails.logger.warn first_bytes.class
-        Rails.logger.warn first_bytes.to_s
-        Rails.logger.warn first_bytes
+        Rails.logger.warn "ALLOWED_DISPLAY_BYTES: #{ALLOWED_DISPLAY_BYTES}"
+        Rails.logger.warn "first_bytes.class: #{first_bytes.class}"
+        Rails.logger.warn "first_bytes.length: #{first_bytes.length}"
 
         part_text_string = first_bytes.gets
+
+        Rails.logger.warn "part_text_string.class: #{part_text_string.class}"
+        Rails.logger.warn "part_text_string: #{part_text_string}"
+        Rails.logger.warn "part_text_string.length: #{part_text_string.length.to_s}"
+
       else
         File.open(self.filepath) do |file|
           part_text_string = file.read(ALLOWED_DISPLAY_BYTES)
