@@ -394,6 +394,10 @@ class Datafile < ActiveRecord::Base
         end
       end
 
+      if part_text_string.encoding == Encoding::ASCII_8BIT
+        part_text_string.force_encoding(Encoding::UTF_8)
+      end
+
       if part_text_string.encoding == Encoding::UTF_8
         return part_text_string
       else
@@ -411,6 +415,11 @@ class Datafile < ActiveRecord::Base
 
     begin
       all_text_string = current_root.as_string(self.storage_key)
+
+      if all_text_string.encoding == Encoding::ASCII_8BIT
+        all_text_string.force_encoding(Encoding::UTF_8)
+      end
+
       if all_text_string.encoding == Encoding::UTF_8
         return all_text_string
       else
