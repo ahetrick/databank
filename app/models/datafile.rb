@@ -387,6 +387,11 @@ class Datafile < ActiveRecord::Base
 
       if IDB_CONFIG[:aws][:s3_mode]
         first_bytes = self.current_root.get_bytes(self.storage_key, 0, ALLOWED_DISPLAY_BYTES)
+
+        Rails.logger.warn first_bytes.class
+        Rails.logger.warn first_bytes.to_s
+        Rails.logger.warn first_bytes
+
         part_text_string = first_bytes.gets
       else
         File.open(self.filepath) do |file|
