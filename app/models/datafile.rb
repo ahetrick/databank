@@ -379,7 +379,7 @@ class Datafile < ActiveRecord::Base
 
   def get_part_text_peek
 
-    return nil unless self.current_root.exists?(self.storage_key)
+    return nil unless self.current_root.exist?(self.storage_key)
 
     begin
 
@@ -407,7 +407,7 @@ class Datafile < ActiveRecord::Base
 
   def get_all_text_peek
 
-    return nil unless self.current_root.exists?(self.storage_key)
+    return nil unless self.current_root.exist?(self.storage_key)
 
     begin
       all_text_string = current_root.as_string(self.storage_key)

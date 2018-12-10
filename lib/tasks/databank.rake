@@ -184,7 +184,7 @@ namespace :databank do
     MedusaIngest.all.each do |ingest|
       if ingest.medusa_path && ingest.medusa_path != ""
         datafile = Datafile.where(web_id: ingest.idb_identifier).first
-        if datafile && File.exists?("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}")
+        if datafile && File.exist?("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}")
           datafile.binary_size = File.size("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}")
           datafile.binary_name = File.basename("#{IDB_CONFIG['medusa']['medusa_path_root']}/#{ingest.medusa_path}")
           datafile.save!
