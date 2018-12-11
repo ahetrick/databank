@@ -1,3 +1,5 @@
+require "browser"
+
 module DatafilesHelper
   module_function
 
@@ -47,6 +49,7 @@ module DatafilesHelper
   end
 
   def disposition(type, datafile)
+
     if browser.chrome? or browser.safari?
       %Q(#{type}; filename="#{datafile.name}"; filename*=utf-8"#{URI.encode(datafile.name)}")
     elsif browser.firefox?
