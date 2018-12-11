@@ -15,7 +15,7 @@ module DatafilesHelper
     when :filesystem
       download_datafile_path(datafile.web_id)
     when :s3
-      datafile.current_root.presigned_get_url(datafile.key, response_content_disposition: disposition('attachment', datafile),
+      datafile.current_root.presigned_get_url(datafile.storage_key, response_content_disposition: disposition('attachment', datafile),
                                               response_content_type: safe_content_type(datafile))
     else
       raise "Unrecognized storage root type #{datafile.storage_root.type}"
@@ -27,7 +27,7 @@ module DatafilesHelper
     when :filesystem
       view_datafile_path(datafile)
     when :s3
-      datafile.current_root.presigned_get_url(datafile.key, response_content_disposition: disposition('inline', datafile),
+      datafile.current_root.presigned_get_url(datafile.storage_key, response_content_disposition: disposition('inline', datafile),
                                               response_content_type: safe_content_type(datafile))
     else
       raise "Unrecognized storage root type #{datafile.current_root.type}"
@@ -39,7 +39,7 @@ module DatafilesHelper
     when :filesystem
       preview_content_datafile_path(datafile)
     when :s3
-      datafile.current_root.presigned_get_url(datafile.key, response_content_disposition: disposition('inline', datafile),
+      datafile.current_root.presigned_get_url(datafile.storage_key, response_content_disposition: disposition('inline', datafile),
                                               response_content_type: safe_content_type(datafile))
     else
       raise "Unrecognized storage root type #{datafile.current_root.type}"
