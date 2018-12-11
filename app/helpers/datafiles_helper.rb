@@ -11,11 +11,11 @@ module DatafilesHelper
   # otherwise we direct through a controller action to get it. The difference in our
   # case is storage in S3 versus storage on the filesystem
   def datafile_download_link(datafile)
-    case datafile.storage_root.root_type
+    case datafile.current_root.root_type
     when :filesystem
       download_datafile_path(datafile.web_id)
     when :s3
-      datafile.storage_root.presigned_get_url(datafile.key, response_content_disposition: disposition('attachment', datafile),
+      datafile.current_root.presigned_get_url(datafile.key, response_content_disposition: disposition('attachment', datafile),
                                               response_content_type: safe_content_type(datafile))
     else
       raise "Unrecognized storage root type #{datafile.storage_root.type}"
@@ -23,26 +23,26 @@ module DatafilesHelper
   end
 
   def datafile_view_link(datafile)
-    case datafile.storage_root.root_type
+    case datafile.current_root.root_type
     when :filesystem
       view_datafile_path(datafile)
     when :s3
-      datafile.storage_root.presigned_get_url(datafile.key, response_content_disposition: disposition('inline', datafile),
+      datafile.current_root.presigned_get_url(datafile.key, response_content_disposition: disposition('inline', datafile),
                                               response_content_type: safe_content_type(datafile))
     else
-      raise "Unrecognized storage root type #{datafile.storage_root.type}"
+      raise "Unrecognized storage root type #{datafile.current_root.type}"
     end
   end
 
   def datafile_content_preview_link(datafile)
-    case datafile.storage_root.root_type
+    case datafile.current_root.root_type
     when :filesystem
       preview_content_datafile_path(datafile)
     when :s3
-      datafile.storage_root.presigned_get_url(datafile.key, response_content_disposition: disposition('inline', datafile),
+      datafile.current_root.presigned_get_url(datafile.key, response_content_disposition: disposition('inline', datafile),
                                               response_content_type: safe_content_type(datafile))
     else
-      raise "Unrecognized storage root type #{datafile.storage_root.type}"
+      raise "Unrecognized storage root type #{datafile.current_root.type}"
     end
   end
 

@@ -211,7 +211,6 @@ class DatafilesController < ApplicationController
         send_file path, filename: @datafile.binary_name, type: DatafilesHelper.safe_content_type(@datafile)
       end
     else
-      Rails.logger.warn ("not filesystem")
       redirect_to(DatafilesHelper.datafile_download_link(@datafile))
     end
 
