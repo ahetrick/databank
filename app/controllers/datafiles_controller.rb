@@ -446,19 +446,7 @@ class DatafilesController < ApplicationController
       raise "Unrecognized storage root type #{datafile.current_root.type}"
     end
   end
-
-  def datafile_content_preview_link(datafile)
-    case datafile.current_root.root_type
-    when :filesystem
-      preview_content_datafile_path(datafile)
-    when :s3
-      datafile.current_root.presigned_get_url(datafile.storage_key, response_content_disposition: disposition('inline', datafile),
-                                              response_content_type: safe_content_type(datafile))
-    else
-      raise "Unrecognized storage root type #{datafile.current_root.type}"
-    end
-  end
-
+  
   def safe_content_type(datafile)
     datafile.mime_type || 'application/octet-stream'
   end
