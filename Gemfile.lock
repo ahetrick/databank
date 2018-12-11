@@ -664,6 +664,7 @@ GEM
       hashie (~> 3.5)
       httpclient (~> 2.8)
       jwt (~> 1.4)
+    browser (1.1.0)
     builder (3.2.3)
     bunny (2.8.1)
       amq-protocol (~> 2.2.0)
@@ -987,6 +988,7 @@ DEPENDENCIES
   bcrypt (~> 3.1.12)
   bootstrap-sass (~> 3.3.4.1)
   boxr
+  browser (~> 1.1)
   builder (~> 3.2, >= 3.2.2)
   bunny (= 2.8.1)
   byebug

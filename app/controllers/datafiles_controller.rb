@@ -97,7 +97,7 @@ class DatafilesController < ApplicationController
 
   def view
     @datafile.with_input_file do |input_file|
-      send_file input_file, type: safe_content_type(@datafile), disposition: 'inline', filename: @datafile.name
+      send_file input_file, type: DatafilesHelper.safe_content_type(@datafile), disposition: 'inline', filename: @datafile.name
     end
   end
 
@@ -206,9 +206,9 @@ class DatafilesController < ApplicationController
     @datafile.record_download(request.remote_ip)
 
     if @datafile.current_root.root_type == :filesystem
-      @datafilefile.with_input_file do |input_file|
-        path = current_root.path_to(@datafile.storage_key, check_path: true)
-        send_file path, filename: @datafile.binary_name, type: DatafilesHelper.safe_media_type(@datafile)
+      @datafile.with_input_file do |input_file|
+        path = @datafile.current_root.path_to(@datafile.storage_key, check_path: true)
+        send_file path, filename: @datafile.binary_name, type: DatafilesHelper.safe_content_type(@datafile)
       end
     else
       Rails.logger.warn ("not filesystem")

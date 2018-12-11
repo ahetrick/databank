@@ -47,11 +47,17 @@ module DatafilesHelper
   end
 
   def disposition(type, datafile)
-    %Q(#{type}; filename="#{datafile.name}"; filename*=utf-8"#{URI.encode(datafile.name)}")
+    if browser.chrome? or browser.safari?
+      %Q(#{type}; filename="#{datafile.name}"; filename*=utf-8"#{URI.encode(datafile.name)}")
+    elsif browser.firefox?
+      %Q(#{type}; filename="#{datafile.name}")
+    else
+      %Q(#{type}; filename="#{datafile.name}"; filename*=utf-8"#{URI.encode(datafile.name)}")
+    end
   end
 
   def safe_content_type(datafile)
-    datafile.media_type || 'application/octet-stream'
+    datafile.mime_type || 'application/octet-stream'
   end
 
 

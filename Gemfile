@@ -20,6 +20,9 @@ gem 'medusa_storage', git: 'https://github.com/medusa-project/medusa_storage.git
 # Use aws-sdk to manage signed urls for downloads
 gem 'aws-sdk'
 
+# Use browser to detect request browser
+gem 'browser', '~> 1.1'
+
 # Use tus-server to support chunked uploads of large files
 gem "tus-server"
 
