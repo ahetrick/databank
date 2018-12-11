@@ -114,16 +114,12 @@ class Datafile < ActiveRecord::Base
     end
   end
 
-  def storage_root
-    current_root
-  end
-
   def exists_on_storage?
-    storage_root.exist?(self.key)
+    current_root.exist?(self.key)
   end
 
   def remove_from_storage
-    storage_root.delete_content(self.key)
+    current_root.delete_content(self.key)
   end
 
   def name

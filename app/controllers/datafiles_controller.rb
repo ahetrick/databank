@@ -201,8 +201,6 @@ class DatafilesController < ApplicationController
     head :ok
   end
 
-
-
   def download
 
     @datafile.record_download(request.remote_ip)
@@ -213,7 +211,8 @@ class DatafilesController < ApplicationController
         send_file path, filename: @datafile.binary_name, type: DatafilesHelper.safe_media_type(@datafile)
       end
     else
-      redirect_to(DatafilesHelper.datafilefile_download_link(@datafile))
+      Rails.logger.warn ("not filesystem")
+      redirect_to(DatafilesHelper.datafile_download_link(@datafile))
     end
 
   end
