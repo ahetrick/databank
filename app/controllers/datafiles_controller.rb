@@ -95,16 +95,9 @@ class DatafilesController < ApplicationController
 
   end
 
-  def display
-    current_root = Application.storage_manager.root_set.at(@datafile.storage_root)
-
-    if current_root.root_type == :filesystem
-      path = current_root.path_to(@datafile.storage_key, check_path: true)
-      send_file path, filename: @datafile.binary_name, type: @datafile.mime_type || ‘application/octet-stream’
-
-    else
-      url = Application.aws_signer.presigned_url(:get_object, bucket: @datafile.storage_root_bucket, key: @datafile.storage_key_with_prefix)
-      redirect_to url
+  def view
+    @datafile.with_input_file do |input_file|
+      send_file input_file, type: safe_content_type(@datafile), disposition: 'inline', filename: @datafile.name
     end
   end
 
@@ -208,23 +201,19 @@ class DatafilesController < ApplicationController
     head :ok
   end
 
+
+
   def download
 
     @datafile.record_download(request.remote_ip)
 
-    current_root = Application.storage_manager.root_set.at(@datafile.storage_root)
-
-    if current_root.root_type == :filesystem
-      path = current_root.path_to(@datafile.storage_key, check_path: true)
-      send_file path, filename: @datafile.binary_name, type: @datafile.mime_type || ‘application/octet-stream’
-
-
+    if @datafile.storage_root.root_type == :filesystem
+      @datafilefile.with_input_file do |input_file|
+        path = current_root.path_to(@datafile.storage_key, check_path: true)
+        send_file path, filename: @datafile.binary_name, type: DatafilesHelper.safe_media_type(@datafile)
+      end
     else
-
-      url = Application.aws_signer.presigned_url(:get_object, bucket: @datafile.storage_root_bucket, key: @datafile.storage_key_with_prefix)
-
-      redirect_to url
-
+      redirect_to(DatafilesHelper.datafilefile_download_link(@datafile))
     end
 
   end

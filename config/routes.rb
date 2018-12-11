@@ -49,7 +49,7 @@ Rails.application.routes.draw do
         patch 'update_status', to: 'datafiles#update_status'
         get 'reset_upload', to: 'datafiles#reset_upload'
         get 'preview', to: 'datafiles#preview'
-        get 'display', to: 'datafiles#display'
+        get 'view', to: 'datafiles#view'
         get 'filepath', to: 'datafiles#filepath', defaults: {format: 'json'}
         get 'bucket_and_key', to: 'datafiles#bucket_and_key', defaults: {format: 'json'}
         get 'viewtext', to: 'datafiles#peek_text', defaults: {format: 'json'}
@@ -122,8 +122,8 @@ Rails.application.routes.draw do
   # route binary downloads
   get "/datafiles/:id/download", to: "datafiles#download"
   
-  # direct display
-  get '/datafiles/:id/display', to: "datafiles#display"
+  # direct view
+  get '/datafiles/:id/view', to: "datafiles#view"
 
   # filepath
   get '/datafiles/:id/filepath', to: "datafiles#filepath", defaults: {format: 'json'}

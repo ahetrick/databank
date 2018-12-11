@@ -70,6 +70,7 @@ class Ability
       can :temporary_error, Dataset
       can :show, FeaturedResearcher
       can :index, FeaturedResearcher
+      can :view, Datafile
 
     else
       can :peek_text, Datafile
@@ -93,7 +94,7 @@ class Ability
       can :recordtext, Dataset
       can :temporary_error, Dataset
       can :show, FeaturedResearcher
-
+      can :view, Datafile
 
     end
     #

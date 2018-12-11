@@ -100,6 +100,36 @@ class Datafile < ActiveRecord::Base
     end
   end
 
+  #wrap the storage root's ability to yield an io on the content
+  def with_input_io
+    storage_root.with_input_io(self.key) do |io|
+      yield io
+    end
+  end
+
+  #wrap the storage root's ability to yield a file path having the appropriate content in it
+  def with_input_file
+    storage_root.with_input_file(self.key, tmp_dir: tmpdir_for_with_input_file) do |file|
+      yield file
+    end
+  end
+
+  def storage_root
+    current_root
+  end
+
+  def exists_on_storage?
+    storage_root.exist?(self.key)
+  end
+
+  def remove_from_storage
+    storage_root.delete_content(self.key)
+  end
+
+  def name
+    binary_name
+  end
+
   # medusa mounts are different on iiif server
   def iiif_bytestream_path
     if self.storage_root == 'draft'
@@ -309,6 +339,18 @@ class Datafile < ActiveRecord::Base
   def destroy_job
     if self.job
       self.job.destroy
+    end
+  end
+
+  def download_link
+    case cfs_file.storage_root.root_type
+    when :filesystem
+      download_cfs_file_path(cfs_file)
+    when :s3
+      cfs_file.storage_root.presigned_get_url(cfs_file.key, response_content_disposition: disposition('attachment', cfs_file),
+                                              response_content_type: safe_content_type(cfs_file))
+    else
+      raise "Unrecognized storage root type #{cfs_file.storage_root.type}"
     end
   end
 
