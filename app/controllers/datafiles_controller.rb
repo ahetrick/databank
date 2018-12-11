@@ -105,7 +105,7 @@ class DatafilesController < ApplicationController
     else
       redirect_to(datafile_view_link(@datafile))
     end
-    
+
   end
 
   # PATCH/PUT /datafiles/1
