@@ -275,7 +275,7 @@ function preview(web_id){
         $('.spinner_'+web_id).show();
 
         $.getJSON( "/datafiles/" + web_id + "/viewtext", function( json ) {
-            $("#preview_" + web_id).html(json.peek_text);
+            $("#preview_" + web_id).html("<pre>" + json.peek_text + "</pre>");
             $("#preview_" + web_id).addClass('fetched');
             $('.spinner_'+web_id).hide();
         });
