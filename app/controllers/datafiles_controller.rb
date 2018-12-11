@@ -97,9 +97,15 @@ class DatafilesController < ApplicationController
   end
 
   def view
-    @datafile.with_input_file do |input_file|
-      send_file input_file, type: safe_content_type(@datafile), disposition: 'inline', filename: @datafile.name
+
+    if @datafile.current_root.root_type == :filesystem
+      @datafile.with_input_file do |input_file|
+        send_file input_file, type: safe_content_type(@datafile), disposition: 'inline', filename: @datafile.name
+      end
+    else
+      redirect_to(datafile_view_link(@datafile))
     end
+    
   end
 
   # PATCH/PUT /datafiles/1
