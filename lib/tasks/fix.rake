@@ -16,6 +16,23 @@ namespace :fix do
 
   end
 
+  desc 'fix missing mime type'
+  task :fix_missing_mime => :environment do
+    datafiles_missing_mime = Datafile.where(mime_type: nil)
+
+    if datafiles_missing_mime.count > 0
+      datafiles_missing_mime.each do |datafile|
+        mime_guesses_set = MIME::Types.type_for(datafile.binary_name.downcase)
+        if mime_guesses_set && mime_guesses_set.length > 0
+          datafile.mime_type = mime_guesses_set[0].content_type
+        else
+          datafile.mime_type = 'application/octet-stream'
+        end
+        datafile.save
+      end
+    end
+  end
+
   desc 'pretend some dev datasets never happened'
   task :fix_dev => :environment do
 
