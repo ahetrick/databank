@@ -440,12 +440,9 @@ class DatafilesController < ApplicationController
     when :filesystem
       view_datafile_path(datafile)
     when :s3
-      view_link = datafile.current_root.presigned_get_url(datafile.storage_key, response_content_disposition: disposition('inline', datafile),
+      datafile.current_root.presigned_get_url(datafile.storage_key, response_content_disposition: disposition('inline', datafile),
                                               response_content_type: safe_content_type(datafile))
-
-      Rails.logger.warn(view_link)
-      view_link
-
+      
     else
       raise "Unrecognized storage root type #{datafile.current_root.type}"
     end
