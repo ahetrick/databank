@@ -149,6 +149,42 @@ namespace :fix do
 
   end
 
+  desc 'fix aws medusa dataset directory values'
+  task :fix_aws_medusa_dir => :environment do
+
+    cfs_hash = Hash.new
+
+    CSV.foreach(Rails.root.join('public', 'aws_doi_cfs.csv')) do |row|
+      cfs_hash[row[1]] = row[0]
+    end
+
+    Dataset.all.each do |dataset|
+      if dataset.publication_state != Databank::PublicationState::DRAFT
+        dataset.medusa_dataset_dir = "/cfs_directories/#{cfs_hash[dataset.dirname]}"
+        dataset.save
+      end
+    end
+
+  end
+
+  desc 'fix prod medusa dataset directory values'
+  task :fix_prod_medusa_dir => :environment do
+
+    cfs_hash = Hash.new
+
+    CSV.foreach(Rails.root.join('public', 'prod_doi_cfs.csv')) do |row|
+      cfs_hash[row[1]] = row[0]
+    end
+
+    Dataset.all.each do |dataset|
+      if dataset.publication_state != Databank::PublicationState::DRAFT
+        dataset.medusa_dataset_dir = "/cfs_directories/#{cfs_hash[dataset.dirname]}"
+        dataset.save
+      end
+    end
+
+  end
+
   desc 'migrate demo datasets'
   task :migrate_demo_datasets => :environment do
 
