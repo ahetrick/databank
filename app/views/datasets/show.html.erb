@@ -175,15 +175,13 @@
 
 <% if (can? :manage, @dataset) %>
   <div class="curator-only">
-    <p>To see this dataset in Medusa, go to
-      <% if @dataset.medusa_dataset_dir && @dataset.medusa_dataset_dir != '' %>
 
-        <a href="<%= IDB_CONFIG['medusa']['datasets_url_base'] %><%= @dataset.medusa_dataset_dir %>" target="_blank"><%= IDB_CONFIG['medusa']['datasets_url_base'] %><%= @dataset.medusa_dataset_dir %></a>
-      <% else %>
-        <a href="<%= IDB_CONFIG['medusa']['file_group_url'] %>" target="_blank">IDB File Group</a> and filter
-        by: <%= @dataset.key %>
-      <% end %>
-    </p>
+    <% if @dataset.fileset_preserved? %>
+      <p> To view in Medusa:
+       <a href="<%= IDB_CONFIG['medusa']['datasets_url_base'] %><%= @dataset.dirname %>" target="_blank"><%= IDB_CONFIG['medusa']['datasets_url_base'] %><%= @dataset.dirname %></a>
+      </p>
+    <% end %>
+
     <div class="panel-group" id="medusa" role="tablist" aria-multiselectable="true">
       <div class="panel panel-default">
         <div class="panel-heading" role="tab" id="medusaHeading">

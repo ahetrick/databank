@@ -212,8 +212,6 @@ class Dataset < ActiveRecord::Base
 
   end
 
-
-
   def today_downloads
     DayFileDownload.where(dataset_key: self.key).uniq.pluck(:ip_address).count
   end
