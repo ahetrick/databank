@@ -214,6 +214,9 @@ class MedusaIngest < ActiveRecord::Base
       end
       datafile.save
 
+      datafile.dataset.medusa_dataset_dir = response_hash['parent_dir']['url_path']
+      datafile.dataset.save
+
     else
       dataset = Dataset.find_by_key(response_hash['pass_through']['identifier'])
       unless dataset

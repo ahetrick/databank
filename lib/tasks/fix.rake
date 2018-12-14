@@ -1,3 +1,5 @@
+require 'csv'
+
 namespace :fix do
 
   desc 'fix missing version'
@@ -36,7 +38,7 @@ namespace :fix do
   desc 'pretend some dev datasets never happened'
   task :fix_dev => :environment do
 
-    datasets_to_destroy = Dataset.where(key: ['IDBDEV-4257527', 'IDBDEV-5614232', 'IDBDEV-5614232'])
+    datasets_to_destroy = Dataset.where(key: ['IDBDEV-1772206'])
 
     datasets_to_destroy.each do |doomed|
       doomed.destroy!
@@ -126,6 +128,25 @@ namespace :fix do
         puts "missing binary for datafile #{datafile.web_id}, root: #{datafile.storage_root}, key: #{datafile.storage_key}"
       end
     end
+  end
+
+
+  desc 'fix dev medusa dataset directory values'
+  task :fix_dev_medusa_dir => :environment do
+
+    cfs_hash = Hash.new
+
+    CSV.foreach(Rails.root.join('public', 'dev_doi_cfs.csv')) do |row|
+      cfs_hash[row[1]] = row[0]
+    end
+
+    Dataset.all.each do |dataset|
+      if dataset.publication_state != Databank::PublicationState::DRAFT
+        dataset.medusa_dataset_dir = "/cfs_directories/#{cfs_hash[dataset.dirname]}"
+        dataset.save
+      end
+    end
+
   end
 
   desc 'migrate demo datasets'
