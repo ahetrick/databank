@@ -178,7 +178,7 @@
 
     <% if @dataset.fileset_preserved? %>
       <p> To view in Medusa:
-       <a href="<%= IDB_CONFIG['medusa']['datasets_url_base']%><%= @dataset.medusa_dataset_dir %>">"<%= IDB_CONFIG['medusa']['datasets_url_base']%><%= @dataset.medusa_dataset_dir %>"></a>
+       <a href="<%= IDB_CONFIG['medusa']['datasets_url_base']%><%= @dataset.medusa_dataset_dir %>"><%= IDB_CONFIG['medusa']['datasets_url_base']%><%= @dataset.medusa_dataset_dir %></a>
       </p>
     <% else%>
       <p>
