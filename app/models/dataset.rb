@@ -204,7 +204,6 @@ class Dataset < ActiveRecord::Base
 
   end
 
-
   def related_version_entry_hash
     # version group is an array of hashes
     self_version = self.dataset_version.to_i
