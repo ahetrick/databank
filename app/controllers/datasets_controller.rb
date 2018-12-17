@@ -1213,7 +1213,7 @@ class DatasetsController < ApplicationController
   # publishing in IDB means interacting with DataCite and Medusa
   def publish
 
-    publish_attempt_result = @dataset.publish
+    publish_attempt_result = @dataset.publish(current_user)
 
     respond_to do |format|
       if publish_attempt_result[:status] == :ok && @dataset.save
