@@ -110,7 +110,7 @@ class Dataset < ActiveRecord::Base
       end
     end
 
-    if Dataset.post_doi(self, user) && Dataset.post_doi_metadata(self, user)
+    if Dataset.post_doi_metadata(self, user) && Dataset.post_doi(self, user)
       MedusaIngest.send_dataset_to_medusa(self)
 
       if IDB_CONFIG[:local_mode] && IDB_CONFIG[:local_mode] == true
