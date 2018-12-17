@@ -1275,7 +1275,7 @@ class DatasetsController < ApplicationController
               end
               @dataset.save
               format.html { redirect_to dataset_path(@dataset.key), notice: Dataset.deposit_confirmation_notice(old_publication_state, @dataset) }
-              format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+              format.json { render json: :show, status: :ok, location: dataset_path(@dataset.key) }
             else
               Rails.logger.warn "Error in saving dataset: #{@dataset.key}:"
               Rails.logger.warn "Identifier created, but not saved: #{@dataset.identifier}. Messages sent to Medusa."
