@@ -132,7 +132,7 @@ Rails.application.routes.draw do
   get '/datafiles/:id/viewtext', to: 'datafiles#peek_text', defaults: {format: 'json'}
 
   # iiif_filepath
-  get '/datafiles/:id/iiif_filepath', to: "datafiles#iiif_filepath", defaults: {format: 'json'}
+  get '/datafiles/:id/iiif_filepath', to: "datafiles#iiif_bytestream_path", defaults: {format: 'json'}
 
   # bucket and key for s3 iiif
   get '/datafiles/:id/bucket_and_key', to: 'datafiles#bucket_and_key', defaults: {format: 'json'}
