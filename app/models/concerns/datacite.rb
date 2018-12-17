@@ -68,12 +68,26 @@ module Datacite
     end
 
     def post_doi_metadata(dataset, current_user)
-
+      
       raise("cannot create or update doi for incomplete dataset") unless Dataset.completion_check(dataset, current_user) == 'ok'
 
-      host = IDB_CONFIG[:datacite_endpoint]
-      user = IDB_CONFIG[:datacite_username]
-      password = IDB_CONFIG[:datacite_password]
+      if dataset.is_test?
+        host = IDB_CONFIG[:test_datacite_endpoint]
+        user = IDB_CONFIG[:test_datacite_username]
+        password = IDB_CONFIG[:test_datacite_password]
+        shoulder = IDB_CONFIG[:test_datacite_shoulder]
+      else
+        host = IDB_CONFIG[:datacite_endpoint]
+        user = IDB_CONFIG[:datacite_username]
+        password = IDB_CONFIG[:datacite_password]
+        shoulder = IDB_CONFIG[:datacite_shoulder]
+      end
+
+      # use specified DOI if provided
+
+      if !dataset.identifier || dataset.identifier == ''
+        dataset.identifier = "#{shoulder}#{dataset.key}_V1"
+      end
 
       uri = URI.parse("https://#{host}/metadata")
 
