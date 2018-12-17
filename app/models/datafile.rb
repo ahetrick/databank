@@ -140,13 +140,15 @@ class Datafile < ActiveRecord::Base
 
   # medusa mounts are different on iiif server
   def iiif_bytestream_path
-    if self.storage_root == 'draft'
-      self.filepath
-    elsif self.storage_root == 'medusa'
-      "#{IDB_CONFIG['medusa']['medusa_path_root']}/#{IDB_CONFIG[:iiif_medusa_group]}/#{self.storage_key}"
+
+    if storage_root == 'draft'
+      File.join(IDB_CONFIG[:iiif][:draft_base], storage_key )
+    elsif storage_root == 'medusa'
+      File.join(IDB_CONFIG[:iiif][:medusa_base], storage_key )
     else
       raise("invalid storage_root found for datafile: #{self.web_id}")
     end
+
   end
 
   def file_extension
