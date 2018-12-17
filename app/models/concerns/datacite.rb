@@ -32,7 +32,7 @@ module Datacite
 
       target = "#{IDB_CONFIG[:root_url_text]}/datasets/#{dataset.key}"
 
-      uri = URI.parse("https://#{host}/doi/#{dataset.identifier}")
+      uri = URI.parse("https://#{host}/doi")
 
       request = Net::HTTP::Post.new(uri.request_uri)
       request.basic_auth(user, password)

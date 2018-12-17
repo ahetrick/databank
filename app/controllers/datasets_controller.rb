@@ -840,13 +840,15 @@ class DatasetsController < ApplicationController
             # send_dataset_to_medusa only sends metadata files unless old_publication_state is draft
             MedusaIngest.send_dataset_to_medusa(@dataset)
 
-            if !@dataset.is_test? || Rails.env.production?
+            if !@dataset.is_test?
+              doi_update_ok = Dataset.post_doi(@dataset, current_user)
               metadata_post_ok = Dataset.post_doi_metadata(@dataset, current_user)
             else
+              doi_update_ok = 'na'
               metadata_post_ok = 'na'
             end
 
-            if metadata_post_ok == 'na' || metadata_post_ok == true
+            if metadata_post_ok == 'na' || (metadata_post_ok && doi_update_ok)
               format.html { redirect_to dataset_path(@dataset.key)}
               format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
             else
