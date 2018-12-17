@@ -146,7 +146,7 @@ function add_material_row() {
 }
 
 function remove_material_row(material_index) {
-    console.log("material_index:" + material_index);
+    //console.log("material_index:" + material_index);
     if ($("#dataset_related_materials_attributes_" + material_index + "_id").val() != undefined) {
         $("#dataset_related_materials_attributes_" + material_index + "__destroy").val("true");
         $("#deleted_material_table > tbody:last-child").append($("#material_index_" + material_index));
@@ -154,6 +154,8 @@ function remove_material_row(material_index) {
     } else {
         $("#material_index_" + material_index).remove();
     }
+
+    $("#datacite_material_index_" + material_index).remove();
     
     if ($("#material_table tr").length < 2) {
         add_material_row();
