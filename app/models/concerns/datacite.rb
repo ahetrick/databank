@@ -32,7 +32,7 @@ module Datacite
 
       target = "#{IDB_CONFIG[:root_url_text]}/datasets/#{dataset.key}"
 
-      uri = URI.parse("https://#{host}/doi")
+      uri = URI.parse("https://#{host}/doi/#{dataset.identifier}")
 
       request = Net::HTTP::Post.new(uri.request_uri)
       request.basic_auth(user, password)
@@ -59,6 +59,7 @@ module Datacite
         dataset.save
         return true
       else
+        Rails.logger.warn "non-success response to doi post attempt"
         Rails.logger.warn request.to_yaml
         Rails.logger.warn response.to_yaml
         return false
@@ -101,6 +102,7 @@ module Datacite
         dataset.save
         return true
       else
+        Rails.logger.warn "non-success response to doi metadata post attempt"
         Rails.logger.warn request.to_yaml
         Rails.logger.warn response.to_yaml
         return false
