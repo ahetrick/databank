@@ -1213,125 +1213,18 @@ class DatasetsController < ApplicationController
   # publishing in IDB means interacting with DataCite and Medusa
   def publish
 
-    @dataset.complete = false
-
-    old_publication_state = @dataset.publication_state
-
-    @dataset.release_date ||= Date.current
-
-    # only publish complete datasets
-    if Dataset.completion_check(@dataset, current_user) == 'ok'
-
-      @dataset.complete = true
-
-      # set publication_state
-      if @dataset.embargo && [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA].include?(@dataset.embargo)
-        @dataset.publication_state = @dataset.embargo
-      else
-        @dataset.publication_state = Databank::PublicationState::RELEASED
-      end
-
-      if old_publication_state != Databank::PublicationState::RELEASED && @dataset.publication_state == Databank::PublicationState::RELEASED
-        @dataset.release_date ||= Date.current
-      end
-
-    end
+    publish_attempt_result = @dataset.publish
 
     respond_to do |format|
-      if @dataset.complete?
-
-        # ensure identifier, update publication_state, interact with DataCite and Medusa
-        if ((old_publication_state != Databank::PublicationState::DRAFT) && (!@dataset.identifier || @dataset.identifier == ''))
-          raise "Missing identifier for dataset that is not a draft. Dataset: #{@dataset.key}"
-
-        elsif old_publication_state == Databank::PublicationState::DRAFT && !@dataset.is_import
-
-          #remove deck directory, if it exists
-          if File.exists?(@dataset.deck_location)
-            FileUtils.rm_rf(@dataset.deck_location)
-          end
-
-          if Dataset.post_doi(@dataset, current_user)
-            if Rails.env.production? && !@dataset.is_test
-              Dataset.post_doi_metadata(@dataset, current_user)
-            end
-            MedusaIngest.send_dataset_to_medusa(@dataset)
-
-            if @dataset.save
-
-              if IDB_CONFIG[:local_mode] && IDB_CONFIG[:local_mode] == true
-                Rails.logger.warn "Dataset #{@dataset.key} succesfully deposited."
-              else
-                begin
-                  notification = DatabankMailer.confirm_deposit(@dataset.key)
-                  notification.deliver_now
-                rescue Exception::StandardError => err
-                  Rails.logger.warn "Confirmation email not sent for #{@dataset.key}"
-                  Rails.logger.warn err.to_yaml
-                  notification = DatabankMailer.confirmation_not_sent(@dataset.key, err)
-                  notification.deliver_now
-                end
-
-              end
-              @dataset.save
-              format.html { redirect_to dataset_path(@dataset.key), notice: Dataset.deposit_confirmation_notice(old_publication_state, @dataset) }
-              format.json { render json: :show, status: :ok, location: dataset_path(@dataset.key) }
-            else
-              Rails.logger.warn "Error in saving dataset: #{@dataset.key}:"
-              Rails.logger.warn "Identifier created, but not saved: #{@dataset.identifier}. Messages sent to Medusa."
-              Rails.logger.warn @dataset.errors
-              format.html { redirect_to dataset_path(@dataset.key), notice: 'Error in saving dataset has been logged by the Research Data Service.' }
-              format.json { render json: @dataset.errors, status: :unprocessable_entity }
-            end
-          end
-
-
-          # at this point, we are dealing with a published or imported dataset
-        else
-
-          if Dataset.post_doi_metadata(@dataset, current_user)
-            MedusaIngest.send_dataset_to_medusa(@dataset)
-
-            # strange double-save is because publication changes the dataset, but should not trigger change flag
-            # there is probably a better way to do this, and alternatives would be welcome
-            if @dataset.save
-              if IDB_CONFIG[:local_mode] && IDB_CONFIG[:local_mode] == true
-                Rails.logger.warn "Dataset #{@dataset.key} succesfully deposited."
-              elsif old_publication_state == Databank::PublicationState::DRAFT && @dataset.is_import
-                begin
-                  notification = DatabankMailer.confirm_deposit(@dataset.key)
-                  notification.deliver_now
-                rescue Exception::StandardError => err
-                  Rails.logger.warn "Confirmation email not sent for #{@dataset.key}"
-                  Rails.logger.warn err.to_yaml
-                  notification = DatabankMailer.confirmation_not_sent(@dataset.key, err)
-                  notification.deliver_now
-                end
-              else
-                notification = DatabankMailer.confirm_deposit_update(@dataset.key)
-                notification.deliver_now
-              end
-              @dataset.save
-              format.html { redirect_to dataset_path(@dataset.key), notice: Dataset.deposit_confirmation_notice(old_publication_state, @dataset) }
-              format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
-            else
-              Rails.logger.warn "Error in saving dataset: #{@dataset.key}:"
-              Rails.logger.warn "DataCite record updated, but change in publication state not saved in IDB"
-              Rails.logger.warn @dataset.errors
-              format.html { redirect_to dataset_path(@dataset.key), notice: 'Error in saving dataset has been logged by the Research Data Service.' }
-              format.json { render json: @dataset.errors, status: :unprocessable_entity }
-            end
-
-          else
-            Rails.logger.warn "Error in publishing import dataset: #{@dataset.key}:"
-            format.html { redirect_to dataset_path(@dataset.key), notice: 'Error in publishing dataset has been logged by the Research Data Service.' }
-            format.json { render json: @dataset.errors, status: :unprocessable_entity }
-          end
-        end
-
+      if publish_attempt_result[:status] == :ok && @dataset.save
+        format.html { redirect_to dataset_path(@dataset.key), notice: Dataset.deposit_confirmation_notice(publish_attempt_result[:old_publication_state], @dataset) }
+        format.json { render json: :show, status: :ok, location: dataset_path(@dataset.key) }
+      elsif publish_attempt_result[:status] == :error_occurred
+        format.html { redirect_to dataset_path(@dataset.key), notice: publish_attempt_result[:error_text] }
+        format.json { render json: {status: :unprocessable_entity}, content_type: request.format, :layout => false }
       else
-        format.html { redirect_to edit_dataset_path(@dataset.key), notice: Dataset.completion_check(@dataset, current_user) }
-        format.json { render json: Dataset.completion_check(@dataset, current_user), status: :unprocessable_entity }
+        format.html { redirect_to dataset_path(@dataset.key), notice: 'Error in publishing dataset has been logged for review by the Research Data Service.' }
+        format.json { render json: {status: :unprocessable_entity}, content_type: request.format, :layout => false }
       end
     end
 

@@ -83,6 +83,56 @@ class Dataset < ActiveRecord::Base
 
   end
 
+  def publish(user)
+
+    self.complete = Dataset.completion_check(self, user) == 'ok'
+    return {status: :error_occurred, error_text: Dataset.completion_check(self, user)} unless self.complete
+
+    self.release_date ||= Date.current
+
+    old_publication_state = @dataset.publication_state
+
+    if (old_publication_state != Databank::PublicationState::DRAFT) && (!@dataset.identifier || @dataset.identifier == '')
+      return {status: :error_occurred, error_text: "Missing identifier for dataset that is not a draft. Dataset: #{@dataset.key}"}
+    end
+
+    # set publication_state
+    if self.embargo && [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA].include?(self.embargo)
+      self.publication_state = self.embargo
+    else
+      self.publication_state = Databank::PublicationState::RELEASED
+    end
+
+    if old_publication_state == Databank::PublicationState::DRAFT && self.publication_state != Databank::PublicationState::DRAFT
+      #remove deck directory, if it exists
+      if File.exists?(@dataset.deck_location)
+        FileUtils.rm_rf(@dataset.deck_location)
+      end
+    end
+
+    if Dataset.post_doi(self, user) && Dataset.post_doi_metadata(self, user)
+      MedusaIngest.send_dataset_to_medusa(self)
+
+      if IDB_CONFIG[:local_mode] && IDB_CONFIG[:local_mode] == true
+        Rails.logger.warn "Dataset #{@dataset.key} succesfully deposited."
+      else
+        begin
+          notification = DatabankMailer.confirm_deposit(@dataset.key)
+          notification.deliver_now
+        rescue Exception::StandardError => err
+          Rails.logger.warn "Confirmation email not sent for #{@dataset.key}"
+          Rails.logger.warn err.to_yaml
+          notification = DatabankMailer.confirmation_not_sent(@dataset.key, err)
+          notification.deliver_now
+        end
+      end
+      {status: :ok, old_publication_state: old_publication_state}
+    else
+      {status: :error_occurred, error_text: "Error in publishing dataset has been logged for review by the Research Data Service."}
+    end
+
+    end
+
   def version_group
 
     # version group is an array of hashes
