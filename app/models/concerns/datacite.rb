@@ -48,7 +48,7 @@ module Datacite
         response = sock.start { |http| http.request(request) }
 
       rescue Net::HTTPBadResponse, Net::HTTPServerError => error
-        Rails.logger.warn "bad or error response to datacite interaction"
+        Rails.logger.warn "bad or error response to doi post attempt"
         Rails.logger.warn error.message
         Rails.logger.warn response.body
         return false
@@ -90,6 +90,7 @@ module Datacite
         response = sock.start { |http| http.request(request) }
 
       rescue Net::HTTPBadResponse, Net::HTTPServerError => error
+        Rails.logger.warn "bad or error response to doi metadata post attempt"
         Rails.logger.warn error.message
         Rails.logger.warn request.to_yaml
         return false
