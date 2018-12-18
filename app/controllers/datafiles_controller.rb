@@ -78,7 +78,12 @@ class DatafilesController < ApplicationController
           @datafile.peek_text = @datafile.get_part_text_peek
         elsif initial_peek_type == Databank::PeekType::LISTING
           @datafile.peek_type = Databank::PeekType::NONE
-          @datafile.initiate_processing_task
+          begin
+            @datafile.initiate_processing_task
+          rescue Exception => ex
+            Rails.logger.warn("Something bad happened when trying to initiate processing task for datafile #{@datafile.web_id}")
+            Rails.logger.warn (ex.message)
+          end
         end
       else
         @datafile.peek_type = Databank::PeekType::NONE
@@ -88,7 +93,7 @@ class DatafilesController < ApplicationController
 
     begin
       @datafile.save
-    rescue ActiveRecord::StatementInvalid 
+    rescue ActiveRecord::StatementInvalid
       @datafile.peek_type=Databank::PeekType::NONE
       @datafile.peek_text= nil
     end
