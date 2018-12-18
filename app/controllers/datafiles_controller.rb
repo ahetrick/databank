@@ -73,7 +73,7 @@ class DatafilesController < ApplicationController
       if initial_peek_type
         @datafile.peek_type = initial_peek_type
         if initial_peek_type == Databank::PeekType::ALL_TEXT
-          @datafile.peek_text = Application.storage_manager.draft_root.as_string(tus_key)
+          @datafile.peek_text = @datafile.get_all_text_peek
         elsif initial_peek_type == Databank::PeekType::PART_TEXT
           @datafile.peek_text = @datafile.get_part_text_peek
         elsif initial_peek_type == Databank::PeekType::LISTING
@@ -86,7 +86,12 @@ class DatafilesController < ApplicationController
 
     end
 
-    # Rails.logger.warn("just before datafile save")
+    begin
+      @datafile.save
+    rescue ActiveRecord::StatementInvalid 
+      @datafile.peek_type=Databank::PeekType::NONE
+      @datafile.peek_text= nil
+    end
 
     if @datafile.save
       render json: to_fileupload, content_type: request.format, :layout => false
@@ -441,6 +446,10 @@ class DatafilesController < ApplicationController
   end
 
   def safe_content_type(datafile)
+    datafile.mime_type || 'application/octet-stream'
+  end
+
+  def safe_media_type(datafile)
     datafile.mime_type || 'application/octet-stream'
   end
 
