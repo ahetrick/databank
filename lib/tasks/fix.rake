@@ -4,7 +4,7 @@ namespace :fix do
 
   desc 'fix storage root for preserved files'
   task :fix_storage_root => :environment do
-    Datafile.where(storage_root: draft).each do |datafile|
+    Datafile.where(storage_root: 'draft').each do |datafile|
       # in_medusa returns a true/false, but also updates datafile records as appropriate
       datafile.in_medusa
     end

@@ -189,7 +189,7 @@
                       .form-group
                         =f.label :medusa_dataset_dir, "URL in Medusa (relative to #{IDB_CONFIG['medusa']['datasets_url_base']} )", class: "control-label"
                         %br
-                        =f.text_field :medusa_dataset_dir, class: "form-control dataset", :placeholder => '/DOI-10-xx/datafiles/filename'
+                        =f.text_field :medusa_dataset_dir, class: "form-control dataset", :placeholder => '/cfs_directories/number'
 
 
       - if can? :manage, @dataset
