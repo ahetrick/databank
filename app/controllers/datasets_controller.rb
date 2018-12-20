@@ -550,8 +550,6 @@ class DatasetsController < ApplicationController
         facet(:datafile_extensions)
         facet(:publication_year)
 
-        #paginate(:page => params[:page])
-
       end
 
     end
