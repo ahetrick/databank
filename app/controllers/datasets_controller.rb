@@ -595,6 +595,8 @@ class DatasetsController < ApplicationController
       @current_page = 1
     end
 
+    @search = @search.paginate(page: @current_page, per_page: 25)
+
     @report=Indexable.citation_report(@search, request.original_url, current_user)
 
     if params.has_key?('download') && params['download']=='now'
