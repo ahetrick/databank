@@ -176,6 +176,10 @@ class Datafile < ActiveRecord::Base
     end
   end
 
+  def safe_target_key
+    target_key || "#{dataset.dirname}/dataset_files/#{datafile.binary_name}"
+  end
+
   # has side-effect of updating record if the bytestream is in medusa, but the record did not indicate
   # if bytestream is found the same in draft and medusa roots, the draft bytestream is deleted
   def in_medusa
@@ -189,7 +193,7 @@ class Datafile < ActiveRecord::Base
 
     #datafile_target_key = "#{dataset.dirname}/dataset_files/#{self.binary_name}"
 
-    if Application.storage_manager.medusa_root.exist?(self.target_key)
+    if Application.storage_manager.medusa_root.exist?(self.safe_target_key)
       in_medusa = true
 
       if storage_root && storage_key && storage_root == 'draft' && storage_key != ''
@@ -198,7 +202,7 @@ class Datafile < ActiveRecord::Base
         #  Can't do full equivalence check (S3 etag is not always MD5), so check sizes.
         if Application.storage_manager.draft_root.exist?(self.storage_key)
           draft_size = Application.storage_manager.draft_root.size(self.storage_key)
-          medusa_size = Application.storage_manager.medusa_root.size(self.target_key)
+          medusa_size = Application.storage_manager.medusa_root.size(self.safe_target_key)
 
           if draft_size == medusa_size
             # If the ingest into Medusa was successful,
@@ -221,7 +225,7 @@ class Datafile < ActiveRecord::Base
 
       if in_medusa
         self.storage_root = 'medusa'
-        self.storage_key = target_key
+        self.storage_key = safe_target_key
         self.save
       end
     else
