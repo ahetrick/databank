@@ -502,7 +502,7 @@ class DatafilesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def datafile_params
-    params.require(:datafile).permit(:description, :binary, :web_id, :dataset_id)
+    params.require(:datafile).permit(:description, :binary, :web_id, :dataset_id, :peek_text, :peek_type)
   end
 
   def upload_params
