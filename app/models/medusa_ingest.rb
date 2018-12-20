@@ -225,8 +225,6 @@ class MedusaIngest < ActiveRecord::Base
         return false
       end
 
-      Rails.logger.warn
-
       # dataset found - do things with dataset and ingest response
       exists_in_draft = draft_root.exist?(response_hash['staging_key'])
 

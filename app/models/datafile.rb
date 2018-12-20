@@ -187,9 +187,9 @@ class Datafile < ActiveRecord::Base
 
     in_medusa = false # start out with the assumption that it is not in medusa, then check and handle
 
-    datafile_target_key = "#{dataset.dirname}/dataset_files/#{self.binary_name}"
+    #datafile_target_key = "#{dataset.dirname}/dataset_files/#{self.binary_name}"
 
-    if Application.storage_manager.medusa_root.exist?(datafile_target_key)
+    if Application.storage_manager.medusa_root.exist?(self.target_key)
       in_medusa = true
 
       if storage_root && storage_key && storage_root == 'draft' && storage_key != ''
@@ -198,7 +198,7 @@ class Datafile < ActiveRecord::Base
         #  Can't do full equivalence check (S3 etag is not always MD5), so check sizes.
         if Application.storage_manager.draft_root.exist?(self.storage_key)
           draft_size = Application.storage_manager.draft_root.size(self.storage_key)
-          medusa_size = Application.storage_manager.medusa_root.size(datafile_target_key)
+          medusa_size = Application.storage_manager.medusa_root.size(self.target_key)
 
           if draft_size == medusa_size
             # If the ingest into Medusa was successful,
@@ -221,7 +221,7 @@ class Datafile < ActiveRecord::Base
 
       if in_medusa
         self.storage_root = 'medusa'
-        self.storage_key = datafile_target_key
+        self.storage_key = target_key
         self.save
       end
     else

@@ -159,7 +159,7 @@
                       - if @dataset.publication_state == Databank::PublicationState::DRAFT
                         = f.text_field :identifier, :class => "dataset form-control", :placeholder => "Leave blank for auto-generate."
                       -else
-                        = f.text_field :identifier, :class => "dataset form-control", :placeholder => "Leave blank for auto-generate.", readonly: true
+                        = f.text_field :identifier, :class => "dataset form-control", readonly: true
 
                     .col-md-3
                       =f.check_box :is_import, :class => "dataset"
@@ -184,6 +184,12 @@
                         =f.label :version_comment, "Version Comment", class: "control-label"
                         %br
                         =f.text_area :version_comment, :rows => 1, class: "form-control dataset"
+                  .row
+                    %span.col-md-6
+                      .form-group
+                        =f.label :medusa_dataset_dir, "URL in Medusa (relative to #{IDB_CONFIG['medusa']['datasets_url_base']} )", class: "control-label"
+                        %br
+                        =f.text_field :medusa_dataset_dir, class: "form-control dataset", :placeholder => '/DOI-10-xx/datafiles/filename'
 
 
       - if can? :manage, @dataset
