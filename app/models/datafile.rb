@@ -168,23 +168,16 @@ class Datafile < ActiveRecord::Base
   end
 
   def dataset_key
-    dataset = Dataset.where(id: self.dataset_id).first
-    if dataset
-      return dataset.key
-    else
-      return nil
-    end
+    dataset.key
   end
 
   def target_key
-    "#{dirname}/dataset_files/#{binary_name}"
+    "#{dataset.dirname}/dataset_files/#{binary_name}"
   end
 
   # has side-effect of updating record if the bytestream is in medusa, but the record did not indicate
   # if bytestream is found the same in draft and medusa roots, the draft bytestream is deleted
   def in_medusa
-
-    dataset = Dataset.find(self.dataset_id)
 
     return false unless dataset
     return false unless (dataset.identifier && dataset.identifier != '')
@@ -247,8 +240,6 @@ class Datafile < ActiveRecord::Base
     if Robot.exists?(address: request_ip)
       return nil
     end
-
-    dataset = Dataset.find(self.dataset_id)
 
     if dataset.publication_state != Databank::PublicationState::DRAFT # ignore draft datasets
 
