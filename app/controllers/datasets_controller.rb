@@ -49,6 +49,12 @@ class DatasetsController < ApplicationController
     @search = nil
     search_get_facets = nil
 
+    if params.has_key('no_pagination')
+      per_page = 500
+    else
+      per_page = 25
+    end
+
     if current_user&.role
 
       case current_user.role
@@ -152,7 +158,7 @@ class DatasetsController < ApplicationController
             facet(:datafile_extensions)
             facet(:publication_year)
 
-            paginate(:page => params[:page] || 1)
+            paginate(page: params[:page] || 1, per_page: per_page)
 
           end
 
@@ -320,7 +326,7 @@ class DatasetsController < ApplicationController
             facet(:datafile_extensions)
             facet(:publication_year)
 
-            paginate(page: params[:page] || 1)
+            paginate(page: params[:page] || 1, per_page: per_page)
 
           end
 
@@ -443,7 +449,7 @@ class DatasetsController < ApplicationController
             facet(:datafile_extensions)
             facet(:publication_year)
 
-            paginate(page: params[:page] || 1)
+            paginate(page: params[:page] || 1, per_page: per_page)
 
           end
       end
@@ -552,7 +558,7 @@ class DatasetsController < ApplicationController
         facet(:datafile_extensions)
         facet(:publication_year)
 
-        paginate(page: params[:page] || 1)
+        paginate(page: params[:page] || 1, per_page: per_page)
 
       end
 
