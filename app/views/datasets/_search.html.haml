@@ -232,6 +232,6 @@
                         ="(#{row.count})"
 
     .col-md-7
-      = will_paginate @search
+      = will_paginate @search.results
       -@search.each_hit_with_result do |hit, dataset|
         = render 'brief_record', dataset:dataset
