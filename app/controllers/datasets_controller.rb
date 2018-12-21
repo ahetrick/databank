@@ -152,7 +152,7 @@ class DatasetsController < ApplicationController
             facet(:datafile_extensions)
             facet(:publication_year)
 
-            paginate(:page => params[:page])
+            paginate(:page => params[:page] || 1)
 
           end
 
@@ -360,7 +360,6 @@ class DatasetsController < ApplicationController
             facet(:datafile_extensions)
             facet(:publication_year)
 
-            paginate(page: params[:page] || 1)
           end
 
           @search = Dataset.search do
@@ -475,8 +474,6 @@ class DatasetsController < ApplicationController
         facet(:hold_state)
         facet(:datafile_extensions)
         facet(:publication_year)
-
-        paginate(page: params[:page] || 1)
 
       end
 
