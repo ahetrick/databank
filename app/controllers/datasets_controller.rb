@@ -67,6 +67,7 @@ class DatasetsController < ApplicationController
             facet(:hold_state)
             facet(:datafile_extensions)
             facet(:publication_year)
+
           end
 
           @search = Dataset.search do
@@ -195,6 +196,7 @@ class DatasetsController < ApplicationController
             end
             keywords (params[:q])
             facet(:visibility_code)
+
           end
 
           search_get_facets = Dataset.search do
@@ -215,7 +217,6 @@ class DatasetsController < ApplicationController
               end
             end
 
-
             keywords (params[:q])
             facet(:license_code)
             facet(:funder_codes)
@@ -226,6 +227,7 @@ class DatasetsController < ApplicationController
             facet(:hold_state)
             facet(:datafile_extensions)
             facet(:publication_year)
+
           end
 
           @search = Dataset.search do
@@ -240,8 +242,6 @@ class DatasetsController < ApplicationController
                 with :publication_state, Databank::PublicationState::TempSuppress::FILE
                 with :publication_state, Databank::PublicationState::PermSuppress::FILE
               end
-
-
 
               if params.has_key?('depositors')
                 any_of do
@@ -320,7 +320,7 @@ class DatasetsController < ApplicationController
             facet(:datafile_extensions)
             facet(:publication_year)
 
-            #paginate(:page => params[:page])
+            paginate(page: params[:page] || 1)
 
           end
 
@@ -359,6 +359,8 @@ class DatasetsController < ApplicationController
             facet(:hold_state)
             facet(:datafile_extensions)
             facet(:publication_year)
+
+            paginate(page: params[:page] || 1)
           end
 
           @search = Dataset.search do
@@ -442,7 +444,7 @@ class DatasetsController < ApplicationController
             facet(:datafile_extensions)
             facet(:publication_year)
 
-            #paginate(:page => params[:page])
+            paginate(page: params[:page] || 1)
 
           end
       end
@@ -473,6 +475,9 @@ class DatasetsController < ApplicationController
         facet(:hold_state)
         facet(:datafile_extensions)
         facet(:publication_year)
+
+        paginate(page: params[:page] || 1)
+
       end
 
       @search = Dataset.search do
@@ -550,6 +555,8 @@ class DatasetsController < ApplicationController
         facet(:datafile_extensions)
         facet(:publication_year)
 
+        paginate(page: params[:page] || 1)
+
       end
 
     end
@@ -588,14 +595,6 @@ class DatasetsController < ApplicationController
       end
       @search.facet(:funder_codes).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
     end
-
-    if params.has_key?(:page)
-      @current_page = params[:page]
-    else
-      @current_page = 1
-    end
-
-    @search = @search.paginate(page: @current_page, per_page: 25)
 
     @report=Indexable.citation_report(@search, request.original_url, current_user)
 
