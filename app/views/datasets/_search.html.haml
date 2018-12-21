@@ -42,10 +42,11 @@
             %span(class="glyphicon glyphicon-search" aria-hidden="true" )
           %button(type="button" class="btn btn-danger" onclick="clearSearchTerm()" )
             %span(class="glyphicon glyphicon-remove" aria-hidden="true" )
-
-    .col-md-7
-      =will_paginate @search.results, previous_label: "<".html_safe, next_label: ">".html_safe, renderer: BootstrapPagination::Rails
+      %br
       =page_entries_info(@search.results)
+    .col-md-4
+      =will_paginate @search.results, previous_label: "<".html_safe, next_label: ">".html_safe, renderer: BootstrapPagination::Rails
+
   .row
     .col-md-5
 
