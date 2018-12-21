@@ -48,7 +48,8 @@
       %h2
         Datasets
         ="(#{@search.total})"
-    .col-md-5
+  .row
+    .col-md-12
       = will_paginate @search.results, renderer: BootstrapPagination::Rails
 
   .row
