@@ -44,14 +44,11 @@
           %button(type="button" class="btn btn-danger" onclick="clearSearchTerm()" )
             %span(class="glyphicon glyphicon-remove" aria-hidden="true" )
 
-    .col-md-2
-      %h2
-        Datasets
-        ="(#{@search.total})"
-  .row
-    .col-md-12
-      = will_paginate @search.results, renderer: BootstrapPagination::Rails
-
+    .col-md-7
+      %strong Datasets:
+      -#="(#{@search.total})"
+      =page_entries_info(@search.results)
+      = will_paginate @search.results, previous_label: "<".html_safe, next_label: ">".html_safe, renderer: BootstrapPagination::Rails
   .row
     .col-md-5
 
