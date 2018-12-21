@@ -49,8 +49,7 @@
         Datasets
         ="(#{@search.total})"
     .col-md-5
-      = will_paginate @search.results
-
+      = will_paginate @search.results, renderer: BootstrapPagination::Rails
 
   .row
     .col-md-5
