@@ -4,7 +4,7 @@
   -else
     %input(type="hidden" name="sort_by" value="sort_updated_desc" )
   -if current_user && current_user.role == 'admin'
-    .input-group
+    .input-group.curator-only
       %span(class="input-group-btn" )
         %button(type="button" class="btn btn-default" disabled=true )
           Updated
