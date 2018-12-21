@@ -32,7 +32,6 @@
 
   .row
     .col-md-5
-      %br
       .input-group
         -if params.has_key?('q') && params['q'] && params['q'].length > 0
           %input(type="text" class="form-control q" name="q" aria-label="search input box" value="#{params['q']}" )
@@ -44,11 +43,10 @@
           %button(type="button" class="btn btn-danger" onclick="clearSearchTerm()" )
             %span(class="glyphicon glyphicon-remove" aria-hidden="true" )
 
-    .col-md-7
+    .col-md-3
       =page_entries_info(@search.results)
-      %br
+    .col-md-4
       =will_paginate @search.results, previous_label: "<".html_safe, next_label: ">".html_safe, renderer: BootstrapPagination::Rails
-
   .row
     .col-md-5
 
