@@ -48,7 +48,6 @@
       %h2 Datasets
     .col-md-5
       =will_paginate @search.results, previous_label: "<".html_safe, next_label: ">".html_safe, renderer: BootstrapPagination::Rails
-      %br
       =page_entries_info(@search.results)
   .row
     .col-md-5
