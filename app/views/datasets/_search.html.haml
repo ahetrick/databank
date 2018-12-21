@@ -45,11 +45,8 @@
             %span(class="glyphicon glyphicon-remove" aria-hidden="true" )
 
     .col-md-7
-      %h2
-        Datasets
-        =page_entries_info(@search.results)
+      =page_entries_info(@search.results)
       =will_paginate @search.results, previous_label: "<".html_safe, next_label: ">".html_safe, renderer: BootstrapPagination::Rails
-
   .row
     .col-md-5
 
