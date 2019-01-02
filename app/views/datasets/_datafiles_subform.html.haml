@@ -70,7 +70,7 @@
                         %input(type="checkbox" id="checkAllFiles" value="checkAllFiles")
                           Select all
                           =surround "(", ")" do
-                            %span(id = "datafiles-count")
+                            %span(id = "datafilesCount")
                               = @dataset.ordered_datafiles.count
                 - @ordered_datafiles.each_with_index do |datafile, i|
                   = f.fields_for :datafiles, datafile do |df|
