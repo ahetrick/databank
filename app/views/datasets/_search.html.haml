@@ -45,9 +45,9 @@
           %button(type="button" class="btn btn-danger" onclick="clearSearchTerm()" )
             %span(class="glyphicon glyphicon-remove" aria-hidden="true" )
 
-    .col-md-3
+    .col-md-2
       =page_entries_info(@search.results)
-    .col-md-3
+    .col-md-4
       =will_paginate @search.results, previous_label: "<".html_safe, next_label: ">".html_safe, renderer: BootstrapPagination::Rails
     -if current_user.role && current_user.role == 'admin'
       .col-md-1

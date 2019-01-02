@@ -75,6 +75,7 @@ function sortResults(sort_criteria){
 }
 
 function showAll(){
+    console.log("inside showAll");
     $("#searchForm").append("<input type='hidden' name='showAll' value='showAll' />");
     $("#searchForm").submit();
 }
