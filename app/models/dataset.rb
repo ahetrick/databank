@@ -708,12 +708,25 @@ class Dataset < ActiveRecord::Base
   end
 
   def ordered_datafiles
-    self.datafiles.where.not(storage_root: [nil, ""]).
+    valid_datafiles = self.datafiles.where.not(storage_root: [nil, ""]).
         where.not(storage_key: [nil, ""]).
-        where(job_status: :complete).
         where.not(binary_size: nil).
         where("binary_size > ?", 0).
         sort_by { |obj| obj.bytestream_name }
+    datafiles = []
+    valid_datafiles.each do |datafile|
+      datafiles << datafile if datafile.has_bytestream && datafile.bytestream_name != "" && datafile.job_staus == :complete
+    end
+    datafiles
+  end
+
+  def incomplete_datafiles
+
+    datafiles = []
+    self.datafiles.each do |datafile|
+      datafiles << datafile if datafile.job_status != :complete
+    end
+
   end
 
   def medusa_ingests

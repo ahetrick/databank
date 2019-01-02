@@ -749,7 +749,10 @@ class DatasetsController < ApplicationController
     end
     @token = @dataset.current_token
 
-    @ordered_datafiles = @dataset.datafiles.sort_by { |obj| obj.bytestream_name }
+    @ordered_datafiles = @dataset.ordered_datafiles
+    @incomplete_datafiles = @dataset.incomplete_datafiles
+
+
 
     set_file_mode
 
