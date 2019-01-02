@@ -712,7 +712,7 @@ class Dataset < ActiveRecord::Base
         where.not(storage_key: [nil, ""]).
         where(job_status: :complete).
         where.not(binary_size: nil).
-        where(binary_size.gt(0)).
+        where("binary_size > ?", 0).
         sort_by { |obj| obj.bytestream_name }
   end
 
