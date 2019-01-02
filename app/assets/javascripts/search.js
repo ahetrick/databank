@@ -38,6 +38,18 @@ function clearSearchTerm(){
     $("#searchForm").submit();
 }
 
+function showAll(){
+    console.log("inside showAll");
+    $("#searchForm").append("<input type='hidden' name='showAll' value='showAll' />");
+    $("#searchForm").submit();
+}
+
+function sortResults(sort_criteria){
+
+    $("input[name='sort_by']").val(sort_criteria);
+    $("#searchForm").submit();
+}
+
 function setSortStyle(){
     var sort_criteria = $("input[name='sort_by']").val();
 
@@ -68,17 +80,6 @@ function setSortStyle(){
     }
 }
 
-function sortResults(sort_criteria){
-
-    $("input[name='sort_by']").val(sort_criteria);
-    $("#searchForm").submit();
-}
-
-function showAll(){
-    console.log("inside showAll");
-    $("#searchForm").append("<input type='hidden' name='showAll' value='showAll' />");
-    $("#searchForm").submit();
-}
 
 
 
