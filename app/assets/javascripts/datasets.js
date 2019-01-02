@@ -27,39 +27,37 @@ ready = function () {
     $('#agree-button').prop("disabled", true);
 
 
-    $( "#publish-then-review-btn" ).click(function() {
+    $("#publish-then-review-btn").click(function () {
 
         $('#offer_review_h').modal('hide');
         $('#deposit').modal('show');
 
     });
 
-    $( "#review-then-publish-btn" ).click(function() {
+    $("#review-then-publish-btn").click(function () {
 
         $('#offer_review_h').modal('hide');
         window.location.href = "/datasets/" + dataset_key + "/request_review"
 
     });
 
-    $( ".choose_review_block_v" ).click(function() {
+    $(".choose_review_block_v").click(function () {
         $('#choose_review_v').trigger("click");
     });
 
 
-    $( ".choose_continue_block_v" ).click(function() {
+    $(".choose_continue_block_v").click(function () {
         $('#choose_continue_v').trigger("click");
     });
 
-    $( ".choose_review_block_h" ).click(function() {
+    $(".choose_review_block_h").click(function () {
         $('#choose_review_h').trigger("click");
     });
 
 
-    $( ".choose_continue_block_h" ).click(function() {
+    $(".choose_continue_block_h").click(function () {
         $('#choose_continue_h').trigger("click");
     });
-
-
 
 
     $('#keyword-text').keyup(handleKeywordKeyup);
@@ -87,10 +85,10 @@ ready = function () {
     var ellipsestext = "...";
     var moretext = "more";
     var lesstext = "less";
-    $('.more').each(function() {
+    $('.more').each(function () {
         var content = $(this).html();
 
-        if(content.length > showChar) {
+        if (content.length > showChar) {
 
             var c = content.substr(0, showChar);
             var h = content.substr(showChar, content.length - showChar);
@@ -102,8 +100,8 @@ ready = function () {
 
     });
 
-    $(".morelink").click(function(){
-        if($(this).hasClass("less")) {
+    $(".morelink").click(function () {
+        if ($(this).hasClass("less")) {
             $(this).removeClass("less");
             $(this).html(moretext);
         } else {
@@ -132,7 +130,7 @@ ready = function () {
 
     var numChecked = $('input.checkFile:checked').length;
 
-    $(".checkFileSelectedCount").html( '(' + numChecked + ')');
+    $(".checkFileSelectedCount").html('(' + numChecked + ')');
 
     $("#checkAllFiles").click(function () {
         $(".checkFileGroup").prop('checked', $(this).prop('checked'));
@@ -152,8 +150,7 @@ ready = function () {
     $('#dropdown-login').click(function (event) {
         if (event.stopPropagation) {
             event.stopPropagation();
-        }
-        else if (window.event) {
+        } else if (window.event) {
             window.event.cancelBubble = true;
         }
     });
@@ -300,7 +297,7 @@ ready = function () {
 
         $.getJSON("/datasets/" + dataset_key + "/get_current_token", function (data) {
             //console.log(data);
-            if (data.token && data.expires && data.token != "none"){
+            if (data.token && data.expires && data.token != "none") {
                 $('#token-header').text('Here is your token:');
                 setTokenExamples(data.token, data.expires);
 
@@ -318,7 +315,7 @@ ready = function () {
         $.getJSON("/datasets/" + dataset_key + "/reserve_doi", function (data) {
             console.log("You are here.");
             console.log(data);
-            if (data.status && data.status == "ok"){
+            if (data.status && data.status == "ok") {
 
                 $("#deposit").modal('show');
 
@@ -345,8 +342,7 @@ ready = function () {
 
             if (filename_isdup(boxItem.name)) {
                 alert("Duplicate file error: A file named " + boxItem.name + " is already in this dataset.  For help, please contact the Research Data Service.");
-            }
-            else {
+            } else {
                 boxItem.dataset_key = dataset_key;
                 window.onbeforeunload = confirmOnPageExit;
                 $.ajax({
@@ -370,7 +366,6 @@ ready = function () {
     });
 
     $('#box-upload-in-progress').hide();
-
 
 
 }
@@ -424,7 +419,7 @@ function setDepositor(email, name) {
 
 function handleAgreeModal(email, name) {
 
-    if ($('#owner-yes').is(":checked") && $('#agree-yes').is(":checked") && ($('#private-yes').is(":checked") || $('#private-na').is(":checked") )) {
+    if ($('#owner-yes').is(":checked") && $('#agree-yes').is(":checked") && ($('#private-yes').is(":checked") || $('#private-na').is(":checked"))) {
         setDepositor(email, name);
         $('#new_dataset').submit();
     } else {
@@ -545,7 +540,7 @@ function handleAgreeNo() {
 }
 
 function agree_answers_all_yes() {
-    return (($('#owner-yes').is(':checked')) && ( ($('#private-yes').is(':checked')) || ($('#private-na').is(':checked')) ) && ($('#agree-yes').is(':checked')))
+    return (($('#owner-yes').is(':checked')) && (($('#private-yes').is(':checked')) || ($('#private-na').is(':checked'))) && ($('#agree-yes').is(':checked')))
 }
 
 function agree_answers_none_no() {
@@ -786,29 +781,31 @@ function getNewToken() {
     });
 }
 
-function setTokenExamples(upload_token, token_expiration){
+function setTokenExamples(upload_token, token_expiration) {
 
 
     $('.current-token').html("<p><strong>Current HTTP Authentication Token: </strong>" + upload_token + "<br/><strong>Expires:</strong> " + (new Date(token_expiration)).toISOString() + "</p>");
     $('#token-button-text').text('View token for command line tools');
 
-    if(window.location.href.indexOf("dev") > -1) {
+    if (window.location.href.indexOf("dev") > -1) {
 
-        $('.command-to-copy').html("<pre><code>python databank_api_client_v2.py "+ dataset_key +" "+ upload_token +" myfile.csv development</code></pre>");
-        $('.curl-to-copy').html("<pre><code>curl -F &quot;binary=@my_datafile.csv&quot; -H &quot;Authorization: Token token=" + upload_token + "&quot; -H &quot;Transfer-Encoding: chunked&quot; -X POST https://rds-dev.library.illinois.edu/api/dataset/"+ dataset_key +"/datafile -o output.txt -k</code></pre>");
+        $('.command-to-copy').html("<pre><code>python databank_api_client_v2.py " + dataset_key + " " + upload_token + " myfile.csv development</code></pre>");
+        $('.curl-to-copy').html("<pre><code>curl -F &quot;binary=@my_datafile.csv&quot; -H &quot;Authorization: Token token=" + upload_token + "&quot; -H &quot;Transfer-Encoding: chunked&quot; -X POST https://rds-dev.library.illinois.edu/api/dataset/" + dataset_key + "/datafile -o output.txt -k</code></pre>");
 
-    } else if(window.location.href.indexOf("aws") > -1) {
+    } else if (window.location.href.indexOf("aws") > -1) {
 
-        $('.command-to-copy').html("<pre><code>python databank_api_client_v2.py "+ dataset_key +" "+ upload_token +" myfile.csv aws_test</code></pre>");
-        $('.curl-to-copy').html("<pre><code>curl -F &quot;binary=@my_datafile.csv&quot; -H &quot;Authorization: Token token=" + upload_token + "&quot; -H &quot;Transfer-Encoding: chunked&quot; -X POST https://aws-databank-alb.library.illinois.edu/api/dataset/"+ dataset_key +"/datafile -o output.txt</code></pre>");
+        $('.command-to-copy').html("<pre><code>python databank_api_client_v2.py " + dataset_key + " " + upload_token + " myfile.csv aws_test</code></pre>");
+        $('.curl-to-copy').html("<pre><code>curl -F &quot;binary=@my_datafile.csv&quot; -H &quot;Authorization: Token token=" + upload_token + "&quot; -H &quot;Transfer-Encoding: chunked&quot; -X POST https://aws-databank-alb.library.illinois.edu/api/dataset/" + dataset_key + "/datafile -o output.txt</code></pre>");
     } else {
 
-        $('.command-to-copy').html("<pre><code>python databank_api_client_v2.py "+ dataset_key +" "+ upload_token +" myfile.csv</code></pre>");
+        $('.command-to-copy').html("<pre><code>python databank_api_client_v2.py " + dataset_key + " " + upload_token + " myfile.csv</code></pre>");
         $('.curl-to-copy').html("<pre><code>curl -F &quot;binary=@my_datafile.csv&quot; -H &quot;Authorization: Token token=" + upload_token + "&quot; -H &quot;Transfer-Encoding: chunked&quot; -X POST https://databank.illinois.edu/api/dataset/" + dataset_key + "/datafile -o output.txt</code></pre>");
     }
 }
 
-function cancelUpload() {
+function cancelUpload(web_id, job_id) {
+
+    console.log("inside cancel upload");
 
     if (!event) {
         event = window.event; // Older versions of IE use
@@ -819,7 +816,17 @@ function cancelUpload() {
     var el = (event.target || event.srcElement); // DOM uses 'target';
     // older versions of
     // IE use 'srcElement'
-    $(el).parent().remove();
+
+    $.getJSON('/datasets/'+ dataset_key + '/datafiles/' + web_id + '/cancel_box_upload')
+        .done(function (json) {
+            console.log(json);
+            $(el).parent().remove();
+        })
+        .fail(function (jqxhr, textStatus, error) {
+            var err = textStatus + ", " + error;
+            console.log("Error attempting to cancel upload: " + err);
+            $(el).parent().html("Error attempting to cancel upload: " + err);
+        });
 }
 
 function deleteSelected() {
@@ -829,7 +836,7 @@ function deleteSelected() {
     if (window.confirm("Are you sure?")) {
 
         //console.log($('#checkFileSelectedCount').html());
-        $('.checkFileSelectedCount').html( '(' + numChecked + ')');
+        $('.checkFileSelectedCount').html('(' + numChecked + ')');
         $('#checkAllFiles').prop('checked', false);
 
         $.each($("input[name='selected_files[]']:checked"), function () {
@@ -838,34 +845,34 @@ function deleteSelected() {
     }
 }
 
-function handleCheckFileGroupChange(){
+function handleCheckFileGroupChange() {
 
     var numChecked = $('input.checkFile:checked').length;
 
-    if (typeof numChecked === 'undefined' || isNaN(numChecked) || numChecked < 1 ){
+    if (typeof numChecked === 'undefined' || isNaN(numChecked) || numChecked < 1) {
         numChecked = 0;
     }
 
 
-    $(".checkFileSelectedCount").html( '(' + numChecked + ')');
+    $(".checkFileSelectedCount").html('(' + numChecked + ')');
     $('#checkAllFiles').prop('checked', false);
 }
 
-function handleKeywordKeyup(){
+function handleKeywordKeyup() {
 
     var keywordString = $('#keyword-text').val();
     keywordArr = keywordString.split(";");
     var keyword_count = keywordArr.length;
 
-    $.each(keywordArr, function(index, keyword ) {
-        if ((keyword.trim()).length < 1 ){
-            keyword_count = keyword_count -1;
+    $.each(keywordArr, function (index, keyword) {
+        if ((keyword.trim()).length < 1) {
+            keyword_count = keyword_count - 1;
         }
     });
 
-    if (keyword_count > 0){
+    if (keyword_count > 0) {
         //console.log(keywordArr);
-        $('#keyword-label').html("Keywords (" + keyword_count +" -- semicolon separated)");
+        $('#keyword-label').html("Keywords (" + keyword_count + " -- semicolon separated)");
     } else {
         $('#keyword-label').html("Keywords");
         $('#keyword-text').attr("placeholder", "[Semicolon separated list of keywords or phrases, e.g.: institutional repositories; file formats]")

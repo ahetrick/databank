@@ -708,7 +708,12 @@ class Dataset < ActiveRecord::Base
   end
 
   def ordered_datafiles
-    self.datafiles.where.not(storage_root: [nil, ""]).sort_by { |obj| obj.bytestream_name }
+    self.datafiles.where.not(storage_root: [nil, ""]).
+        where.not(storage_key: [nil, ""]).
+        where(job_status: :complete).
+        where.not(binary_size: nil).
+        where(binary_size.gt(0)).
+        sort_by { |obj| obj.bytestream_name }
   end
 
   def medusa_ingests
