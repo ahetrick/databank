@@ -1,4 +1,4 @@
--if @dataset
+-if current_user && current_user.role == 'admin' && @dataset
 
   %h3
     Files for
