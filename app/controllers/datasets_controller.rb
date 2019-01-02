@@ -60,21 +60,21 @@ class DatasetsController < ApplicationController
       case current_user.role
         when "admin"
 
-          search_get_facets = Dataset.search do
-            without(:depositor, 'error')
-            with(:is_most_recent_version, true)
-            keywords (params[:q])
-            facet(:license_code)
-            facet(:funder_codes)
-            facet(:creator_names)
-            facet(:depositor)
-            facet(:subject_text)
-            facet(:visibility_code)
-            facet(:hold_state)
-            facet(:datafile_extensions)
-            facet(:publication_year)
-
-          end
+          # search_get_facets = Dataset.search do
+          #   without(:depositor, 'error')
+          #   with(:is_most_recent_version, true)
+          #   keywords (params[:q])
+          #   facet(:license_code)
+          #   facet(:funder_codes)
+          #   facet(:creator_names)
+          #   facet(:depositor)
+          #   facet(:subject_text)
+          #   facet(:visibility_code)
+          #   facet(:hold_state)
+          #   facet(:datafile_extensions)
+          #   facet(:publication_year)
+          #
+          # end
 
           @search = Dataset.search do
 
@@ -165,21 +165,21 @@ class DatasetsController < ApplicationController
           # this makes a row for each category, even if the current search does not have any results in a category
           # these facets are only for admins
 
-          search_get_facets.facet(:visibility_code).rows.each do |outer_row|
-            has_this_row = false
-            @search.facet(:visibility_code).rows.each do |inner_row|
-              has_this_row = true if inner_row.value == outer_row.value
-            end
-            @search.facet(:visibility_code).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
-          end
-
-          search_get_facets.facet(:depositor).rows.each do |outer_row|
-            has_this_row = false
-            @search.facet(:depositor).rows.each do |inner_row|
-              has_this_row = true if inner_row.value == outer_row.value
-            end
-            @search.facet(:depositor).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
-          end
+          # search_get_facets.facet(:visibility_code).rows.each do |outer_row|
+          #   has_this_row = false
+          #   @search.facet(:visibility_code).rows.each do |inner_row|
+          #     has_this_row = true if inner_row.value == outer_row.value
+          #   end
+          #   @search.facet(:visibility_code).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
+          # end
+          #
+          # search_get_facets.facet(:depositor).rows.each do |outer_row|
+          #   has_this_row = false
+          #   @search.facet(:depositor).rows.each do |inner_row|
+          #     has_this_row = true if inner_row.value == outer_row.value
+          #   end
+          #   @search.facet(:depositor).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
+          # end
 
 
         when "depositor"
