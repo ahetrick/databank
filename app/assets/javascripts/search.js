@@ -74,6 +74,11 @@ function sortResults(sort_criteria){
     $("#searchForm").submit();
 }
 
+function showAll(){
+    $("#searchForm").append("<input type='hidden' name='showAll' value='showAll' />");
+    $("#searchForm").submit();
+}
+
 
 
 $(document).ready(search_ready);

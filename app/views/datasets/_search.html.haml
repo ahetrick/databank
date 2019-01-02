@@ -5,11 +5,7 @@
     %input(type="hidden" name="sort_by" value="sort_updated_desc" )
   -if current_user && current_user.role == 'admin'
     .row
-      .col-md-5
-        %input(type="checkbox" name="no_pagination" value="no_pagination")
-          Show All (no pagination)
-
-      .col-md-7
+      .col-md-7.col-md-offset-5
         .input-group.curator-only
           %span(class="input-group-btn" )
             %button(type="button" class="btn btn-default" disabled=true )
@@ -51,8 +47,12 @@
 
     .col-md-3
       =page_entries_info(@search.results)
-    .col-md-4
+    .col-md-3
       =will_paginate @search.results, previous_label: "<".html_safe, next_label: ">".html_safe, renderer: BootstrapPagination::Rails
+    -if current_user.role && current_user.role == 'admin'
+      .col-md-1
+        %button(type="button" class="btn btn-success" onclick="showAll")
+          Show All
   .row
     .col-md-5
 

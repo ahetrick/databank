@@ -49,7 +49,7 @@ class DatasetsController < ApplicationController
     @search = nil
     search_get_facets = nil
 
-    if params.has_key?('no_pagination')
+    if params.has_key?('showAll')
       per_page = 500
     else
       per_page = 25
