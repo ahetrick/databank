@@ -57,8 +57,9 @@
               -if @ordered_datafiles.count > 0
                 - current_user && current_user.role == 'admin'
                   %tr.row.curator-only
-                    %td.col-md-4.col-md-offset-4
-                      %a(href="/datasets/#{@dataset.key}/datafiles" class="btn btn-primary btn-block idb") Advanced File Management
+                    %td
+                      %span.col-md-4.col-md-offset-4
+                        %a(href="/datasets/#{@dataset.key}/datafiles" class="btn btn-primary btn-block idb") Advanced File Management
   -#
   -#              -if (@dataset.publication_state == Databank::PublicationState::DRAFT) && ( (can? :manage, @dataset ) ||  (can? :update, @dataset) )
   -#                .row
