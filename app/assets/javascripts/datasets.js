@@ -389,8 +389,6 @@ function pad(n) {
 
 function cancelBoxUpload(datafile, job) {
 
-    console.log('datafile: ' + datafile + ', job:' + job );
-
     $.getJSON( '/datasets/' + dataset_key + '/datafiles/' + datafile + '/cancel_box_upload' )
         .done(function() {
             $("#job" + job).remove();

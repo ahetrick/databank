@@ -639,6 +639,9 @@ class DatasetsController < ApplicationController
   end
 
   def cancel_box_upload
+
+    Rails.logger.warn "cancel box upload params: #{params}"
+
     begin
 
       @job_id_string = "0"
@@ -709,6 +712,7 @@ class DatasetsController < ApplicationController
         end
 
       else
+        Rails.logger.warn "did not find datafile"
         render json: {}, status: :ok
       end
 
