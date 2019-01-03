@@ -715,7 +715,7 @@ class Dataset < ActiveRecord::Base
         sort_by { |obj| obj.bytestream_name }
     datafiles = []
     valid_datafiles.each do |datafile|
-      datafiles << datafile if datafile.has_bytestream && datafile.bytestream_name != "" && datafile.job_staus == :complete
+      datafiles << datafile if datafile.has_bytestream && datafile.bytestream_name != "" && datafile.job_status == :complete
     end
     datafiles
   end
