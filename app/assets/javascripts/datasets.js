@@ -389,18 +389,15 @@ function pad(n) {
 
 function cancelBoxUpload(datafile, job) {
 
-    $.ajax({
-        type: "GET",
-        url: '/datasets/' + dataset_key + '/datafiles/' + datafile + '/cancel_box_upload',
-        success: function (data) {
-            $("#job" + job).remove();
-        },
-        error: function (data) {
-            console.log("error cancelling upload from Box: " + data);
-        },
-        dataType: 'text'
-    });
+    console.log('datafile: ' + datafile + ', job:' + job );
 
+    $.getJSON( '/datasets/' + dataset_key + '/datafiles/' + datafile + '/cancel_box_upload' )
+        .done(function() {
+            $("#job" + job).remove();
+        })
+        .fail(function() {
+            console.log( "cancel failed, see server log" );
+        });
 }
 
 function setDepositor(email, name) {
@@ -803,7 +800,7 @@ function setTokenExamples(upload_token, token_expiration) {
     }
 }
 
-function cancelUpload(web_id, job_id) {
+function cancelUpload() {
 
     console.log("inside cancel upload");
 
@@ -812,21 +809,11 @@ function cancelUpload(web_id, job_id) {
                               // a global reference
                               // and not an argument.
     }
-
     var el = (event.target || event.srcElement); // DOM uses 'target';
     // older versions of
     // IE use 'srcElement'
 
-    $.getJSON('/datasets/'+ dataset_key + '/datafiles/' + web_id + '/cancel_box_upload')
-        .done(function (json) {
-            console.log(json);
-            $(el).parent().remove();
-        })
-        .fail(function (jqxhr, textStatus, error) {
-            var err = textStatus + ", " + error;
-            console.log("Error attempting to cancel upload: " + err);
-            $(el).parent().html("Error attempting to cancel upload: " + err);
-        });
+    $(el).parent().remove();
 }
 
 function deleteSelected() {

@@ -132,6 +132,6 @@
                               (refresh page to update)
                           %span(class="col-md-2")
                             - if (can? :manage, @dataset ) ||  (can? :update, @dataset)
-                              %button(class="cancel-upload-btn btn btn-danger btn-sm" onclick="cancelUpload('#{datafile.web_id}', '#{datafile.job_id}')") Cancel
+                              %button(class="cancel-upload-btn btn btn-danger btn-sm" onclick="cancelBoxUpload('#{datafile.web_id}', '#{datafile.job_id}')") Cancel
 
           %div(id="datafiles_upload_progress")
