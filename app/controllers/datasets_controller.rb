@@ -689,34 +689,35 @@ class DatasetsController < ApplicationController
               if job.destroy && @datafile.destroy
                 render json: "successfully canceled upload from Box", status: :ok
               else
-                render json: "error attemptiong to cancel upload from Box", status: :unprocessable_entity
+                render json: {}, status: :unprocessable_entity
               end
             end
           else
             if @datafile.destroy
-              render json: "successfully canceled upload from Box", status: :ok
+              render json: {}, status: :ok
             else
-              render json: "error attemptiong to cancel upload from Box", status: :unprocessable_entity
+              render json: {}, status: :unprocessable_entity
             end
           end
 
         else
           if @datafile.destroy
-            render json: "successfully canceled upload from Box", status: :ok
+            render json: {}, status: :ok
           else
-            render json: "error attemptiong to cancel upload from Box", status: :unprocessable_entity
+            render json: {}, status: :unprocessable_entity
           end
         end
 
       else
-        render json: "datafile not found", status: :not_found
+        render json: {}, status: :ok
       end
 
     rescue Errno::ESRCH => ex
       Rails.logger.warn ex.message
+      render json: {}, status: :unprocessable_entity
     rescue Exception::StandardError => ex
       Rails.logger.warn ex.message
-      render json: "error attemptiong to cancel upload from Box: #{ex.message}", status: :unprocessable_entity
+      render json: {}, status: :unprocessable_entity
     end
   end
 
