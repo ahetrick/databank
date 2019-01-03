@@ -649,6 +649,9 @@ class DatasetsController < ApplicationController
       @datafile = Datafile.find_by_web_id(params[:web_id])
 
       if @datafile
+
+        Rails.logger.warn "datafile found"
+
         if @datafile.job_id
           @job_id_string = @datafile.job_id.to_s
           job = Delayed::Job.where(id: @datafile.job_id).first
@@ -688,10 +691,10 @@ class DatasetsController < ApplicationController
                 end
               end
             elsif job
-              @datafile.destroy
               if job.destroy && @datafile.destroy
-                render json: "successfully canceled upload from Box", status: :ok
+                render json: {}, status: :ok
               else
+                Rails.logger.warn("failed to destroy job or datafile")
                 render json: {}, status: :unprocessable_entity
               end
             end
@@ -699,6 +702,7 @@ class DatasetsController < ApplicationController
             if @datafile.destroy
               render json: {}, status: :ok
             else
+              Rails.logger.warn("there was no job, failed to destroy datafile")
               render json: {}, status: :unprocessable_entity
             end
           end
@@ -707,6 +711,7 @@ class DatasetsController < ApplicationController
           if @datafile.destroy
             render json: {}, status: :ok
           else
+            Rails.logger.warn("there was no job_id, failed to destroy datafile")
             render json: {}, status: :unprocessable_entity
           end
         end
