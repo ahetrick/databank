@@ -43,7 +43,7 @@ class DatasetsController < ApplicationController
   def index
 
     @datasets = Dataset.where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::TempSuppress::FILE, Databank::PublicationState::PermSuppress::FILE]).where(is_test: false) #used for json response
-    
+
     @my_datasets_count = 0
 
     @search = nil
@@ -58,32 +58,201 @@ class DatasetsController < ApplicationController
     if current_user&.role
 
       case current_user.role
-        when "admin"
+      when "admin"
 
-          # search_get_facets = Dataset.search do
-          #   without(:depositor, 'error')
-          #   with(:is_most_recent_version, true)
-          #   keywords (params[:q])
-          #   facet(:license_code)
-          #   facet(:funder_codes)
-          #   facet(:creator_names)
-          #   facet(:depositor)
-          #   facet(:subject_text)
-          #   facet(:visibility_code)
-          #   facet(:hold_state)
-          #   facet(:datafile_extensions)
-          #   facet(:publication_year)
-          #
-          # end
+        # search_get_facets = Dataset.search do
+        #   without(:depositor, 'error')
+        #   with(:is_most_recent_version, true)
+        #   keywords (params[:q])
+        #   facet(:license_code)
+        #   facet(:funder_codes)
+        #   facet(:creator_names)
+        #   facet(:depositor)
+        #   facet(:subject_text)
+        #   facet(:visibility_code)
+        #   facet(:hold_state)
+        #   facet(:datafile_extensions)
+        #   facet(:publication_year)
+        #
+        # end
 
-          @search = Dataset.search do
+        @search = Dataset.search do
 
+          without(:depositor, 'error')
+
+          if params.has_key?('license_codes')
+            any_of do
+              params['license_codes'].each do |license_code|
+                with :license_code, license_code
+              end
+            end
+          end
+
+          if params.has_key?('subjects')
+            any_of do
+              params['subjects'].each do |subject|
+                with :subject_text, subject
+              end
+            end
+          end
+
+          if params.has_key?('depositors')
+            any_of do
+              params['depositors'].each do |depositor|
+                with :depositor, depositor
+              end
+            end
+          end
+
+          if params.has_key?('funder_codes')
+            any_of do
+              params['funder_codes'].each do |funder_code|
+                with :funder_codes, funder_code
+              end
+            end
+          end
+
+          if params.has_key?('visibility_codes')
+            any_of do
+              params['visibility_codes'].each do |visibility_code|
+                with :visibility_code, visibility_code
+              end
+            end
+          end
+
+          if params.has_key?('publication_years')
+            any_of do
+              params['publication_years'].each do |publication_year|
+                with :publication_year, publication_year
+              end
+            end
+          end
+
+          keywords (params[:q])
+
+          if params.has_key?('sort_by')
+            if params['sort_by'] == 'sort_updated_asc'
+              order_by :updated_at, :asc
+            elsif params['sort_by'] == 'sort_released_asc'
+              order_by :release_datetime, :asc
+            elsif params['sort_by'] == 'sort_released_desc'
+              order_by :release_datetime, :desc
+            elsif params['sort_by'] == 'sort_ingested_asc'
+              order_by :ingest_datetime, :asc
+            elsif params['sort_by'] == 'sort_ingested_desc'
+              order_by :ingest_datetime, :desc
+            else
+              order_by :updated_at, :desc
+            end
+          else
+            order_by :updated_at, :desc
+          end
+
+          facet(:license_code)
+          facet(:funder_codes)
+          facet(:creator_names)
+          facet(:depositor)
+          facet(:subject_text)
+          facet(:visibility_code)
+          facet(:hold_state)
+          facet(:datafile_extensions)
+          facet(:publication_year)
+
+          paginate(page: params[:page] || 1, per_page: per_page)
+
+        end
+
+        # this makes a row for each category, even if the current search does not have any results in a category
+        # these facets are only for admins
+
+        # search_get_facets.facet(:visibility_code).rows.each do |outer_row|
+        #   has_this_row = false
+        #   @search.facet(:visibility_code).rows.each do |inner_row|
+        #     has_this_row = true if inner_row.value == outer_row.value
+        #   end
+        #   @search.facet(:visibility_code).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
+        # end
+        #
+        # search_get_facets.facet(:depositor).rows.each do |outer_row|
+        #   has_this_row = false
+        #   @search.facet(:depositor).rows.each do |inner_row|
+        #     has_this_row = true if inner_row.value == outer_row.value
+        #   end
+        #   @search.facet(:depositor).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
+        # end
+
+
+      when "depositor"
+
+        search_get_my_facets = Dataset.search do
+
+          all_of do
             without(:depositor, 'error')
+            with :depositor_email, current_user.email
+            with(:is_most_recent_version, true)
+            with :is_test, false
+            any_of do
+              with :publication_state, Databank::PublicationState::DRAFT
+              with :publication_state, Databank::PublicationState::RELEASED
+              with :publication_state, Databank::PublicationState::Embargo::FILE
+              with :publication_state, Databank::PublicationState::TempSuppress::FILE
+              with :publication_state, Databank::PublicationState::TempSuppress::METADATA
+              with :publication_state, Databank::PublicationState::PermSuppress::FILE
+            end
+          end
+          keywords (params[:q])
+          facet(:visibility_code)
 
-            if params.has_key?('license_codes')
+        end
+
+        search_get_facets = Dataset.search do
+
+          all_of do
+            without(:depositor, 'error')
+            with(:is_test, false)
+            any_of do
+              with :depositor_email, current_user.email
+              with :publication_state, Databank::PublicationState::RELEASED
+              with :publication_state, Databank::PublicationState::Embargo::FILE
+              with :publication_state, Databank::PublicationState::TempSuppress::FILE
+              with :publication_state, Databank::PublicationState::PermSuppress::FILE
+              all_of do
+                with :depositor_email, current_user.email
+                with :publication_state, Databank::PublicationState::TempSuppress::METADATA
+              end
+            end
+          end
+
+          keywords (params[:q])
+          facet(:license_code)
+          facet(:funder_codes)
+          facet(:creator_names)
+          facet(:subject_text)
+          facet(:depositor)
+          facet(:visibility_code)
+          facet(:hold_state)
+          facet(:datafile_extensions)
+          facet(:publication_year)
+
+        end
+
+        @search = Dataset.search do
+
+          all_of do
+            without(:depositor, 'error')
+            with :is_test, false
+            any_of do
+              with :depositor_email, current_user.email
+              with :publication_state, Databank::PublicationState::RELEASED
+              with :publication_state, Databank::PublicationState::Embargo::FILE
+              with :publication_state, Databank::PublicationState::TempSuppress::FILE
+              with :publication_state, Databank::PublicationState::PermSuppress::FILE
+            end
+
+            if params.has_key?('depositors')
               any_of do
-                params['license_codes'].each do |license_code|
-                  with :license_code, license_code
+                params['depositors'].each do |depositor|
+                  with :depositor, depositor
                 end
               end
             end
@@ -96,10 +265,10 @@ class DatasetsController < ApplicationController
               end
             end
 
-            if params.has_key?('depositors')
+            if params.has_key?('license_codes')
               any_of do
-                params['depositors'].each do |depositor|
-                  with :depositor, depositor
+                params['license_codes'].each do |license_code|
+                  with :license_code, license_code
                 end
               end
             end
@@ -128,329 +297,160 @@ class DatasetsController < ApplicationController
               end
             end
 
-            keywords (params[:q])
+          end
 
-            if params.has_key?('sort_by')
-              if params['sort_by'] == 'sort_updated_asc'
-                order_by :updated_at, :asc
-              elsif params['sort_by']== 'sort_released_asc'
-                order_by :release_datetime, :asc
-              elsif params['sort_by'] == 'sort_released_desc'
-                order_by :release_datetime, :desc
-              elsif params['sort_by'] == 'sort_ingested_asc'
-                order_by :ingest_datetime, :asc
-              elsif params['sort_by']==  'sort_ingested_desc'
-                order_by :ingest_datetime, :desc
-              else
-                order_by :updated_at, :desc
-              end
+          keywords (params[:q])
+          if params.has_key?('sort_by')
+            if params['sort_by'] == 'sort_updated_asc'
+              order_by :updated_at, :asc
+            elsif params['sort_by'] == 'sort_released_asc'
+              order_by :release_datetime, :asc
+            elsif params['sort_by'] == 'sort_released_desc'
+              order_by :release_datetime, :desc
+            elsif params['sort_by'] == 'sort_ingested_asc'
+              order_by :ingest_datetime, :asc
+            elsif params['sort_by'] == 'sort_ingested_desc'
+              order_by :ingest_datetime, :desc
             else
               order_by :updated_at, :desc
             end
-
-            facet(:license_code)
-            facet(:funder_codes)
-            facet(:creator_names)
-            facet(:depositor)
-            facet(:subject_text)
-            facet(:visibility_code)
-            facet(:hold_state)
-            facet(:datafile_extensions)
-            facet(:publication_year)
-
-            paginate(page: params[:page] || 1, per_page: per_page)
-
+          else
+            order_by :updated_at, :desc
           end
+          facet(:license_code)
+          facet(:funder_codes)
+          facet(:subject_text)
+          facet(:depositor)
+          facet(:visibility_code)
+          facet(:hold_state)
+          facet(:datafile_extensions)
+          facet(:publication_year)
 
-          # this makes a row for each category, even if the current search does not have any results in a category
-          # these facets are only for admins
+          paginate(page: params[:page] || 1, per_page: per_page)
 
-          # search_get_facets.facet(:visibility_code).rows.each do |outer_row|
-          #   has_this_row = false
-          #   @search.facet(:visibility_code).rows.each do |inner_row|
-          #     has_this_row = true if inner_row.value == outer_row.value
-          #   end
-          #   @search.facet(:visibility_code).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
-          # end
-          #
-          # search_get_facets.facet(:depositor).rows.each do |outer_row|
-          #   has_this_row = false
-          #   @search.facet(:depositor).rows.each do |inner_row|
-          #     has_this_row = true if inner_row.value == outer_row.value
-          #   end
-          #   @search.facet(:depositor).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
-          # end
+        end
 
+        # this gets all categories for facets, even if current results do not have any instances
 
-        when "depositor"
+        # search_get_my_facets.facet(:visibility_code).rows.each do |outer_row|
+        #   has_this_row = false
+        #   @search.facet(:visibility_code).rows.each do |inner_row|
+        #     has_this_row = true if inner_row.value == outer_row.value
+        #   end
+        #   @search.facet(:visibility_code).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
+        # end
+      else
 
-          search_get_my_facets = Dataset.search do
+        # search_get_facets = Dataset.search do
+        #   all_of do
+        #     without(:depositor, 'error')
+        #     with(:is_most_recent_version, true)
+        #     with :is_test, false
+        #     without :hold_state, Databank::PublicationState::TempSuppress::METADATA
+        #     any_of do
+        #       with :publication_state, Databank::PublicationState::RELEASED
+        #       with :publication_state, Databank::PublicationState::Embargo::FILE
+        #       with :publication_state, Databank::PublicationState::TempSuppress::FILE
+        #       with :publication_state, Databank::PublicationState::PermSuppress::FILE
+        #     end
+        #   end
+        #
+        #   keywords (params[:q])
+        #   facet(:license_code)
+        #   facet(:funder_codes)
+        #   facet(:creator_names)
+        #   facet(:subject_text)
+        #   facet(:depositor)
+        #   facet(:visibility_code)
+        #   facet(:hold_state)
+        #   facet(:datafile_extensions)
+        #   facet(:publication_year)
+        # end
 
-            all_of do
-              without(:depositor, 'error')
-              with :depositor_email, current_user.email
-              with(:is_most_recent_version, true)
-              with :is_test, false
-              any_of do
-                with :publication_state, Databank::PublicationState::DRAFT
-                with :publication_state, Databank::PublicationState::RELEASED
-                with :publication_state, Databank::PublicationState::Embargo::FILE
-                with :publication_state, Databank::PublicationState::TempSuppress::FILE
-                with :publication_state, Databank::PublicationState::TempSuppress::METADATA
-                with :publication_state, Databank::PublicationState::PermSuppress::FILE
-              end
+        @search = Dataset.search do
+
+          all_of do
+
+            without(:depositor, 'error')
+            with(:is_test, false)
+            any_of do
+              with :publication_state, Databank::PublicationState::RELEASED
+              with :publication_state, Databank::PublicationState::Embargo::FILE
+              with :publication_state, Databank::PublicationState::TempSuppress::FILE
             end
-            keywords (params[:q])
-            facet(:visibility_code)
 
-          end
-
-          search_get_facets = Dataset.search do
-
-            all_of do
-              without(:depositor, 'error')
-              with(:is_test, false)
+            if params.has_key?('depositors')
               any_of do
-                with :depositor_email, current_user.email
-                with :publication_state, Databank::PublicationState::RELEASED
-                with :publication_state, Databank::PublicationState::Embargo::FILE
-                with :publication_state, Databank::PublicationState::TempSuppress::FILE
-                with :publication_state, Databank::PublicationState::PermSuppress::FILE
-                all_of do
-                  with :depositor_email, current_user.email
-                  with :publication_state, Databank::PublicationState::TempSuppress::METADATA
+                params['depositors'].each do |depositor|
+                  with :depositor, depositor
                 end
               end
             end
 
-            keywords (params[:q])
-            facet(:license_code)
-            facet(:funder_codes)
-            facet(:creator_names)
-            facet(:subject_text)
-            facet(:depositor)
-            facet(:visibility_code)
-            facet(:hold_state)
-            facet(:datafile_extensions)
-            facet(:publication_year)
-
-          end
-
-          @search = Dataset.search do
-
-            all_of do
-              without(:depositor, 'error')
-              with :is_test, false
+            if params.has_key?('subjects')
               any_of do
-                with :depositor_email, current_user.email
-                with :publication_state, Databank::PublicationState::RELEASED
-                with :publication_state, Databank::PublicationState::Embargo::FILE
-                with :publication_state, Databank::PublicationState::TempSuppress::FILE
-                with :publication_state, Databank::PublicationState::PermSuppress::FILE
-              end
-
-              if params.has_key?('depositors')
-                any_of do
-                  params['depositors'].each do |depositor|
-                    with :depositor, depositor
-                  end
+                params['subjects'].each do |subject|
+                  with :subject_text, subject
                 end
               end
-
-              if params.has_key?('subjects')
-                any_of do
-                  params['subjects'].each do |subject|
-                    with :subject_text, subject
-                  end
-                end
-              end
-
-              if params.has_key?('license_codes')
-                any_of do
-                  params['license_codes'].each do |license_code|
-                    with :license_code, license_code
-                  end
-                end
-              end
-
-              if params.has_key?('funder_codes')
-                any_of do
-                  params['funder_codes'].each do |funder_code|
-                    with :funder_codes, funder_code
-                  end
-                end
-              end
-
-              if params.has_key?('visibility_codes')
-                any_of do
-                  params['visibility_codes'].each do |visibility_code|
-                    with :visibility_code, visibility_code
-                  end
-                end
-              end
-
-              if params.has_key?('publication_years')
-                any_of do
-                  params['publication_years'].each do |publication_year|
-                    with :publication_year, publication_year
-                  end
-                end
-              end
-
             end
 
-            keywords (params[:q])
-            if params.has_key?('sort_by')
-              if params['sort_by'] == 'sort_updated_asc'
-                order_by :updated_at, :asc
-              elsif params['sort_by']== 'sort_released_asc'
-                order_by :release_datetime, :asc
-              elsif params['sort_by'] == 'sort_released_desc'
-                order_by :release_datetime, :desc
-              elsif params['sort_by'] == 'sort_ingested_asc'
-                order_by :ingest_datetime, :asc
-              elsif params['sort_by']==  'sort_ingested_desc'
-                order_by :ingest_datetime, :desc
-              else
-                order_by :updated_at, :desc
+            if params.has_key?('publication_years')
+              any_of do
+                params['publication_years'].each do |publication_year|
+                  with :publication_year, publication_year
+                end
               end
+            end
+
+            if params.has_key?('license_codes')
+              any_of do
+                params['license_codes'].each do |license_code|
+                  with :license_code, license_code
+                end
+              end
+            end
+
+            if params.has_key?('funder_codes')
+              any_of do
+                params['funder_codes'].each do |funder_code|
+                  with :funder_codes, funder_code
+                end
+              end
+            end
+          end
+
+          keywords (params[:q])
+          if params.has_key?('sort_by')
+            if params['sort_by'] == 'sort_updated_asc'
+              order_by :updated_at, :asc
+            elsif params['sort_by'] == 'sort_released_asc'
+              order_by :release_datetime, :asc
+            elsif params['sort_by'] == 'sort_released_desc'
+              order_by :release_datetime, :desc
+            elsif params['sort_by'] == 'sort_ingested_asc'
+              order_by :ingest_datetime, :asc
+            elsif params['sort_by'] == 'sort_ingested_desc'
+              order_by :ingest_datetime, :desc
             else
               order_by :updated_at, :desc
             end
-            facet(:license_code)
-            facet(:funder_codes)
-            facet(:subject_text)
-            facet(:depositor)
-            facet(:visibility_code)
-            facet(:hold_state)
-            facet(:datafile_extensions)
-            facet(:publication_year)
-
-            paginate(page: params[:page] || 1, per_page: per_page)
-
+          else
+            order_by :updated_at, :desc
           end
+          facet(:license_code)
+          facet(:funder_codes)
+          facet(:creator_names)
+          facet(:subject_text)
+          facet(:depositor)
+          facet(:visibility_code)
+          facet(:hold_state)
+          facet(:datafile_extensions)
+          facet(:publication_year)
 
-          # this gets all categories for facets, even if current results do not have any instances
+          paginate(page: params[:page] || 1, per_page: per_page)
 
-          # search_get_my_facets.facet(:visibility_code).rows.each do |outer_row|
-          #   has_this_row = false
-          #   @search.facet(:visibility_code).rows.each do |inner_row|
-          #     has_this_row = true if inner_row.value == outer_row.value
-          #   end
-          #   @search.facet(:visibility_code).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
-          # end
-        else
-
-          # search_get_facets = Dataset.search do
-          #   all_of do
-          #     without(:depositor, 'error')
-          #     with(:is_most_recent_version, true)
-          #     with :is_test, false
-          #     without :hold_state, Databank::PublicationState::TempSuppress::METADATA
-          #     any_of do
-          #       with :publication_state, Databank::PublicationState::RELEASED
-          #       with :publication_state, Databank::PublicationState::Embargo::FILE
-          #       with :publication_state, Databank::PublicationState::TempSuppress::FILE
-          #       with :publication_state, Databank::PublicationState::PermSuppress::FILE
-          #     end
-          #   end
-          #
-          #   keywords (params[:q])
-          #   facet(:license_code)
-          #   facet(:funder_codes)
-          #   facet(:creator_names)
-          #   facet(:subject_text)
-          #   facet(:depositor)
-          #   facet(:visibility_code)
-          #   facet(:hold_state)
-          #   facet(:datafile_extensions)
-          #   facet(:publication_year)
-          # end
-
-          @search = Dataset.search do
-
-            all_of do
-
-              without(:depositor, 'error')
-              with(:is_test, false)
-              any_of do
-                with :publication_state, Databank::PublicationState::RELEASED
-                with :publication_state, Databank::PublicationState::Embargo::FILE
-                with :publication_state, Databank::PublicationState::TempSuppress::FILE
-              end
-
-              if params.has_key?('depositors')
-                any_of do
-                  params['depositors'].each do |depositor|
-                    with :depositor, depositor
-                  end
-                end
-              end
-
-              if params.has_key?('subjects')
-                any_of do
-                  params['subjects'].each do |subject|
-                    with :subject_text, subject
-                  end
-                end
-              end
-
-              if params.has_key?('publication_years')
-                any_of do
-                  params['publication_years'].each do |publication_year|
-                    with :publication_year, publication_year
-                  end
-                end
-              end
-
-              if params.has_key?('license_codes')
-                any_of do
-                  params['license_codes'].each do |license_code|
-                    with :license_code, license_code
-                  end
-                end
-              end
-
-              if params.has_key?('funder_codes')
-                any_of do
-                  params['funder_codes'].each do |funder_code|
-                    with :funder_codes, funder_code
-                  end
-                end
-              end
-            end
-
-            keywords (params[:q])
-            if params.has_key?('sort_by')
-              if params['sort_by'] == 'sort_updated_asc'
-                order_by :updated_at, :asc
-              elsif params['sort_by']== 'sort_released_asc'
-                order_by :release_datetime, :asc
-              elsif params['sort_by'] == 'sort_released_desc'
-                order_by :release_datetime, :desc
-              elsif params['sort_by'] == 'sort_ingested_asc'
-                order_by :ingest_datetime, :asc
-              elsif params['sort_by']==  'sort_ingested_desc'
-                order_by :ingest_datetime, :desc
-              else
-                order_by :updated_at, :desc
-              end
-            else
-              order_by :updated_at, :desc
-            end
-            facet(:license_code)
-            facet(:funder_codes)
-            facet(:creator_names)
-            facet(:subject_text)
-            facet(:depositor)
-            facet(:visibility_code)
-            facet(:hold_state)
-            facet(:datafile_extensions)
-            facet(:publication_year)
-
-            paginate(page: params[:page] || 1, per_page: per_page)
-
-          end
+        end
       end
 
     else
@@ -532,13 +532,13 @@ class DatasetsController < ApplicationController
         if params.has_key?('sort_by')
           if params['sort_by'] == 'sort_updated_asc'
             order_by :updated_at, :asc
-          elsif params['sort_by']== 'sort_released_asc'
+          elsif params['sort_by'] == 'sort_released_asc'
             order_by :release_datetime, :asc
           elsif params['sort_by'] == 'sort_released_desc'
             order_by :release_datetime, :desc
           elsif params['sort_by'] == 'sort_ingested_asc'
             order_by :ingest_datetime, :asc
-          elsif params['sort_by']==  'sort_ingested_desc'
+          elsif params['sort_by'] == 'sort_ingested_desc'
             order_by :ingest_datetime, :desc
           else
             order_by :updated_at, :desc
@@ -597,9 +597,9 @@ class DatasetsController < ApplicationController
     #   @search.facet(:funder_codes).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
     # end
 
-    @report=Indexable.citation_report(@search, request.original_url, current_user)
+    @report = Indexable.citation_report(@search, request.original_url, current_user)
 
-    if params.has_key?('download') && params['download']=='now'
+    if params.has_key?('download') && params['download'] == 'now'
       send_data @report, :filename => 'report.txt'
     end
 
@@ -615,20 +615,20 @@ class DatasetsController < ApplicationController
 
     if params.has_key?(:suppression_action)
       case params[:suppression_action]
-        when "temporarily_suppress_files"
-          temporarily_suppress_files
-        when "temporarily_suppress_metadata"
-          temporarily_suppress_metadata
-        when "permanently_suppress_files"
-          permanently_suppress_files
-        when "permanently_suppress_metadata"
-          permanently_suppress_metadata
-        when "unsuppress"
-          unsuppress
-        when "suppress_changelog"
-          suppress_changelog
-        when "unsuppress_changelog"
-          unsuppress_changelog
+      when "temporarily_suppress_files"
+        temporarily_suppress_files
+      when "temporarily_suppress_metadata"
+        temporarily_suppress_metadata
+      when "permanently_suppress_files"
+        permanently_suppress_files
+      when "permanently_suppress_metadata"
+        permanently_suppress_metadata
+      when "unsuppress"
+        unsuppress
+      when "suppress_changelog"
+        suppress_changelog
+      when "unsuppress_changelog"
+        unsuppress_changelog
       end
     end
 
@@ -656,58 +656,68 @@ class DatasetsController < ApplicationController
 
             if !pid.empty?
 
-              begin
+              Process.kill('QUIT', Integer(pid))
+              Dir.foreach(IDB_CONFIG[:delayed_job_pid_dir]) do |pid_filename|
+                next if pid_filename == '.' or pid_filename == '..'
+                next unless pid_filename.include? 'delayed_job'
+                pid_filepath = "#{IDB_CONFIG[:delayed_job_pid_dir]}/#{pid_filename}"
 
-                Process.kill('QUIT', Integer(pid))
-                Dir.foreach(IDB_CONFIG[:delayed_job_pid_dir]) do |pid_filename|
-                  next if pid_filename == '.' or pid_filename == '..'
-                  next unless pid_filename.include? 'delayed_job'
-                  pid_filepath = "#{IDB_CONFIG[:delayed_job_pid_dir]}/#{pid_filename}"
+                if File.exists?(pid_filepath)
 
-                  if File.exists?(pid_filepath)
-
-                    file_contents = IO.read(pid_filepath)
-                    if file_contents.include? pid.to_s
-                      File.delete(pid_filepath)
-                    end
-                  else
-                    Rails.logger.warn "#{pid_filepath} did not exist"
+                  file_contents = IO.read(pid_filepath)
+                  if file_contents.include? pid.to_s
+                    File.delete(pid_filepath)
                   end
-
+                else
+                  Rails.logger.warn "#{pid_filepath} did not exist"
                 end
 
-              rescue Errno::ESRCH => ex
-                Rails.logger.warn ex.message
+              end
+
+              if Delayed::Job.all.count == 0
+                system "cd #{Rails.root} && RAILS_ENV=#{::Rails.env} bin/delayed_job -n #{@@num_box_ingest_deamons} restart"
+              else
+                running_deamon_count = 0
+                Dir.foreach(IDB_CONFIG[:delayed_job_pid_dir]) do |item|
+                  next if item == '.' or item == '..'
+                  next unless item.include? 'delayed_job'
+                  running_deamon_count = running_deamon_count + 1
+                end
+              end
+            elsif job
+              @datafile.destroy
+              if job.destroy && @datafile.destroy
+                render json: "successfully canceled upload from Box", status: :ok
+              else
+                render json: "error attemptiong to cancel upload from Box", status: :unprocessable_entity
               end
             end
-
-            if Delayed::Job.all.count == 0
-              system "cd #{Rails.root} && RAILS_ENV=#{::Rails.env} bin/delayed_job -n #{@@num_box_ingest_deamons} restart"
+          else
+            if @datafile.destroy
+              render json: "successfully canceled upload from Box", status: :ok
             else
-              running_deamon_count = 0
-              Dir.foreach(IDB_CONFIG[:delayed_job_pid_dir]) do |item|
-                next if item == '.' or item == '..'
-                next unless item.include? 'delayed_job'
-                running_deamon_count = running_deamon_count + 1
-              end
+              render json: "error attemptiong to cancel upload from Box", status: :unprocessable_entity
             end
-          elsif job
-            job.destroy
-            @datafile.destroy
-
           end
+
         else
-          @datafile.destroy
+          if @datafile.destroy
+            render json: "successfully canceled upload from Box", status: :ok
+          else
+            render json: "error attemptiong to cancel upload from Box", status: :unprocessable_entity
+          end
         end
+
+      else
+        render json: "datafile not found", status: :not_found
       end
 
-      render json: "successfully canceled upload from Box", status: :ok
-
+    rescue Errno::ESRCH => ex
+      Rails.logger.warn ex.message
     rescue Exception::StandardError => ex
       Rails.logger.warn ex.message
       render json: "error attemptiong to cancel upload from Box: #{ex.message}", status: :unprocessable_entity
     end
-
   end
 
   # GET /datasets/new
@@ -747,7 +757,6 @@ class DatasetsController < ApplicationController
     @incomplete_datafiles = @dataset.incomplete_datafiles
 
 
-
     set_file_mode
 
     @funder_info_arr = FUNDER_INFO_ARR
@@ -784,11 +793,11 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       if @dataset.save
-        format.html { redirect_to edit_dataset_path(@dataset.key) }
-        format.json { render :edit, status: :created, location: edit_dataset_path(@dataset.key) }
+        format.html {redirect_to edit_dataset_path(@dataset.key)}
+        format.json {render :edit, status: :created, location: edit_dataset_path(@dataset.key)}
       else
-        format.html { render :new }
-        format.json { render json: @dataset.errors, status: :unprocessable_entity }
+        format.html {render :new}
+        format.json {render json: @dataset.errors, status: :unprocessable_entity}
       end
     end
 
@@ -809,9 +818,9 @@ class DatasetsController < ApplicationController
         if params.has_key?('context') && params['context'] == 'exit'
 
           if @dataset.publication_state == Databank::PublicationState::DRAFT
-            format.html { redirect_to "/datasets?q=&#{URI.encode('depositors[]')}=#{current_user.name}&context=exit_draft" }
+            format.html {redirect_to "/datasets?q=&#{URI.encode('depositors[]')}=#{current_user.name}&context=exit_draft"}
           else
-            format.html { redirect_to "/datasets?q=&#{URI.encode('depositors[]')}=#{current_user.name}&context=exit_doi" }
+            format.html {redirect_to "/datasets?q=&#{URI.encode('depositors[]')}=#{current_user.name}&context=exit_doi"}
           end
 
         elsif params.has_key?('context') && params['context'] == 'publish'
@@ -846,11 +855,11 @@ class DatasetsController < ApplicationController
             end
 
             if metadata_post_ok == 'na' || (metadata_post_ok && doi_update_ok)
-              format.html { redirect_to dataset_path(@dataset.key)}
-              format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+              format.html {redirect_to dataset_path(@dataset.key)}
+              format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
             else
-              format.html { redirect_to dataset_path(@dataset.key), notice: 'Error updating DataCite Metadata, details have been logged.'}
-              format.json { render json: @dataset.errors, status: :unprocessable_entity}
+              format.html {redirect_to dataset_path(@dataset.key), notice: 'Error updating DataCite Metadata, details have been logged.'}
+              format.json {render json: @dataset.errors, status: :unprocessable_entity}
             end
 
 
@@ -860,13 +869,13 @@ class DatasetsController < ApplicationController
           end
 
         else #this else means context was not set to exit or publish - this is the normal draft update
-          format.html { redirect_to dataset_path(@dataset.key)}
-          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+          format.html {redirect_to dataset_path(@dataset.key)}
+          format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
         end
 
       else #this else means update failed
-        format.html { render :edit }
-        format.json { render json: @dataset.errors, status: :unprocessable_entity }
+        format.html {render :edit}
+        format.json {render json: @dataset.errors, status: :unprocessable_entity}
       end
 
     end
@@ -970,14 +979,14 @@ class DatasetsController < ApplicationController
 
       respond_to do |format|
 
-        format.html { render :edit, alert: completion_check_message }
-        format.json { render json: {"message": completion_check_message} }
+        format.html {render :edit, alert: completion_check_message}
+        format.json {render json: {"message": completion_check_message}}
       end
 
     else
       respond_to do |format|
-        format.html { render json: {"message": "dataset not found"} }
-        format.json { render json: {"message": "published dataset not found"}, status: :unprocessable_entity }
+        format.html {render json: {"message": "dataset not found"}}
+        format.json {render json: {"message": "published dataset not found"}, status: :unprocessable_entity}
       end
 
     end
@@ -991,12 +1000,12 @@ class DatasetsController < ApplicationController
     @dataset.destroy
     respond_to do |format|
       if current_user
-        format.html { redirect_to "/datasets?q=&#{URI.encode('depositors[]')}=#{current_user.username}", notice: 'Dataset was successfully deleted.' }
+        format.html {redirect_to "/datasets?q=&#{URI.encode('depositors[]')}=#{current_user.username}", notice: 'Dataset was successfully deleted.'}
       else
-        format.html { redirect_to datasets_url, notice: 'Dataset was successfully deleted.' }
+        format.html {redirect_to datasets_url, notice: 'Dataset was successfully deleted.'}
       end
 
-      format.json { head :no_content }
+      format.json {head :no_content}
     end
   end
 
@@ -1009,11 +1018,11 @@ class DatasetsController < ApplicationController
     @dataset.suppress_changelog = true
     respond_to do |format|
       if @dataset.save
-        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset changelog has suppressed.] }
-        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset changelog has suppressed.]}
+        format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
       else
-        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
-        format.json { render json: @dataset.errors, status: :unprocessable_entity }
+        format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.]}
+        format.json {render json: @dataset.errors, status: :unprocessable_entity}
       end
     end
   end
@@ -1022,11 +1031,11 @@ class DatasetsController < ApplicationController
     @dataset.suppress_changelog = false
     respond_to do |format|
       if @dataset.save
-        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset changelog has been unsuppressed.] }
-        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset changelog has been unsuppressed.]}
+        format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
       else
-        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
-        format.json { render json: @dataset.errors, status: :unprocessable_entity }
+        format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.]}
+        format.json {render json: @dataset.errors, status: :unprocessable_entity}
       end
     end
   end
@@ -1037,11 +1046,11 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       if @dataset.save
-        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset files have been temporarily suppressed.] }
-        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset files have been temporarily suppressed.]}
+        format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
       else
-        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
-        format.json { render json: @dataset.errors, status: :unprocessable_entity }
+        format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.]}
+        format.json {render json: @dataset.errors, status: :unprocessable_entity}
       end
     end
 
@@ -1056,15 +1065,15 @@ class DatasetsController < ApplicationController
       if @dataset.save
 
         if Dataset.post_doi_metadata(@dataset, current_user)
-          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been temporarily suppressed.] }
-          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+          format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been temporarily suppressed.]}
+          format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
         else
-          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been temporarily suppressed in IDB, but DataCite was not updated.] }
-          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+          format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been temporarily suppressed in IDB, but DataCite was not updated.]}
+          format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
         end
       else
-        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
-        format.json { render json: @dataset.errors, status: :unprocessable_entity }
+        format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.]}
+        format.json {render json: @dataset.errors, status: :unprocessable_entity}
 
       end
     end
@@ -1079,15 +1088,15 @@ class DatasetsController < ApplicationController
       if @dataset.save
 
         if Dataset.post_doi_metadata(@dataset, current_user)
-          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset has been unsuppressed.] }
-          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+          format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset has been unsuppressed.]}
+          format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
         else
-          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset has been unsuppressed in IDB, but DataCite was not updated.] }
-          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+          format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset has been unsuppressed in IDB, but DataCite was not updated.]}
+          format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
         end
       else
-        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
-        format.json { render json: @dataset.errors, status: :unprocessable_entity }
+        format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.]}
+        format.json {render json: @dataset.errors, status: :unprocessable_entity}
 
       end
     end
@@ -1102,11 +1111,11 @@ class DatasetsController < ApplicationController
     respond_to do |format|
 
       if @dataset.save
-        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset files have been permanently supressed.] }
-        format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+        format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset files have been permanently supressed.]}
+        format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
       else
-        format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
-        format.json { render json: @dataset.errors, status: :unprocessable_entity }
+        format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.]}
+        format.json {render json: @dataset.errors, status: :unprocessable_entity}
       end
 
     end
@@ -1123,16 +1132,16 @@ class DatasetsController < ApplicationController
     if Dataset.get_doi_metadata(@dataset)
       respond_to do |format|
         if Dataset.delete_doi_metadata(@dataset)
-          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been permenantly suppressed in IDB, and the DOI has been marked inactive in DataCite's Metadata Store.] }
-          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+          format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been permenantly suppressed in IDB, and the DOI has been marked inactive in DataCite's Metadata Store.]}
+          format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
         else
-          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
-          format.json { render json: @dataset.errors, status: :unprocessable_entity }
+          format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.]}
+          format.json {render json: @dataset.errors, status: :unprocessable_entity}
         end
       end
     else
-      format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been permenantly suppressed in IDB, and the DOI was not registered in DataCite's Metadata Store.] }
-      format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+      format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been permenantly suppressed in IDB, and the DOI was not registered in DataCite's Metadata Store.]}
+      format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
     end
 
     if old_state == Databank::PublicationState::Embargo::METADATA
@@ -1141,15 +1150,15 @@ class DatasetsController < ApplicationController
         if @dataset.save
           if Dataset.delete_doi_metadata(@dataset, current_user)
             @dataset.save
-            format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Reserved DOI has been deleted and all files have been permanently supressed.] }
-            format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+            format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Reserved DOI has been deleted and all files have been permanently supressed.]}
+            format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
           else
-            format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been permenantly suppressed in IDB, but DataCite has not been updated.] }
-            format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+            format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been permenantly suppressed in IDB, but DataCite has not been updated.]}
+            format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
           end
         else
-          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
-          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+          format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.]}
+          format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
         end
       end
 
@@ -1158,21 +1167,21 @@ class DatasetsController < ApplicationController
 
         if @dataset.save
           if Dataset.post_doi_metadata(@dataset, current_user)
-            format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and all files have been permanently supressed.] }
-            format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+            format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and all files have been permanently supressed.]}
+            format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
           else
-            format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been permanently supressed in IDB, but DataCite has not been updated.] }
-            format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+            format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been permanently supressed in IDB, but DataCite has not been updated.]}
+            format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
           end
         else
-          format.html { redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.] }
-          format.json { render :show, status: :ok, location: dataset_path(@dataset.key) }
+          format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.]}
+          format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
         end
 
       end
     end
   end
-  
+
   def request_review
 
     params = Hash.new
@@ -1198,11 +1207,11 @@ class DatasetsController < ApplicationController
     respond_to do |format|
 
       if @dataset.save
-        format.html { redirect_to dataset_path(@dataset.key), notice: "Your request has been submitted. In the meantime, your DOI has been reserved and you can give your citation to your publisher as a placeholder:  #{@dataset.plain_text_citation}"}
-        format.json { render json: {status: :ok }, content_type: request.format, :layout => false }
+        format.html {redirect_to dataset_path(@dataset.key), notice: "Your request has been submitted. In the meantime, your DOI has been reserved and you can give your citation to your publisher as a placeholder:  #{@dataset.plain_text_citation}"}
+        format.json {render json: {status: :ok}, content_type: request.format, :layout => false}
       else
-        format.html { redirect_to dataset_path(@dataset.key), notice: "Your request has been submitted."}
-        format.json { render json: {status: :ok }, content_type: request.format, :layout => false }
+        format.html {redirect_to dataset_path(@dataset.key), notice: "Your request has been submitted."}
+        format.json {render json: {status: :ok}, content_type: request.format, :layout => false}
       end
 
     end
@@ -1216,14 +1225,14 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       if publish_attempt_result[:status] == :ok && @dataset.save
-        format.html { redirect_to dataset_path(@dataset.key), notice: Dataset.deposit_confirmation_notice(publish_attempt_result[:old_publication_state], @dataset) }
-        format.json { render json: :show, status: :ok, location: dataset_path(@dataset.key) }
+        format.html {redirect_to dataset_path(@dataset.key), notice: Dataset.deposit_confirmation_notice(publish_attempt_result[:old_publication_state], @dataset)}
+        format.json {render json: :show, status: :ok, location: dataset_path(@dataset.key)}
       elsif publish_attempt_result[:status] == :error_occurred
-        format.html { redirect_to dataset_path(@dataset.key), notice: publish_attempt_result[:error_text] }
-        format.json { render json: {status: :unprocessable_entity}, content_type: request.format, :layout => false }
+        format.html {redirect_to dataset_path(@dataset.key), notice: publish_attempt_result[:error_text]}
+        format.json {render json: {status: :unprocessable_entity}, content_type: request.format, :layout => false}
       else
-        format.html { redirect_to dataset_path(@dataset.key), notice: 'Error in publishing dataset has been logged for review by the Research Data Service.' }
-        format.json { render json: {status: :unprocessable_entity}, content_type: request.format, :layout => false }
+        format.html {redirect_to dataset_path(@dataset.key), notice: 'Error in publishing dataset has been logged for review by the Research Data Service.'}
+        format.json {render json: {status: :unprocessable_entity}, content_type: request.format, :layout => false}
       end
     end
 
@@ -1284,8 +1293,8 @@ class DatasetsController < ApplicationController
     end
 
     file_mappings = datafiles
-                        .lazy  # Lazy allows us to begin sending the download immediately instead of waiting to download everything
-                        .map { |url, path| [open(url), path] }
+                        .lazy # Lazy allows us to begin sending the download immediately instead of waiting to download everything
+                        .map {|url, path| [open(url), path]}
     zipline(file_mappings, file_name)
 
   end
@@ -1300,8 +1309,8 @@ class DatasetsController < ApplicationController
       web_ids = web_ids_str.split('~')
 
       if !web_ids.respond_to?(:count) || web_ids.count < 1
-        return_hash["status"]="error"
-        return_hash["error"]="no web_ids after split"
+        return_hash["status"] = "error"
+        return_hash["error"] = "no web_ids after split"
         render(json: return_hash.to_json, content_type: request.format, :layout => false)
       end
 
@@ -1311,9 +1320,9 @@ class DatasetsController < ApplicationController
 
       parametrized_doi = @dataset.identifier.parameterize
 
-      download_hash = DownloaderClient.datafiles_download_hash(@dataset,web_ids, "DOI-#{parametrized_doi}")
+      download_hash = DownloaderClient.datafiles_download_hash(@dataset, web_ids, "DOI-#{parametrized_doi}")
       if download_hash
-        if download_hash['status']== 'ok'
+        if download_hash['status'] == 'ok'
           web_ids.each do |web_id|
             datafile = Datafile.find_by_web_id(web_id)
             if datafile
@@ -1324,21 +1333,21 @@ class DatasetsController < ApplicationController
             end
           end
 
-          return_hash["status"]="ok"
-          return_hash["url"]=download_hash['download_url']
-          return_hash["total_size"]=download_hash['total_size']
+          return_hash["status"] = "ok"
+          return_hash["url"] = download_hash['download_url']
+          return_hash["total_size"] = download_hash['total_size']
         else
-          return_hash["status"]="error"
-          return_hash["error"]=download_hash["error"]
+          return_hash["status"] = "error"
+          return_hash["error"] = download_hash["error"]
         end
       else
-        return_hash["status"]="error"
-        return_hash["error"]="nil zip link returned"
+        return_hash["status"] = "error"
+        return_hash["error"] = "nil zip link returned"
       end
       render(json: return_hash.to_json, content_type: request.format, :layout => false)
     else
-      return_hash["status"]="error"
-      return_hash["error"]="no web_ids in request"
+      return_hash["status"] = "error"
+      return_hash["error"] = "no web_ids in request"
       render(json: return_hash.to_json, content_type: request.format, :layout => false)
     end
 
@@ -1359,15 +1368,15 @@ class DatasetsController < ApplicationController
       # Rails.logger.warn "new_embargo state detected: #{params['new_embargo_state']}"
 
       case params['new_embargo_state']
-        when Databank::PublicationState::Embargo::FILE
-          new_embargo_state = Databank::PublicationState::Embargo::FILE
+      when Databank::PublicationState::Embargo::FILE
+        new_embargo_state = Databank::PublicationState::Embargo::FILE
 
         #new_publication_state = Databank::PublicationState::Embargo::FILE
-        when Databank::PublicationState::Embargo::METADATA
-          new_embargo_state = Databank::PublicationState::Embargo::METADATA
+      when Databank::PublicationState::Embargo::METADATA
+        new_embargo_state = Databank::PublicationState::Embargo::METADATA
         #new_publication_state = Databank::PublicationState::Embargo::METADATA
-        else
-          new_embargo_state = Databank::PublicationState::Embargo::NONE
+      else
+        new_embargo_state = Databank::PublicationState::Embargo::NONE
         #new_publication_state = Databank::PublicationState::RELEASED
       end
 
@@ -1559,7 +1568,7 @@ class DatasetsController < ApplicationController
   end
 
   def set_file_mode
-    
+
     Databank::Application.file_mode = Databank::FileMode::WRITE_READ
 
     if IDB_CONFIG[:aws][:s3_mode] == false

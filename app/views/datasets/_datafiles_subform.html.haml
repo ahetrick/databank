@@ -113,7 +113,10 @@
                             %span(class="metadata-label")
                               STATUS:
                             %span(class="metadata-value" )
-                              = datafile.job_status
+                              -if datafile.job && datafile.job.progress_current
+                                = datafile.job_status
+                              -else
+                                %em error
                             %span(class="metadata-label" )
                               | PROGRESS:
                             %span(class="metadata-value" )
@@ -122,7 +125,7 @@
                                 of
                                 = datafile.box_filesize_display
                               -else
-                                Error occured. If cancelling and retrying does not work, please contact the
+                                If cancelling and retrying does not work, please contact the
                                 %a(href="/help#contact") Research Data Service
                                 for assistance.
                             %span(class="metadata-note" )
