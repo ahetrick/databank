@@ -103,26 +103,27 @@
                           = df.hidden_field :web_id
               -if @incomplete_datafiles.count > 0
                 -@incomplete_datafiles.each do |datafile|
-                  %tr(id="job#{datafile.job.id}")
-                    %td
-                      .row
-                        %span(class="col-md-4")
-                          = datafile.box_filename
-                        %span(class="col-md-6")
-                          %span(class="metadata-label")
-                            STATUS:
-                          %span(class="metadata-value" )
-                            = datafile.job_status
-                          %span(class="metadata-label" )
-                            | PROGRESS:
-                          %span(class="metadata-value" )
-                            = number_to_human_size((datafile.job.progress_current) * 10000)
-                            of
-                            = datafile.box_filesize_display
-                          %span(class="metadata-note" )
-                            (refresh page to update)
-                        %span(class="col-md-2")
-                          - if (can? :manage, @dataset ) ||  (can? :update, @dataset)
-                            %button(class="cancel-upload-btn btn btn-danger btn-sm" onclick="cancelUpload('#{datafile.web_id}', '#{datafile.job_id}')") Cancel
+                  -if datafile.job_id
+                    %tr(id="job#{datafile.job_id}")
+                      %td
+                        .row
+                          %span(class="col-md-4")
+                            = datafile.box_filename
+                          %span(class="col-md-6")
+                            %span(class="metadata-label")
+                              STATUS:
+                            %span(class="metadata-value" )
+                              = datafile.job_status
+                            %span(class="metadata-label" )
+                              | PROGRESS:
+                            %span(class="metadata-value" )
+                              = number_to_human_size((datafile.job.progress_current) * 10000)
+                              of
+                              = datafile.box_filesize_display
+                            %span(class="metadata-note" )
+                              (refresh page to update)
+                          %span(class="col-md-2")
+                            - if (can? :manage, @dataset ) ||  (can? :update, @dataset)
+                              %button(class="cancel-upload-btn btn btn-danger btn-sm" onclick="cancelUpload('#{datafile.web_id}', '#{datafile.job_id}')") Cancel
 
-  %div(id="datafiles_upload_progress")
+          %div(id="datafiles_upload_progress")
