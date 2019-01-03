@@ -117,9 +117,14 @@
                             %span(class="metadata-label" )
                               | PROGRESS:
                             %span(class="metadata-value" )
-                              = number_to_human_size((datafile.job.progress_current) * 10000)
-                              of
-                              = datafile.box_filesize_display
+                              -if datafile.job && datafile.job.progress_current
+                                = number_to_human_size((datafile.job.progress_current) * 10000)
+                                of
+                                = datafile.box_filesize_display
+                              -else
+                                Error occured. If cancelling and retrying does not work, please contact the
+                                %a(href="/help#contact") Research Data Service
+                                for assistance.
                             %span(class="metadata-note" )
                               (refresh page to update)
                           %span(class="col-md-2")
