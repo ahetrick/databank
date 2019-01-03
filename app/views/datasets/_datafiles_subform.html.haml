@@ -58,8 +58,9 @@
                 -if current_user && current_user.role == 'admin'
                   %tr
                     %td
-                      %a(href="/datasets/#{@dataset.key}/datafiles" class="btn btn-primary btn-block idb")
-                        Advanced File Management
+                      %span.col-md-4.col.offset-4
+                        %a(href="/datasets/#{@dataset.key}/datafiles" class="btn btn-primary btn-block idb")
+                          Advanced File Management
   -#
   -#              -if (@dataset.publication_state == Databank::PublicationState::DRAFT) && ( (can? :manage, @dataset ) ||  (can? :update, @dataset) )
   -#                .row
