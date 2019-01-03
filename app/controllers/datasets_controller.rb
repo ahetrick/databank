@@ -701,17 +701,11 @@ class DatasetsController < ApplicationController
         end
       end
 
-      respond_to do |format|
-        format.html { render json: "successfully canceled upload from Box", status: :ok }
-        format.json { render json: "successfully canceled upload from Box", status: :ok }
-      end
+      render json: "successfully canceled upload from Box", status: :ok
 
     rescue Exception::StandardError => ex
       Rails.logger.warn ex.message
-      respond_to do |format|
-        format.html { render json: "successfully canceled upload from Box", status: :unprocessable_entity }
-        format.json { render json: "successfully canceled upload from Box", status: :unprocessable_entity }
-      end
+      render json: "error attemptiong to cancel upload from Box: #{ex.message}", status: :unprocessable_entity
     end
 
   end
