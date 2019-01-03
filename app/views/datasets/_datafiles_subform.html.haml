@@ -62,13 +62,13 @@
 
                 -if (@dataset.publication_state == Databank::PublicationState::DRAFT) && ( (can? :manage, @dataset ) ||  (can? :update, @dataset) )
                   .row
-                    %span(class="col-md-4" )
+                    %span.col-md-4
                       %button(class="btn btn-danger" type="button" onclick="deleteSelected()")
                         Delete Selected
                         %span.checkFileSelectedCount
-                        %span(class="glyphicon glyphicon-trash")
+                        %span.glyphicon.glyphicon-trash
                   .row
-                    %span(class=" checkbox col-md-4")
+                    %span(class="checkbox col-md-4")
                       %label
                         %input(type="checkbox" id="checkAllFiles" value="checkAllFiles")
                           Select all
@@ -81,10 +81,10 @@
                       %td
                         .row.checkbox
                           %span(class="col-md-8")
-                            - if (@dataset.publication_state == Databank::PublicationState::DRAFT) && ( (can? :manage, @dataset ) ||  (can? :update, @dataset) )
+                            -if (@dataset.publication_state == Databank::PublicationState::DRAFT) && ( (can? :manage, @dataset ) ||  (can? :update, @dataset) )
                               %label
                                 %input(type="checkbox" class="checkFile checkFileGroup" name="selected_files[]" value="#{i}" onchange="handleCheckFileGroupChange()" )
-                                  = datafile.bytestream_name
+                                =datafile.bytestream_name
                             -else
                               = datafile.bytestream_name
                             %input(type="text" class="bytestream_name" value="#{datafile.bytestream_name}" )
@@ -121,12 +121,3 @@
                             %button(class="cancel-upload-btn btn btn-danger btn-sm" onclick="cancelUpload('#{datafile.web_id}', '#{datafile.job_id}')") Cancel
 
                 %div(id="datafiles_upload_progress")
-
-
-
-
-
-
-
-
-
