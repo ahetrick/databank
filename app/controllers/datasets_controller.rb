@@ -763,10 +763,6 @@ class DatasetsController < ApplicationController
     end
     @token = @dataset.current_token
 
-    @ordered_datafiles = @dataset.ordered_datafiles
-    @incomplete_datafiles = @dataset.incomplete_datafiles
-
-
     set_file_mode
 
     @funder_info_arr = FUNDER_INFO_ARR
@@ -912,11 +908,11 @@ class DatasetsController < ApplicationController
 
       has_license_file = false
 
-      if @dataset.ordered_datafiles.count > 0
+      if @dataset.complete_datafiles.count > 0
 
         proposed_dataset.datafiles = Array.new
 
-        @dataset.ordered_datafiles.each do |datafile|
+        @dataset.complete_datafiles.each do |datafile|
           if datafile.bytestream_name && ((datafile.bytestream_name).downcase == "license.txt")
             has_license_file = true
             temporary_datafile = Datafile.create(dataset_id: proposed_dataset.id)
@@ -1276,7 +1272,7 @@ class DatasetsController < ApplicationController
   def zip_and_download_selected
 
     if @dataset.identifier && !@dataset.identifier.empty? && @dataset.publication_state != Databank::PublicationState::DRAFT
-      @dataset.ordered_datafiles.each do |datafile|
+      @dataset.complete_datafiles.each do |datafile|
 
         if params[:selected_files].include?(datafile.web_id)
           datafile.record_download(request.remote_ip)

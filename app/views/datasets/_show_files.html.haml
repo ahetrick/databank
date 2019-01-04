@@ -39,11 +39,11 @@
                                   %input(type="checkbox" id="checkAllFiles" value="checkAllFiles")
                                   Select all
 
-                                  ="(#{dataset.ordered_datafiles.count})"
+                                  ="(#{dataset.complete_datafiles.count})"
 
-                    -if dataset.ordered_datafiles.count > 0
+                    -if dataset.complete_datafiles.count > 0
 
-                      - dataset.ordered_datafiles.each do |datafile|
+                      - dataset.complete_datafiles.each do |datafile|
                         %tr.row
                           %td
                             .row.checkbox

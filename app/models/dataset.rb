@@ -707,14 +707,21 @@ class Dataset < ActiveRecord::Base
     750000000
   end
 
-  def ordered_datafiles
-    valid_datafiles = self.datafiles.where.not(storage_root: [nil, ""]).
+  def valid_datafiles
+    self.datafiles.where.not(storage_root: [nil, ""]).
         where.not(storage_key: [nil, ""]).
         where.not(binary_size: nil).
-        where("binary_size > ?", 0).
-        sort_by { |obj| obj.bytestream_name }
+        where("binary_size > ?", 0)
+  end
+
+  def sorted_datafiles
+    valid_datafiles.sort_by { |obj| obj.bytestream_name }
+  end
+
+  def complete_datafiles
+
     datafiles = []
-    valid_datafiles.each do |datafile|
+    sorted_datafiles.each do |datafile|
       datafiles << datafile if datafile.has_bytestream && datafile.bytestream_name != "" && datafile.job_status == :complete
     end
     datafiles
@@ -723,9 +730,10 @@ class Dataset < ActiveRecord::Base
   def incomplete_datafiles
 
     datafiles = []
-    self.datafiles.each do |datafile|
+    sorted_datafiles.each do |datafile|
       datafiles << datafile if datafile.job_status != :complete
     end
+    datafiles
 
   end
 
@@ -1130,7 +1138,7 @@ class Dataset < ActiveRecord::Base
 
     content = content +  "\n[ #{'File'.pluralize(self.datafiles.count)} (#{self.datafiles.count}): ] \n"
 
-    self.ordered_datafiles.each do |datafile|
+    self.complete_datafiles.each do |datafile|
       content = content + ". #{datafile.bytestream_name}, #{ApplicationController.helpers.number_to_human_size(datafile.bytestream_size)}\n"
     end
 

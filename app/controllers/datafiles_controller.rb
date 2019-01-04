@@ -18,7 +18,7 @@ class DatafilesController < ApplicationController
   # GET /datafiles
   # GET /datafiles.json
   def index
-    @datafiles = @dataset.ordered_datafiles
+    @datafiles = @dataset.complete_datafiles
     authorize! :edit, @dataset
   end
 
