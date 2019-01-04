@@ -101,8 +101,8 @@
                                 %span(class="glyphicon glyphicon-trash")
                           = df.hidden_field :_destroy, value: false
                           = df.hidden_field :web_id
-              -if @datafile.incomplete_datafiles.count > 0
-                -@datafile.incomplete_datafiles.each do |datafile|
+              -if @dataset.incomplete_datafiles.count > 0
+                -@dataset.incomplete_datafiles.each do |datafile|
                   -if datafile.job_id
                     %tr(id="job#{datafile.job_id}")
                       %td
