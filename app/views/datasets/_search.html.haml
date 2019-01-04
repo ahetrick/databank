@@ -51,7 +51,7 @@
       =will_paginate @search.results, previous_label: "<".html_safe, next_label: ">".html_safe, renderer: BootstrapPagination::Rails
     -if current_user && current_user.role == 'admin'
       .col-md-1
-        %button(type="button" class="btn btn-success" onclick="showAll")
+        %button(type="button" class="btn btn-success" onclick="showAll()")
           Show All
   .row
     .col-md-5
