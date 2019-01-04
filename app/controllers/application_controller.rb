@@ -8,6 +8,9 @@ class ApplicationController < ActionController::Base
   include CanCan::ControllerAdditions
 
   rescue_from StandardError, with: :error_occurred
+  rescue_from ActionView::MissingTemplate do |exception|
+    render json: {}, status: :unprocessable_entity
+  end
 
   after_filter :store_location
 
