@@ -109,7 +109,7 @@
                         .row
                           %span(class="col-md-4")
                             = datafile.box_filename
-                          %span(class="col-md-6")
+                          %span(class="col-md-8")
                             %span(class="metadata-label")
                               STATUS:
                             %span(class="metadata-value" )
@@ -130,8 +130,5 @@
                                 for assistance.
                             %span(class="metadata-note" )
                               (refresh page to update)
-                          %span(class="col-md-2")
-                            - if (can? :manage, @dataset ) ||  (can? :update, @dataset)
-                              %button(class="cancel-upload-btn btn btn-danger btn-sm" onclick="cancelBoxUpload('#{datafile.web_id}', '#{datafile.job_id}')") Cancel
 
           %div(id="datafiles_upload_progress")
