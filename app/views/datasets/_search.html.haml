@@ -49,15 +49,14 @@
       =page_entries_info(@search.results)
     .col-md-4
       =will_paginate @search.results, previous_label: "<".html_safe, next_label: ">".html_safe, renderer: BootstrapPagination::Rails
-    -if current_user && current_user.role == 'admin'
-      .col-md-1
-        %select(id="per_page" name="per_page" onchange="set_per_page()" )
-          %option(value="25")
-            25 per page
-          %option(value="50")
-            50 per page
-          %option(value="500")
-            Show All
+    .col-md-1
+      %select(id="per_page" name="per_page" onchange="set_per_page()" class="form-control" )
+        %option(value="25")
+          25 per page
+        %option(value="50")
+          50 per page
+        %option(value="500")
+          Show All
   .row
     .col-md-5
 
