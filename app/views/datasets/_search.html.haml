@@ -53,10 +53,7 @@
 
     .col-md-7
       =page_entries_info(@search.results)
-  .row
-    .col-md-7.col-md-offset-5
-      =will_paginate @search.results, previous_label: "<".html_safe, next_label: ">".html_safe, renderer: BootstrapPagination::Rails
-
+  
   .row
     .col-md-5
 
