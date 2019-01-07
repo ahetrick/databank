@@ -51,8 +51,12 @@
       =will_paginate @search.results, previous_label: "<".html_safe, next_label: ">".html_safe, renderer: BootstrapPagination::Rails
     -if current_user && current_user.role == 'admin'
       .col-md-1
-        %button(type="button" class="btn btn-success" onclick="showAll()")
-          Show All
+        %select{name: 'per_page'}}
+          %option{value: '25'} 25 per page
+          %option{value: '50'} 50 per page
+          %option{value: '500'} Show All
+
+
   .row
     .col-md-5
 

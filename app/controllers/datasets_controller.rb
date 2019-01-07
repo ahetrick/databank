@@ -49,8 +49,8 @@ class DatasetsController < ApplicationController
     @search = nil
     search_get_facets = nil
 
-    if params.has_key?(:showAll)
-      per_page = 500
+    if params.has_key?(:per_page)
+      per_page = params[:per_page].to_i
     else
       per_page = 25
     end

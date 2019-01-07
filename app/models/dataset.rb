@@ -108,6 +108,10 @@ class Dataset < ActiveRecord::Base
       if File.exists?(deck_location)
         FileUtils.rm_rf(deck_location)
       end
+      # set release date to current if not embargo
+      if self.publication_state == Databank::PublicationState::RELEASED
+        self.release_date = Date.current
+      end
     end
 
     if Dataset.post_doi_metadata(self, user) && Dataset.post_doi(self, user)
