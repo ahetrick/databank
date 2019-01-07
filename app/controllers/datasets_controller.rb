@@ -60,21 +60,21 @@ class DatasetsController < ApplicationController
       case current_user.role
       when "admin"
 
-        # search_get_facets = Dataset.search do
-        #   without(:depositor, 'error')
-        #   with(:is_most_recent_version, true)
-        #   keywords (params[:q])
-        #   facet(:license_code)
-        #   facet(:funder_codes)
-        #   facet(:creator_names)
-        #   facet(:depositor)
-        #   facet(:subject_text)
-        #   facet(:visibility_code)
-        #   facet(:hold_state)
-        #   facet(:datafile_extensions)
-        #   facet(:publication_year)
-        #
-        # end
+        search_get_facets = Dataset.search do
+          without(:depositor, 'error')
+          with(:is_most_recent_version, true)
+          keywords (params[:q])
+          facet(:license_code)
+          facet(:funder_codes)
+          facet(:creator_names)
+          facet(:depositor)
+          facet(:subject_text)
+          facet(:visibility_code)
+          facet(:hold_state)
+          facet(:datafile_extensions)
+          facet(:publication_year)
+
+        end
 
         @search = Dataset.search do
 
@@ -165,21 +165,21 @@ class DatasetsController < ApplicationController
         # this makes a row for each category, even if the current search does not have any results in a category
         # these facets are only for admins
 
-        # search_get_facets.facet(:visibility_code).rows.each do |outer_row|
-        #   has_this_row = false
-        #   @search.facet(:visibility_code).rows.each do |inner_row|
-        #     has_this_row = true if inner_row.value == outer_row.value
-        #   end
-        #   @search.facet(:visibility_code).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
-        # end
-        #
-        # search_get_facets.facet(:depositor).rows.each do |outer_row|
-        #   has_this_row = false
-        #   @search.facet(:depositor).rows.each do |inner_row|
-        #     has_this_row = true if inner_row.value == outer_row.value
-        #   end
-        #   @search.facet(:depositor).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
-        # end
+        search_get_facets.facet(:visibility_code).rows.each do |outer_row|
+          has_this_row = false
+          @search.facet(:visibility_code).rows.each do |inner_row|
+            has_this_row = true if inner_row.value == outer_row.value
+          end
+          @search.facet(:visibility_code).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
+        end
+
+        search_get_facets.facet(:depositor).rows.each do |outer_row|
+          has_this_row = false
+          @search.facet(:depositor).rows.each do |inner_row|
+            has_this_row = true if inner_row.value == outer_row.value
+          end
+          @search.facet(:depositor).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
+        end
 
 
       when "depositor"
@@ -332,40 +332,40 @@ class DatasetsController < ApplicationController
 
         # this gets all categories for facets, even if current results do not have any instances
 
-        # search_get_my_facets.facet(:visibility_code).rows.each do |outer_row|
-        #   has_this_row = false
-        #   @search.facet(:visibility_code).rows.each do |inner_row|
-        #     has_this_row = true if inner_row.value == outer_row.value
-        #   end
-        #   @search.facet(:visibility_code).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
-        # end
+        search_get_my_facets.facet(:visibility_code).rows.each do |outer_row|
+          has_this_row = false
+          @search.facet(:visibility_code).rows.each do |inner_row|
+            has_this_row = true if inner_row.value == outer_row.value
+          end
+          @search.facet(:visibility_code).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
+        end
       else
 
-        # search_get_facets = Dataset.search do
-        #   all_of do
-        #     without(:depositor, 'error')
-        #     with(:is_most_recent_version, true)
-        #     with :is_test, false
-        #     without :hold_state, Databank::PublicationState::TempSuppress::METADATA
-        #     any_of do
-        #       with :publication_state, Databank::PublicationState::RELEASED
-        #       with :publication_state, Databank::PublicationState::Embargo::FILE
-        #       with :publication_state, Databank::PublicationState::TempSuppress::FILE
-        #       with :publication_state, Databank::PublicationState::PermSuppress::FILE
-        #     end
-        #   end
-        #
-        #   keywords (params[:q])
-        #   facet(:license_code)
-        #   facet(:funder_codes)
-        #   facet(:creator_names)
-        #   facet(:subject_text)
-        #   facet(:depositor)
-        #   facet(:visibility_code)
-        #   facet(:hold_state)
-        #   facet(:datafile_extensions)
-        #   facet(:publication_year)
-        # end
+        search_get_facets = Dataset.search do
+          all_of do
+            without(:depositor, 'error')
+            with(:is_most_recent_version, true)
+            with :is_test, false
+            without :hold_state, Databank::PublicationState::TempSuppress::METADATA
+            any_of do
+              with :publication_state, Databank::PublicationState::RELEASED
+              with :publication_state, Databank::PublicationState::Embargo::FILE
+              with :publication_state, Databank::PublicationState::TempSuppress::FILE
+              with :publication_state, Databank::PublicationState::PermSuppress::FILE
+            end
+          end
+
+          keywords (params[:q])
+          facet(:license_code)
+          facet(:funder_codes)
+          facet(:creator_names)
+          facet(:subject_text)
+          facet(:depositor)
+          facet(:visibility_code)
+          facet(:hold_state)
+          facet(:datafile_extensions)
+          facet(:publication_year)
+        end
 
         @search = Dataset.search do
 
@@ -455,31 +455,31 @@ class DatasetsController < ApplicationController
 
     else
 
-      # search_get_facets = Dataset.search do
-      #
-      #   all_of do
-      #     without(:depositor, 'error')
-      #     with(:is_most_recent_version, true)
-      #     with :is_test, false
-      #     without :hold_state, Databank::PublicationState::TempSuppress::METADATA
-      #     any_of do
-      #       with :publication_state, Databank::PublicationState::RELEASED
-      #       with :publication_state, Databank::PublicationState::Embargo::FILE
-      #       with :publication_state, Databank::PublicationState::TempSuppress::FILE
-      #     end
-      #   end
-      #
-      #   keywords (params[:q])
-      #   facet(:license_code)
-      #   facet(:funder_codes)
-      #   facet(:subject_text)
-      #   facet(:creator_names)
-      #   facet(:depositor)
-      #   facet(:visibility_code)
-      #   facet(:hold_state)
-      #   facet(:datafile_extensions)
-      #   facet(:publication_year)
-      # end
+      search_get_facets = Dataset.search do
+
+        all_of do
+          without(:depositor, 'error')
+          with(:is_most_recent_version, true)
+          with :is_test, false
+          without :hold_state, Databank::PublicationState::TempSuppress::METADATA
+          any_of do
+            with :publication_state, Databank::PublicationState::RELEASED
+            with :publication_state, Databank::PublicationState::Embargo::FILE
+            with :publication_state, Databank::PublicationState::TempSuppress::FILE
+          end
+        end
+
+        keywords (params[:q])
+        facet(:license_code)
+        facet(:funder_codes)
+        facet(:subject_text)
+        facet(:creator_names)
+        facet(:depositor)
+        facet(:visibility_code)
+        facet(:hold_state)
+        facet(:datafile_extensions)
+        facet(:publication_year)
+      end
 
       @search = Dataset.search do
 
@@ -565,37 +565,37 @@ class DatasetsController < ApplicationController
     # this makes a row for each category, even if the current search does not have any results in a category
     # these facets are in all searchers
 
-    # search_get_facets.facet(:subject_text).rows.each do |outer_row|
-    #   has_this_row = false
-    #   @search.facet(:subject_text).rows.each do |inner_row|
-    #     has_this_row = true if inner_row.value == outer_row.value
-    #   end
-    #   @search.facet(:subject_text).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
-    # end
-    #
-    # search_get_facets.facet(:publication_year).rows.each do |outer_row|
-    #   has_this_row = false
-    #   @search.facet(:publication_year).rows.each do |inner_row|
-    #     has_this_row = true if inner_row.value == outer_row.value
-    #   end
-    #   @search.facet(:publication_year).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
-    # end
-    #
-    # search_get_facets.facet(:license_code).rows.each do |outer_row|
-    #   has_this_row = false
-    #   @search.facet(:license_code).rows.each do |inner_row|
-    #     has_this_row = true if inner_row.value == outer_row.value
-    #   end
-    #   @search.facet(:license_code).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
-    # end
-    #
-    # search_get_facets.facet(:funder_codes).rows.each do |outer_row|
-    #   has_this_row = false
-    #   @search.facet(:funder_codes).rows.each do |inner_row|
-    #     has_this_row = true if inner_row.value == outer_row.value
-    #   end
-    #   @search.facet(:funder_codes).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
-    # end
+    search_get_facets.facet(:subject_text).rows.each do |outer_row|
+      has_this_row = false
+      @search.facet(:subject_text).rows.each do |inner_row|
+        has_this_row = true if inner_row.value == outer_row.value
+      end
+      @search.facet(:subject_text).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
+    end
+
+    search_get_facets.facet(:publication_year).rows.each do |outer_row|
+      has_this_row = false
+      @search.facet(:publication_year).rows.each do |inner_row|
+        has_this_row = true if inner_row.value == outer_row.value
+      end
+      @search.facet(:publication_year).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
+    end
+
+    search_get_facets.facet(:license_code).rows.each do |outer_row|
+      has_this_row = false
+      @search.facet(:license_code).rows.each do |inner_row|
+        has_this_row = true if inner_row.value == outer_row.value
+      end
+      @search.facet(:license_code).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
+    end
+
+    search_get_facets.facet(:funder_codes).rows.each do |outer_row|
+      has_this_row = false
+      @search.facet(:funder_codes).rows.each do |inner_row|
+        has_this_row = true if inner_row.value == outer_row.value
+      end
+      @search.facet(:funder_codes).rows << Placeholder_FacetRow.new(outer_row.value, 0) unless has_this_row
+    end
 
     @report = Indexable.citation_report(@search, request.original_url, current_user)
 
