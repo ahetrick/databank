@@ -46,6 +46,7 @@
             %span(class="glyphicon glyphicon-remove" aria-hidden="true" )
     .col-md-5
       =will_paginate @search.results, previous_label: "<".html_safe, next_label: ">".html_safe, renderer: BootstrapPagination::Rails
+
     .col-md-2
       = select_tag :per_page, options_for_select([['25 per page', '25'], ['50 per page', '50'], ['Show All', '500']], params[:per_page]), onchange: 'set_per_page()', class: "form-control search-control"
 
