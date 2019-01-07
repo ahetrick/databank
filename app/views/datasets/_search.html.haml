@@ -34,7 +34,7 @@
 
   .row
     .col-md-5
-      .input-group
+      .input-group.search-control
         -if params.has_key?('q') && params['q'] && params['q'].length > 0
           %input(type="text" class="form-control q" name="q" aria-label="search input box" value="#{params['q']}" )
         -else
@@ -47,7 +47,7 @@
     .col-md-5
       =will_paginate @search.results, previous_label: "<".html_safe, next_label: ">".html_safe, renderer: BootstrapPagination::Rails, class: 'pagination-sm'
     .col-md-2
-      = select_tag :per_page, options_for_select([['25 per page', '25'], ['50 per page', '50'], ['Show All', '500']], params[:per_page]), onchange: 'set_per_page()', class: "form-control"
+      = select_tag :per_page, options_for_select([['25 per page', '25'], ['50 per page', '50'], ['Show All', '500']], params[:per_page]), onchange: 'set_per_page()', class: "form-control search-control"
 
   .row
     .col-md-7.col-md-offset-5
