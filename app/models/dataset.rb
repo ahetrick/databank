@@ -873,6 +873,11 @@ class Dataset < ActiveRecord::Base
       if (change.audited_changes.has_key?('medusa_uuid')) || (change.audited_changes.has_key?('binary_name')) || (change.audited_changes.has_key?('medusa_dataset_dir'))
         medusaChangesArr << change.id
       end
+
+      if change.audited_changes.include?("draft")
+        medusaChangesArr << change.id
+      end
+
       if (change.audited_changes.keys.include?("publication_state"))
         pub_change = (change.audited_changes)["publication_state"]
         if pub_change.class == Array && pub_change[0] == Databank::PublicationState::DRAFT
