@@ -117,10 +117,9 @@
   <!-- END file section -->
 
 
+  <% if @dataset.publication_state != Databank::PublicationState::DRAFT %>
 
-<!--  <%# if @dataset.publication_state != Databank::PublicationState::DRAFT %>
-
-    <%# if (can? :manage, @dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::PermSuppress::FILE, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state) && @dataset.hold_state != Databank::PublicationState::TempSuppress::METADATA && !@dataset.suppress_changelog) %>
+    <% if (can? :manage, @dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::PermSuppress::FILE, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state) && @dataset.hold_state != Databank::PublicationState::TempSuppress::METADATA && !@dataset.suppress_changelog) %>
       <div class="panel-group" id="changelog" role="tablist" aria-multiselectable="true">
         <div class="panel panel-default">
           <div class="panel-heading" role="tab" id="changelogHeading">
@@ -132,19 +131,19 @@
           </div>
           <div class="panel-collapse collapse" id="changelogPanel" role="tabpanel" aria-labelledby="changelogHeading">
             <div class="panel-body">
-              <p><a href="/help?context=changelog&key=<%#= @dataset.key %>">Contact the Research Data Service</a> for
+              <p><a href="/help?context=changelog&key=<%= @dataset.key %>">Contact the Research Data Service</a> for
                 help interpreting this log.</p>
 
-              <%#= render partial: "show_changelog" %>
+              <%= render partial: "show_changelog" %>
 
             </div>
           </div>
         </div>
       </div>
 
-    <%# end %>
+    <% end %>
 
-  <%# end %>-->
+  <% end %>
 
   <% if can? :edit, @dataset %>
     <a href="/datasets/<%= @dataset.key %>/review_deposit_agreement">Review Deposit Agreement</a>

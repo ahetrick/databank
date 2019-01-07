@@ -12,7 +12,6 @@ class Datafile < ActiveRecord::Base
   include Viewable
   belongs_to :dataset
   has_many :nested_items, dependent: :destroy
-  audited associated_with: :dataset
 
   WEB_ID_LENGTH = 5
 

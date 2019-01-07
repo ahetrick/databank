@@ -1,6 +1,5 @@
 class Deckfile < ActiveRecord::Base
   belongs_to :dataset
-  audited associated_with: :dataset
 
   before_destroy :delete_file
 
