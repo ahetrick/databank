@@ -33,12 +33,6 @@
         %br
 
   .row
-    .col-md-5.col-md-offset-5
-      =will_paginate @search.results, previous_label: "<".html_safe, next_label: ">".html_safe, renderer: BootstrapPagination::Rails
-    .col-md-2
-      = select_tag :per_page, options_for_select([['25 per page', '25'], ['50 per page', '50'], ['Show All', '500']], params[:per_page]), onchange: 'set_per_page()', class: "form-control"
-
-  .row
     .col-md-5
       .input-group
         -if params.has_key?('q') && params['q'] && params['q'].length > 0
@@ -50,10 +44,15 @@
             %span(class="glyphicon glyphicon-search" aria-hidden="true" )
           %button(type="button" class="btn btn-danger" onclick="clearSearchTerm()" )
             %span(class="glyphicon glyphicon-remove" aria-hidden="true" )
-
-    .col-md-7
+    .col-md-5
+      =will_paginate @search.results, previous_label: "<".html_safe, next_label: ">".html_safe, renderer: BootstrapPagination::Rails
+    .col-md-2
+      = select_tag :per_page, options_for_select([['25 per page', '25'], ['50 per page', '50'], ['Show All', '500']], params[:per_page]), onchange: 'set_per_page()', class: "form-control"
+        
+  .row
+    .col-md-12
       =page_entries_info(@search.results)
-  
+
   .row
     .col-md-5
 
