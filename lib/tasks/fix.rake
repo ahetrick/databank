@@ -242,7 +242,7 @@ namespace :fix do
      '10.26123/idbdev-7539740_v1']
 
     bad_records.each do |identifier|
-      tmp_dataset = Dataset.new(identifier: identifier, is_test: true)
+      tmp_dataset = Dataset.new(identifier: identifier, is_test: true, publication_state: Databank::PublicationState::TempSuppress::METADATA)
       Dataset.delete_doi_metadata(tmp_dataset)
     end
 

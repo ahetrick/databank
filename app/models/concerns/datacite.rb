@@ -69,7 +69,9 @@ module Datacite
 
     def post_doi_metadata(dataset, current_user)
 
-      raise("cannot create or update doi for incomplete dataset") unless Dataset.completion_check(dataset, current_user) == 'ok'
+      system_user = User.find_by_provider_and_uid("system", IDB_CONFIG[:system_user_email])
+
+      raise("cannot create or update doi for incomplete dataset") unless current_user = system_user || Dataset.completion_check(dataset, current_user) == 'ok'
 
       #embargoed, supressed, and curator held metadata is handled by the to_datacite_xml method
 
