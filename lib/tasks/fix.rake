@@ -193,6 +193,36 @@ namespace :fix do
 
   end
 
+  desc 'make datacite record not findable as appropriate for datasets'
+  task :redact_from_datacite => :environment do
+
+    test = Dataset.where(:is_test => true)
+
+    held = Dataset.where(hold_state: Databank::PublicationState::TempSuppress::METADATA)
+
+    suppressed = Dataset.where(publication_state: [Databank::PublicationState::TempSuppress::METADATA, Databank::PublicationState::PermSuppress::METADATA])
+
+    embargoed = Dataset.where(publication_state: Databank::PublicationState::Embargo::METADATA)
+
+    [test, held, suppressed, embargoed].each do |recordset|
+      recordset.each do |dataset|
+        Dataset.delete_doi_metadata(dataset)
+      end
+    end
+
+  end
+
+  desc 'make dev datasets not findable in datacite'
+  task :redact_dev => :environment do
+
+    if Rails.env.development?
+      Dataset.where.not(publication_state: Databank::PublicationState::DRAFT).each do |dataset|
+        Dataset.delete_doi_metadata(dataset)
+      end
+    end
+
+  end
+
   desc 'migrate demo datasets'
   task :migrate_demo_datasets => :environment do
 
