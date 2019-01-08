@@ -233,6 +233,22 @@ namespace :fix do
 
   end
 
+  desc 'fix specific test records in datacite'
+  task :fix_datacite_custom => :environment do
+
+    bad_records = ['10.26123/idbdev-1772206_v1',
+     '10.26123/idbdev-2774199_v1',
+     '10.26123/idblocal-5622337_v1',
+     '10.26123/idbdev-7539740_v1']
+
+    bad_records.each do |identifier|
+      tmp_dataset = Dataset.new(identifier: identifier, is_test: true)
+      Dataset.delete_doi_metadata(tmp_dataset)
+    end
+
+
+  end
+
   desc 'migrate demo datasets'
   task :migrate_demo_datasets => :environment do
 
