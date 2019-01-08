@@ -226,7 +226,7 @@ namespace :fix do
   desc 'make aws-test datasets not findable in datacite'
   task :redact_aws_test => :environment do
 
-    Dataset.where.not(publication_state: Databank::PublicationState::DRAFT).where('identifier LIKE ?', '%testidb%').each do |dataset|
+    Dataset.where.not(publication_state: Databank::PublicationState::DRAFT).where('identifier LIKE ?', '%TESTIDB%').each do |dataset|
       puts dataset.title
       Dataset.delete_doi_metadata(dataset)
     end

@@ -198,6 +198,7 @@ module Datacite
 
       rescue Net::HTTPBadResponse, Net::HTTPServerError => error
 
+        Rails.logger.warn "problem is before response"
         Rails.logger.warn error.message
         Rails.logger.warn request.to_yaml
         return false
@@ -208,6 +209,7 @@ module Datacite
         return true
 
       else
+        Rails.logger.warn "problem is in response"
         Rails.logger.warn request.to_yaml
         Rails.logger.warn response.to_yaml
         return false
