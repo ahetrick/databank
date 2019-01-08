@@ -200,7 +200,7 @@ module Datacite
 
         Rails.logger.warn "problem is before response"
         Rails.logger.warn error.message
-        Rails.logger.warn request.to_yaml
+        #Rails.logger.warn request.to_yaml
         return false
       end
 
@@ -210,6 +210,14 @@ module Datacite
         system_user = User.find_by_provider_and_uid("system", IDB_CONFIG[:system_user_email])
         Dataset.post_doi_metadata(dataset, system_user)
 
+        uri = URI.parse("https://#{host}/metadata/#{dataset.identifier}" )
+
+        request = Net::HTTP::Delete.new(uri.request_uri)
+        request.basic_auth(user, password)
+        request.content_type = "text/plain"
+
+        sock = Net::HTTP.new(uri.host, uri.port)
+        sock.use_ssl = true
         retry_response = sock.start { |http| http.request(request) }
 
         if retry_response == Net::HTTPSession || Net::HTTPRedirection
@@ -223,8 +231,8 @@ module Datacite
         return true
       else
         Rails.logger.warn "problem is in response"
-        Rails.logger.warn request.to_yaml
-        Rails.logger.warn response.to_yaml
+        #Rails.logger.warn request.to_yaml
+        #Rails.logger.warn response.to_yaml
         return false
       end
 
