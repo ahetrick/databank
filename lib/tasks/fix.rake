@@ -223,6 +223,18 @@ namespace :fix do
 
   end
 
+  desc 'make aws-test datasets nof findable in datacite'
+  task :redact_aws_test => :environment do
+
+    if Rails.env.aws-production?
+      Dataset.where.not(publication_state: Databank::PublicationState::DRAFT).where('publication_state LIKE ?', '%testidb%').each do |dataset|
+        Dataset.delete_doi_metadata(dataset)
+      end
+    end
+
+
+  end
+
   desc 'migrate demo datasets'
   task :migrate_demo_datasets => :environment do
 
