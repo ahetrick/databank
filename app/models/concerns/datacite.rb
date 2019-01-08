@@ -205,9 +205,22 @@ module Datacite
       end
 
       case response
+      when Net::HTTPUnprocessableEntity
+        # fix bad state of no metadata, from previous api state
+        system_user = User.create_system_user
+        Dataset.post_doi_metadata(dataset, system_user)
+
+        retry_response = sock.start { |http| http.request(request) }
+
+        if retry_response == Net::HTTPSession || Net::HTTPRedirection
+          return true
+        else
+          Rails.logger.warn("retry did not work for #{dataset.key}")
+          return false
+        end
+        
       when Net::HTTPSuccess, Net::HTTPRedirection
         return true
-
       else
         Rails.logger.warn "problem is in response"
         Rails.logger.warn request.to_yaml
