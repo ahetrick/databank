@@ -207,7 +207,7 @@ module Datacite
       case response
       when Net::HTTPUnprocessableEntity
         # fix bad state of no metadata, from previous api state
-        system_user = User.create_system_user
+        system_user = User.find_by_provider_and_uid("system", IDB_CONFIG[:system_user_email])
         Dataset.post_doi_metadata(dataset, system_user)
 
         retry_response = sock.start { |http| http.request(request) }
@@ -218,7 +218,7 @@ module Datacite
           Rails.logger.warn("retry did not work for #{dataset.key}")
           return false
         end
-        
+
       when Net::HTTPSuccess, Net::HTTPRedirection
         return true
       else
