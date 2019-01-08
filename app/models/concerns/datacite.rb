@@ -166,7 +166,7 @@ module Datacite
 
     def delete_doi_metadata(dataset)
 
-      existing_datacite_record = datacite_record_hash(dataset)
+      existing_datacite_record = get_doi_metadata(dataset)
 
       if !existing_datacite_record
         Rails.logger.warn "No Datacite record found when attempting to delete DataCite record for dataset #{dataset.key}."
