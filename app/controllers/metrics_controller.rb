@@ -27,25 +27,26 @@ class MetricsController < ApplicationController
 
       CSV.open(t, 'w') do |report|
 
-          report << ['doi', 'pub_date' ,'num_files', 'num_bytes', 'total_downloads', 'num_relationships']
+        report << ['doi', 'pub_date', 'num_files', 'num_bytes', 'total_downloads', 'num_relationships', 'subject']
 
-          datasets.each do |dataset|
+        datasets.each do |dataset|
 
-            report << ["#{dataset.identifier}",
-                       "#{dataset.release_date.iso8601}",
-                       "#{dataset.datafiles.count}",
-                       "#{dataset.total_filesize}",
-                       "#{dataset.total_downloads}",
-                       "#{dataset.num_external_relationships}"]
-
-          end
+          report << ["#{dataset.identifier}",
+                     "#{dataset.release_date.iso8601}",
+                     "#{dataset.datafiles.count}",
+                     "#{dataset.total_filesize}",
+                     "#{dataset.total_downloads}",
+                     "#{dataset.num_external_relationships}",
+                     "#{dataset.subject}"]
 
         end
+
+      end
 
       send_file t.path, :type => 'text/csv',
                 :disposition => 'attachment',
                 :filename => "datasets.csv"
-      end
+    end
   end
 
   def datafiles_csv
@@ -113,7 +114,7 @@ class MetricsController < ApplicationController
                 :disposition => 'attachment',
                 :filename => "contained.csv"
 
-      report.close(unlink_now=false)
+      report.close(unlink_now = false)
 
     end
 
@@ -127,26 +128,26 @@ class MetricsController < ApplicationController
 
       report = CSV.new(t)
 
-      report << [ "doi,datacite_relationship", "material_id_type", "material_id,material_type" ]
+      report << ["doi,datacite_relationship", "material_id_type", "material_id,material_type"]
 
-        datasets.each do |dataset|
-          dataset.related_materials.each do |material|
+      datasets.each do |dataset|
+        dataset.related_materials.each do |material|
 
-            datacite_arr = Array.new
+          datacite_arr = Array.new
 
-            if material.datacite_list && material.datacite_list != ''
-              datacite_arr = material.datacite_list.split(',')
+          if material.datacite_list && material.datacite_list != ''
+            datacite_arr = material.datacite_list.split(',')
             # else
             #   report << ["#{dataset.identifier}", "", "#{material.uri_type}", "#{material.uri}", "#{material.selected_type}"]
+          end
+
+          datacite_arr.each do |relationship|
+
+            if ['IsPreviousVersionOf', 'IsNewVersionOf'].exclude?(relationship)
+              report << ["#{dataset.identifier}", "#{relationship}", "#{material.uri_type}", "#{material.uri}", "#{material.selected_type}"]
             end
 
-            datacite_arr.each do |relationship|
-
-              if ['IsPreviousVersionOf','IsNewVersionOf'].exclude?(relationship)
-                report << ["#{dataset.identifier}", "#{relationship}", "#{material.uri_type}", "#{material.uri}", "#{material.selected_type}"]
-              end
-
-            end
+          end
         end
       end
 
@@ -154,8 +155,8 @@ class MetricsController < ApplicationController
                 :disposition => 'attachment',
                 :filename => "related_materials.csv"
 
-      report.close(unlink_now=false)
+      report.close(unlink_now = false)
 
-     end
+    end
   end
 end
