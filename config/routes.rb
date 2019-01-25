@@ -4,6 +4,7 @@ require './lib/api/base'
 
 Rails.application.routes.draw do
 
+  resources :contributors
   resources :databank_tasks, only: [:index, :show]
   get '/databank_tasks/pending', to: 'databank_tasks#pending'
   post '/databank_tasks/update_status', to: 'databank_tasks#update_status', defaults: {format: 'json'}
@@ -121,7 +122,7 @@ Rails.application.routes.draw do
 
   # route binary downloads
   get "/datafiles/:id/download", to: "datafiles#download"
-  
+
   # direct view
   get '/datafiles/:id/view', to: "datafiles#view"
 
@@ -178,6 +179,8 @@ Rails.application.routes.draw do
   get "/metrics/datafiles_simple_list", to: "metrics#datafiles_simple_list"
 
   get "/metrics/datasets_csv", to: "metrics#datasets_csv"
+
+  get "/metrics/funders_csv", to: "metrics#funders_csv"
 
   get "/metrics/datafiles_csv", to: "metrics#datafiles_csv"
 

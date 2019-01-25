@@ -84,6 +84,30 @@ class MetricsController < ApplicationController
 
   end
 
+  def funders_csv
+    Tempfile.open("contained_files_csv") do |t|
+
+      datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT)
+
+      report = CSV.new(t)
+
+      report << ["doi,funder,grant"]
+
+      datasets.each do |dataset|
+        dataset.funders.each do |funder|
+          report << [dataset.identifier, funder.name, funder.grant]
+        end
+      end
+
+      send_file t.path, :type => 'text/csv',
+                :disposition => 'attachment',
+                :filename => "funders.csv"
+
+      report.close(unlink_now = false)
+
+    end
+  end
+
   def archived_content_csv
 
     datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT)
