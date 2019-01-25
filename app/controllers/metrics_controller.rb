@@ -85,13 +85,13 @@ class MetricsController < ApplicationController
   end
 
   def funders_csv
-    Tempfile.open("contained_files_csv") do |t|
+    Tempfile.open("funders_csv") do |t|
 
       datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT)
 
       report = CSV.new(t)
 
-      report << ["doi,funder,grant"]
+      report << ["doi","funder","grant"]
 
       datasets.each do |dataset|
         dataset.funders.each do |funder|
@@ -146,7 +146,7 @@ class MetricsController < ApplicationController
 
   def related_materials_csv
 
-    Tempfile.open("contained_files_csv") do |t|
+    Tempfile.open("materials_csv") do |t|
 
       datasets = Dataset.where.not(publication_state: Databank::PublicationState::DRAFT)
 
