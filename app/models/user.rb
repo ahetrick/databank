@@ -113,6 +113,11 @@ class User < ActiveRecord::Base
       return TRUE
     end
 
+    # exception for Thien Le, student assistant for a dataset
+    if netid = 'thienle2'
+      return TRUE
+    end
+
     response = open("http://quest.grainger.uiuc.edu/directory/ed/person/#{netid}").read
     # Rails.logger.warn response
     # response_nospace = response.gsub(">\r\n", "")
