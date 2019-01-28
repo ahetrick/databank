@@ -127,59 +127,60 @@ class User < ActiveRecord::Base
     # Rails.logger.warn netid
     # Rails.logger.warn employee_type
     case employee_type
-      when "A"
-        # Faculty
-        return true
-      when "B"
-        # Acad. Prof."
-        return true
-      when "C", "D"
-        # Civil Service"
-        return true
-      when "E"
-        # Extra Help"
-        return false
-      when "G"
-        # Grad. Assisant"
-        return true
-      when "H"
-        # Acad./Grad. Hourly"
-        return true
-      when "L"
-        # Lump Sum"
-        return false
-      when "M"
-        # Summer Help"
-        return false
-      when "P"
-        # Post Doc."
-        return true
-      when "R"
-        # Medical Resident"
-        return true
-      when "S"
-        # Student"
-        student_level = xml_doc.xpath("//attr[@name='uiucedustudentlevelcode']").text()
-        if student_level == "1U"
-          # undergraduate
-          return false
-        else
-          return true
-        end
-      when "T"
-        # Retiree"
-        return true
-      when "U"
-        # Unpaid"
-        return false
-      when "V"
-        # Virtual"
-        return false
-      when "W"
-        # One Time Pay"
+    when "A"
+      # Faculty
+      return true
+    when "B"
+      # Acad. Prof."
+      return true
+    when "C", "D"
+      # Civil Service"
+      return true
+    when "E"
+      # Extra Help"
+      return false
+    when "G"
+      # Grad. Assisant"
+      return true
+    when "H"
+      # Acad./Grad. Hourly"
+      return true
+    when "L"
+      # Lump Sum"
+      return false
+    when "M"
+      # Summer Help"
+      return false
+    when "P"
+      # Post Doc."
+      return true
+    when "R"
+      # Medical Resident"
+      return true
+    when "S"
+      # Student"
+      student_level = xml_doc.xpath("//attr[@name='uiucedustudentlevelcode']").text()
+      student_level.strip!
+      if student_level == "1U"
+        # undergraduate
         return false
       else
-        return false
+        return true
+      end
+    when "T"
+      # Retiree"
+      return true
+    when "U"
+      # Unpaid"
+      return false
+    when "V"
+      # Virtual"
+      return false
+    when "W"
+      # One Time Pay"
+      return false
+    else
+      return false
     end
 
   end
@@ -201,11 +202,11 @@ class User < ActiveRecord::Base
   def self.reserve_doi_user()
 
     user = User.new(provider: "system",
-    uid: IDB_CONFIG[:reserve_doi_netid],
-    email: "#{IDB_CONFIG[:reserve_doi_netid]}@illinois.edu",
-    username: IDB_CONFIG[:reserve_doi_netid],
-    name: IDB_CONFIG[:reserve_doi_netid],
-    role: "admin")
+                    uid: IDB_CONFIG[:reserve_doi_netid],
+                    email: "#{IDB_CONFIG[:reserve_doi_netid]}@illinois.edu",
+                    username: IDB_CONFIG[:reserve_doi_netid],
+                    name: IDB_CONFIG[:reserve_doi_netid],
+                    role: "admin")
 
     user
 
@@ -228,7 +229,7 @@ class User < ActiveRecord::Base
 
         return display_name
 
-      catch OpenURI::HTTPError
+        catch OpenURI::HTTPError
 
         return "Guest"
 
