@@ -114,7 +114,7 @@ class User < ActiveRecord::Base
     end
 
     # exception for Thien Le, student assistant for a dataset
-    if netid = 'thienle2'
+    if netid == 'thienle2'
       return TRUE
     end
 
