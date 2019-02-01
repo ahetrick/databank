@@ -865,5 +865,10 @@ function handleKeywordKeyup() {
 
 }
 
+function setOrgCreators(dataset_id, new_value) {
+    $('#dataset_org_creators').val(new_value);
+    $('#edit_dataset_' + dataset_id).submit();
+}
+
 $(document).ready(ready);
 $(document).on('page:load', ready);

@@ -17,7 +17,8 @@
       =f.hidden_field :have_permission
       =f.hidden_field :removed_private
       =f.hidden_field :agree
-      = f.hidden_field :publication_state
+      =f.hidden_field :org_creators
+      =f.hidden_field :publication_state
       .panel-group(id="description" role="tablist" aria-multiselectable="true")
         .panel.panel-default
           .panel-heading(role="tab" id="descriptionHeading")
@@ -63,7 +64,27 @@
                     -else
                       = f.collection_select :license, @license_info_arr, :code, :name, {:prompt => true}, {:class => "form-control dataset", onchange: "license_change_warning()"}
 
-              = render partial: 'creators_subform', locals: {f: f}
+
+              -if @dataset.org_creators && @dataset.org_creators == true
+                =render partial: 'org_creators_subform', locals: {f: f}
+                =render partial: 'contributors_subform', locals: {f: f}
+              -else
+                = render partial: 'ind_creators_subform', locals: {f: f}
+
+              -if(can? :manage, @dataset)
+                -toggled_value = nil
+                -if @dataset.org_creators && @dataset.org_creators == true
+                  -toggled_value = "false"
+                -else
+                  -toggled_value = "true"
+                .row.curator-only
+                  %span(class="glyphicon glyphicon-warning-sign" )
+                  Switching creator type deletes all creators of current type and sumbits form, which saves any other changes.
+                  %button(type="button" class="btn btn-primary" onclick="setOrgCreators(#{@dataset.id.to_s}, #{toggled_value})")
+                    -if @dataset.org_creators && @dataset.org_creators == true
+                      Switch to Individual Creators
+                    -else
+                      Switch to Organization Creators
 
               = f.hidden_field :publisher, :value=>"University of Illinois at Urbana-Champaign"
 

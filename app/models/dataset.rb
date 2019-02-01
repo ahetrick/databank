@@ -52,6 +52,7 @@ class Dataset < ActiveRecord::Base
 
   has_many :datafiles, dependent: :destroy
   has_many :creators, dependent: :destroy
+  has_many :contributors, dependent: :destroy
   has_many :funders, dependent: :destroy
   has_many :related_materials, dependent: :destroy
   has_many :deckfiles, dependent: :destroy
@@ -487,6 +488,14 @@ class Dataset < ActiveRecord::Base
 
   end
 
+  def individual_creators
+    self.creators.where(type_of: Databank::CreatorType::PERSON)
+  end
+
+  def institutional_creators
+    self.creators.where(type_of: Databank::CreatorType::INSTITUTION)
+  end
+
   def creator_list
     return_list = ""
 
@@ -495,11 +504,11 @@ class Dataset < ActiveRecord::Base
       return_list << "; " unless i == 0
 
       case creator.type_of
-        when Creator::PERSON
+        when Databank::CreatorType::PERSON
           return_list << creator.family_name
           return_list << ", "
           return_list << creator.given_name
-        when Creator::INSTITUTION
+        when Databank::CreatorType::INSTITUTION
           return_list << creator.institution_name
       end
 

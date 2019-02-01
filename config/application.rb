@@ -90,6 +90,11 @@ module Databank
     NONE = 'none'
   end
 
+  class CreatorType
+    PERSON = 0
+    INSTITUTION = 1
+  end
+
   class Application < Rails::Application
 
     attr_accessor :shibboleth_host

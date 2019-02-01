@@ -742,10 +742,14 @@ class DatasetsController < ApplicationController
 
   # GET /datasets/1/edit
   def edit
+    if @dataset.org_creators && @dataset.org_creators == true
+      @dataset.contributors.build unless @dataset.contributors.count > 0
+    end
     @dataset.creators.build unless @dataset.creators.count > 0
     @dataset.funders.build unless @dataset.funders.count > 0
     @dataset.related_materials.build unless @dataset.related_materials.count > 0
     @completion_check = Dataset.completion_check(@dataset, current_user)
+    @dataset.org_creators = @dataset.org_creators || false
     #set_license(@dataset)
     @publish_modal_msg = Dataset.publish_modal_msg(@dataset)
     if @dataset.has_deck_content
@@ -815,11 +819,40 @@ class DatasetsController < ApplicationController
   def update
 
     old_publication_state = @dataset.publication_state
+
+    old_creator_state = @dataset.org_creators || false
+
+    if old_creator_state != true
+      old_creator_state = false
+    end
+
+    if dataset_params[:org_creators] != "true"
+      dataset_params[:org_creators] = "false"
+    end
+
     @dataset.release_date ||= Date.current
 
     respond_to do |format|
 
       if @dataset.update(dataset_params)
+
+        if dataset_params[:org_creators] == 'true' && old_creator_state == false
+
+          # delete all individual creators
+          @dataset.individual_creators.delete_all
+          params['context'] = 'continue_edit'
+
+        elsif dataset_params[:org_creators] == 'false' && old_creator_state == true
+
+          # delete all institutional creators
+          @dataset.institutional_creators.delete_all
+
+          # delete all additional contributors
+          @dataset.contributors.delete_all
+
+          params['context'] = 'continue_edit'
+
+        end
 
         if params.has_key?('context') && params['context'] == 'exit'
 
@@ -868,11 +901,14 @@ class DatasetsController < ApplicationController
               format.json {render json: @dataset.errors, status: :unprocessable_entity}
             end
 
-
           else #this else means completion_check was not ok within publish context
             # Rails.logger.warn Dataset.completion_check(@dataset, current_user)
             raise "Error: Cannot update published dataset with incomplete information."
           end
+
+        elsif params.has_key?('context') && params['context'] == 'continue_edit'
+          format.html {redirect_to edit_dataset_path(@dataset)}
+          format.json {render :edit, status: :ok, location: edit_dataset_path(@dataset)}
 
         else #this else means context was not set to exit or publish - this is the normal draft update
           format.html {redirect_to dataset_path(@dataset.key)}
@@ -1594,7 +1630,7 @@ class DatasetsController < ApplicationController
   # def dataset_params
 
   def dataset_params
-    params.require(:dataset).permit(:medusa_dataset_dir, :title, :identifier, :publisher, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :dataset_version, :release_date, :is_test, :is_import, :audit_id, :removed_private, :have_permission, :agree, :web_ids, :version_comment, :subject, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destroy, :_update, :audit_id], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update, :audit_id], related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id], deckfiles_attributes: [:disposition, :remove, :path, :dataset_id, :id])
+    params.require(:dataset).permit(:medusa_dataset_dir, :title, :identifier, :publisher, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :dataset_version, :release_date, :is_test, :is_import, :audit_id, :removed_private, :have_permission, :agree, :web_ids, :org_creators, :version_comment, :subject, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destroy, :_update, :audit_id], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update, :audit_id], related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id], deckfiles_attributes: [:disposition, :remove, :path, :dataset_id, :id])
   end
 
 

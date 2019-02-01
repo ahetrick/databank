@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181002154923) do
+ActiveRecord::Schema.define(version: 20190201182938) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,6 +51,21 @@ ActiveRecord::Schema.define(version: 20181002154923) do
   add_index "audits", ["created_at"], name: "index_audits_on_created_at", using: :btree
   add_index "audits", ["request_uuid"], name: "index_audits_on_request_uuid", using: :btree
   add_index "audits", ["user_id", "user_type"], name: "user_index", using: :btree
+
+  create_table "contributors", force: :cascade do |t|
+    t.integer  "dataset_id"
+    t.string   "family_name"
+    t.string   "given_name"
+    t.string   "institution_name"
+    t.string   "identifier"
+    t.integer  "type_of"
+    t.integer  "row_order"
+    t.string   "email"
+    t.integer  "row_position"
+    t.string   "identifier_scheme"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
 
   create_table "creators", force: :cascade do |t|
     t.integer  "dataset_id"
@@ -141,6 +156,7 @@ ActiveRecord::Schema.define(version: 20181002154923) do
     t.boolean  "suppress_changelog",          default: false
     t.text     "version_comment"
     t.string   "subject"
+    t.boolean  "org_creators",                default: false
   end
 
   add_index "datasets", ["key"], name: "index_datasets_on_key", unique: true, using: :btree
