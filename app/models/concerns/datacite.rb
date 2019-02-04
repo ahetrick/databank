@@ -426,17 +426,44 @@ module Datacite
         contactNode['contributorType'] = "ContactPerson"
         contactNode.parent = contributorsNode
 
-        if contact.family_name && contact.given_name
-          contactNameNode = doc.create_element('contributorName')
-          contactNameNode.content = "#{contact.family_name}, #{contact.given_name}"
-          contactNameNode.parent = contactNode
+        contactNameNode = doc.create_element('contributorName')
 
-          if contact.identifier && contact.identifier != ""
-            contactIdentifierNode = doc.create_element('nameIdentifier')
-            contactIdentifierNode["schemeURI"] = "http://orcid.org/"
-            contactIdentifierNode["nameIdentifierScheme"] = "ORCID"
-            contactIdentifierNode.content = "#{contact.identifier}"
-            contactIdentifierNode.parent = contactNode
+        if contact.family_name && contact.given_name
+          contactNameNode.content = "#{contact.family_name.strip}, #{contact.given_name.strip}"
+        elsif contact.institution_name
+          contactNameNode.content = contact.institution_name.strip
+        else
+          raise "missing name for contact #{contact.to_yaml}"
+        end
+
+        contactNameNode.parent = contactNode
+
+        if contact.identifier && contact.identifier != ""
+          contactIdentifierNode = doc.create_element('nameIdentifier')
+          contactIdentifierNode["schemeURI"] = "http://orcid.org/"
+          contactIdentifierNode["nameIdentifierScheme"] = "ORCID"
+          contactIdentifierNode.content = "#{contact.identifier}"
+          contactIdentifierNode.parent = contactNode
+        end
+
+        if dataset.contributors.count > 0
+
+          dataset.contributors.each do |contributor|
+
+            contributorNameNode = doc.create_element('contributorName')
+
+            contributorNameNode.content = "#{contributor.family_name.strip}, #{contributor.given_name.strip}"
+            contributorNameNode.parent = contributorNode
+
+            # ORCID assumption hard-coded here, but in the model there is a field for identifier_scheme
+            if contributor.identifier && contributor.identifier != ""
+              contributorIdentifierNode = doc.create_element('nameIdentifier')
+              contributorIdentifierNode['schemeURI'] = "http://orcid.org/"
+              contributorIdentifierNode['nameIdentifierScheme'] = "ORCID"
+              contributorIdentifierNode.content = "#{contributor.identifier}"
+              contributorIdentifierNode.parent = contributorNode
+            end
+
           end
         end
 
