@@ -902,7 +902,7 @@ class DatasetsController < ApplicationController
             end
 
           else #this else means completion_check was not ok within publish context
-            # Rails.logger.warn Dataset.completion_check(@dataset, current_user)
+            Rails.logger.warn Dataset.completion_check(@dataset, current_user)
             raise "Error: Cannot update published dataset with incomplete information."
           end
 

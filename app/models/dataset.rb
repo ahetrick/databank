@@ -342,7 +342,7 @@ class Dataset < ActiveRecord::Base
 
       dataset.creators.each do |creator|
         if !creator.email || creator.email == ''
-          validation_error_messages << "an email address for #{creator.given_name} #{creator.family_name}"
+          validation_error_messages << "an email address for all creators"
         elsif creator.email.include?('@illinois.edu')
           netid = creator.email.split('@').first
 
