@@ -361,15 +361,22 @@ class Dataset < ActiveRecord::Base
       end
 
       dataset.creators.each do |creator|
-        if !creator.given_name || creator.given_name == ''
+        if creator.type_of == Databank::CreatorType::PERSON && (!creator.given_name || creator.given_name == '')
           validation_error_messages << "at least one given name for author(s)"
           break
         end
       end
 
       dataset.creators.each do |creator|
-        if !creator.given_name || creator.given_name == ''
+        if creator.type_of == Databank::CreatorType::PERSON && !creator.given_name || creator.given_name == ''
           validation_error_messages << "a family name for author(s)"
+          break
+        end
+      end
+
+      dataset.creators.each do |creator|
+        if creator.type_of == Databank::CreatorType::INSTITUTION && !creator.institution_name || creator.institution_name == ''
+          validation_error_messages << "a name for institution(s)"
           break
         end
       end
