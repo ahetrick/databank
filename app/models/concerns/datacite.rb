@@ -171,7 +171,7 @@ module Datacite
       existing_datacite_record = get_doi_metadata(dataset)
 
       if !existing_datacite_record
-        Rails.logger.warn "No Datacite record found when attempting to delete DataCite record for dataset #{dataset.key}."
+        Rails.logger.warn "No DataCite record found when attempting to delete DataCite record for dataset #{dataset.key}."
         return true
       end
 
@@ -338,7 +338,6 @@ module Datacite
 
       creatorNameNode.content = "[Redacted]"
       creatorNameNode.parent = creatorNode
-
 
       titlesNode = doc.create_element('titles')
       titlesNode.parent = resourceNode
@@ -626,6 +625,7 @@ module Datacite
 
         end
 
+        Rails.logger.warn(doc.to_xml)
         return doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
 
       rescue StandardError => error
