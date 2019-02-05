@@ -625,13 +625,13 @@ module Datacite
 
         end
 
-        Rails.logger.warn(doc.to_xml)
         return doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
 
       rescue StandardError => error
 
-        default_doc = Nokogiri::XML::Document.parse(%Q[<?xml version="1.0 encoding="UTF-8"?><error>Dataset Incomplete.</error>])
-        return default_doc.to_xml
+        raise error
+        #default_doc = Nokogiri::XML::Document.parse(%Q[<?xml version="1.0 encoding="UTF-8"?><error>Dataset Incomplete.</error>])
+        #return default_doc.to_xml
 
       end
 
