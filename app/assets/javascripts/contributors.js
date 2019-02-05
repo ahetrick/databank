@@ -70,10 +70,9 @@ function add_contributor_row() {
         '<td class="col-md-1">' +
         '<button type="button" class="btn btn-primary btn-block orcid-search-btn" data-id="' + newId + '" onclick="showOrcidSearchModal(' + newId + ')"><span class="glyphicon glyphicon-search"></span>&nbsp;Look Up&nbsp;<img src="/iD_icon_16x16.png">' +
         '</td>' +
-        '<td class="col-md-2">' +
+        '<td class="col-md-3">' +
         '<input onchange="handle_contributor_email_change(this)" class="form-control dataset contributor-email" placeholder="[e.g.: netid@illinois.edu]" type="email" name="dataset[contributors_attributes][' + newId + '][email]" id="dataset_contributors_attributes_' + newId + '_email" />' +
         '</td>' +
-        '<td class="col-md-2" align="center"><input name="dataset[contributors_attributes][' + newId + '][is_contact]" type="hidden" value="false" id="dataset_contributors_attributes_' + newId + '_is_contact"><input class="dataset contact_radio" name="primary_contact" onchange="handle_contact_change()" type="radio"  value="' + newId + '"></td>' +
         '<td class="col-md-1"></td>' +
         '</tr>';
     $("#contributor_table tbody:last-child").append(contributor_row);
