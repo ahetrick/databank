@@ -424,7 +424,7 @@ module Datacite
 
         contactNode = doc.create_element('contributor')
         contactNode['contributorType'] = "ContactPerson"
-        contactNode.parent = contributorsNode
+
 
         contactNameNode = doc.create_element('contributorName')
 
@@ -446,9 +446,14 @@ module Datacite
           contactIdentifierNode.parent = contactNode
         end
 
+        contactNode.parent = contributorsNode
+
         if dataset.contributors.count > 0
 
           dataset.contributors.each do |contributor|
+
+            contributorNode = doc.create_element('contributor')
+            contributorNode['contributorType'] = "ContactPerson"
 
             contributorNameNode = doc.create_element('contributorName')
 
@@ -464,6 +469,7 @@ module Datacite
               contributorIdentifierNode.parent = contributorNode
             end
 
+            contributorNode.parent = contributorsNode
           end
         end
 
