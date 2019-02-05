@@ -397,7 +397,14 @@ module Datacite
 
           creatorNameNode = doc.create_element('creatorName')
 
-          creatorNameNode.content = "#{creator.family_name.strip}, #{creator.given_name.strip}"
+          if creator.family_name && creator.family_name != '' && creator.given_name && creator.given_name != ''
+            creatorNameNode.content = "#{creator.family_name.strip}, #{creator.given_name.strip}"
+          elsif creator.institution_name && creator.institution_name != ''
+            creatorNameNode.content = creator.institution_name.strip
+          else
+            raise("invalid creator record")
+          end
+
           creatorNameNode.parent = creatorNode
 
           # ORCID assumption hard-coded here, but in the model there is a field for identifier_scheme
