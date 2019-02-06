@@ -12,10 +12,13 @@ class HelpController < ApplicationController
   def help_mail
     if params.has_key?("nobots")
       # ignore the spam
-    else
+    elsif verify_recaptcha(message: 'MESSAGE NOT SENT: reCAPTCHA verification required')
       help_request = DatabankMailer.contact_help(params)
       help_request.deliver_now
+      redirect_to '/help', notice: "Your email has been sent to the Research Data Service Team. "
+    else
+      redirect_to '/help'
     end
-    redirect_to '/help', notice: "Your email has been sent to the Research Data Service Team. "
+
   end
 end

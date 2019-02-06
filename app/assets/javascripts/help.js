@@ -11,6 +11,11 @@ help_ready = function () {
             top: 60
         }
     });
+    var $recaptcha = document.querySelector('#g-recaptcha-response');
+
+    if($recaptcha) {
+        $recaptcha.setAttribute("required", "required");
+    }
 }
 
 $(document).ready(help_ready);
