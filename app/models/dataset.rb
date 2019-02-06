@@ -513,11 +513,11 @@ class Dataset < ActiveRecord::Base
 
       case creator.type_of
         when Databank::CreatorType::PERSON
-          return_list << creator.family_name
+          return_list << creator.family_name || ''
           return_list << ", "
-          return_list << creator.given_name
+          return_list << creator.given_name || ''
         when Databank::CreatorType::INSTITUTION
-          return_list << creator.institution_name
+          return_list << creator.institution_name || ''
       end
 
     end
