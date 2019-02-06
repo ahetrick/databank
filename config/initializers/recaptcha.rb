@@ -4,6 +4,6 @@ Recaptcha.configure do |config|
   config.secret_key = IDB_CONFIG[:recaptcha][:secret_key]
   # Uncomment the following line if you are using a proxy server:
   if IDB_CONFIG[:local_mode] != true
-    config.proxy = 'http://databank.illinois.edu'
+    config.proxy = IDB_CONFIG[:root_url_text]
   end
 end
