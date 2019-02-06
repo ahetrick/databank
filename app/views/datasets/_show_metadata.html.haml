@@ -143,6 +143,14 @@
               %td>
                 = dataset.depositor_name
 
+        -dataset.contributors.each do |contributor|
+          %tr.row
+            %td
+              %span.metadata-label
+                Additional Contact
+            %td
+              =contributor.display_name
+                
         -if can? :manage, dataset
           %tr.row
             %td
