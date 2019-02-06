@@ -11,14 +11,46 @@ class Creator < ActiveRecord::Base
 
   def display_name
 
-    return_text = "placeholder name"
-
     if self.type_of == Databank::CreatorType::INSTITUTION
-      return_text = "#{self.institution_name}"
+
+      if self.institution_name && self.institution_name != ''
+       return_text = "#{self.institution_name}"
+      else
+        return_text  = 'University of Illinois at Urbana-Champaign'
+      end
+
     else
-      return_text = "#{self.given_name} #{self.family_name}"
+
+      if self.given_name && self.given_name != '' && self.family_name && self.family_name != ''
+        return_text = "#{self.given_name} #{self.family_name}"
+      else
+        return_text  = 'University of Illinois at Urbana-Champaign'
+      end
     end
 
+    return_text
+
+  end
+
+  def list_name
+    if self.type_of == Databank::CreatorType::INSTITUTION
+
+      if self.institution_name && self.institution_name != ''
+        return_text = "#{self.institution_name}"
+      else
+        return_text  = 'University of Illinois at Urbana-Champaign'
+      end
+
+    else
+
+      if self.given_name && self.given_name != '' && self.family_name && self.family_name != ''
+        return_text = "#{self.family_name}, #{self.given_name}"
+      else
+        return_text  = 'University of Illinois at Urbana-Champaign'
+      end
+    end
+
+    return_text
   end
 
 end

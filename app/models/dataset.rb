@@ -511,14 +511,7 @@ class Dataset < ActiveRecord::Base
 
       return_list << "; " unless i == 0
 
-      case creator.type_of
-        when Databank::CreatorType::PERSON
-          return_list << creator.family_name || ''
-          return_list << ", "
-          return_list << creator.given_name || ''
-        when Databank::CreatorType::INSTITUTION
-          return_list << creator.institution_name || ''
-      end
+      return_list << creator.list_name
 
     end
     return_list
