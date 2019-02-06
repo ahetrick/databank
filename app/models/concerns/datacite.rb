@@ -426,7 +426,6 @@ module Datacite
         titleNode.parent = titlesNode
 
         contributorsNode = doc.create_element('contributors')
-        contributorsNode.parent = resourceNode
 
         contactNode = doc.create_element('contributor')
         contactNode['contributorType'] = "ContactPerson"
@@ -478,6 +477,8 @@ module Datacite
             contributorNode.parent = contributorsNode
           end
         end
+
+        contributorsNode.parent = resourceNode
 
         dataset.funders.each do |funder|
           if (funder.name && funder.name != '') || (funder.identifier && funder.identifer != '')
