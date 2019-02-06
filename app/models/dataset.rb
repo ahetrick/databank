@@ -640,7 +640,12 @@ class Dataset < ActiveRecord::Base
 
     self.creators.each do |creator|
       if creator.is_contact?
-        self.corresponding_creator_name = "#{creator.given_name} #{creator.family_name}"
+        if creator.type_of = Databank::CreatorType::PERSON
+          self.corresponding_creator_name = "#{creator.given_name} #{creator.family_name}"
+
+        elsif creator.type_of = Databank::CreatorType::INSTITUTION
+          self.corresponding_creator_name = creator.institution_name
+        end
         self.corresponding_creator_email = creator.email
       end
     end
