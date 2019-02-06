@@ -876,6 +876,8 @@ GEM
       ffi (>= 0.5.0, < 2)
     rchardet (1.8.0)
     rdoc (4.3.0)
+    recaptcha (4.13.1)
+      json
     rest-client (2.0.2)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
@@ -1032,6 +1034,7 @@ DEPENDENCIES
   progress_job
   rails (~> 4.2, >= 4.2.10)
   rchardet
+  recaptcha
   rest-client
   roda
   rspec-rails (~> 3.5)
