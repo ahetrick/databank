@@ -12,7 +12,7 @@ class HelpController < ApplicationController
   def help_mail
     if params.has_key?("nobots")
       # ignore the spam
-    elsif verify_recaptcha(message: 'MESSAGE NOT SENT: reCAPTCHA verification required', error_callback: fallback)
+    elsif verify_recaptcha(message: 'MESSAGE NOT SENT: reCAPTCHA verification required', error_callback: :quarantine)
       help_request = DatabankMailer.contact_help(params)
       help_request.deliver_now
       redirect_to '/help', notice: "Your email has been sent to the Research Data Service Team. "
@@ -24,9 +24,6 @@ class HelpController < ApplicationController
 
   def quarantine
     # not quarantining yet - just passing through for now
-    help_request = DatabankMailer.contact_help(params)
-    help_request.deliver_now
-    redirect_to '/help', notice: "Your email has been sent to the Research Data Service Team. "
   end
 
 end
