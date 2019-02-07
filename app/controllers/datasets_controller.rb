@@ -990,28 +990,37 @@ class DatasetsController < ApplicationController
           # Rails.logger.warn "inside create temporary creator"
           # Rails.logger.warn "creator_p has a family name key? #{creator_p.has_key?(:family_name)}"
           if creator_p.has_key?(:type_of)
-            temporary_creator.type_of = creator_p[:type_of]
-          elsif creator_p.has_key?(:institution_name) && creator_p[:institution_name] != ''
-            temporary_creator.type_of = Databank::CreatorType::INSTITUTION
-          elsif creator_p.has_key?(:family_name) && creator_p.has_key?(:given_name)
-            temporary_creator.type_of = Databank::CreatorType::PERSON
+
+            if creator_p[:type_of] == Databank::CreatorType::PERSON.to_s &&
+                creator_p.has_key?(:family_name) && creator_p.has_key?(:given_name) &&
+                creator_p[:family_name] != '' && creator_p[:given_name] != ''
+              temporary_creator = Creator.create(dataset_id: proposed_dataset.id,
+                                                 type_of: Databank::CreatorType::PERSON,
+                                                 family_name: creator_p[:family_name],
+                                                 given_name: creator_p[:given_name])
+
+
+            elsif creator_p[:type_of] == Databank::CreatorType::INSTITUTION.to_s &&
+                creator_p.has_key?(:institution_name) && creator_p[:institution_name] != ''
+              temporary_creator = Creator.create(dataset_id: proposed_dataset.id,
+                                                 type_of: Databank::CreatorType::INSTITUTION,
+                                                 institution_name: creator_p[:institution_name])
+            else
+              Rails.logger.warn("invalid creator record: #{creator.to_yaml}")
+              respond_to do |format|
+                format.html {render json: {"message": "invalid creator record found"}} and return
+                format.json {render json: {"message": "invalid creator record found"}, status: :unprocessable_entity} and return
+              end
+            end
           end
-          if creator_p.has_key?(:institution_name)
-            temporary_creator.given_name = creator_p[:given_name]
-          end
-          if creator_p.has_key?(:family_name)
-            temporary_creator.given_name = creator_p[:given_name]
-          end
-          if creator_p.has_key?(:given_name)
-            temporary_creator.given_name = creator_p[:given_name]
-          end
+
           if creator_p.has_key?(:email)
             temporary_creator.email = creator_p[:email]
           end
           if creator_p.has_key?(:is_contact)
             temporary_creator.is_contact = creator_p[:is_contact]
           end
-          
+
           temporary_creator.save
           proposed_dataset.creators.push(temporary_creator)
         end
