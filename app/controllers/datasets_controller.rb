@@ -822,13 +822,7 @@ class DatasetsController < ApplicationController
 
     old_creator_state = @dataset.org_creators || false
 
-    if old_creator_state != true
-      old_creator_state = false
-    end
-
-    if dataset_params[:org_creators] != "true"
-      dataset_params[:org_creators] = "false"
-    end
+    Rails.logger.warn dataset_params
 
     @dataset.release_date ||= Date.current
 
