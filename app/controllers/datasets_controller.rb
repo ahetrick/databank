@@ -983,7 +983,8 @@ class DatasetsController < ApplicationController
 
         params[:dataset][:creators_attributes].each do |creator_params|
           creator_p = creator_params[1]
-          #Rails.logger.warn creator_p
+          Rails.logger.warn "creator_p: "
+          Rails.logger.warn creator_p
 
           temporary_creator = nil
 
@@ -1022,6 +1023,7 @@ class DatasetsController < ApplicationController
           end
 
           temporary_creator.save
+          Rails.logger.warn("temporary_creator: #{temporary_creator.to_yaml}")
           proposed_dataset.creators.push(temporary_creator)
         end
 
