@@ -363,6 +363,8 @@ class Dataset < ActiveRecord::Base
 
       dataset.creators.each do |creator|
         if creator.type_of == Databank::CreatorType::PERSON && (!creator.given_name || creator.given_name == '')
+          Rails.logger.warn "inside creator person detected"
+          Rails.logger.warn creator.to_yaml
           validation_error_messages << "at least one given name for author(s)"
           break
         end
