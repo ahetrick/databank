@@ -990,7 +990,11 @@ class DatasetsController < ApplicationController
 
           # Rails.logger.warn "inside create temporary creator"
           # Rails.logger.warn "creator_p has a family name key? #{creator_p.has_key?(:family_name)}"
+          #
+          Rails.logger.warn "creator_p has type of key: #{creator_p.has_key?(:type_of)}"
           if creator_p.has_key?(:type_of)
+
+            Rails.logger.warn("creator_p type_of: #{creator_p[:type_of]}")
 
             if creator_p[:type_of] == Databank::CreatorType::PERSON.to_s &&
                 creator_p.has_key?(:family_name) && creator_p.has_key?(:given_name) &&
