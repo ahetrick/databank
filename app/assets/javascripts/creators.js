@@ -5,10 +5,25 @@ creators_ready = function () {
     $('.orcid-search-spinner').hide();
     var cells, desired_width, table_width;
     if ($("#creator_table tr").length > 0) {
+
+        var person_creators_type = 0
+        var org_creators_type = 1
+
         table_width = $('#creator_table').width();
         cells = $('#creator_table').find('tr')[0].cells.length;
         desired_width = table_width / cells + 'px';
-        handleCreatorTable();
+
+        var dataset_org_creators = $('#dataset_org_creators').val();
+
+        console.log(dataset_org_creators);
+
+        if (dataset_org_creators == 'true') {
+            handleCreatorTable(org_creators_type);
+        } else {
+            handleCreatorTable(person_creators_type);
+        }
+
+
 
         $('#creator_table td').css('width', desired_width);
 
@@ -38,7 +53,7 @@ creators_ready = function () {
     //alert("creators.js javascript working");
 }
 
-function add_creator_row() {
+function add_creator_row(creator_type) {
 
     $('#update-confirm').prop('disabled', false);
 
@@ -54,7 +69,7 @@ function add_creator_row() {
         '<td><span style="display:inline;" class="glyphicon glyphicon-resize-vertical"></span></td>' +
         '<td class="col-md-2">' +
         '<input type="hidden" value="' + $('#creator_table tr').length + '" name="dataset[creators_attributes][' + newId + '][row_position]" id="dataset_creators_attributes_' + newId + '_row_position" />' +
-        '<input value="0" type="hidden" name="dataset[creators_attributes][' + newId + '][type_of]" id="dataset_creators_attributes_' + newId + '_type_of" />' +
+        '<input value="'+ creator_type +'" type="hidden" name="dataset[creators_attributes][' + newId + '][type_of]" id="dataset_creators_attributes_' + newId + '_type_of" />' +
         '<input onchange="generate_creator_preview()" class="form-control dataset creator" placeholder="[e.g.: Smith]" type="text" name="dataset[creators_attributes][' + newId + '][family_name]" id="dataset_creators_attributes_' + newId + '_family_name" />' +
         '</td>' +
 
@@ -82,7 +97,7 @@ function add_creator_row() {
 
 }
 
-function remove_creator_row(creator_index) {
+function remove_creator_row(creator_index, creator_type) {
 
 
     // do not allow removal of primary contact for published dataset
@@ -102,7 +117,7 @@ function remove_creator_row(creator_index) {
         $('#creator_table').sortable('refresh');
 
         if ($("#creator_table tr").length < 2) {
-            add_creator_row();
+            add_creator_row(creator_type);
         }
         $('#update-confirm').prop('disabled', false);
         handleCreatorTable();
@@ -110,7 +125,7 @@ function remove_creator_row(creator_index) {
     }
 }
 
-function handleCreatorTable() {
+function handleCreatorTable(creator_type) {
     $('#creator_table tr').each(function (i) {
         // for all but header row, set the row_position value of the input to match the table row position
         if (i > 0) {
@@ -127,7 +142,7 @@ function handleCreatorTable() {
             //console.log("table row count: " + $("#creator_table tr").length );
 
             if ((i + 1) == ($("#creator_table tr").length)) {
-                $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_index + "\x22 )' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_creator_row()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
+                $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_index + "\x22 )' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_creator_row(" + creator_type + ")' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
             } else {
                 $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_index + "\x22 )' type='button'><span class='glyphicon glyphicon-trash'></span></button>");
             }
