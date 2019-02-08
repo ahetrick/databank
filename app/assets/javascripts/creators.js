@@ -6,8 +6,8 @@ creators_ready = function () {
     var cells, desired_width, table_width;
     if ($("#creator_table tr").length > 0) {
 
-        var person_creators_type = 0
-        var org_creators_type = 1
+        var person_creators_type = 0;
+        var org_creators_type = 1;
 
         table_width = $('#creator_table').width();
         cells = $('#creator_table').find('tr')[0].cells.length;
@@ -22,8 +22,6 @@ creators_ready = function () {
         } else {
             handleCreatorTable(person_creators_type);
         }
-
-
 
         $('#creator_table td').css('width', desired_width);
 
@@ -53,7 +51,9 @@ creators_ready = function () {
     //alert("creators.js javascript working");
 }
 
-function add_creator_row(creator_type) {
+
+
+function add_person_creator(){
 
     $('#update-confirm').prop('disabled', false);
 
@@ -63,6 +63,7 @@ function add_creator_row(creator_type) {
     if (maxId != NaN) {
         newId = maxId + 1;
     }
+
     $('#creator_index_max').val(newId);
 
     var creator_row = '<tr class="item row" id="creator_index_' + newId + '">' +
@@ -93,13 +94,43 @@ function add_creator_row(creator_type) {
         '</tr>';
     $("#creator_table tbody:last-child").append(creator_row);
 
-    handleCreatorTable();
+    handleCreatorTable(1);
+}
 
+function add_institution_creator(){
+    $('#update-confirm').prop('disabled', false);
+
+    var maxId = Number($('#creator_index_max').val());
+    var newId = 1;
+
+    if (maxId != NaN) {
+        newId = maxId + 1;
+    }
+
+    $('#creator_index_max').val(newId);
+
+    var creator_row = '<tr class="item row" id="creator_index_' + newId + '">' +
+        '<td><span style="display:inline;" class="glyphicon glyphicon-resize-vertical"></span></td>' +
+        '<td class="col-md-6">' +
+        '<input type="hidden" value="' + $('#creator_table tr').length + '" name="dataset[creators_attributes][' + newId + '][row_position]" id="dataset_creators_attributes_' + newId + '_row_position" />' +
+        '<input value="1" type="hidden" name="dataset[creators_attributes][' + newId + '][type_of]" id="dataset_creators_attributes_' + newId + '_type_of" />' +
+        '<input onchange="generate_creator_preview()" class="form-control dataset creator" placeholder="[e.g.: Institute of Phenomenon Observation and Measurement]" type="text" name="dataset[creators_attributes][' + newId + '][institution_name]" id="dataset_creators_attributes_' + newId + '_institution_name" />' +
+        '</td>' +
+        '<td class="col-md-3">' +
+        '<input onchange="handle_creator_email_change(this)" class="form-control dataset creator-email" placeholder="[e.g.: netid@illinois.edu]" type="email" name="dataset[creators_attributes][' + newId + '][email]" id="dataset_creators_attributes_' + newId + '_email" />' +
+        '</td>' +
+        '<td class="col-md-2" align="center"><input name="dataset[creators_attributes][' + newId + '][is_contact]" type="hidden" value="false" id="dataset_creators_attributes_' + newId + '_is_contact"><input class="dataset contact_radio" name="primary_contact" onchange="handle_contact_change()" type="radio"  value="' + newId + '"></td>' +
+        '<td class="col-md-1"></td>' +
+        '</tr>';
+    $("#creator_table tbody:last-child").append(creator_row);
+
+    handleCreatorTable(1);
 }
 
 function remove_creator_row(creator_index, creator_type) {
 
-
+    var person_creators_type = 0
+    var org_creators_type = 1
     // do not allow removal of primary contact for published dataset
 
     if (($("input[name='dataset[publication_state]']").val() != 'draft') && ($("#dataset_creators_attributes_" + creator_index + "_is_contact").val() == 'true')) {
@@ -117,7 +148,11 @@ function remove_creator_row(creator_index, creator_type) {
         $('#creator_table').sortable('refresh');
 
         if ($("#creator_table tr").length < 2) {
-            add_creator_row(creator_type);
+            if (creator_type == org_creators_type){
+                add_institution_creator();
+            } else {
+                add_person_creator();
+            }
         }
         $('#update-confirm').prop('disabled', false);
         handleCreatorTable();
@@ -142,7 +177,14 @@ function handleCreatorTable(creator_type) {
             //console.log("table row count: " + $("#creator_table tr").length );
 
             if ((i + 1) == ($("#creator_table tr").length)) {
-                $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_index + "\x22 )' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_creator_row(" + creator_type + ")' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
+
+                if (creator_type == org_creators_type){
+                    $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_index + "\x22 )' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_institution_creator()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
+                } else {
+                    $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_index + "\x22 )' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_person_creator()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
+                }
+
+
             } else {
                 $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_index + "\x22 )' type='button'><span class='glyphicon glyphicon-trash'></span></button>");
             }
