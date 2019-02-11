@@ -364,7 +364,7 @@ class Dataset < ActiveRecord::Base
       dataset.creators.each do |creator|
         if creator.type_of == Databank::CreatorType::PERSON && (!creator.given_name || creator.given_name == '')
           #DEBUG
-          raise("error: creator person detected while testing for org author")
+          #raise("error: creator person detected while testing for org author")
           validation_error_messages << "at least one given name for author(s)"
           break
         end
