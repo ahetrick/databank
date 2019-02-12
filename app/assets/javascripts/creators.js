@@ -161,6 +161,10 @@ function remove_creator_row(creator_index, creator_type) {
 }
 
 function handleCreatorTable(creator_type) {
+
+    var person_creators_type = 0;
+    var org_creators_type = 1;
+
     $('#creator_table tr').each(function (i) {
         // for all but header row, set the row_position value of the input to match the table row position
         if (i > 0) {
