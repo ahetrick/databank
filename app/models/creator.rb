@@ -33,6 +33,9 @@ class Creator < ActiveRecord::Base
   end
 
   def list_name
+
+    Rails.logger.warn self.to_yaml
+
     if self.type_of == Databank::CreatorType::INSTITUTION
 
       if self.institution_name && self.institution_name != ''
