@@ -44,7 +44,7 @@
         %td(class="col-md-2")
           = cf.hidden_field :_destroy, value: false
           = cf.hidden_field :row_position # value set via AJAX
-          = cf.hidden_field :type_of, value: Databank::CreatorType::PERSON
+          = cf.hidden_field :type_of, value: Databank::CreatorType::INSTITUTION
 
           = cf.text_field :family_name, class: "form-control dataset creator", placeholder: "[e.g.: Smith]", onchange: "generate_creator_preview()"
         %td(class="col-md-2")
