@@ -6,26 +6,23 @@ class Creator < ActiveRecord::Base
   default_scope { order (:row_position) }
 
   def as_json(options={})
-    super(:only => [:family_name, :given_name, :identifier, :is_contact, :row_position, :created_at, :updated_at])
+    if self.institution_name && self.institution_name != ''
+      super(:only => [:institution_name, :identifier, :is_contact, :row_position, :created_at, :updated_at])
+    else
+      super(:only => [:family_name, :given_name, :identifier, :is_contact, :row_position, :created_at, :updated_at])
+    end
+
   end
 
   def display_name
 
-    if self.type_of == Databank::CreatorType::INSTITUTION
-
-      if self.institution_name && self.institution_name != ''
+    if self.institution_name && self.institution_name != ''
        return_text = "#{self.institution_name}"
-      else
-        return_text  = 'University of Illinois at Urbana-Champaign'
-      end
-
-    else
-
-      if self.given_name && self.given_name != '' && self.family_name && self.family_name != ''
+    elsif self.given_name && self.given_name != '' && self.family_name && self.family_name != ''
         return_text = "#{self.given_name} #{self.family_name}"
-      else
-        return_text  = 'University of Illinois at Urbana-Champaign'
-      end
+    else
+      raise("institution_name: #{institution_name}, given_name: #{given_name}, family_name: #{family_name}")
+      #return_text  = 'University of Illinois at Urbana-Champaign'
     end
 
     return_text
@@ -34,25 +31,17 @@ class Creator < ActiveRecord::Base
 
   def list_name
 
-    Rails.logger.warn self.to_yaml
-
-    if self.type_of == Databank::CreatorType::INSTITUTION
-
-      if self.institution_name && self.institution_name != ''
-        return_text = "#{self.institution_name}"
-      else
-        return_text  = 'University of Illinois at Urbana-Champaign'
+    if self.institution_name && self.institution_name != ''
+      return_text = "#{self.institution_name}"
+    elsif self.family_name && self.family_name != ''
+      return_text = "#{self.family_name}"
+      if self.given_name && self.given_name != ''
+        return_text << ", #{self.given_name}"
       end
-
     else
-
-      if self.given_name && self.given_name != '' && self.family_name && self.family_name != ''
-        return_text = "#{self.family_name}, #{self.given_name}"
-      else
-        return_text  = 'University of Illinois at Urbana-Champaign'
-      end
+      raise("institution_name: #{institution_name}, given_name: #{given_name}, family_name: #{family_name}")
+      #return_text  = 'University of Illinois at Urbana-Champaign'
     end
-
     return_text
   end
 
