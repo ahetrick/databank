@@ -370,7 +370,11 @@
     - else
       %a(href="/datasets/#{@dataset.key}/review_deposit_agreement?" target="_blank" ) Review Deposit Agreement
 
-  = render partial: 'orcid_search'
+  - if @dataset.org_creators
+    =render partial: 'orcid_contributor_search'
+  -else
+    =render partial: 'orcid_creator_search'
+
   = render partial: 'datasets/help/license_help_modal'
   = render partial: 'datasets/help/embargo_help_modal'
 

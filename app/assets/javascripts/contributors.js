@@ -68,7 +68,7 @@ function add_contributor_row() {
         '</td>' +
 
         '<td class="col-md-1">' +
-        '<button type="button" class="btn btn-primary btn-block orcid-search-btn" data-id="' + newId + '" onclick="showOrcidSearchModal(' + newId + ')"><span class="glyphicon glyphicon-search"></span>&nbsp;Look Up&nbsp;<img src="/iD_icon_16x16.png">' +
+        '<button type="button" class="btn btn-primary btn-block orcid-search-btn" data-id="' + newId + '" onclick="showContributorOrcidSearchModal(' + newId + ')"><span class="glyphicon glyphicon-search"></span>&nbsp;Look Up&nbsp;<img src="/iD_icon_16x16.png">' +
         '</td>' +
         '<td class="col-md-3">' +
         '<input onchange="handle_contributor_email_change(this)" class="form-control dataset contributor-email" placeholder="[e.g.: netid@illinois.edu]" type="email" name="dataset[contributors_attributes][' + newId + '][email]" id="dataset_contributors_attributes_' + newId + '_email" />' +
@@ -200,7 +200,7 @@ function handle_contact_change() {
 // *** ORCID stuff
 
 
-function set_orcid_from_search_modal() {
+function set_contributor_orcid_from_search_modal() {
     var contributor_index = $("#contributor-index").val();
     var selected = $("input[type='radio'][name='orcid-search-select']:checked").val();
     var select_split = selected.split("~");
@@ -213,7 +213,7 @@ function set_orcid_from_search_modal() {
     $("#dataset_contributors_attributes_" + contributor_index + "_given_name").val(selected_given);
 }
 
-function search_orcid() {
+function search_contributor_orcid() {
 
     $("#orcid-search-results").empty();
     $('.orcid-search-spinner').show();
@@ -360,7 +360,7 @@ function enableOrcidImport() {
     $('#orcid-import-btn').prop('disabled', false);
 }
 
-function showOrcidSearchModal(contributor_index) {
+function showContributorOrcidSearchModal(contributor_index) {
 
     $('#orcid-import-btn').prop('disabled', true);
 
@@ -370,7 +370,7 @@ function showOrcidSearchModal(contributor_index) {
     $("#contributor-family").val(contributorFamilyName);
     $("#contributor-given").val(contributorGivenName);
     $("#orcid-search-results").empty();
-    $('#orcid_search').modal('show');
+    $('#orcid_contributor_search').modal('show');
 }
 
 function isEmail(email) {
