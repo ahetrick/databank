@@ -88,7 +88,7 @@ Rails.application.configure do
   }
   config.action_mailer.perform_deliveries = true
   config.action_mailer.logger = Rails.logger
-  config.action_mailer.default_url_options = {host: "demo.databank.library.illinois.edu"}
+  config.action_mailer.default_url_options = {host: "demo.databank.illinois.edu"}
 
   # Specifies the header that your server uses for sending files
   # config.action_dispatch.x_sendfile_header = "X-Sendfile"
