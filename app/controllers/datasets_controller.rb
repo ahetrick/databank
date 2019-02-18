@@ -1575,9 +1575,9 @@ class DatasetsController < ApplicationController
 
   def set_file_mode
 
-    Databank::Application.file_mode = Databank::FileMode::READ_ONLY
+    #Databank::Application.file_mode = Databank::FileMode::READ_ONLY
 
-    #Databank::Application.file_mode = Databank::FileMode::WRITE_READ
+    Databank::Application.file_mode = Databank::FileMode::WRITE_READ
 
     #if IDB_CONFIG[:aws][:s3_mode] == false
 
