@@ -491,7 +491,7 @@ class Dataset < ActiveRecord::Base
         response = 'ok'
       end
     ensure
-      return response
+      return response || 'error'
     end
 
   end
