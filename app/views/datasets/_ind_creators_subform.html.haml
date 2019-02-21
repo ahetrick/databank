@@ -2,6 +2,10 @@
 = render partial: 'datasets/help/primary_contact_help_modal'
 %label(class="control-label required")
   Author List (One primary long-term contact must be selected from this list.)
+  %a(href="#" data-toggle="modal" data-target="#offerOrgAuthModal" tabindex="-1" )
+    %span(class="fa fa-question-circle")
+    %span(class="idb-help-prompt" )
+      citing organization as author?
 %br
 %input(type="hidden" name="creator_index_max" id="creator_index_max" value="#{@dataset.creators.count.to_i}" )
 
