@@ -4,7 +4,7 @@ require 'json'
 class User < ActiveRecord::Base
   include ActiveModel::Serialization
 
-  ROLES = %w[admin depositor guest no_deposit]
+  ROLES = %w[admin depositor guest no_deposit reviewer editor]
 
   validates_uniqueness_of :uid, allow_blank: false
   validates :email, allow_blank: false, email: true

@@ -22,7 +22,9 @@ Rails.application.routes.draw do
     end
   end
 
-  get '/featured_researchers/:id', to: 'feaatured_researchers#show'
+  get '/data_curation_network', to: 'data_curation_network#index'
+
+  get '/featured_researchers/:id', to: 'featured_researchers#show'
 
   get '/datasets/download_citation_report', to: 'datasets#download_citation_report'
 
