@@ -1,0 +1,12 @@
+%form(role="form" id="permissions_form")
+  %input(id="permission_action" type="hidden" name="permission_action" )
+.curator-only
+  .panel-group(id="permissions" role="tablist" aria-multiselectable="true")
+    .panel.panel-default
+      .panel-heading(role="tab" id="permissionsHeading")
+        %h4(class="panel-title")
+          %a(role="button" data-toggle="collapse" data-parent="#access" href="#permissionsPanel" aria-expanded="false" aria-controls="permissionsPanel" class="accordion-toggle collapsed" )
+            %span( class="metadata-label" ) Permissions
+      .panel-collapse.collapse(id="permissionsPanel" role="tabpanel" aria-labelledby="permissionsHeading" )
+        .panel-body
+          Permissions content

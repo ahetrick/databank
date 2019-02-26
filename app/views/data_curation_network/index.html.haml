@@ -1,21 +1,31 @@
 .container-fluid
-  %h2 Data Curation Network Portal for Illinois Data Bank
 
-  %h3 Curators
-  .indent
-    If you have a working Data Curation Network curator account for Illinois Data Bank, you can
-    %button(type="button" class="btn btn-primary" )
-      Log In to Illinois Data Bank
-    here.
+  =render partial: 'heading'
 
-    %br
-    =succeed "." do
-      If you need to set up, renew, or modify your account, please contact us at
-      %a(href="mailto:researchdata@illinois.library.illinois.edu") researchdata@illinois.library.illinois.edu
+  -if current_user && current_user.role == 'curator'
+    %h3 My Datasets
+    -if @search
+      -@search.each_hit_with_result do |hit, dataset|
+        = render 'datasets/brief_record', dataset:dataset
+    -else
+      Placeholder content
 
-  %h3 Looking for more information about the Data Curation Network?
-  .indent
-    =succeed('!') do
-      Check out the
-      %a(href="https://datacurationnetwork.org/" )
-        Data Curation Network homepage
+  -else
+    .row
+      .col-md-6.text-center
+        .dcn-contact
+          .fas.fa-envelope.fa-10x
+        %br
+        =succeed "." do
+          To renew or modify your account, contact
+          %a(href="mailto:researchdata@illinois.library.illinois.edu" ) researchdata@illinois.library.illinois.edu
+
+      .col-md-6.text-center
+        .dcn-login
+          .fas.fa-sign-in-alt.fa-10x
+        %br
+        =succeed "." do
+          With a working Data Curation Network curator account for Illinois Data Bank,
+          %a(href="/data_curation_network/log_in") log in here
+
+

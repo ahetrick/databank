@@ -4,6 +4,7 @@ require './lib/api/base'
 
 Rails.application.routes.draw do
 
+  resources :user_abilities
   resources :contributors
   resources :contributors
   resources :databank_tasks, only: [:index, :show]
@@ -23,6 +24,9 @@ Rails.application.routes.draw do
   end
 
   get '/data_curation_network', to: 'data_curation_network#index'
+  get '/data_curation_network/admin', to: 'data_curation_network#admin'
+  get '/data_curation_network/log_in', to: 'data_curation_network#log_in'
+  get '/data_curation_network/log_out', to: 'data_curation_network#log_out'
 
   get '/featured_researchers/:id', to: 'featured_researchers#show'
 
@@ -37,6 +41,10 @@ Rails.application.routes.draw do
   resources :deckfiles
   get "/datasets/pre_deposit", to: "datasets#pre_deposit"
 
+  get "/on_failed_registration", to: "welcome#on_failed_registration"
+
+  resources :account_activations, only: [:edit]
+
   resources :related_materials
   resources :funders
   resources :definitions
@@ -45,6 +53,11 @@ Rails.application.routes.draw do
   resources :users
   resources :identities
   resources :datasets do
+
+    member do
+      get 'permissions', to: 'datasets#permissions'
+    end
+
     resources :datafiles do
       member do
         get 'upload', to: 'datafiles#upload'

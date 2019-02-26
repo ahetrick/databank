@@ -4,45 +4,29 @@ class SessionsController < ApplicationController
 
   def new
     session[:login_return_referer] = request.env['HTTP_REFERER']
-    if IDB_CONFIG.has_key?(:local_mode) && IDB_CONFIG[:local_mode]
-      redirect_to('/auth/identity')
-    else
-      redirect_to(shibboleth_login_path(Databank::Application.shibboleth_host))
-    end
+    redirect_to(shibboleth_login_path(Databank::Application.shibboleth_host))
   end
 
   def create
-    #raise request.env["omniauth.auth"].to_yaml
-    auth = request.env["omniauth.auth"]
 
-    if auth && auth[:uid]
+    user = User.from_omniauth(request.env["omniauth.auth"])
 
-      return_url = clear_and_return_return_path
-      user = User.find_by_provider_and_uid(auth["provider"], auth["uid"])
-
-      if user
-        user.update_with_omniauth(auth)
-        user.save
-      else
-        user = User.create_with_omniauth(auth)
-      end
-
-
-      if user.id
-        session[:user_id] = user.id
-      else
-        unauthorized
-      end
-
-      if user.role == 'no_deposit'
-        redirect_to root_url, notice: "ACCOUNT NOT ELIGABLE TO DEPOSIT DATA.<br/>Faculty, staff, and graduate students are eligable to deposit data in Illinois Data Bank.<br/>Please <a href='/help'>contact the Research Data Service</a> if this determination is in error, or if you have any questions."
-      else
-        redirect_to return_url
-      end
-
+    if user&.id
+      session[:user_id] = user.id
     else
       unauthorized
     end
+
+    if user.role == 'curator'
+      redirect_to '/data_curation_network'
+
+    elsif user.role == 'no_deposit'
+      redirect_to root_url, notice: "ACCOUNT NOT ELIGABLE TO DEPOSIT DATA.<br/>Faculty, staff, and graduate students are eligable to deposit data in Illinois Data Bank.<br/>Please <a href='/help'>contact the Research Data Service</a> if this determination is in error, or if you have any questions."
+
+    else
+      redirect_to return_url
+    end
+
   end
 
   def destroy
@@ -79,12 +63,10 @@ class SessionsController < ApplicationController
 
   protected
 
-  def clear_and_return_return_path
-    return_url = session[:login_return_uri] || session[:login_return_referer] || root_path
-    session[:login_return_uri] = session[:login_return_referer] = nil
-    reset_session
-    return_url
+  def return_url
+    session[:login_return_uri] || session[:login_return_referer] || root_path
   end
+
 
   def shibboleth_login_path(host)
     "/Shibboleth.sso/Login?target=https://#{host}/auth/shibboleth/callback"

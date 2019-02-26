@@ -12,6 +12,7 @@
   <%= render partial: 'incomplete_deposit_modal' %>
 <% end %>
 <% if ((can? :manage, @dataset) && (@dataset.publication_state != Databank::PublicationState::DRAFT)) %>
+  <%= render partial: 'permissions' %>
   <%= render partial: 'curator_access_controls' %>
 <% end %>
 

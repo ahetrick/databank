@@ -1,0 +1,18 @@
+%p#notice= notice
+
+%p
+  %b Dataset:
+  = @user_ability.dataset_id
+%p
+  %b User name:
+  = @user_ability.user_name
+%p
+  %b User email:
+  = @user_ability.user_email
+%p
+  %b Ability:
+  = @user_ability.ability
+
+= link_to 'Edit', edit_user_ability_path(@user_ability)
+\|
+= link_to 'Back', user_abilities_path

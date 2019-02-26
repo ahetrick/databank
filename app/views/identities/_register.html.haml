@@ -1,0 +1,7 @@
+=form_tag('/auth/identity/register') do
+  =text_field_tag :name
+  =text_field_tag :email
+  =pasword_field_tag :password
+  =password_field_tag :pasword_confirmation
+  =recaptcha_tags
+  =submit_tag

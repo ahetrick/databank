@@ -57,6 +57,7 @@ class Dataset < ActiveRecord::Base
   has_many :related_materials, dependent: :destroy
   has_many :deckfiles, dependent: :destroy
   has_many :system_files, dependent: :destroy
+  has_many :user_abilities, dependent: :destroy
 
   accepts_nested_attributes_for :datafiles, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :deckfiles, reject_if: :all_blank, allow_destroy: true
@@ -1179,6 +1180,9 @@ class Dataset < ActiveRecord::Base
 
   end
 
+  def user_abilites
+    DatasetUserAbility.where(dataset_key: self.key)
+  end
 
   def self.make_anvl(metadata)
     anvl = ""

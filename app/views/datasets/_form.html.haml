@@ -56,7 +56,7 @@
                   .form-group.required
                     = f.label :license, "License", :class => "control-label"
                     %a(href="#" data-toggle="modal" data-target="#licenseModal" tabindex="-1" )
-                      %span(class="fa fa-question-circle")
+                      %span(class="far fa-question-circle")
                       what's this?
                     -if @dataset.publication_state == Databank::PublicationState::DRAFT
                       = f.collection_select :license, @license_info_arr, :code, :name, {:prompt => true}, {:class => "form-control dataset"}
@@ -134,7 +134,7 @@
                     .form-group
                       =f.label :embargo, "Publication Delay (embargo)", class: "control-label"
                       %a(href="#" data-toggle="modal" data-target="#embargoModal" tabindex="-1" )
-                        %span(class="fa fa-question-circle")
+                        %span(class="far fa-question-circle")
                         what's this?
                       - if ((can? :manage, @dataset) || [Databank::PublicationState::DRAFT, Databank::PublicationState::Embargo::METADATA].include?(@dataset.publication_state))
                         = f.select :embargo, options_for_select([["No Publication Delay", Databank::PublicationState::Embargo::NONE],["File Only Publication Delay", Databank::PublicationState::Embargo::FILE],["Metadata and File Publication Delay", Databank::PublicationState::Embargo::METADATA]], @dataset.embargo), {}, {class: "form-control dataset"}
@@ -158,7 +158,7 @@
                     .form-group
                       =f.label :embargo, "Publication Delay (embargo)", class: "control-label"
                       %a(href="#" data-toggle="modal" data-target="#embargoModal" tabindex="-1" )
-                        %span(class="fa fa-question-circle")
+                        %span(class="far fa-question-circle")
                         what's this?
                       = f.select :embargo, options_for_select([["No Publication Delay", Databank::PublicationState::Embargo::NONE]], @dataset.embargo), {class: "form-control dataset"}
                   .col-md-2
@@ -268,7 +268,7 @@
           %tr.row
             %td
               %div(id="file-drop-area")
-                %span(class="fa fa-cloud-upload fa-2x" )
+                %span(class="far fa-cloud-upload fa-2x" )
                 Drop files in this area
             %td
               %span(class="fa upload-inconsistent fa-circle")
@@ -283,7 +283,7 @@
             %td.fileselect(id="file-select-area")
               %label(class="btn btn-success fileinput-button")
                 %span(class="fileinput-button-content" )
-                  %span(class="fa fa-laptop fa-lg" )
+                  %span(class="far fa-laptop fa-lg" )
                   Select files from your computer
             %td
               %span(class="fa upload-inconsistent fa-circle")

@@ -1,0 +1,1 @@
+These partials are intended for use within the context of portals for the Data Curation Network and for publisher reviews.

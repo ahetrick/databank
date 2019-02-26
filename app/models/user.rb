@@ -9,16 +9,25 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :uid, allow_blank: false
   validates :email, allow_blank: false, email: true
 
-  def netid
-    self.uid.split('@').first
-  end
-
-  def net_id
-    self.netid
-  end
-
   def is? (requested_role)
     self.role == requested_role.to_s
+  end
+
+  def self.from_omniauth(auth)
+
+    if auth && auth[:provider]
+      if auth[:provider] == 'shibboleth'
+        self.from_shibboleth(auth)
+      elsif auth[:provider] == 'identity'
+        self.from_identity(auth)
+      else
+        raise("unknown identity provider: #{auth[:provider]}")
+      end
+    else
+      return nil
+    end
+
+
   end
 
   def self.user_role(uid)

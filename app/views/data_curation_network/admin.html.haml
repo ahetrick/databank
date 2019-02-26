@@ -1,4 +1,12 @@
--if(can? :manage, Dataset)
-  %h2 Hello Admin
--else
-  %h2 Hello non-Admin
+.container-fluid
+
+  =render partial: 'heading'
+
+  -if(can? :manage, Dataset)
+
+
+
+
+  -else
+    .jumbotron
+      This page is for administration of the Data Curation Network Portal for Illinois Data Bank. If you are an administrator, log in to manage accounts.

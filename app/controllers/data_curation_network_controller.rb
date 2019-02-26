@@ -1,12 +1,13 @@
 class DataCurationNetworkController < ApplicationController
   
   def index
+    @search = nil
   end
 
   def admin
   end
 
-  def my_datasets
+  def account
   end
 
   def log_in
