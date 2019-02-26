@@ -234,7 +234,9 @@ class User < ActiveRecord::Base
 
         return display_name
 
-        catch OpenURI::HTTPError
+      rescue OpenURI::HTTPError => err
+
+        Rails.logger.warn err.message
 
         return "Guest"
 
