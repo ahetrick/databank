@@ -1,3 +1,5 @@
+
+
 %form(action="/datasets" id="searchForm" accept-charset="UTF-8" method="get" )
   -if params.has_key?('sort_by')
     %input(type="hidden" name="sort_by" value="#{params['sort_by']}" )
@@ -127,7 +129,7 @@
                   .facet
                     -if params.has_key?('depositors') && params['depositors'].include?(row.value)
                       %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
-                        = User::Shibobleth.user_info_string(row.value)
+                        = User::Shibboleth.user_info_string(row.value)
                         ="(#{row.count})"
                     -else
                       %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
