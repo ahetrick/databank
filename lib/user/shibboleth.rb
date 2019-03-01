@@ -29,7 +29,7 @@ class User::Shibboleth < User::User
       user.uid = auth["uid"]
       user.email = auth["info"]["email"]
       user.username = (auth["info"]["email"]).split('@').first
-      user.name = Shibboleth::User.user_display_name((auth["info"]["email"]).split('@').first)
+      user.name = User::Shibboleth.user_display_name((auth["info"]["email"]).split('@').first)
       user.role = user_role(auth["uid"])
     end
   end
@@ -42,16 +42,9 @@ class User::Shibboleth < User::User
     self.uid = auth["uid"]
     self.email = auth["info"]["email"]
     self.username = self.email.split('@').first
-    self.name = Shibboleth::User.user_display_name(self.username)
+    self.name = User::Shibboleth.user_display_name(self.username)
+    self.role = user_role(auth["uid"])
 
-    if IDB_CONFIG[:local_mode]
-      # Rails.logger.info "inside local mode check #{IDB_CONFIG[:local_mode]}"
-      self.role = Shibboleth::User.user_role(auth["info"]["email"])
-    else
-      # Rails.logger.info "failed local mode check #{IDB_CONFIG[:local_mode]}"
-      # Rails.logger.warn "auth: #{auth.to_yaml}"
-      self.role = Shibboleth::User.user_role(auth["uid"])
-    end
   end
 
   def self.user_role(email)
