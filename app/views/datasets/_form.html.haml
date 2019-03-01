@@ -58,13 +58,12 @@
                     %a(href="#" data-toggle="modal" data-target="#licenseModal" tabindex="-1" )
                       %span(class="far fa-question-circle")
                       what's this?
-                    -if @license_info_arr
 
-                      -if @dataset.publication_state == Databank::PublicationState::DRAFT
-                        = f.collection_select :license, @license_info_arr, :code, :name, {:prompt => true}, {:class => "form-control dataset"}
+                    -if @dataset.publication_state == Databank::PublicationState::DRAFT
+                      = f.collection_select :license, LICENSE_INFO_ARR, :code, :name, {:prompt => true}, {:class => "form-control dataset"}
 
-                      -else
-                        = f.collection_select :license, @license_info_arr, :code, :name, {:prompt => true}, {:class => "form-control dataset", onchange: "license_change_warning()"}
+                    -else
+                      = f.collection_select :license, LICENSE_INFO_ARR, :code, :name, {:prompt => true}, {:class => "form-control dataset", onchange: "license_change_warning()"}
 
 
               -if @dataset.org_creators && @dataset.org_creators == true
