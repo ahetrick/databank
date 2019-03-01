@@ -937,7 +937,7 @@ class Dataset < ActiveRecord::Base
         agent = nil
         user = nil
         if change.user_id && change.user_id != ''
-          user = User.find(Integer(change.user_id))
+          user = User::Shibboleth.find(Integer(change.user_id))
         end
         if user
           agent = user.serializable_hash

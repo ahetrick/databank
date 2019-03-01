@@ -35,7 +35,7 @@ module User
 
     def self.reserve_doi_user()
 
-      user = User.new(provider: "system",
+      user = User::User.new(provider: "system",
                       uid: IDB_CONFIG[:reserve_doi_netid],
                       email: "#{IDB_CONFIG[:reserve_doi_netid]}@illinois.edu",
                       username: IDB_CONFIG[:reserve_doi_netid],

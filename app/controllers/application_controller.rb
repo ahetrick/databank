@@ -95,7 +95,9 @@ class ApplicationController < ActionController::Base
 
   def current_user
     begin
-      @current_user ||= User.find(session[:user_id]) if session[:user_id]
+      if session[:user_id]
+        @current_user = User::Shibboleth.find(session[:user_id]) || User::Identity.find(session[:user_id])
+      end
     rescue ActiveRecord::RecordNotFound
       session[:user_id] = nil
     end

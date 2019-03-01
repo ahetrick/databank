@@ -69,7 +69,7 @@ module Datacite
 
     def post_doi_metadata(dataset, current_user)
 
-      system_user = User.find_by_provider_and_uid("system", IDB_CONFIG[:system_user_email])
+      system_user = User::Shibboleth.find_by_provider_and_uid("system", IDB_CONFIG[:system_user_email])
 
       raise("cannot create or update doi for incomplete dataset") unless current_user = system_user || Dataset.completion_check(dataset, current_user) == 'ok'
 
@@ -209,7 +209,7 @@ module Datacite
       case response
       when Net::HTTPUnprocessableEntity
         # fix bad state of no metadata, from previous api state
-        system_user = User.find_by_provider_and_uid("system", IDB_CONFIG[:system_user_email])
+        system_user = User::User.find_by_provider_and_uid("system", IDB_CONFIG[:system_user_email])
         Dataset.post_doi_metadata(dataset, system_user)
 
         uri = URI.parse("https://#{host}/metadata/#{dataset.identifier}" )
