@@ -183,6 +183,10 @@ class User::Shibboleth < User::User
 
   def self.user_display_name(email)
 
+    netid = netid_from_email(email)
+
+    return nil unless netid
+
     # exception for Neil Smalheiser, UIC faculty who is also Affiliated Faculty with the iSchool at Illinois
     if netid == 'neils'
       return "Neil Smalheiser"
