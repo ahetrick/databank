@@ -45,7 +45,7 @@ namespace :fix do
 
   desc 'remove invalid creators'
   task :remove_invalid_creators => :environment do
-    Creators.all do |creator|
+    Creator.all do |creator|
       creator.destroy unless creator.has_name
     end
   end
