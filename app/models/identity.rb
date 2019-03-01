@@ -2,7 +2,6 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
 
   belongs_to :invitee
 
-  before_save :downcase_email
   before_create :create_activation_digest
   validates :name,  presence: true
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
@@ -34,11 +33,6 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
   end
 
   private
-
-  # Converts email to all lower-case.
-  def downcase_email
-    self.email = email.downcase
-  end
 
   # Creates and assigns the activation token and digest.
   def create_activation_digest
