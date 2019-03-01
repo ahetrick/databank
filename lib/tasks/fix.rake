@@ -43,6 +43,13 @@ namespace :fix do
     end
   end
 
+  desc 'remove invalid creators'
+  task :remove_invalid_creators => environment do
+    Creators.all do |creator|
+      creator.destroy unless creator.has_name
+    end
+  end
+
   desc 'pretend some dev datasets never happened'
   task :fix_dev => :environment do
 

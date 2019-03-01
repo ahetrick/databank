@@ -1,6 +1,9 @@
 class Creator < ActiveRecord::Base
   include ActiveModel::Serialization
   belongs_to :dataset
+
+  validates :has_name
+
   audited except: [:row_order, :type_of, :identifier_scheme, :dataset_id, :institution_name], associated_with: :dataset
 
   default_scope { order (:row_position) }
@@ -44,5 +47,12 @@ class Creator < ActiveRecord::Base
     end
     return_text
   end
+
+  def has_name
+    unless (self.institution_name && self.institution_name != '') || (self.given_name && self.given_name != '' && self.family_name && self.family_name != '')
+      errors.add([:base], "Creator must have a valid name.")
+    end
+  end
+
 
 end

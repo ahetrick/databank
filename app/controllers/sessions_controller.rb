@@ -9,7 +9,15 @@ class SessionsController < ApplicationController
 
   def create
 
-    user = User.from_omniauth(request.env["omniauth.auth"])
+    auth = request.env["omniauth.auth"]
+
+    if auth[:provider] && auth[:provider] == 'shibboleth'
+      user = User::Shibboleth.from_omniauth(auth)
+    elsif auth[:provider] && auth[:provider] == 'identity'
+      user = User::Identity.from_omniauth(auth)
+    else
+      unauthorized
+    end
 
     if user&.id
       session[:user_id] = user.id

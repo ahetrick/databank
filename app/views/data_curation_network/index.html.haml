@@ -7,25 +7,21 @@
     -if @search
       -@search.each_hit_with_result do |hit, dataset|
         = render 'datasets/brief_record', dataset:dataset
-    -else
-      Placeholder content
+
+  -elsif current_user && current_user.role == 'admin'
+    .jumbotron
+      Hey
+      =succeed ',' do
+        =current_user.name
+      you're logged in through Shibboleth with your University of Illinois identity. If you want to try out your Data Curation Network persona, log out first.
+
+  -elsif current_user
+    .jumbotron
+      =succeed '.' do
+        To find out more, check out the
+        %a(href="https://datacurationnetwork.org/" )Data Curation Network site
 
   -else
-    .row
-      .col-md-6.text-center
-        .dcn-contact
-          .fas.fa-envelope.fa-10x
-        %br
-        =succeed "." do
-          To renew or modify your account, contact
-          %a(href="mailto:researchdata@illinois.library.illinois.edu" ) researchdata@illinois.library.illinois.edu
-
-      .col-md-6.text-center
-        .dcn-login
-          .fas.fa-sign-in-alt.fa-10x
-        %br
-        =succeed "." do
-          With a working Data Curation Network curator account for Illinois Data Bank,
-          %a(href="/data_curation_network/log_in") log in here
+    =render partial: 'identities/log_in'
 
 

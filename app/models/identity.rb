@@ -1,6 +1,6 @@
 class Identity < OmniAuth::Identity::Models::ActiveRecord
-  GROUPS = %w[network_curator publisher collaborator]
-  STATES = %w[pending active expired]
+
+  belongs_to :invitee
 
   before_save :downcase_email
   before_create :create_activation_digest
@@ -11,6 +11,8 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
             uniqueness: { case_sensitive: false }
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }
+  validates :invitee, presence: true
+
 
   # Returns true if the given token matches the digest.
   def authenticated?(attribute, token)

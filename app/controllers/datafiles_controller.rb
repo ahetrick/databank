@@ -19,17 +19,18 @@ class DatafilesController < ApplicationController
   # GET /datafiles.json
   def index
     @datafiles = @dataset.complete_datafiles
-    authorize! :edit, @dataset
+    authorize! :read, @dataset
   end
 
   # GET /datafiles/1
   # GET /datafiles/1.json
   def show
-    authorize! :edit, @dataset
+    authorize! :read, @dataset
   end
 
   # GET /datafiles/new
   def new
+    authorize! :edit, @dataset
     @datafile = Datafile.new
     @datafile.web_id ||= @datafile.generate_web_id
   end
@@ -51,9 +52,6 @@ class DatafilesController < ApplicationController
   # POST /datafiles
   # POST /datafiles.json
   def create
-
-    # Rails.logger.warn("inside create datafile")
-
     @datafile = Datafile.new(dataset_id: @dataset.id)
 
     if params.has_key?(:datafile) && params[:datafile].has_key?(:tus_url)

@@ -1,22 +1,5 @@
 .container-fluid
-
   =render partial: 'heading'
-
   .row
-    .col-md-9
-
+    .col-md-10.col-md-offset-1
       =render partial: 'identities/log_in'
-
-      .col-md-3.text-center
-
-        .dcn-home
-          .fas.fa-home.fa-5x
-        %br
-        %a(href="/data_curation_network" ) Data Curation Network Portal for the Illinois Data Bank
-        %hr
-        .dcn-contact
-          .fas.fa-envelope.fa-5x
-        %br
-        =succeed "." do
-          To renew or modify your account, contact
-          %a(href="mailto:researchdata@illinois.library.illinois.edu" ) researchdata@illinois.library.illinois.edu

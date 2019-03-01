@@ -1,14 +1,20 @@
 = form_tag '/auth/identity/callback' do
-  %li
-    .form-group
-      = label_tag :auth_key, 'Email', class: 'control-label'
-      %br
-      = text_field_tag :auth_key
-  %li
-    .form-group
-      = label_tag :password, 'Password', class: 'control-label'
-      %br
-      = password_field_tag :password
-  %li
-    .actions
-      = submit_tag 'Log In'
+
+  .form-group.row
+    .col-md-2.col-md-offset-3
+      %label.control-label{for: :auth_key}
+        Email
+    .col-md-4
+      =text_field_tag :auth_key, nil, class: 'form-control'
+
+  .form-group.row
+    .col-md-2.col-md-offset-3
+      %label.control-label{for: :password}
+        Password
+    .col-md-4
+      =text_field_tag :password, nil, class: 'form-control'
+
+  .row
+    .col-md-2.col-md-offset-7.actions
+      %button(type="submit" class="btn btn-primary btn-block")
+        Log In

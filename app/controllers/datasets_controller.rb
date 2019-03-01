@@ -12,23 +12,7 @@ class DatasetsController < ApplicationController
 
   protect_from_forgery except: [:cancel_box_upload, :validate_change2published]
   skip_before_filter :verify_authenticity_token, :only => :validate_change2published
-
-  load_resource :find_by => :key
-  authorize_resource
-  skip_load_and_authorize_resource :only => :download_endNote_XML
-  skip_load_and_authorize_resource :only => :download_plaintext_citation
-  skip_load_and_authorize_resource :only => :download_BibTeX
-  skip_load_and_authorize_resource :only => :download_RIS
-  skip_load_and_authorize_resource :only => :stream_file
-  skip_load_and_authorize_resource :only => :show_agreement
-  skip_load_and_authorize_resource :only => :review_deposit_agreement
-  skip_load_and_authorize_resource :only => :datacite_record
-  skip_load_and_authorize_resource :only => :download_link
-  skip_load_and_authorize_resource :only => :pre_deposit
-  skip_load_and_authorize_resource :only => :confirmation_message
-  skip_load_and_authorize_resource :only => :validate_change2published
-
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :permisisons, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :request_review, :reserve_doi, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message, :get_new_token, :send_to_medusa]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :request_review, :reserve_doi, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message, :get_new_token, :send_to_medusa, :validate_change2published]
 
   @@num_box_ingest_deamons = 10
 
@@ -773,10 +757,12 @@ class DatasetsController < ApplicationController
     @license_info_arr = LICENSE_INFO_ARR
 
     @dataset.subject = Databank::Subject::NONE unless @dataset.subject
+    authorize! :edit, @dataset
 
   end
 
   def get_new_token
+    authorize! :edit, @dataset
     @token = @dataset.new_token
     render json: {token: @token.identifier, expires: @token.expires}
   end
@@ -799,6 +785,8 @@ class DatasetsController < ApplicationController
 
     @dataset = Dataset.new(dataset_params)
 
+    authorize! :edit, @dataset
+
     set_file_mode
 
     respond_to do |format|
@@ -812,11 +800,14 @@ class DatasetsController < ApplicationController
     end
 
 
+
   end
 
   # PATCH/PUT /datasets/1
   # PATCH/PUT /datasets/1.json
   def update
+
+    authorize! :edit, @dataset
 
     old_publication_state = @dataset.publication_state
 
@@ -920,9 +911,7 @@ class DatasetsController < ApplicationController
 
   def validate_change2published
 
-    set_dataset
-
-    raise "dataset not found" unless @dataset
+    authorize! :edit, @dataset
 
     # Rails.logger.warn params.to_yaml
 
@@ -1057,6 +1046,8 @@ class DatasetsController < ApplicationController
   # DELETE /datasets/1.json
   def destroy
 
+    authorize! :edit, @dataset
+
     @dataset.destroy
     respond_to do |format|
       if current_user
@@ -1075,6 +1066,9 @@ class DatasetsController < ApplicationController
   end
 
   def suppress_changelog
+
+    authorize! :manage, @dataset
+
     @dataset.suppress_changelog = true
     respond_to do |format|
       if @dataset.save
@@ -1085,9 +1079,13 @@ class DatasetsController < ApplicationController
         format.json {render json: @dataset.errors, status: :unprocessable_entity}
       end
     end
+
   end
 
   def unsuppress_changelog
+
+    authorize! :manage, @dataset
+
     @dataset.suppress_changelog = false
     respond_to do |format|
       if @dataset.save
@@ -1098,9 +1096,12 @@ class DatasetsController < ApplicationController
         format.json {render json: @dataset.errors, status: :unprocessable_entity}
       end
     end
+
   end
 
   def temporarily_suppress_files
+
+    authorize! :manage, @dataset
 
     @dataset.hold_state = Databank::PublicationState::TempSuppress::FILE
 
@@ -1117,6 +1118,8 @@ class DatasetsController < ApplicationController
   end
 
   def temporarily_suppress_metadata
+
+    authorize! :manage, @dataset
 
     @dataset.hold_state = Databank::PublicationState::TempSuppress::METADATA
 
@@ -1141,6 +1144,9 @@ class DatasetsController < ApplicationController
   end
 
   def unsuppress
+
+    authorize! :manage, @dataset
+
     @dataset.hold_state = 'none'
 
     respond_to do |format|
@@ -1164,6 +1170,8 @@ class DatasetsController < ApplicationController
 
   def permanently_suppress_files
 
+    authorize! :manage, @dataset
+
     @dataset.publication_state = Databank::PublicationState::PermSuppress::FILE
     @dataset.hold_state = Databank::PublicationState::PermSuppress::FILE
     @dataset.tombstone_date = Date.current
@@ -1183,6 +1191,8 @@ class DatasetsController < ApplicationController
   end
 
   def permanently_suppress_metadata
+
+    authorize! :manage, @dataset
 
     @dataset.hold_state = Databank::PublicationState::PermSuppress::METADATA
     @dataset.publication_state = Databank::PublicationState::PermSuppress::METADATA
@@ -1281,6 +1291,8 @@ class DatasetsController < ApplicationController
   # publishing in IDB means interacting with DataCite and Medusa
   def publish
 
+    authorize! :edit, @dataset
+
     publish_attempt_result = @dataset.publish(current_user)
 
     respond_to do |format|
@@ -1299,6 +1311,9 @@ class DatasetsController < ApplicationController
   end
 
   def send_to_medusa
+
+    authorize! :edit, @dataset
+
     Rails.logger.warn(params.to_yaml)
     MedusaIngest.send_dataset_to_medusa(@dataset)
     render json: {status: :ok} and return

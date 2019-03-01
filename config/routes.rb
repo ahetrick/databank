@@ -26,7 +26,10 @@ Rails.application.routes.draw do
   get '/data_curation_network', to: 'data_curation_network#index'
   get '/data_curation_network/admin', to: 'data_curation_network#admin'
   get '/data_curation_network/log_in', to: 'data_curation_network#log_in'
-  get '/data_curation_network/log_out', to: 'data_curation_network#log_out'
+  get '/data_curation_network/register', to: 'data_curation_network#register'
+  get '/data_curation_network/my_account/:id', to: 'data_curation_network#my_account'
+  get '/data_curation_network/add_account', to: 'data_curation_network#add_account'
+  get '/data_curation_network/edit_account/:id', to: 'data_curation_network#edit_account'
 
   get '/featured_researchers/:id', to: 'featured_researchers#show'
 

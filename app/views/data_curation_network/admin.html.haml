@@ -4,6 +4,36 @@
 
   -if(can? :manage, Dataset)
 
+    -if @accounts
+      %h3 Accounts
+      %table.table
+        %tr.row
+          %th.col-md-3
+            Name
+          %th.col-md-3
+            Email
+          %th.col-md-3
+            Expires
+          %th.col-md-3(colspan="3" )
+            Actions
+      -@accounts.each do |account|
+        %tr.row
+          %td.col-md-3
+            =account.name
+          %td-col-md-3
+            =account.email
+          %td-col-md-3
+            =Time.now.iso8601
+          %td-col-md-1
+            %button(type="button" class="btn btn-primary btn-block")
+              Add
+          %td-col-md-1
+            %button(type="button" class="btn btn-success btn-block" )
+              Edit
+          %td-col-md-1
+            %button(type="button" class="btn btn-danger btn-block" )
+              Destroy
+
 
 
 
