@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
     if exception.class == CanCan::AccessDenied
       alert_message = "You are not authorized to access the requested resource."
 
-      if exception.subject.class == Dataset && exception.action == :new
+      if exception.action == :create
         if current_user && current_user.role == 'no_deposit'
           redirect_to redirect_path, alert: "ACCOUNT NOT ELIGIBLE TO DEPOSIT DATA.<br/>Faculty, staff, and graduate students are eligible to deposit data in Illinois Data Bank.<br/>Please <a href='/help'>contact the Research Data Service</a> if this determination is in error, or if you have any questions."
         else
