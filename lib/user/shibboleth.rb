@@ -172,7 +172,7 @@ class User::Shibboleth < User::User
     netid = netid_from_email(email)
     if netid
       begin
-        return("#{user_display_name(email)}" | email)
+        return("#{User::Shibboleth.user_display_name(email)}" | email)
       rescue StandardError
         return email
       end
