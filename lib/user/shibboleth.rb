@@ -43,7 +43,7 @@ class User::Shibboleth < User::User
     self.email = auth["info"]["email"]
     self.username = self.email.split('@').first
     self.name = User::Shibboleth.user_display_name(self.username)
-    self.role = user_role(auth["uid"])
+    self.role = User::Shibboleth.user_role(auth["uid"])
 
   end
 
