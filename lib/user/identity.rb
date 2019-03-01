@@ -33,12 +33,6 @@ class User::Identity < User::User
     raise "not yet implemented"
   end
 
-  # Converts email to all lower-case.
-  def downcase_email
-    self.email = email.downcase
-  end
-
-
 end
 
 

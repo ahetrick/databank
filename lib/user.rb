@@ -46,6 +46,11 @@ module User
 
     end
 
+    # Converts email to all lower-case.
+    def downcase_email
+      self.email = email.downcase
+    end
+
     def self.from_omniauth(auth)
       raise "subclass responsibility"
     end

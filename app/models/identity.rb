@@ -34,6 +34,11 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
 
   private
 
+  # Converts email to all lower-case.
+  def downcase_email
+    self.email = email.downcase
+  end
+
   # Creates and assigns the activation token and digest.
   def create_activation_digest
     self.activation_token  = Identity.new_token
