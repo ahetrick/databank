@@ -716,6 +716,7 @@ class DatasetsController < ApplicationController
 
   # GET /datasets/new
   def new
+    authorize! :create, Dataset
     @dataset = Dataset.new
     @dataset.publication_state = Databank::PublicationState::DRAFT
     @dataset.creators.build
