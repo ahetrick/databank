@@ -6,13 +6,13 @@ class User::Shibboleth < User::User
 
   def self.from_omniauth(auth)
     if auth && auth[:uid]
-      user = find_by_provider_and_uid(auth["provider"], auth["uid"])
+      user = User::Shibboleth.find_by_provider_and_uid(auth["provider"], auth["uid"])
 
       if user
         user.update_with_omniauth(auth)
         user.save
       else
-        user = User.create_with_omniauth(auth)
+        user = User::Shibboleth.create_with_omniauth(auth)
       end
 
       return user
@@ -23,22 +23,14 @@ class User::Shibboleth < User::User
   end
 
   def self.create_with_omniauth(auth)
+
     create! do |user|
       user.provider = auth["provider"]
       user.uid = auth["uid"]
       user.email = auth["info"]["email"]
       user.username = (auth["info"]["email"]).split('@').first
-      user.name = User.user_display_name((auth["info"]["email"]).split('@').first)
-
-      if IDB_CONFIG[:local_mode]
-        # Rails.logger.info "inside local mode check #{IDB_CONFIG[:local_mode]}"
-        user.role = user_role(auth["info"]["email"])
-      else
-        # Rails.logger.info "failed local mode check #{IDB_CONFIG[:local_mode]}"
-        # Rails.logger.warn "auth: #{auth.to_yaml}"
-        user.role = user_role(auth["uid"])
-      end
-
+      user.name = Shibboleth::User.user_display_name((auth["info"]["email"]).split('@').first)
+      user.role = user_role(auth["uid"])
     end
   end
 
@@ -50,15 +42,15 @@ class User::Shibboleth < User::User
     self.uid = auth["uid"]
     self.email = auth["info"]["email"]
     self.username = self.email.split('@').first
-    self.name = User.user_display_name(self.username)
+    self.name = Shibboleth::User.user_display_name(self.username)
 
     if IDB_CONFIG[:local_mode]
       # Rails.logger.info "inside local mode check #{IDB_CONFIG[:local_mode]}"
-      self.role = User.user_role(auth["info"]["email"])
+      self.role = Shibboleth::User.user_role(auth["info"]["email"])
     else
       # Rails.logger.info "failed local mode check #{IDB_CONFIG[:local_mode]}"
       # Rails.logger.warn "auth: #{auth.to_yaml}"
-      self.role = User.user_role(auth["uid"])
+      self.role = Shibboleth::User.user_role(auth["uid"])
     end
   end
 
