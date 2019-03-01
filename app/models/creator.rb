@@ -51,7 +51,7 @@ class Creator < ActiveRecord::Base
 
   def has_name
     unless (self.institution_name && self.institution_name != '') || (self.given_name && self.given_name != '' && self.family_name && self.family_name != '')
-      errors.add([:base], "Creator must have a valid name.")
+      errors.add(:base, "Creator must have a valid name.")
     end
   end
 

@@ -46,8 +46,6 @@ class ApplicationController < ActionController::Base
         end
 
       else
-        Rails.logger.warn exception.subject.class
-        Rails.logger.warn exception.action
         redirect_to redirect_path, alert: alert_message
       end
 
