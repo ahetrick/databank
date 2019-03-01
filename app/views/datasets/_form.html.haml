@@ -41,7 +41,7 @@
             .panel-body
               - if @dataset.errors.any?
                 .error_explaination
-                  = "#{pluralize(@dataset.errors.count, "error")} prohibited this dataset from being deposited."
+                  = "#{pluralize(@dataset.errors.count, "error")} prohibited this dataset from being saved."
                   %ul
                     - @dataset.errors.full_messages.each do |msg|
                       %li
