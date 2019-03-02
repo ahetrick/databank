@@ -174,12 +174,6 @@ ready = function () {
     $('#update-save-button').click(function () {
 
 
-        if ($(".invalid-email").length >= 0) {
-            console.log($(".invalid-email").length);
-            alert("Email address must be present and in a valid format.");
-            $(".invalid-email").first().focus();
-            return
-        }
         if ($(".invalid-name").length >= 0) {
             alert("Name must be complete.");
             $(".invalid-name").first().focus();
