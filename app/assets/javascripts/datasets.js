@@ -173,21 +173,28 @@ ready = function () {
 
     $('#update-save-button').click(function () {
 
-        if ($(".invalid-email").length == 0) {
 
-            if ($(".progress-bar").length == 0) {
-
-                window.onbeforeunload = null;
-
-                $("[id^=edit_dataset]").submit();
-            } else {
-                alert("UPLOADS IN PROGRESS. Try again once uploads are complete.")
-            }
-
-        } else {
+        if ($(".invalid-email").length >= 0) {
             alert("Email address must be in a valid format.");
             $(".invalid-email").first().focus();
+            return
         }
+        if ($(".invalid-name").length >= 0) {
+            alert("Name must be complete.");
+            $(".invalid-email").first().focus();
+            return
+        }
+
+        if ($(".progress-bar").length == 0) {
+
+            window.onbeforeunload = null;
+
+            $("[id^=edit_dataset]").submit();
+        } else {
+            alert("UPLOADS IN PROGRESS. Try again once uploads are complete.")
+            return
+        }
+        
     });
 
     $('#update-confirm').prop('disabled', true);
@@ -694,37 +701,37 @@ function confirm_update() {
     // console.log($("[id^=edit_dataset]").serialize());
 
     // using patch because that method designation is in the form already
-    if ($(".invalid-email").length == 0) {
-
-        // console.log("inside valid input ok");
-
-        $('#validation-warning').empty();
-        $.ajax({
-            url: '/datasets/' + dataset_key + '/validate_change2published',
-            type: 'patch',
-            data: $("[id^=edit_dataset]").serialize(),
-            datatype: 'json',
-            success: function (data) {
-                console.log(data);
-
-                if (data.message == "ok") {
-                    reset_confirm_msg();
-                    $('#deposit').modal('show');
-                } else {
-                    $('#validation-warning').html('<div class="alert alert-alert">' + data.message + '</div>');
-                    $('#update-confirm').prop('disabled', true);
-                }
-
-            }
-        });
-    } else {
+    if ($(".invalid-email").length >= 0) {
         alert("Email address must be in a valid format.");
         $(".invalid-email").first().focus();
+        return
     }
-}
+    if ($(".invalid-name").length >= 0) {
+        alert("Name must be complete.");
+        $(".invalid-email").first().focus();
+        return
+    }
+    // console.log("inside valid input ok");
 
-function validateCreatorNames(){
+    $('#validation-warning').empty();
+    $.ajax({
+        url: '/datasets/' + dataset_key + '/validate_change2published',
+        type: 'patch',
+        data: $("[id^=edit_dataset]").serialize(),
+        datatype: 'json',
+        success: function (data) {
+            console.log(data);
 
+            if (data.message == "ok") {
+                reset_confirm_msg();
+                $('#deposit').modal('show');
+            } else {
+                $('#validation-warning').html('<div class="alert alert-alert">' + data.message + '</div>');
+                $('#update-confirm').prop('disabled', true);
+            }
+
+        }
+    });
 }
 
 /*function confirm_update(){
