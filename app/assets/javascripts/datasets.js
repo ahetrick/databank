@@ -175,13 +175,14 @@ ready = function () {
 
 
         if ($(".invalid-email").length >= 0) {
-            alert("Email address must be in a valid format.");
+            console.log($(".invalid-email").length);
+            alert("Email address must be present and in a valid format.");
             $(".invalid-email").first().focus();
             return
         }
         if ($(".invalid-name").length >= 0) {
             alert("Name must be complete.");
-            $(".invalid-email").first().focus();
+            $(".invalid-name").first().focus();
             return
         }
 
@@ -194,7 +195,7 @@ ready = function () {
             alert("UPLOADS IN PROGRESS. Try again once uploads are complete.")
             return
         }
-        
+
     });
 
     $('#update-confirm').prop('disabled', true);
