@@ -137,13 +137,13 @@ function handlecontributorTable() {
 function handle_contributor_email_change(input) {
     if (isEmail($(input).val())) {
         $(input).closest('td').removeClass('input-field-required');
-        $(input).removeClass("invalid-input");
+        $(input).removeClass("invalid-email");
     } else if ($(input).val() != "") {
-        $(input).addClass("invalid-input");
+        $(input).addClass("invalid-email");
         alert("email address must be in valid format");
         $(input).focus();
     } else {
-        $(input).removeClass("invalid-input");
+        $(input).removeClass("invalid-email");
     }
 }
 

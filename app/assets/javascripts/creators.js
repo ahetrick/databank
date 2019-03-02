@@ -199,13 +199,13 @@ function handleCreatorTable(creator_type) {
 function handle_creator_email_change(input) {
     if (isEmail($(input).val())) {
         $(input).closest('td').removeClass('input-field-required');
-        $(input).removeClass("invalid-input");
+        $(input).removeClass("invalid-email");
     } else if ($(input).val() != "") {
-        $(input).addClass("invalid-input");
+        $(input).addClass("invalid-email");
         alert("email address must be in valid format");
         $(input).focus();
     } else {
-        $(input).removeClass("invalid-input");
+        $(input).removeClass("invalid-email");
     }
 }
 
@@ -220,11 +220,16 @@ function generate_creator_preview() {
         //console.log("inside tr each for creator index " + creator_index);
 
         //console.log($("#dataset_creators_attributes_" + creator_index + "__destroy").val());
-        ;
-        if ((i > 0) && (($("#dataset_creators_attributes_" + creator_index + "_family_name").val() != "") || ($("#dataset_creators_attributes_" + creator_index + "_given_name").val() != ""))) {
 
-            //console.log("inside generate creator 2");
-            //console.log($("#dataset_creators_attributes_" + creator_index + "_family_name").val());
+        if ((i > 0) &&
+            (($("#dataset_creators_attributes_" + creator_index + "_institution_name").val() == "") &&
+                (($("#dataset_creators_attributes_" + creator_index + "_family_name").val() == "") || ($("#dataset_creators_attributes_" + creator_index + "_given_name").val() == "")))){
+            $(this).addClass("invalid-name");
+        } else {
+            $(this).removeClass("invalid-name");
+        }
+
+        if ((i > 0) && (($("#dataset_creators_attributes_" + creator_index + "_family_name").val() != "") && ($("#dataset_creators_attributes_" + creator_index + "_given_name").val() != ""))) {
 
             if (creator_list_preview.length > 0) {
 
@@ -234,6 +239,13 @@ function generate_creator_preview() {
             creator_list_preview = creator_list_preview + $("#dataset_creators_attributes_" + creator_index + "_family_name").val();
             creator_list_preview = creator_list_preview + ", "
             creator_list_preview = creator_list_preview + $("#dataset_creators_attributes_" + creator_index + "_given_name").val();
+        } else {
+            if ((i > 0) && (($("#dataset_creators_attributes_" + creator_index + "_institution_name").val() != ""))) {
+                if (creator_list_preview.length > 0) {
+                    creator_list_preview = creator_list_preview + "; ";
+                }
+                creator_list_preview = creator_list_preview + $("#dataset_creators_attributes_" + creator_index + "_institution_name").val();
+            }
         }
     });
 

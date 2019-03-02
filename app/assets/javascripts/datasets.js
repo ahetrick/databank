@@ -173,7 +173,7 @@ ready = function () {
 
     $('#update-save-button').click(function () {
 
-        if ($(".invalid-input").length == 0) {
+        if ($(".invalid-email").length == 0) {
 
             if ($(".progress-bar").length == 0) {
 
@@ -186,7 +186,7 @@ ready = function () {
 
         } else {
             alert("Email address must be in a valid format.");
-            $(".invalid-input").first().focus();
+            $(".invalid-email").first().focus();
         }
     });
 
@@ -202,7 +202,7 @@ ready = function () {
 
     $('#save-exit-button').click(function () {
 
-        if ($(".invalid-input").length == 0) {
+        if ($(".invalid-email").length == 0) {
 
             if ($(".progress-bar").length == 0) {
 
@@ -215,7 +215,7 @@ ready = function () {
             }
         } else {
             alert("Email address must be in a valid format.");
-            $(".invalid-input").first().focus();
+            $(".invalid-email").first().focus();
         }
 
     });
@@ -694,7 +694,7 @@ function confirm_update() {
     // console.log($("[id^=edit_dataset]").serialize());
 
     // using patch because that method designation is in the form already
-    if ($(".invalid-input").length == 0) {
+    if ($(".invalid-email").length == 0) {
 
         // console.log("inside valid input ok");
 
@@ -719,8 +719,12 @@ function confirm_update() {
         });
     } else {
         alert("Email address must be in a valid format.");
-        $(".invalid-input").first().focus();
+        $(".invalid-email").first().focus();
     }
+}
+
+function validateCreatorNames(){
+
 }
 
 /*function confirm_update(){
