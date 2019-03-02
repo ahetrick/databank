@@ -148,6 +148,7 @@ function remove_creator_row(creator_index, creator_type) {
         $('#creator_table').sortable('refresh');
 
         if ($("#creator_table tr").length < 2) {
+
             if (creator_type == org_creators_type){
                 add_institution_creator();
             } else {
@@ -183,17 +184,17 @@ function handleCreatorTable(creator_type) {
             if ((i + 1) == ($("#creator_table tr").length)) {
 
                 if (creator_type == org_creators_type){
-                    $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_index + "\x22, \x22" + "institution" + "\x22 )' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_institution_creator()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
+                    $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x27" + creator_index + "\x27, 1 )' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_institution_creator()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
                 } else {
-                    $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_index + "\x22, \x22" + "person" + "\x22  )' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_person_creator()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
+                    $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x27" + creator_index + "\x27, 0  )' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_person_creator()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
                 }
 
 
             } else {
                 if (creator_type == org_creators_type) {
-                    $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_index + "\x22, \x22" + "institution" + "\x22  )' type='button'><span class='glyphicon glyphicon-trash'></span></button>");
+                    $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x27" + creator_index + "\x27, 1  )' type='button'><span class='glyphicon glyphicon-trash'></span></button>");
                 } else {
-                    $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x22" + creator_index + "\x22, \x22" + "person" + "\x22  )' type='button'><span class='glyphicon glyphicon-trash'></span></button>");
+                    $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x27" + creator_index + "\x27, 0  )' type='button'><span class='glyphicon glyphicon-trash'></span></button>");
                 }
 
             }
