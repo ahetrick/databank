@@ -176,7 +176,7 @@ ready = function () {
 
         if ($(".invalid-name").length >= 0) {
             alert("All names must be complete.");
-            $(".invalid-name input").first().focus();
+            $(".invalid-name > input").first().focus();
             return
         }
 
