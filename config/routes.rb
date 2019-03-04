@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   resources :user_abilities
   resources :contributors
   resources :contributors
+  resources :invitees
   resources :databank_tasks, only: [:index, :show]
   get '/databank_tasks/pending', to: 'databank_tasks#pending'
   post '/databank_tasks/update_status', to: 'databank_tasks#update_status', defaults: {format: 'json'}
