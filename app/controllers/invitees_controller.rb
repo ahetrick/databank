@@ -27,12 +27,24 @@ class InviteesController < ApplicationController
     @invitee = Invitee.new(invitee_params)
 
     respond_to do |format|
+
       if @invitee.save
-        format.html { redirect_to @invitee, notice: 'Invitee was successfully created.' }
-        format.json { render :show, status: :created, location: @invitee }
+        if @invitee.group == Databank::IdentityGroup::NETWORK_CURATOR
+          format.html { redirect_to '/data_curation_network/accounts', notice: 'Invitee was successfully created.' }
+          format.json { render :show, status: :created, location: @invitee }
+        else
+          format.html { redirect_to @invitee, notice: 'Invitee was successfully created.' }
+          format.json { render :show, status: :created, location: @invitee }
+        end
       else
-        format.html { render :new }
-        format.json { render json: @invitee.errors, status: :unprocessable_entity }
+        if @invitee.group == Databank::IdentityGroup::NETWORK_CURATOR
+          format.html { redirect_to '/data_curation_network/accounts', notice: 'Error attempting to create invitee.' }
+          format.json { render :show, status: :created, location: @invitee }
+        else
+          format.html { render :new }
+          format.json { render json: @invitee.errors, status: :unprocessable_entity }
+        end
+
       end
     end
   end
@@ -69,6 +81,6 @@ class InviteesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def invitee_params
-      params.fetch(:invitee, {})
+      params.require(:invitee).permit(:email, :group, :role)
     end
 end
