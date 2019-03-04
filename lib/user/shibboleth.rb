@@ -173,8 +173,10 @@ class User::Shibboleth < User::User
     if netid
       begin
         return("#{User::Shibboleth.user_display_name(email)}" | email)
-      rescue StandardError
-        return email
+      rescue StandardError => error
+        raise error
+
+        #return email
       end
     else
       return email
