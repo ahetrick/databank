@@ -210,6 +210,9 @@ function handle_creator_email_change(input) {
         $(input).addClass("invalid-email");
         alert("email address must be in valid format");
         $(input).focus();
+        //DEBUG
+        console.log('214')
+        $(input).addClass('alert alert-alert')
     } else {
         $(input).removeClass("invalid-email");
     }

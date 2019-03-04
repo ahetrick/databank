@@ -141,6 +141,8 @@ function handle_contributor_email_change(input) {
     } else if ($(input).val() != "") {
         $(input).addClass("invalid-email");
         alert("email address must be in valid format");
+        console.log('144')
+        $(input).addClass('alert alert-notice')
         $(input).focus();
     } else {
         $(input).removeClass("invalid-email");
