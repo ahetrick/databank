@@ -1,6 +1,6 @@
 class DataCurationNetworkController < ApplicationController
 
-  before_action :set_account, only: [:my_account, :edit_account, :register]
+  before_action :set_invitee, only: [:my_account, :edit_account, :register]
   
   def index
     @search = nil
@@ -13,31 +13,31 @@ class DataCurationNetworkController < ApplicationController
   end
 
   def my_account
-    unless @account
+    unless @invitee
       redirect_to("/data_curation_network", notice: "Log in to curate datasets or manage your account. Contact the research data service for any needed assistance.") and return
     end
-    authorize! :edit, @account
+    authorize! :edit, @invitee
   end
 
   def add_account
     authorize! :manage, Invitee
-    @account = Invitee.new
+    @invitee = Invitee.new
     render 'data_curation_network/account/add'
   end
 
   def edit_account
     authorize! :manage, Invitee
-    unless @account
+    unless @invitee
       redirect_to("/data_curation_network", notice: "error: unable to validate account identifier") and return
     end
     render 'data_curation_network/account/edit'
   end
 
   def register
-    unless @account
+    unless @invitee
       redirect_to("/data_curation_network", notice: "Log in to curate datasets or manage your account. Contact the research data service for any needed assistance.") and return
     end
-    authorize! :edit, @account
+    authorize! :edit, @invitee
   end
 
   def log_in
@@ -45,12 +45,12 @@ class DataCurationNetworkController < ApplicationController
 
   private
 
-  def set_account
-    @account = Invitee.find_by_key(params[:id])
-    unless @account
-      @account = Invitee.find(params[:invitee_id])
+  def set_invitee
+    @invitee = Invitee.find_by_key(params[:id])
+    unless @invitee
+      @invitee = Invitee.find(params[:invitee_id])
     end
-    nil unless @dataset
+    nil unless @invitee
   end
 
 end
