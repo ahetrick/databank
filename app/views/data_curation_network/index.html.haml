@@ -2,13 +2,13 @@
 
   =render partial: 'heading'
 
-  -if current_user && current_user.role == 'curator'
+  -if current_user && current_user.role == Databank::UserRole::REVIEWER
     %h3 My Datasets
     -if @search
       -@search.each_hit_with_result do |hit, dataset|
         = render 'datasets/brief_record', dataset:dataset
 
-  -elsif current_user && current_user.role == 'admin'
+  -elsif current_user && current_user.role == Databank::UserRole::ADMIN
     .text-center
       .dcn-admin
         .fas.fa-users.fa-8x

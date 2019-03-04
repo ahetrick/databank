@@ -5,14 +5,20 @@
       = f.label :email, "Email Address", :class => "control-label"
       %br
       = f.text_field :email, class: "form-control", placeholder: "[account@organization.org]"
-    .form-group
-      = f.label :group, "Group", :class => "control-label"
-      %br
-      = f.collection_select :group, @group_arr, :code, :name, {:prompt => true}, {:class => "form-control"}
-    .form-group
-      = f.label :role, "Email Address", :class => "control-label"
-      %br
-      = f.collection_select :role, @role_arr, :code, :name, {:prompt => true}, {:class => "form-control"}
+    -if @group
+      =f.hidden_field :group, @group
+    -elsif @group_arr
+      .form-group
+        = f.label :group, "Group", :class => "control-label"
+        %br
+        = f.collection_select :group, @group_arr, :code, :name, {:prompt => true}, {:class => "form-control"}
+    -if @role
+      =f.hidden_field :role, @role
+    -elsif @role_arr
+      .form-group
+        = f.label :role, "Email Address", :class => "control-label"
+        %br
+        = f.collection_select :role, @role_arr, :code, :name, {:prompt => true}, {:class => "form-control"}
     .row
       .col-md-2.col-md-offset-7.actions
         %button(type="submit" class="btn btn-primary btn-block")

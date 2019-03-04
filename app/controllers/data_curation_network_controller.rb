@@ -23,6 +23,9 @@ class DataCurationNetworkController < ApplicationController
     authorize! :manage, Invitee
     @invitee = Invitee.new
     render 'data_curation_network/account/add'
+    @group = Databank::IdentityGroup::NETWORK_CURATOR
+    @role = Databank::UserRole::REVIEWER
+
   end
 
   def edit_account
