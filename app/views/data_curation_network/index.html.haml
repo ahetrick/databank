@@ -9,13 +9,15 @@
         = render 'datasets/brief_record', dataset:dataset
 
   -elsif current_user && current_user.role == 'admin'
-    %p
+    .text-center
+      .dcn-admin
+        .fas.fa-users.fa-8x
+      %a(href="/data_curation_network/accounts") Accounts
+
+    .jumbotron
       =succeed ',' do
         =current_user.name
       you are logged in through Shibboleth with your University of Illinois identity. If you want to try out your Data Curation Network persona, log out first.
-    .dcn-admin
-      .fas.fa-users.fa-10x
-    %a(href="/data_curation_network/accounts") Accounts
 
   -elsif current_user
     .jumbotron
