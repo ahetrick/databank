@@ -203,6 +203,11 @@ function handleCreatorTable(creator_type) {
 }
 
 function handle_creator_email_change(input) {
+
+    console.log("creator");
+    console.log($(input).val());
+    console.log(isEmail($(input).val()));
+
     if (isEmail($(input).val())) {
         $(input).closest('td').removeClass('input-field-required');
         $(input).removeClass("invalid-email");
@@ -210,9 +215,6 @@ function handle_creator_email_change(input) {
         $(input).addClass("invalid-email");
         alert("email address must be in valid format");
         $(input).focus();
-        //DEBUG
-        console.log('214')
-        $(input).addClass('alert alert-alert')
     } else {
         $(input).removeClass("invalid-email");
     }
@@ -454,11 +456,6 @@ function showCreatorOrcidSearchModal(creator_index) {
     $("#creator-given").val(creatorGivenName);
     $("#orcid-search-results").empty();
     $('#orcid_creator_search').modal('show');
-}
-
-function isEmail(email) {
-    var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-    return regex.test(email);
 }
 
 $(document).ready(creators_ready);

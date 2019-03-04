@@ -135,14 +135,17 @@ function handlecontributorTable() {
 }
 
 function handle_contributor_email_change(input) {
+
+    console.log("contributor");
+    console.log($(input).val());
+    console.log(isEmail($(input).val()));
+
     if (isEmail($(input).val())) {
         $(input).closest('td').removeClass('input-field-required');
         $(input).removeClass("invalid-email");
     } else if ($(input).val() != "") {
         $(input).addClass("invalid-email");
         alert("email address must be in valid format");
-        console.log('144')
-        $(input).addClass('alert alert-notice')
         $(input).focus();
     } else {
         $(input).removeClass("invalid-email");
@@ -373,11 +376,6 @@ function showContributorOrcidSearchModal(contributor_index) {
     $("#contributor-given").val(contributorGivenName);
     $("#orcid-search-results").empty();
     $('#orcid_contributor_search').modal('show');
-}
-
-function isEmail(email) {
-    var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-    return regex.test(email);
 }
 
 $(document).ready(contributors_ready);
