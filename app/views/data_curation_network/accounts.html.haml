@@ -4,7 +4,7 @@
 
   -if(can? :manage, Dataset)
 
-    -if @accounts
+    -if @accounts && @accounts.count > 0
       %h3 Accounts
       %table.table
         %tr.row
@@ -14,7 +14,7 @@
             Email
           %th.col-md-3
             Expires
-          %th.col-md-3(colspan="3" )
+          %th.col-md-3(colspan="2" )
             Actions
       -@accounts.each do |account|
         %tr.row
@@ -25,14 +25,16 @@
           %td-col-md-3
             =Time.now.iso8601
           %td-col-md-1
-            %button(type="button" class="btn btn-primary btn-block")
-              Add
-          %td-col-md-1
             %button(type="button" class="btn btn-success btn-block" )
               Edit
           %td-col-md-1
             %button(type="button" class="btn btn-danger btn-block" )
               Destroy
+    .pull-right
+      %button(type="button" class="btn btn-primary" onclick='window.location = "/data_curation_network/account/add"' )
+        %span(class="glyphicon glyphicon-plus" )
+        Add
+
 
 
 

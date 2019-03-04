@@ -6,8 +6,9 @@ class DataCurationNetworkController < ApplicationController
     @search = nil
   end
 
-  def admin
+  def accounts
     @accounts=Invitee.where(group: Databank::IdentityGroup::NETWORK_CURATOR)
+
     authorize! :manage, Invitee
   end
 
@@ -20,13 +21,16 @@ class DataCurationNetworkController < ApplicationController
 
   def add_account
     authorize! :manage, Invitee
+    @account = Invitee.new
+    render 'data_curation_network/account/add'
   end
 
   def edit_account
+    authorize! :manage, Invitee
     unless @account
-      redirect_to("/data_curation_network", notice: "Log in to curate datasets or manage your account. Contact the research data service for any needed assistance.") and return
+      redirect_to("/data_curation_network", notice: "error: unable to validate account identifier") and return
     end
-    authorize! :edit, @account
+    render 'data_curation_network/account/edit'
   end
 
   def register
