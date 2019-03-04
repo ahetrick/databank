@@ -174,7 +174,7 @@ ready = function () {
     $('#update-save-button').click(function () {
 
 
-        if ($(".invalid-name").length >= 0) {
+        if ($(".invalid-name").length > 0) {
             alert("All names must be complete.");
             $(".invalid-name > input").first().focus();
             return
@@ -701,9 +701,9 @@ function confirm_update() {
         $(".invalid-email").first().focus();
         return
     }
-    if ($(".invalid-name").length >= 0) {
-        alert("Name must be complete.");
-        $(".invalid-email").first().focus();
+    if ($(".invalid-name").length > 0) {
+        alert("All names must be complete.");
+        $(".invalid-name > input").first().focus();
         return
     }
     // console.log("inside valid input ok");
