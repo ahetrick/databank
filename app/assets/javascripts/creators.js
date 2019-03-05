@@ -10,6 +10,10 @@ creators_ready = function () {
         var org_creators_type = 1;
         var dataset_creator_type = null;
 
+        console.log("inside creators_ready");
+        console.log($('#dataset_org_creators').val());
+        console.log($('#dataset_org_creators').val == 'true');
+        
         if ($('#dataset_org_creators').val == 'true') {
             dataset_creator_type = org_creators_type;
         } else {
@@ -53,7 +57,7 @@ creators_ready = function () {
 }
 
 function add_person_creator(){
-    
+
     $('#update-confirm').prop('disabled', false);
 
     var maxId = Number($('#creator_index_max').val());
