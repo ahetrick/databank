@@ -8,6 +8,15 @@ creators_ready = function () {
 
         var person_creators_type = 0;
         var org_creators_type = 1;
+        var dataset_creator_type = null;
+        console.log("inside creators_ready");
+        console.log($('#dataset_org_creators').val());
+
+        if ($('#dataset_org_creators').val == 'true') {
+            dataset_creator_type = org_creators_type;
+        } else {
+            dataset_creator_type = person_creators_type;
+        }
 
         table_width = $('#creator_table').width();
         cells = $('#creator_table').find('tr')[0].cells.length;
@@ -17,11 +26,7 @@ creators_ready = function () {
 
         console.log(dataset_org_creators);
 
-        if (dataset_org_creators == 'true') {
-            handleCreatorTable(org_creators_type);
-        } else {
-            handleCreatorTable(person_creators_type);
-        }
+        handleCreatorTable(dataset_creator_type);
 
         $('#creator_table td').css('width', desired_width);
 
@@ -41,7 +46,7 @@ creators_ready = function () {
                 var item_id, position;
                 item_id = ui.item.data('item-id');
                 position = ui.item.index();
-                handleCreatorTable();
+                handleCreatorTable(dataset_creator_type);
                 generate_creator_preview();
             }
         });
@@ -50,8 +55,6 @@ creators_ready = function () {
 
     //alert("creators.js javascript working");
 }
-
-
 
 function add_person_creator(){
 
@@ -129,9 +132,19 @@ function add_institution_creator(){
 
 function remove_creator_row(creator_index, creator_type) {
 
-    var person_creators_type = 0
-    var org_creators_type = 1
     // do not allow removal of primary contact for published dataset
+
+    var person_creators_type = 0;
+    var org_creators_type = 1;
+    var dataset_creator_type = null;
+    console.log("inside remove_creator_row");
+    console.log($('#dataset_org_creators').val());
+
+    if ($('#dataset_org_creators').val == 'true') {
+        dataset_creator_type = org_creators_type;
+    } else {
+        dataset_creator_type = person_creators_type;
+    }
 
     if (($("input[name='dataset[publication_state]']").val() != 'draft') && ($("#dataset_creators_attributes_" + creator_index + "_is_contact").val() == 'true')) {
         alert("The primary long term contact for a published dataset may not be removed.  To delete this author listing, first select a different contact.")
@@ -156,7 +169,7 @@ function remove_creator_row(creator_index, creator_type) {
             }
         }
         $('#update-confirm').prop('disabled', false);
-        handleCreatorTable();
+        handleCreatorTable(dataset_creator_type);
         generate_creator_preview();
     }
 }
