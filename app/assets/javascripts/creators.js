@@ -9,8 +9,6 @@ creators_ready = function () {
         var person_creators_type = 0;
         var org_creators_type = 1;
         var dataset_creator_type = null;
-        console.log("inside creators_ready");
-        console.log($('#dataset_org_creators').val());
 
         if ($('#dataset_org_creators').val == 'true') {
             dataset_creator_type = org_creators_type;
@@ -23,8 +21,6 @@ creators_ready = function () {
         desired_width = table_width / cells + 'px';
 
         var dataset_org_creators = $('#dataset_org_creators').val();
-
-        console.log(dataset_org_creators);
 
         handleCreatorTable(dataset_creator_type);
 
@@ -57,7 +53,7 @@ creators_ready = function () {
 }
 
 function add_person_creator(){
-
+    
     $('#update-confirm').prop('disabled', false);
 
     var maxId = Number($('#creator_index_max').val());
@@ -97,7 +93,7 @@ function add_person_creator(){
         '</tr>';
     $("#creator_table tbody:last-child").append(creator_row);
 
-    handleCreatorTable(1);
+    handleCreatorTable(0);
 }
 
 function add_institution_creator(){
@@ -176,13 +172,8 @@ function remove_creator_row(creator_index, creator_type) {
 
 function handleCreatorTable(creator_type) {
 
-    console.log("inside handleCreatorTable");
-    console.log(creator_type);
-
     var person_creators_type = 0;
     var org_creators_type = 1;
-
-    console.log(creator_type == org_creators_type);
 
     $('#creator_table tr').each(function (i) {
         // for all but header row, set the row_position value of the input to match the table row position
