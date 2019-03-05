@@ -696,7 +696,7 @@ function confirm_update() {
     // console.log($("[id^=edit_dataset]").serialize());
 
     // using patch because that method designation is in the form already
-    if ($(".invalid-email").length >= 0) {
+    if ($(".invalid-email").length > 0) {
         alert("Email address must be in a valid format.");
         $(".invalid-email").first().focus();
         return
