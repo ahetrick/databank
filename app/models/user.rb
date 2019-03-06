@@ -180,7 +180,7 @@ class User < ActiveRecord::Base
       primary_affiliation = xml_doc.xpath("//attr[@name='edupersonprimaryaffiliation']").text()
       primary_affiliation.strip!
       #TODO: find out what other values are possible
-      return student_level == "staff"
+      return primary_affiliation == "staff"
     when "V"
       # Virtual"
       return false
