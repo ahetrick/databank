@@ -10,11 +10,7 @@ creators_ready = function () {
         var org_creators_type = 1;
         var dataset_creator_type = null;
 
-        console.log("inside creators_ready");
-        console.log($('#dataset_org_creators').val());
-        console.log($('#dataset_org_creators').val() == true);
-
-        if ($('#dataset_org_creators').val() == true) {
+        if ($('#dataset_org_creators').val() == 'true') {
             dataset_creator_type = org_creators_type;
         } else {
             dataset_creator_type = person_creators_type;
@@ -136,7 +132,7 @@ function remove_creator_row(creator_index, creator_type) {
     var org_creators_type = 1;
     var dataset_creator_type = null;
 
-    if ($('#dataset_org_creators').val() == true) {
+    if ($('#dataset_org_creators').val() == 'true') {
         dataset_creator_type = org_creators_type;
     } else {
         dataset_creator_type = person_creators_type;
