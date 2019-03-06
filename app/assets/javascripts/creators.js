@@ -20,8 +20,6 @@ creators_ready = function () {
         cells = $('#creator_table').find('tr')[0].cells.length;
         desired_width = table_width / cells + 'px';
 
-        var dataset_org_creators = $('#dataset_org_creators').val();
-
         handleCreatorTable(dataset_creator_type);
 
         $('#creator_table td').css('width', desired_width);
