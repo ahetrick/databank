@@ -177,7 +177,10 @@ class User < ActiveRecord::Base
       return true
     when "U"
       # Unpaid"
-      return false
+      primary_affiliation = xml_doc.xpath("//attr[@name='edupersonprimaryaffiliation']").text()
+      primary_affiliation.strip!
+      #TODO: find out what other values are possible
+      return student_level == "staff"
     when "V"
       # Virtual"
       return false
