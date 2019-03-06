@@ -506,7 +506,6 @@ class Dataset < ActiveRecord::Base
   end
 
   def creator_list
-
     if self.creators.count == 0
       return "[Creator List]"
     elsif self.creators.count == 1
@@ -516,18 +515,30 @@ class Dataset < ActiveRecord::Base
       end
     else
       return_list = ""
-
       self.creators.each_with_index do |creator, i|
-
         return_list << "; " unless i == 0
-
         return_list << creator.list_name
-
       end
       return return_list
     end
+  end
 
-
+  def contributor_list
+    if self.contributors.count == 0
+      return nil
+    elsif self.contributors.count == 1
+      contributor = self.creators.first
+      if contributor.family_name && contributor.family_name != ''
+        return contributor.list_name
+      end
+    else
+      return_list = ""
+      self.contributors.each_with_index do |contributor, i|
+        return_list << ", " unless i == 0
+        return_list << contributor.display_name
+      end
+      return return_list
+    end
   end
 
   def license_name

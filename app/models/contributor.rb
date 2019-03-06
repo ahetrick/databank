@@ -10,14 +10,11 @@ class Contributor < ActiveRecord::Base
   end
 
   def display_name
-
-    return_text = "placeholder name"
-
     if self.type_of == Databank::CreatorType::INSTITUTION
-      return_text = "#{self.institution_name}"
+      "#{self.institution_name}"
     else
-      return_text = "#{self.given_name} #{self.family_name}"
+      "#{self.given_name} #{self.family_name}"
     end
-
   end
+
 end
