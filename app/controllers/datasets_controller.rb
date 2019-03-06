@@ -614,10 +614,6 @@ class DatasetsController < ApplicationController
       when "unsuppress_changelog"
         unsuppress_changelog
       end
-    elsif params.has_key?(:permission_action)
-      Rails.logger.warn params[:permission_action]
-    else
-      Rails.logger.warn "no action here"
     end
 
     @completion_check = Dataset.completion_check(@dataset, current_user)
