@@ -152,7 +152,10 @@ class User::Shibboleth < User::User
         return true
       when "U"
         # Unpaid"
-        return false
+        primary_affiliation = xml_doc.xpath("//attr[@name='edupersonprimaryaffiliation']").text()
+        primary_affiliation.strip!
+        #TODO: find out what other values are possible
+        return primary_affiliation == "staff"
       when "V"
         # Virtual"
         return false
