@@ -137,13 +137,13 @@
             -else
               = dataset.corresponding_creator_name
 
-        -dataset.contributors.each do |contributor|
+        -if dataset.contributor_list && dataset.contributor_list != ''
           %tr.row
             %td
               %span.metadata-label
-                Additional Contact
+                Additional Contact(s)
             %td
-              =contributor.display_name
+              =dataset.contributor_list
 
         -if can? :manage, dataset
           %tr.row.curator-only
