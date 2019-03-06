@@ -824,8 +824,8 @@ class DatasetsController < ApplicationController
 
         if dataset_params[:org_creators] == 'true' && old_creator_state == false
 
-          # delete all individual creators
-          @dataset.individual_creators.delete_all
+          # convert individual creators to additional contacts (contributors)
+          @dataset.ind_creators_to_contributors
           params['context'] = 'continue_edit'
 
         elsif dataset_params[:org_creators] == 'false' && old_creator_state == true
@@ -833,9 +833,8 @@ class DatasetsController < ApplicationController
           # delete all institutional creators
           @dataset.institutional_creators.delete_all
 
-          # delete all additional contributors
-          @dataset.contributors.delete_all
-
+          # convert all additional contacts (contributors) to individual authors
+          @dataset.contributors_to_ind_creators
           params['context'] = 'continue_edit'
 
         end

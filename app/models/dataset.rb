@@ -1184,6 +1184,38 @@ class Dataset < ActiveRecord::Base
     DatasetUserAbility.where(dataset_key: self.key)
   end
 
+  def ind_creators_to_contributors
+    self.individual_creators.each do |creator|
+      Contributor.create(dataset_id: creator.dataset_id,
+                         given_name: creator.given_name,
+                         family_name: creator.family_name,
+                         email: creator.email,
+                         identifier: creator.identifier,
+                         identifier_scheme: creator.identifier_scheme,
+                         row_order: creator.row_order,
+                         row_position: creator.row_position,
+                         type_of: Databank::CreatorType::PERSON)
+      creator.destroy
+    end
+  end
+
+  def contributors_to_ind_creators
+    self.contributors.each do |contributor|
+      Creator.create(dataset_id: contributor.dataset_id,
+                         given_name: contributor.given_name,
+                         family_name: contributor.family_name,
+                         email: contributor.email,
+                         identifier: contributor.identifier,
+                         identifier_scheme: contributor.identifier_scheme,
+                         row_order: contributor.row_order,
+                         row_position: contributor.row_position,
+                         type_of: Databank::CreatorType::PERSON)
+      contributor.destroy
+    end
+
+  end
+
+
   def self.make_anvl(metadata)
     anvl = ""
     metadata_count = metadata.count

@@ -872,10 +872,13 @@ function handleKeywordKeyup() {
 }
 
 function setOrgCreators(dataset_id, new_value) {
-    window.onbeforeunload = null;
-    $('#dataset_org_creators').val(new_value);
-    window.onbeforeunload = null;
-    $('#edit_dataset_' + dataset_id).submit();
+
+    if (window.confirm("Are you sure?")) {
+        window.onbeforeunload = null;
+        $('#dataset_org_creators').val(new_value);
+        window.onbeforeunload = null;
+        $('#edit_dataset_' + dataset_id).submit();
+    }
 }
 
 $(document).ready(ready);
