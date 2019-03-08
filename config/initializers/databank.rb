@@ -44,7 +44,7 @@ IDB_CONFIG[:admin_identities_list].split(", ").each do |email|
     invitee = Invitee.find_by_email(email);
     if invitee && invitee.has_attribute?(:expires_at)
       invitee.update_attribute(:expires_at, Time.now + 1.years)
-    elsif ActiveRecord::Base.connection.column_exists?(:invitee, :expires_at)
+    elsif ActiveRecord::Base.connection.column_exists?(:invitees, :expires_at)
       Invitee.create!(email:email, expires_at: Time.now + 1.years, group: Databank::IdentityGroup::ADMIN, role: Databank::UserRole::ADMIN)
     end
   end
