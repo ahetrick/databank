@@ -618,6 +618,8 @@ class DatasetsController < ApplicationController
 
     @completion_check = Dataset.completion_check(@dataset, current_user)
 
+    @show_data_curation_network_heading = current_user && current_user.role == Databank::UserRole::REVIEWER && @databank.data_curation_network
+
     set_file_mode
 
   end

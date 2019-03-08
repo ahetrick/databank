@@ -1,4 +1,4 @@
-<% if current_user && current_user.role == 'curator' %>
+<% if @show_data_curation_network_heading %>
   <%= render partial: 'data_curation_network/heading' %>
 <% end %>
 <% version_group = @dataset.version_group %>
