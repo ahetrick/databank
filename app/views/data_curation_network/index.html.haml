@@ -3,10 +3,16 @@
   =render partial: 'heading'
 
   -if current_user && current_user.role == Databank::UserRole::REVIEWER
-    %h3 My Datasets
-    -if @search
-      -@search.each_hit_with_result do |hit, dataset|
+    %h3 Datasets
+    -if @drafts && @drafts.count > 0
+      -@drafts.each do |dataset|
         = render 'datasets/brief_record', dataset:dataset
+    -if @nondrafts && @nondrafts.count > 0
+      -@nondrafts.each do |dataset|
+        = render 'datasets/brief_record', dataset:dataset
+    -unless(@drafts && @drafts.count > 0)||(@nondrafts && @nondrafts.count > 0)
+      .jumbotron
+        No current Data Curation Network datasets
 
   -elsif current_user && current_user.role == Databank::UserRole::ADMIN
     .text-center
@@ -17,7 +23,7 @@
     .jumbotron
       =succeed ',' do
         =current_user.name
-      you are logged in through Shibboleth with your University of Illinois identity. If you want to try out your Data Curation Network persona, log out first.
+      you are logged in as an admin. If you want to try out your Data Curation Network persona, log out first.
 
   -elsif current_user
     .jumbotron

@@ -12,7 +12,7 @@ class DatasetsController < ApplicationController
 
   protect_from_forgery except: [:cancel_box_upload, :validate_change2published]
   skip_before_filter :verify_authenticity_token, :only => :validate_change2published
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :request_review, :reserve_doi, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message, :get_new_token, :send_to_medusa, :validate_change2published]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :request_review, :reserve_doi, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message, :get_new_token, :send_to_medusa, :validate_change2published, :update_permissions]
 
   @@num_box_ingest_deamons = 10
 
@@ -593,11 +593,11 @@ class DatasetsController < ApplicationController
   # GET /datasets/1.json
   def show
 
+    #Rails.logger.warn params.to_yaml
+
     if params.has_key?(:selected_files)
       zip_and_download_selected
-    end
-
-    if params.has_key?(:suppression_action)
+    elsif params.has_key?(:suppression_action)
       case params[:suppression_action]
       when "temporarily_suppress_files"
         temporarily_suppress_files
@@ -620,6 +620,24 @@ class DatasetsController < ApplicationController
 
     set_file_mode
 
+  end
+
+  def update_permissions
+
+    Rails.logger.warn params
+    authorize! :manage, @dataset
+    if params.has_key?(:permission_action)
+      if params.has_key?(:can_read)
+        if params[:can_read].include?(Databank::IdentityGroup::NETWORK_CURATOR)
+          @dataset.update_attribute(:data_curation_network, true)
+        else
+          @dataset.update_attribute(:data_curation_network, false)
+        end
+      else
+        @dataset.update_attribute(:data_curation_network, false)
+      end
+    end
+    redirect_to "/datasets/#{@dataset.key}"
   end
 
   def cancel_box_upload

@@ -1,26 +1,35 @@
 -if @invitee
 
   = form_for @invitee do |f|
-    .form-group
-      = f.label :email, "Email Address", :class => "control-label"
-      %br
-      = f.text_field :email, class: "form-control", placeholder: "[account@organization.org]"
-    -if @group
-      =f.hidden_field :group, @group
-    -elsif @group_arr
-      .form-group
-        = f.label :group, "Group", :class => "control-label"
-        %br
-        = f.collection_select :group, @group_arr, :code, :name, {:prompt => true}, {:class => "form-control"}
-    -if @role
-      =f.hidden_field :role, @role
-    -elsif @role_arr
-      .form-group
-        = f.label :role, "Email Address", :class => "control-label"
-        %br
-        = f.collection_select :role, @role_arr, :code, :name, {:prompt => true}, {:class => "form-control"}
     .row
-      .col-md-2.col-md-offset-7.actions
+      .col-md-6
+        .form-group
+          = f.label :email, "Email Address", :class => "control-label"
+          %br
+          = f.text_field :email, class: "form-control", placeholder: "[account@organization.org]"
+      .col-md-6
+        .form-group
+          %div(id="expiration-date-picker")
+            .form-group
+              =f.label :expires_at, "Expiration Date",  :class => "control-label"
+              =f.date_field :expires_at, class: "form-control dataset"
+
+
+    .row
+      .col-md-6
+        .form-group
+          = f.label :group, "Group", :class => "control-label"
+          %br
+          = f.select(:group, @group_arr, {:prompt => false, :class => "form-control dataset"})
+
+      .col-md-6
+        .form-group
+          = f.label :role, "Role", :class => "control-label"
+          %br
+          = f.select(:role, @role_arr, {:prompt => false, :class => "form-control dataset"})
+
+    .row
+      .col-md-2.col-md-offset-10.actions
         %button(type="submit" class="btn btn-primary btn-block")
           Submit
 -else

@@ -30,7 +30,7 @@ Rails.application.routes.draw do
   get '/data_curation_network/register', to: 'data_curation_network#register'
   get '/data_curation_network/my_account/:id', to: 'data_curation_network#my_account'
   get '/data_curation_network/account/add', to: 'data_curation_network#add_account'
-  get '/data_curation_network/account/:id/edit', to: 'data_curation_network#edit_account'
+  get '/data_curation_network/accounts/:id/edit', to: 'data_curation_network#edit_account'
 
   get '/featured_researchers/:id', to: 'featured_researchers#show'
 
@@ -59,7 +59,7 @@ Rails.application.routes.draw do
   resources :datasets do
 
     member do
-      get 'permissions', to: 'datasets#permissions'
+      post 'permissions', to: 'datasets#update_permissions'
     end
 
     resources :datafiles do

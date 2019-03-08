@@ -1,7 +1,8 @@
 class Identity < OmniAuth::Identity::Models::ActiveRecord
 
-  belongs_to :invitee
+  attr_accessor :remember_token, :activation_token, :reset_token
 
+  before_create :set_invitee
   before_create :create_activation_digest
   validates :name,  presence: true
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
@@ -10,8 +11,6 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
             uniqueness: { case_sensitive: false }
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }
-  validates :invitee, presence: true
-
 
   # Returns true if the given token matches the digest.
   def authenticated?(attribute, token)
@@ -37,6 +36,15 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
   # Converts email to all lower-case.
   def downcase_email
     self.email = email.downcase
+  end
+
+  def set_invitee
+    invitee = Invitee.find_by_email(self.email)
+    if invitee
+      self.invitee_id = invitee.id
+    else
+      raise("attempt to create identity without invitee: #{self.to_yaml}")
+    end
   end
 
   # Creates and assigns the activation token and digest.

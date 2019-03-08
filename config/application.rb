@@ -102,6 +102,7 @@ module Databank
     NETWORK_CURATOR = 'network_curator'
     PUBLISHER = 'publisher'
     COLLABORATOR = 'collaborator'
+    ADMIN = 'admin'
   end
 
   class IdentityState
@@ -111,12 +112,12 @@ module Databank
   end
 
   class UserRole
-    ADMIN = :admin
-    DEPOSITOR = :depositor
-    GUEST = :guest
-    NO_DEPOSIT = :no_deposit
-    REVIEWER = :reviewer
-    EDITOR = :editor
+    ADMIN = 'admin'
+    DEPOSITOR = 'depositor'
+    GUEST = 'guest'
+    NO_DEPOSIT = 'no_deposit'
+    REVIEWER = 'reviewer'
+    EDITOR = 'editor'
   end
 
   class Application < Rails::Application

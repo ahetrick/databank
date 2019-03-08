@@ -26,6 +26,8 @@ class InviteesController < ApplicationController
   def create
     @invitee = Invitee.new(invitee_params)
 
+    authorize! :manage, @invitee
+
     respond_to do |format|
 
       if @invitee.save
@@ -52,13 +54,27 @@ class InviteesController < ApplicationController
   # PATCH/PUT /invitees/1
   # PATCH/PUT /invitees/1.json
   def update
-    respond_to do |format|
-      if @invitee.update(invitee_params)
-        format.html { redirect_to @invitee, notice: 'Invitee was successfully updated.' }
-        format.json { render :show, status: :ok, location: @invitee }
-      else
-        format.html { render :edit }
-        format.json { render json: @invitee.errors, status: :unprocessable_entity }
+    authorize! :manage, @invitee
+    if @invitee.group == Databank::IdentityGroup::NETWORK_CURATOR
+
+        respond_to do |format|
+          if @invitee.update(invitee_params)
+            format.html { redirect_to "/data_curation_network/accounts", notice: 'Invitee was successfully updated.' }
+            format.json { render :show, status: :ok, location: @invitee }
+          else
+            format.html { redirect_to "/data_curation_network/account/#{@invitee_id}/edit" }
+            format.json { render json: @invitee.errors, status: :unprocessable_entity }
+          end
+        end
+    else
+      respond_to do |format|
+        if @invitee.update(invitee_params)
+          format.html { redirect_to @invitee, notice: 'Invitee was successfully updated.' }
+          format.json { render :show, status: :ok, location: @invitee }
+        else
+          format.html { render :edit }
+          format.json { render json: @invitee.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
@@ -66,6 +82,7 @@ class InviteesController < ApplicationController
   # DELETE /invitees/1
   # DELETE /invitees/1.json
   def destroy
+    authorize! :manage, @invitee
     @invitee.destroy
     respond_to do |format|
       format.html { redirect_to invitees_url, notice: 'Invitee was successfully destroyed.' }
@@ -81,6 +98,6 @@ class InviteesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def invitee_params
-      params.require(:invitee).permit(:email, :group, :role)
+      params.require(:invitee).permit(:email, :group, :role, :expires_at)
     end
 end

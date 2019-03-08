@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190228163126) do
+ActiveRecord::Schema.define(version: 20190308194345) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -157,6 +157,7 @@ ActiveRecord::Schema.define(version: 20190228163126) do
     t.text     "version_comment"
     t.string   "subject"
     t.boolean  "org_creators",                default: false
+    t.boolean  "data_curation_network",       default: false,   null: false
   end
 
   add_index "datasets", ["key"], name: "index_datasets_on_key", unique: true, using: :btree
@@ -252,7 +253,6 @@ ActiveRecord::Schema.define(version: 20190228163126) do
     t.string   "activation_digest"
     t.boolean  "activated",         default: false
     t.datetime "activated_at"
-    t.datetime "expires_at"
     t.string   "reset_digest"
     t.integer  "invitee_id"
   end
@@ -274,6 +274,7 @@ ActiveRecord::Schema.define(version: 20190228163126) do
     t.string   "role"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "expires_at"
   end
 
   create_table "medusa_ingests", force: :cascade do |t|

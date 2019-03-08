@@ -6,38 +6,38 @@
 
     -if @accounts && @accounts.count > 0
       %h3 Accounts
-      %table.table
-        %tr.row
-          %th.col-md-3
-            Name
-          %th.col-md-3
-            Email
-          %th.col-md-3
-            Expires
-          %th.col-md-3(colspan="2" )
-            Actions
-      -@accounts.each do |account|
-        %tr.row
-          %td.col-md-3
-            =account.name
-          %td-col-md-3
-            =account.email
-          %td-col-md-3
-            =Time.now.iso8601
-          %td-col-md-1
-            %button(type="button" class="btn btn-success btn-block" )
-              Edit
-          %td-col-md-1
-            %button(type="button" class="btn btn-danger btn-block" )
-              Destroy
+      %hr
+      %table.table.table-stripped
+        %thead
+          %tr.row
+            %th.col-md-4
+              %strong Email
+            %th.col-md-4
+              %strong Expires
+            %th.col-md-4(colspan="2" )
+              %strong Actions
+        %tbody
+          -@accounts.each do |account|
+            %tr.row
+              %td.col-md-4
+                =account.email
+              %td.col-md-4
+                -if account.expires_at
+                  =account.expires_at.iso8601
+                -else
+                  does not expire
+              %td.col-md-2
+                %button(type="button" class="btn btn-success btn-block"  onclick='window.location = "/data_curation_network/accounts/#{account.id}/edit"'  )
+                  Edit
+              %td.col-md-2
+                =link_to 'Destroy', account, class: "btn btn-danger btn-block idb", method: :delete, data: { confirm: 'Are you sure?' }
+
+    %hr
+
     .pull-right
       %button(type="button" class="btn btn-primary" onclick='window.location = "/data_curation_network/account/add"' )
         %span(class="glyphicon glyphicon-plus" )
-        Add
-
-
-
-
+        Add New Account
 
   -else
     .jumbotron
