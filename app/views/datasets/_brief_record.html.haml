@@ -45,7 +45,7 @@
           suppressed by curator
 
 
-  -if(can? :view, dataset) || dataset.publication_state != Databank::PublicationState::DRAFT && dataset.release_date
+  -if(can? :view, dataset) && dataset.release_date
     .label.label-info
       -if dataset.release_date > Time.now()
         planned publication date:
