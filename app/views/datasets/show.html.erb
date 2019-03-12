@@ -1,6 +1,7 @@
-<% if @show_data_curation_network_heading %>
+<% if current_user&.provider == 'identity' && current_user.group == Databank::IdentityGroup::NETWORK_CURATOR && current_user.role == Databank::UserRole::REVIEWER %>
   <%= render partial: 'data_curation_network/heading' %>
 <% end %>
+
 <% version_group = @dataset.version_group %>
 
 <% if [Databank::PublicationState::RELEASED, Databank::PublicationState::TempSuppress::FILE, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state) %>

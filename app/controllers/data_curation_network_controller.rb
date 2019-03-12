@@ -3,7 +3,7 @@ class DataCurationNetworkController < ApplicationController
   before_action :set_invitee, only: [:my_account, :edit_account]
   
   def index
-    @drafts = Dataset.where(data_curation_network: true, publication_state: Databank::PublicationState::DRAFT)
+    @drafts = Dataset.where(data_curation_network: true).where(publication_state: Databank::PublicationState::DRAFT)
     @nondrafts = Dataset.where(data_curation_network: true).where.not(publication_state: Databank::PublicationState::DRAFT)
   end
 

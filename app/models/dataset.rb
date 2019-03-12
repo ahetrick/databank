@@ -211,6 +211,17 @@ class Dataset < ActiveRecord::Base
 
   end
 
+  def metadata_public?
+    [Databank::PublicationState::RELEASED,
+     Databank::PublicationState::Embargo::FILE,
+     Databank::PublicationState::TempSuppress::FILE,
+     Databank::PublicationState::PermSuppress::FILE].include?(publication_state) && hold_state == Databank::PublicationState::TempSuppress::NONE
+  end
+
+  def files_public?
+    Databank::PublicationState::RELEASED == publication_state && hold_state == Databank::PublicationState::TempSuppress::NONE
+  end
+
   def related_version_entry_hash
     # version group is an array of hashes
     self_version = self.dataset_version.to_i

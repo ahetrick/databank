@@ -10,7 +10,7 @@
 
           =render partial: 'file_restriction_alert', locals: {dataset: dataset}
 
-          -if (can? :manage, dataset) || ((can? :edit, dataset) && (dataset.publication_state != Databank::PublicationState::PermSuppress::FILE)) || ((dataset.publication_state == Databank::PublicationState::RELEASED) && (dataset.hold_state != Databank::PublicationState::TempSuppress::FILE))
+          -if (can? :manage, dataset) || ((can? :edit, dataset) && (dataset.publication_state != Databank::PublicationState::PermSuppress::FILE)) || dataset.files_public?
             %form(role="form" id="select-files-form")
               .form-group(id="select-files-form-group")
                 %table(id="show-files-table" class="table table-striped")

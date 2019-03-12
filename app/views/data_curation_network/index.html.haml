@@ -3,16 +3,21 @@
   =render partial: 'heading'
 
   -if current_user && current_user.role == Databank::UserRole::REVIEWER
-    %h3 Datasets
+    %h3 Datasets in Progress
     -if @drafts && @drafts.count > 0
       -@drafts.each do |dataset|
         = render 'datasets/brief_record', dataset:dataset
+    -else
+      .jumbotron
+        No Data Curation Network datasets in Progress in Illinois Data Bank
+
+    %h3 Completed Datasets
     -if @nondrafts && @nondrafts.count > 0
       -@nondrafts.each do |dataset|
         = render 'datasets/brief_record', dataset:dataset
-    -unless(@drafts && @drafts.count > 0)||(@nondrafts && @nondrafts.count > 0)
+    -else
       .jumbotron
-        No current Data Curation Network datasets
+        No Completed Data Curation Network datasets found in Illinois Data Bank
 
   -elsif current_user && current_user.role == Databank::UserRole::ADMIN
     .text-center

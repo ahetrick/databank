@@ -51,6 +51,19 @@ module User
       self.email = email.downcase
     end
 
+    def group
+      if self.provider == 'shibboleth'
+        self.provider
+      elsif self.provider == 'identity'
+        invitee = Invitee.find_by_email(self.email)
+        if invitee
+          invitee.group
+        else
+          raise("no invitation found for identity: #{self.email}")
+        end
+      end
+    end
+
     def self.from_omniauth(auth)
       raise "subclass responsibility"
     end

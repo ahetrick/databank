@@ -593,7 +593,7 @@ class DatasetsController < ApplicationController
   # GET /datasets/1.json
   def show
 
-    #Rails.logger.warn params.to_yaml
+    authorize! :view, @dataset
 
     if params.has_key?(:selected_files)
       zip_and_download_selected
@@ -618,15 +618,13 @@ class DatasetsController < ApplicationController
 
     @completion_check = Dataset.completion_check(@dataset, current_user)
 
-    @show_data_curation_network_heading = current_user && current_user.role == Databank::UserRole::REVIEWER && @databank.data_curation_network
-
     set_file_mode
 
   end
 
   def update_permissions
 
-    Rails.logger.warn params
+    #Rails.logger.warn params
     authorize! :manage, @dataset
     if params.has_key?(:permission_action)
       if params.has_key?(:can_read)
@@ -1167,7 +1165,7 @@ class DatasetsController < ApplicationController
 
     authorize! :manage, @dataset
 
-    @dataset.hold_state = 'none'
+    @dataset.hold_state = Databank::PublicationState::TempSuppress::NONE
 
     respond_to do |format|
 
