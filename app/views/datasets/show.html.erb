@@ -36,28 +36,14 @@
 
   <%= render partial: 'metadata_restriction_alert', locals: {dataset: @dataset} %>
 
-  <!--- show metadata section if curator OR published and not held OR depositor and not permenantly suppressed --->
-  <!--- inefficiently verbose consditional for readabilty  --->
-
-  <% if (can? :manage, @dataset) %>
+  <% if (can? :view, @dataset) %>
     <%= render partial: 'show_metadata', locals: {dataset: @dataset} %>
-
-  <% elsif ([Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::PermSuppress::FILE].include? @dataset.publication_state) &&
-      (@dataset.hold_state != Databank::PublicationState::TempSuppress::METADATA) %>
-    <%= render partial: 'show_metadata', locals: {dataset: @dataset, license_name: @license_name} %>
-
-  <% elsif (can? :edit, @dataset) && (@dataset.publication_state != Databank::PublicationState::PermSuppress::METADATA) %>
-
-    <%= render partial: 'show_metadata', locals: {dataset: @dataset} %>
-
   <% end %>
 
   <!-- END metadata section-->
   <div class="panel-group" id="versionGroup" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="versionGroupHeading">
-
-
         <h4 class="panel-title">
 
           <% if version_group && version_group[:entries] && version_group[:entries].length > 1 %>
