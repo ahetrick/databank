@@ -21,7 +21,7 @@ class User::Identity < User::User
 
   def self.create_with_omniauth(auth)
 
-    Rails.logger.warn auth.to_yaml
+    #Rails.logger.warn auth.to_yaml
 
     invitee = Invitee.find_by_email(auth["info"]["email"])
     if invitee && invitee.expires_at >= Time.now
@@ -40,7 +40,7 @@ class User::Identity < User::User
   end
 
   def update_with_omniauth(auth)
-    Rails.logger.warn auth.to_yaml
+    #Rails.logger.warn auth.to_yaml
 
     self.provider = auth["provider"]
     self.uid = auth["uid"]

@@ -1332,7 +1332,7 @@ class DatasetsController < ApplicationController
 
     authorize! :edit, @dataset
 
-    Rails.logger.warn(params.to_yaml)
+    #Rails.logger.warn(params.to_yaml)
     MedusaIngest.send_dataset_to_medusa(@dataset)
     render json: {status: :ok} and return
   end

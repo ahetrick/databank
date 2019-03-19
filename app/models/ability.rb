@@ -6,6 +6,7 @@ class Ability
     #
 
     user ||= User::Shibboleth.new # guest user (not logged in)
+
     if user.is?(Databank::UserRole::ADMIN)
       can :manage, :all
       
@@ -38,6 +39,10 @@ class Ability
 
       can [:view_files], Dataset do |dataset|
         dataset.try(:data_curation_network) == true || dataset.files_public?
+      end
+
+      can [:view, :update, :edit], Identity do |identity|
+        identity.try(:email) == user.email
       end
 
     else

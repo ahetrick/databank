@@ -85,7 +85,7 @@ class InviteesController < ApplicationController
     authorize! :manage, @invitee
     @invitee.destroy
     respond_to do |format|
-      format.html { redirect_to invitees_url, notice: 'Invitee was successfully destroyed.' }
+      format.html { redirect_to '/data_curation_network/accounts', notice: 'Invitee was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

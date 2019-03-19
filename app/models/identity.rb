@@ -4,6 +4,9 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
 
   before_create :set_invitee
   before_create :create_activation_digest
+
+  before_destroy :destroy_user
+
   validates :name,  presence: true
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   validates :email, presence: true, length: { maximum: 255 },
@@ -36,6 +39,13 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
   # Converts email to all lower-case.
   def downcase_email
     self.email = email.downcase
+  end
+
+  def destroy_user
+    user = User::Identity.find_by_email(self.email)
+    if user
+      user.destroy!
+    end
   end
 
   def set_invitee
