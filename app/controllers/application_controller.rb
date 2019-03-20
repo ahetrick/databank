@@ -49,6 +49,8 @@ class ApplicationController < ActionController::Base
         redirect_to redirect_path, alert: alert_message
       end
 
+    elsif  exception.class == IdentityError
+      redirect_to '/welcome', alert: exception.msg
     elsif exception.class == ActiveRecord::RecordNotFound
       respond_to do |format|
         format.html { render ('errors/error404'), status: 404}

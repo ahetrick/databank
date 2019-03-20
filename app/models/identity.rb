@@ -53,7 +53,7 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
     if invitee
       self.invitee_id = invitee.id
     else
-      raise("attempt to create identity without invitee: #{self.to_yaml}")
+      raise IdentityError, "attempt to create identity without invitee: #{self.to_yaml}"
     end
   end
 
