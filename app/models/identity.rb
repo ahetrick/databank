@@ -36,6 +36,11 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
     SecureRandom.urlsafe_base64
   end
 
+  def invited
+    set_invitee
+    errors.add(:base, 'Registered identity must have current invitation.') unless [nil, ''].exclude?(self.invitee_id)
+  end
+
   private
 
   # Converts email to all lower-case.
@@ -52,14 +57,9 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
 
   def set_invitee
     invitee = Invitee.find_by_email(self.email)
-    if invitee
+    if invitee && invitee.expires_at > Time.now
       self.invitee_id = invitee.id
     end
-  end
-
-  def invited
-    set_invitee
-    self.invitee_id != nil
   end
 
   # Creates and assigns the activation token and digest.

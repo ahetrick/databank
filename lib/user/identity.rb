@@ -34,7 +34,7 @@ class User::Identity < User::User
         user.role = user_role(user.email)
       end
     else
-      raise("Could not find current invitee: #{auth}")
+      return nil
     end
 
   end
@@ -55,7 +55,7 @@ class User::Identity < User::User
     if invitee
       return invitee.role
     else
-      raise("Unable to determine role for identity: #{email}")
+      return Databank::UserRole::GUEST
     end
   end
 
