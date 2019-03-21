@@ -1,3 +1,4 @@
+
 class Identity < OmniAuth::Identity::Models::ActiveRecord
 
   attr_accessor :remember_token, :activation_token, :reset_token
@@ -14,6 +15,7 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
             uniqueness: { case_sensitive: false }
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }
+  validate :invited
 
   # Returns true if the given token matches the digest.
   def authenticated?(attribute, token)
@@ -52,9 +54,12 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
     invitee = Invitee.find_by_email(self.email)
     if invitee
       self.invitee_id = invitee.id
-    else
-      raise IdentityError, "attempt to create identity without invitee: #{self.to_yaml}"
     end
+  end
+
+  def invited
+    set_invitee
+    self.invitee_id != nil
   end
 
   # Creates and assigns the activation token and digest.
