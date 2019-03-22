@@ -6,22 +6,25 @@ class User::Identity < User::User
 
   def self.from_omniauth(auth)
     if auth && auth[:uid]
-      user = User::Identity.find_by_provider_and_uid('identity', auth['uid'])
-      if user
-        user.update_with_omniauth(auth)
-        user.save
+      identity = Identity.find_by_email(auth["info"]["email"])
+
+      if identity && identity.activated
+        user = user = User::Identity.find_by_provider_and_uid(auth["provider"], auth["uid"])
+        if user
+          user.update_with_omniauth(auth)
+        else
+          user = User::Identity.create_with_omniauth(auth)
+        end
+        return user
       else
-        user = User::Identity.create_with_omniauth(auth)
+        return nil
       end
-      return user
     else
       return nil
     end
   end
 
   def self.create_with_omniauth(auth)
-
-    #Rails.logger.warn auth.to_yaml
 
     invitee = Invitee.find_by_email(auth["info"]["email"])
     if invitee && invitee.expires_at >= Time.now
@@ -40,14 +43,13 @@ class User::Identity < User::User
   end
 
   def update_with_omniauth(auth)
-    #Rails.logger.warn auth.to_yaml
-
-    self.provider = auth["provider"]
-    self.uid = auth["uid"]
-    self.email = auth["info"]["email"]
-    self.username = self.email.split('@').first
-    self.name = auth["info"]["name"]
-    self.role = User::Identity.user_role(self.email)
+    update_attribute(provider, auth["provider"])
+    update_attribute(uid, auth["uid"])
+    update_attribute(email, auth["info"]["email"])
+    update_attribute(username, self.email.split('@').first)
+    update_attribute(name, auth["info"]["name"])
+    update_attribute(role, User::Identity.user_role(self.email))
+    self
   end
 
   def self.user_role(email)

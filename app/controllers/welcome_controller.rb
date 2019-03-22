@@ -24,6 +24,7 @@ class WelcomeController < ApplicationController
   end
 
   def on_failed_registration
+    Rails.logger.warn params
   end
 
 end

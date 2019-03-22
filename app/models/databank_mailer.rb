@@ -132,16 +132,15 @@ class DatabankMailer < ActionMailer::Base
 
   end
 
-  def account_activation(email, identity)
+  def account_activation(identity)
     @identity = identity
-    mail(to: email, subject: "Illinois Data Bank account activation")
+    mail(to: @identity.email, subject: "Illinois Data Bank account activation")
   end
 
   def password_reset(email, identity)
     @identity = identity
     mail(to: email, subject: "Illinois Data Bank password reset")
   end
-
 
   def link_report()
     subject = prepend_system_code('Illinois Data Bank] Related Materials Links Status Report')

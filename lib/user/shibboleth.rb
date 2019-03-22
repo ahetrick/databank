@@ -10,7 +10,6 @@ class User::Shibboleth < User::User
 
       if user
         user.update_with_omniauth(auth)
-        user.save
       else
         user = User::Shibboleth.create_with_omniauth(auth)
       end
@@ -23,7 +22,6 @@ class User::Shibboleth < User::User
   end
 
   def self.create_with_omniauth(auth)
-
     create! do |user|
       user.provider = auth["provider"]
       user.uid = auth["uid"]
@@ -35,16 +33,13 @@ class User::Shibboleth < User::User
   end
 
   def update_with_omniauth(auth)
-
-    # Rails.logger.warn(auth)
-
-    self.provider = auth["provider"]
-    self.uid = auth["uid"]
-    self.email = auth["info"]["email"]
-    self.username = self.email.split('@').first
-    self.name = User::Shibboleth.user_display_name(self.username)
-    self.role = User::Shibboleth.user_role(auth["uid"])
-
+    update_attribute(provider, auth["provider"])
+    update_attribute(uid, auth["uid"])
+    update_attribute(email, auth["info"]["email"])
+    update_attribute(username, self.email.split('@').first)
+    update_attribute(name, User::Shibboleth.user_display_name(self.username))
+    update_attribute(role, User::Shibboleth.user_role(auth["uid"]))
+    self
   end
 
   def self.user_role(email)

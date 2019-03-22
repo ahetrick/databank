@@ -5,6 +5,7 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
 
   before_create :set_invitee
   before_create :create_activation_digest
+  after_create :send_activation_email
 
   before_destroy :destroy_user
 
@@ -41,6 +42,24 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
     errors.add(:base, 'Registered identity must have current invitation.') unless [nil, ''].exclude?(self.invitee_id)
   end
 
+  def activation_url
+    "#{IDB_CONFIG[:root_url_text]}/account_activations/#{self.activation_token}/edit?email=#{CGI.escape(self.email)}"
+  end
+
+  def send_activation_email
+    notification = DatabankMailer.account_activation(self)
+    notification.deliver_now
+  end
+
+  def group
+    set_invitee
+    if @invitee
+      @invitee.group
+    else
+      nil
+    end
+  end
+
   private
 
   # Converts email to all lower-case.
@@ -56,9 +75,9 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
   end
 
   def set_invitee
-    invitee = Invitee.find_by_email(self.email)
-    if invitee && invitee.expires_at > Time.now
-      self.invitee_id = invitee.id
+    @invitee = Invitee.find_by_email(self.email)
+    if @invitee && @invitee.expires_at > Time.now
+      self.invitee_id = @invitee.id
     end
   end
 

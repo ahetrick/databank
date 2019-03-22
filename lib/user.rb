@@ -8,8 +8,6 @@ module User
   class User < ActiveRecord::Base
     include ActiveModel::Serialization
 
-    ROLES = %w[admin depositor guest no_deposit reviewer editor]
-
     validates_uniqueness_of :uid, allow_blank: false
     before_save :downcase_email
     validates :name,  presence: true
