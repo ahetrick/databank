@@ -33,12 +33,12 @@ class User::Shibboleth < User::User
   end
 
   def update_with_omniauth(auth)
-    update_attribute(provider, auth["provider"])
-    update_attribute(uid, auth["uid"])
-    update_attribute(email, auth["info"]["email"])
-    update_attribute(username, self.email.split('@').first)
-    update_attribute(name, User::Shibboleth.user_display_name(self.username))
-    update_attribute(role, User::Shibboleth.user_role(auth["uid"]))
+    update_attribute(:provider, auth["provider"])
+    update_attribute(:uid, auth["uid"])
+    update_attribute(:email, auth["info"]["email"])
+    update_attribute(:username, self.email.split('@').first)
+    update_attribute(:name, User::Shibboleth.user_display_name(self.username))
+    update_attribute(:role, User::Shibboleth.user_role(auth["uid"]))
     self
   end
 

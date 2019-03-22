@@ -43,12 +43,12 @@ class User::Identity < User::User
   end
 
   def update_with_omniauth(auth)
-    update_attribute(provider, auth["provider"])
-    update_attribute(uid, auth["uid"])
-    update_attribute(email, auth["info"]["email"])
-    update_attribute(username, self.email.split('@').first)
-    update_attribute(name, auth["info"]["name"])
-    update_attribute(role, User::Identity.user_role(self.email))
+    update_attribute(:provider, auth["provider"])
+    update_attribute(:uid, auth["uid"])
+    update_attribute(:email, auth["info"]["email"])
+    update_attribute(:username, self.email.split('@').first)
+    update_attribute(:name, auth["info"]["name"])
+    update_attribute(:role, User::Identity.user_role(self.email))
     self
   end
 
