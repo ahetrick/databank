@@ -2,7 +2,7 @@ class DataCurationNetworkController < ApplicationController
 
   def index
     @drafts = Dataset.where(data_curation_network: true).where(publication_state: Databank::PublicationState::DRAFT)
-    @nondrafts = Dataset.where(data_curation_network: true).where.(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA])
+    @nondrafts = Dataset.where(data_curation_network: true).where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA])
   end
 
   def accounts
