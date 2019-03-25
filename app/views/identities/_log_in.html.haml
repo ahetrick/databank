@@ -10,6 +10,7 @@
   .form-group.row
     .col-md-2.col-md-offset-3
       %label.control-label{for: :password}
+      Password
       = link_to "(forgot password)", new_password_reset_path
     .col-md-4
       =text_field_tag :password, nil, class: 'form-control'
