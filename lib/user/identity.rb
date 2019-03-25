@@ -7,7 +7,6 @@ class User::Identity < User::User
   def self.from_omniauth(auth)
     if auth && auth[:uid]
       identity = Identity.find_by_email(auth["info"]["email"])
-
       if identity && identity.activated
         user = user = User::Identity.find_by_provider_and_uid(auth["provider"], auth["uid"])
         if user
@@ -25,7 +24,6 @@ class User::Identity < User::User
   end
 
   def self.create_with_omniauth(auth)
-
     invitee = Invitee.find_by_email(auth["info"]["email"])
     if invitee && invitee.expires_at >= Time.now
       create! do |user|
@@ -39,7 +37,6 @@ class User::Identity < User::User
     else
       return nil
     end
-
   end
 
   def update_with_omniauth(auth)

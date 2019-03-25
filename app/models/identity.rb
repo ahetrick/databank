@@ -1,7 +1,7 @@
 
 class Identity < OmniAuth::Identity::Models::ActiveRecord
 
-  attr_accessor :remember_token, :activation_token, :reset_token
+  attr_accessor :activation_token, :reset_token
 
   before_create :set_invitee
   before_create :create_activation_digest
@@ -46,8 +46,18 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
     "#{IDB_CONFIG[:root_url_text]}/account_activations/#{self.activation_token}/edit?email=#{CGI.escape(self.email)}"
   end
 
+  def password_reset_url
+    "#{IDB_CONFIG[:root_url_text]}/password_reset/#{self.reset_token}/edit?email=#{CGI.escape(self.email)}"
+  end
+
   def send_activation_email
     notification = DatabankMailer.account_activation(self)
+    notification.deliver_now
+  end
+
+  # Sends password reset email.
+  def send_password_reset_email
+    notification = DatabankMailer.password_reset(self)
     notification.deliver_now
   end
 
@@ -58,6 +68,23 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
     else
       nil
     end
+  end
+
+  # Creates and assigns the activation token and digest.
+  def create_activation_digest
+    self.activation_token  = Identity.new_token
+    self.activation_digest = Identity.digest(activation_token)
+  end
+
+  # Sets the password reset attributes.
+  def create_reset_digest
+    self.reset_token = Identity.new_token
+    update_attribute(:reset_digest,  Identity.digest(reset_token))
+    update_attribute(:reset_sent_at, Time.zone.now)
+  end
+
+  def password_reset_expired?
+    reset_sent_at < 2.hours.ago
   end
 
   private
@@ -81,10 +108,6 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
     end
   end
 
-  # Creates and assigns the activation token and digest.
-  def create_activation_digest
-    self.activation_token  = Identity.new_token
-    self.activation_digest = Identity.digest(activation_token)
-  end
+
 
 end
