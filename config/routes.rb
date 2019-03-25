@@ -4,7 +4,9 @@ require './lib/api/base'
 
 Rails.application.routes.draw do
 
-  resources :review_requests
+  resources :review_requests do
+    get 'report', to: 'review_requests#report'
+  end
   resources :password_resets, only: [:new, :create, :edit, :update]
 
   resources :user_abilities
