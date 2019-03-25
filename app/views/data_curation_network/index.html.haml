@@ -3,26 +3,32 @@
   =render partial: 'heading'
 
   -if current_user && current_user.role == Databank::UserRole::REVIEWER
-    %h3 Draft datasets curated with the Data Curation Network
-    -if @drafts && @drafts.count > 0
-      -@drafts.each do |dataset|
-        = render 'datasets/brief_record', dataset:dataset
-    -else
-      .jumbotron
-        No no draft datasets were found in Illinois Data Bank that are being curated with the Data Curation Network.
+    .row
+      .col-md-3.col-md-offset-3
+        .text-center
+          .dcn-admin
+            .fas.fa-user.fa-8x
+          %a(href="/data_curation_network/my_account") My Account
+      .col-md-3
+        .text-center
+          .dcn-dataset
+            .fas.fa-server.fa-8x
+          %a(href="/data_curation_network/datasets") Datasets
 
-    %h3 Published datasets curated with the Data Curation Network
-    -if @nondrafts && @nondrafts.count > 0
-      -@nondrafts.each do |dataset|
-        = render 'datasets/brief_record', dataset:dataset
-    -else
-      .jumbotron
-        No published datasets were found in Illinois Data Bank that have been curated with the Data Curation Network.
+
   -elsif current_user && current_user.role == Databank::UserRole::ADMIN
-    .text-center
-      .dcn-admin
-        .fas.fa-users.fa-8x
-      %a(href="/data_curation_network/accounts") Accounts
+    .row
+      .col-md-3.col-md-offset-3
+        .text-center
+          .dcn-admin
+            .fas.fa-users.fa-8x
+          %a(href="/data_curation_network/accounts") Accounts
+      .col-md-3
+        .text-center
+          .dcn-dataset
+            .fas.fa-server.fa-8x
+          %a(href="/data_curation_network/datasets") Datasets
+
 
     .jumbotron
       =succeed ',' do
