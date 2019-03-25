@@ -1255,6 +1255,10 @@ class Dataset < ActiveRecord::Base
     URI.escape(s, /[%:\n\r]/)
   end
 
+  def review_requests
+    ReviewRequest.where(dataset_key: self.key)
+  end
+
   private
 
   def generate_auth_token

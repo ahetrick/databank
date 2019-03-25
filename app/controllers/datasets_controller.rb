@@ -1289,6 +1289,8 @@ class DatasetsController < ApplicationController
       @dataset.identifier = "#{shoulder}#{@dataset.key}_V1"
     end
 
+    ReviewRequest.create(dataset_key: @dataset.key, requested_at: Time.now)
+
     help_request = DatabankMailer.contact_help(params)
     help_request.deliver_now
 
