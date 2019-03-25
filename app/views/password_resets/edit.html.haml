@@ -1,6 +1,6 @@
-%h1 Reset Password
 .row
   .col-md-6.col-md-offset-3
+    %h1 Reset Password
     =form_for @identity, url: password_reset_path(params[:id]) do |f|
       =hidden_field_tag :email, @identity.email
       .form-group

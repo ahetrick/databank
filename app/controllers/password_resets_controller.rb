@@ -9,7 +9,7 @@ class PasswordResetsController < ApplicationController
 
   def create
     @identity = Identity.find_by(email: params[:password_reset][:email].downcase)
-    if @user
+    if @identity
       @identity.create_reset_digest
       @identity.send_password_reset_email
       if @identity.group == Databank::IdentityGroup::NETWORK_CURATOR
