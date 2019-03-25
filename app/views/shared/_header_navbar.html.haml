@@ -28,7 +28,7 @@
             Help
       %ul.nav.navbar-nav.navbar-right
         - if current_user
-          -if currrent_user.role == Databank::UserRole::REVIEWER
+          -if current_user.role == Databank::UserRole::REVIEWER
             %li
               %a(href="/data_curation_network/my_account")
                 =current_user.name
