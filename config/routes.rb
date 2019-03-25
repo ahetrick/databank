@@ -136,6 +136,8 @@ Rails.application.routes.draw do
 
   get '/datasets/:id/get_current_token', to: 'datasets#get_current_token', defaults: {format: 'json'}
 
+  #add pre-publication review record
+  get '/datasets/:id/add_review_request', to: 'dataset#add_review_request'
 
   # authentication routes
   match '/auth/:provider/callback', to: 'sessions#create', via: [:get, :post]

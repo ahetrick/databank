@@ -18,7 +18,7 @@
 <% if (can? :manage, @dataset) %>
   <%= render partial: 'permissions' %>
   <div class="curator-only">
-    <a href="/datasets/<%= dataset.key %>/add_review_request">Add pre-publication review request record</a>
+    <a href="/datasets/<%= @dataset.key %>/add_review_request">Add pre-publication review request record</a>
   </div>
 <% end %>
 <% if ((can? :manage, @dataset) && (@dataset.publication_state != Databank::PublicationState::DRAFT)) %>
