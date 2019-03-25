@@ -19,9 +19,8 @@
       %tr
         %td
           -if review_request.dataset
-            -Rails.logger.warn review_request.dataset
-            =debug(review_request.dataset)
-            =render partial: 'datasets/brief_record', dataset: review_request.dataset
+            %a(href="/datasets/#{review_request.dataset_key}")
+              =review_request.dataset.plain_text_citation
           -else
             %a(href="/datasets/#{review_request.dataset_key}")
               ="#{IDB_CONFIG[:root_url_text]}/datasets/#{review_request.dataset_key}"
