@@ -19,6 +19,8 @@
       %tr
         %td
           -if review_request.dataset
+            -Rails.logger.warn review_request.dataset
+            =debug(review_request.dataset)
             =render partial: 'datasets/brief_record', dataset: review_request.dataset
           -else
             %a(href="/datasets/#{review_request.dataset_key}")
