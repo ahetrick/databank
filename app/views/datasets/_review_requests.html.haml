@@ -15,13 +15,16 @@
       .panel-collapse.collapse(id="reviewsPanel" role="tabpanel" aria-labelledby="reviewsHeading" )
         .panel-body
           %a(href="/review_requests") See all review requests for all datasets
-          %h3
-            Pre-publication review requested for this dataset at:
-          .indent
-            -if @dataset.review_requests.count > 0
+          -if @dataset.review_requests.count > 0
+            %h3
+              Pre-publication review requested for this dataset at:
+            .indent
+
               -@dataset.review_requests.each do |review|
                 =review.requested_at.iso8601
                 %br
+          -else
+            No pre-publication review request records found for this dataset.
           %hr
           %h3
             Add new pre-publication review request record for this dataset:
