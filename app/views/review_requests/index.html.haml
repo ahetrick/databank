@@ -5,18 +5,18 @@
     %span.glyphicon.glyphicon-download
     Download Report
 
-%table
+%table.container.table
   %thead
-    %tr
-      %th Dataset
-      %th Review Requested at
-      %th
-      %th
-      %th
+    %tr.row
+      %th.col-md-6 Dataset
+      %th.col-md-3 Review Requested at
+      %th.col-md-1
+      %th.col-md-1
+      %th.col-md-1
 
   %tbody
     - @review_requests.each do |review_request|
-      %tr
+      %tr.row
         %td
           -if review_request.dataset
             %a(href="/datasets/#{review_request.dataset_key}")
@@ -30,4 +30,4 @@
         %td= link_to 'Destroy', review_request, method: :delete, data: { confirm: 'Are you sure?' }
 %br
 
-= link_to 'New Review request', new_review_request_path
+= link_to 'Add New Review request', new_review_request_path
