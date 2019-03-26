@@ -617,6 +617,7 @@ class DatasetsController < ApplicationController
     end
 
     @completion_check = Dataset.completion_check(@dataset, current_user)
+    @review_request = ReviewRequest.new(dataset_key: @dataset.key, requested_at: Time.now)
 
     set_file_mode
 
@@ -1649,10 +1650,6 @@ class DatasetsController < ApplicationController
     @datasets = Dataset.all
   end
 
-  def add_review_request
-    @review_request = ReviewRequest.new(dataset_key: @dataset.key, requested_at: Time.now)
-  end
-  
   private
 
   # Use callbacks to share common setup or constraints between actions.
