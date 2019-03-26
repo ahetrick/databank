@@ -619,7 +619,7 @@ module Datacite
                 ready_count = ready_count + 1
                 relatedMaterialNode = doc.create_element('relatedIdentifier')
                 relatedMaterialNode['relatedIdentifierType'] = material.uri_type || 'URL'
-                relatedMaterialNode['relationType'] = relationship
+                relatedMaterialNode['relationType'] = relationship.strip!
                 relatedMaterialNode.content = material.uri
                 relatedMaterialNode.parent = relatedIdentifiersNode
               end
