@@ -14,23 +14,26 @@
             %span( class="metadata-label" ) Pre-publication Review Requests
       .panel-collapse.collapse(id="reviewsPanel" role="tabpanel" aria-labelledby="reviewsHeading" )
         .panel-body
+          %a(href="/review_requests") See all review requests for all datasets
           %h3
             Pre-publication review requested for this dataset at:
-          -if @dataset.review_requests.count > 0
-            -@dataset.review_requests.each do |review|
-              =review.requested_at.iso8601
-              %br
+          .indent
+            -if @dataset.review_requests.count > 0
+              -@dataset.review_requests.each do |review|
+                =review.requested_at.iso8601
+                %br
           %hr
           %h3
-            Add new pre-publication review request record
+            Add new pre-publication review request record for this dataset:
           %em
-            (For requests made before requests were recorded.)
-          = form_for @review_request do |f|
-            .field
-              = f.hidden_field :dataset_key, value: @dataset.key
-            .field
-              = f.label :requested_at
-              = f.datetime_select :requested_at
-            .actions
-              = f.submit 'Save'
+            (For requests made before such requests were recorded.)git 
+          .indent
+            = form_for @review_request do |f|
+              .field
+                = f.hidden_field :dataset_key, value: @dataset.key
+              .field
+                = f.label :requested_at
+                = f.datetime_select :requested_at
+              .actions
+                = f.submit 'Save'
 
