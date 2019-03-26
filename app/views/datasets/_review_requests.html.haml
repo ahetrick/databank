@@ -4,7 +4,8 @@
     %h2= "#{pluralize(@review_request.errors.count, "error")} prohibited this review_request from being saved:"
     %ul
       - @review_request.errors.full_messages.each do |message|
-        %li= message
+        %li
+          = message
     .panel-group(id="reviews" role="tablist" aria-multiselectable="true")
       .panel.panel-default
         .panel-heading(role="tab" id="reviewsHeading")
