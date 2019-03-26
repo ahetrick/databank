@@ -28,6 +28,8 @@ class SessionsController < ApplicationController
       else
         redirect_to return_url
       end
+    elsif session[:previous_url] == '/data_curation_network/register'
+      redirect_to '/data_curation_network', notice: 'Account activation link sent to registered email address.'
     else
       redirect_to root_url
     end
