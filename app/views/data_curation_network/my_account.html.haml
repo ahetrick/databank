@@ -1,3 +1,5 @@
+=render partial: 'heading'
+
 -if @identity
   =form_for @identity, url: "/data_curation_network/identity/#{@identity.id}/update" do |f|
     .form-group.required.row
