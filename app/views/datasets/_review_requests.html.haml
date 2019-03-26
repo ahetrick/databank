@@ -17,7 +17,7 @@
           %h3
             Pre-publication review requested for this dataset at:
           -if @dataset.review_requests.count > 0
-            =@dataset.review_requests.each do |review|
+            -@dataset.review_requests.each do |review|
               =review.requested_at.iso8601
               %br
           %hr
