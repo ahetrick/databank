@@ -51,8 +51,15 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
   end
 
   def send_activation_email
-    notification = DatabankMailer.account_activation(self)
-    notification.deliver_now
+    Rails.logger.warn "inside send_activation_email"
+    begin
+      notification = DatabankMailer.account_activation(self)
+      notification.deliver_now
+    rescue Execption => exception
+      Rails.logger.warn error.msg
+      Rails.logger.warn error.class
+      raise exception
+    end
   end
 
   # Sends password reset email.
