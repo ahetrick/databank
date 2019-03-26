@@ -26,7 +26,7 @@
           %h3
             Add new pre-publication review request record for this dataset:
           %em
-            (For requests made before such requests were recorded.)git
+            (For requests made before such requests were recorded.)
           .indent
             = form_for @review_request do |f|
               .field
@@ -35,5 +35,5 @@
                 = f.label :requested_at
                 = f.datetime_select :requested_at
               .actions
-                = f.submit 'Save'
+                = f.submit 'Save', class: "btn btn-primary"
 

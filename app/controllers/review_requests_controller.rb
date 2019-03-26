@@ -34,7 +34,7 @@ class ReviewRequestsController < ApplicationController
 
     respond_to do |format|
       if @review_request.save
-        format.html { redirect_to @review_request, notice: 'Review request was successfully created.' }
+        format.html { redirect_to "/datasets/#{@review_request.dataset_key}", notice: 'Review request was successfully created.' }
         format.json { render :show, status: :created, location: @review_request }
       else
         format.html { render :new }

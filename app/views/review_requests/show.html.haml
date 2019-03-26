@@ -9,4 +9,6 @@
 
 = link_to 'Edit', edit_review_request_path(@review_request)
 \|
-= link_to 'Back', review_requests_path
+= link_to 'List', review_requests_path
+\|
+=link_to 'Dataset', "/datasets/#{@review_request.dataset_key}"
