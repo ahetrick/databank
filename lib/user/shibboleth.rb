@@ -55,11 +55,11 @@ class User::Shibboleth < User::User
         admins = IDB_CONFIG[:admin_list].split(", ")
 
         if admins.include?(netid)
-          role = "admin"
+          role = Databank::UserRole::ADMIN
         elsif can_deposit(email)
-          role = "depositor"
+          role = Databank::UserRole::DEPOSITOR
         else
-          role = "no_deposit"
+          role = Databank::UserRole::GUEST
         end
       end
 

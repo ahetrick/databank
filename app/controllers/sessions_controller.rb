@@ -46,24 +46,22 @@ class SessionsController < ApplicationController
   def role_switch
     new_role = params['role']
     if ['depositor', 'guest', 'no_deposit'].include?(new_role)
-      current_user.role = new_role
-      current_user.save
       new_role_text = "new role"
       case new_role
-        when 'depositor'
-          new_role_text = "depositor"
-        when 'guest'
-          new_role_text = "guest"
-        when 'no_deposit'
-          new_role_text = "undergrad, or other authenticated but not authorized agent"
+      when 'depositor'
+        current_user.update_attribute(:role, Databank::UserRole::DEPOSITOR)
+        new_role_text = "depositor"
+      when 'guest'
+        current_user.update_attribute(:role, Databank::UserRole::GUEST)
+        new_role_text = "guest"
+      when 'no_deposit'
+        current_user.update_attribute(:role, Databank::UserRole::NO_DEPOSIT)
+        new_role_text = "undergrad, or other authenticated but not authorized agent"
       end
-
       redirect_to root_url, notice: "Successfully switched role to #{new_role_text}."
     else
       redirect_to root_url, notice: "Unable to switch roles."
     end
-
-
   end
 
   protected
