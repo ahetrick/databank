@@ -27,7 +27,7 @@
             (For requests made before requests were recorded.)
           = form_for @review_request do |f|
             .field
-              = f.hidden_field :dataset_key, @dataset.key
+              = f.hidden_field :dataset_key, value: @dataset.key
             .field
               = f.label :requested_at
               = f.datetime_select :requested_at
