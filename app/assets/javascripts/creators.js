@@ -226,6 +226,17 @@ function handle_creator_email_change(input) {
 }
 
 function generate_creator_preview() {
+
+    var person_creators_type = 0;
+    var org_creators_type = 1;
+    var dataset_creator_type = null;
+
+    if ($('#dataset_org_creators').val() == 'true') {
+        dataset_creator_type = org_creators_type;
+    } else {
+        dataset_creator_type = person_creators_type;
+    }
+
     var creator_list_preview = "";
 
     $('#creator_table tr').each(function (i) {
@@ -233,34 +244,28 @@ function generate_creator_preview() {
         var split_id = (this.id).split('_');
         var creator_index = split_id[2];
 
-        //console.log("inside tr each for creator index " + creator_index);
+        if (i > 0)
+        {
+            if (dataset_creator_type == org_creators_type) {
+               if (($("#dataset_creators_attributes_" + creator_index + "_institution_name").val() != "")){
+                   $(this).removeClass("invalid-name");
+                   if (creator_list_preview.length > 0) {
+                       creator_list_preview = creator_list_preview + "; ";
+                   }
+                   creator_list_preview = creator_list_preview + $("#dataset_creators_attributes_" + creator_index + "_institution_name").val();
 
-        //console.log($("#dataset_creators_attributes_" + creator_index + "__destroy").val());
-
-        if ((i > 0) &&
-            (($("#dataset_creators_attributes_" + creator_index + "_institution_name").val() == "") &&
-                (($("#dataset_creators_attributes_" + creator_index + "_family_name").val() == "") || ($("#dataset_creators_attributes_" + creator_index + "_given_name").val() == "")))){
-            $(this).addClass("invalid-name");
-        } else {
-            $(this).removeClass("invalid-name");
-        }
-
-        if ((i > 0) && (($("#dataset_creators_attributes_" + creator_index + "_family_name").val() != "") && ($("#dataset_creators_attributes_" + creator_index + "_given_name").val() != ""))) {
-
-            if (creator_list_preview.length > 0) {
-
-                creator_list_preview = creator_list_preview + "; ";
-            }
-
-            creator_list_preview = creator_list_preview + $("#dataset_creators_attributes_" + creator_index + "_family_name").val();
-            creator_list_preview = creator_list_preview + ", "
-            creator_list_preview = creator_list_preview + $("#dataset_creators_attributes_" + creator_index + "_given_name").val();
-        } else {
-            if ((i > 0) && (($("#dataset_creators_attributes_" + creator_index + "_institution_name").val() != ""))) {
-                if (creator_list_preview.length > 0) {
-                    creator_list_preview = creator_list_preview + "; ";
-                }
-                creator_list_preview = creator_list_preview + $("#dataset_creators_attributes_" + creator_index + "_institution_name").val();
+               } else {
+                   $(this).addClass("invalid-name");
+               }
+            } else {
+               if (($("#dataset_creators_attributes_" + creator_index + "_family_name").val() != "") && ($("#dataset_creators_attributes_" + creator_index + "_given_name").val() != "")){
+                   $(this).removeClass("invalid-name");
+                   creator_list_preview = creator_list_preview + $("#dataset_creators_attributes_" + creator_index + "_family_name").val();
+                   creator_list_preview = creator_list_preview + ", "
+                   creator_list_preview = creator_list_preview + $("#dataset_creators_attributes_" + creator_index + "_given_name").val();
+               } else {
+                   $(this).addClass("invalid-name");
+               }
             }
         }
     });
