@@ -6,25 +6,15 @@ class DatabankMailer < ActionMailer::Base
 
   def confirm_deposit(dataset_key)
 
-    Rails.logger.warn "inside confirm deposit"
-
     @dataset = Dataset.find_by_key(dataset_key)
 
     if @dataset
 
-      Rails.logger.warn "inside dataset found"
-
       subject = prepend_system_code("Illinois Data Bank] Dataset successfully deposited (#{@dataset.identifier})")
-
       to_array = Array.new
-
       to_array << @dataset.depositor_email
 
       @dataset.creators.each do |creator|
-
-        Rails.logger.warn "inside creator"
-        Rails.logger.warn creator.email
-
         to_array << creator.email
       end
 
