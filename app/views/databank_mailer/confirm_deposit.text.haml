@@ -7,7 +7,7 @@ Release date: #{@dataset.release_date}
   Pre-publication revew request
   = succeed ':' do
     =pluralize(@dataset.review_requests.count, 'date')
-  =dataset.review_requests.each_with_index do |request, i|
+  =@dataset.review_requests.each_with_index do |request, i|
     -if i < (@dataset.review_requests.count - 1)
       = succeed ', ' do
         =request.requested_at.strftime("%Y-%m-%d")
