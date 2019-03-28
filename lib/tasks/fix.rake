@@ -252,7 +252,7 @@ namespace :fix do
     bad_records = ['10.26123/idbdev-1772206_v1',
      '10.26123/idbdev-2774199_v1',
      '10.26123/idblocal-5622337_v1',
-     '10.26123/idbdev-7539740_v1']
+     '10.26123/testidb-6183513']
 
     bad_records.each do |identifier|
       uri = URI.parse("https://#{host}/metadata/#{identifier}" )

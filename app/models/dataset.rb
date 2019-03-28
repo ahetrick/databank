@@ -128,7 +128,7 @@ class Dataset < ActiveRecord::Base
           notification.deliver_now
         rescue StandardError => error
           Rails.logger.warn "Confirmation email not sent for #{key}"
-          Rails.logger.warn error.msg
+          Rails.logger.warn error.message
           notification = DatabankMailer.confirmation_not_sent(key, error)
           notification.deliver_now
         end
