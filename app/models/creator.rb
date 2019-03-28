@@ -42,6 +42,8 @@ class Creator < ActiveRecord::Base
       if self.given_name && self.given_name != ''
         return_text << ", #{self.given_name}"
       end
+    elsif self.given_name && self.given_name != ''
+      return_text << "#{self.given_name}"
     else
       raise("institution_name: #{institution_name}, given_name: #{given_name}, family_name: #{family_name}")
       #return_text  = 'University of Illinois at Urbana-Champaign'

@@ -539,14 +539,12 @@ class Dataset < ActiveRecord::Base
       return nil
     elsif self.contributors.count == 1
       contributor = self.creators.first
-      if contributor.family_name && contributor.family_name != ''
-        return contributor.list_name
-      end
+      return contributor.list_name
     else
       return_list = ""
       self.contributors.each_with_index do |contributor, i|
         return_list << ", " unless i == 0
-        return_list << contributor.display_name
+        return_list << contributor.list_name
       end
       return return_list
     end
