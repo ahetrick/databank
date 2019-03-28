@@ -131,7 +131,6 @@ class Dataset < ActiveRecord::Base
           Rails.logger.warn error.message
           notification = DatabankMailer.confirmation_not_sent(key, error)
           notification.deliver_now
-          raise error
         end
       end
       {status: :ok, old_publication_state: old_publication_state}
