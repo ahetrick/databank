@@ -126,7 +126,7 @@ class Dataset < ActiveRecord::Base
         begin
           notification = DatabankMailer.confirm_deposit(key)
           notification.deliver_now
-        rescue Exception::StandardError => err
+        rescue
           Rails.logger.warn "Confirmation email not sent for #{key}"
           Rails.logger.warn err.to_yaml
           notification = DatabankMailer.confirmation_not_sent(key, err)
