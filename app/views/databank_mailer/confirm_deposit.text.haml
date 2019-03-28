@@ -4,7 +4,8 @@ Here is some information about the deposited dataset:
 DataCite DOI: #{@dataset.identifier}
 Release date: #{@dataset.release_date}
 -if @dataset.review_requests.count > 0
-  Pre-publication revew request= succeed ':' do
+  Pre-publication revew request
+  = succeed ':' do
     =pluralize(@dataset.review_requests.count, 'date')
   =dataset.review_requests.each_with_index do |request, i|
     -if i < (@dataset.review_requests.count - 1)
