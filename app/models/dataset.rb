@@ -1259,6 +1259,10 @@ class Dataset < ActiveRecord::Base
     ReviewRequest.where(dataset_key: self.key)
   end
 
+  def in_pre_publication_review
+    publication_state == Databank::PublicationState::DRAFT && ( (identifier && identifier != '') || review_requests.count > 0)
+  end
+
   private
 
   def generate_auth_token
