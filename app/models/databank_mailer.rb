@@ -5,7 +5,7 @@ class DatabankMailer < ActionMailer::Base
   default from: "databank@library.illinois.edu"
 
   def confirm_deposit(dataset_key)
-    @dataset = Dataset.find_by_key(key: dataset_key)
+    @dataset = Dataset.find_by_key(dataset_key)
     
     if @dataset
 
@@ -27,7 +27,7 @@ class DatabankMailer < ActionMailer::Base
 
   def confirm_deposit_update(dataset_key)
 
-    @dataset = Dataset.find_by_key(key: dataset_key)
+    @dataset = Dataset.find_by_key(dataset_key)
 
     if @dataset
       subject = prepend_system_code("Illinois Data Bank] Dataset successfully updated (#{@dataset.identifier})")
@@ -52,7 +52,7 @@ class DatabankMailer < ActionMailer::Base
 
     subject = prepend_system_code('Illinois Data Bank] Incomplete dataset deposit')
 
-    @dataset = Dataset.find_by_key(key: dataset_key)
+    @dataset = Dataset.find_by_key(dataset_key)
     if @dataset
       mail(to: dataset.depositor_email, cc: 'databank@library.illinois.edu', subject: subject)
     else
@@ -64,7 +64,7 @@ class DatabankMailer < ActionMailer::Base
 
     subject = prepend_system_code('Illinois Data Bank] Dataset release date approaching')
 
-    @dataset = Dataset.find_by_key(key: dataset_key)
+    @dataset = Dataset.find_by_key(dataset_key)
     if @dataset
       mail(to: @dataset.depositor_email, cc: 'databank@library.illinois.edu', subject: subject)
     else
@@ -76,7 +76,7 @@ class DatabankMailer < ActionMailer::Base
 
     subject = prepend_system_code('Illinois Data Bank] Dataset release date approaching')
 
-    @dataset = Dataset.find_by_key(key: dataset_key)
+    @dataset = Dataset.find_by_key(dataset_key)
     if @dataset
       mail(to: @dataset.depositor_email, cc: 'databank@library.illinois.edu', subject: subject )
     else
@@ -122,7 +122,7 @@ class DatabankMailer < ActionMailer::Base
     subject = prepend_system_code('Illinois Data Bank] Dataset confirmation email not sent')
 
     @err = err
-    @dataset = Dataset.find_by_key(key: dataset_key)
+    @dataset = Dataset.find_by_key(dataset_key)
     if @dataset
       mail(to: 'databank@library.illinois.edu', subject: subject )
     else
