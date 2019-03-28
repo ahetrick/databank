@@ -538,7 +538,7 @@ class Dataset < ActiveRecord::Base
     if self.contributors.count == 0
       return nil
     elsif self.contributors.count == 1
-      contributor = self.creators.first
+      contributor = self.contributors.first
       return contributor.list_name
     else
       return_list = ""
