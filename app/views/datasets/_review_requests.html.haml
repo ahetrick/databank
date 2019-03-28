@@ -21,7 +21,8 @@
             .indent
 
               -@dataset.review_requests.each do |review|
-                =review.requested_at.iso8601
+                =review.requested_at.strftime("%Y-%m-%d")
+                =" | "
                 =link_to 'Edit', edit_review_request_path(review), class: "btn btn-primary idb"
                 %br
           -else
