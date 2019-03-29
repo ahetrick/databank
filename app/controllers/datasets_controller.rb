@@ -47,10 +47,9 @@ class DatasetsController < ApplicationController
         search_get_facets = Dataset.search do
           without(:depositor, 'error')
           with(:is_most_recent_version, true)
-          keywords (params[:q])
+          keywords(params[:q])
           facet(:license_code)
           facet(:funder_codes)
-          facet(:creator_names)
           facet(:depositor)
           facet(:subject_text)
           facet(:visibility_code)
@@ -134,7 +133,6 @@ class DatasetsController < ApplicationController
 
           facet(:license_code)
           facet(:funder_codes)
-          facet(:creator_names)
           facet(:depositor)
           facet(:subject_text)
           facet(:visibility_code)
