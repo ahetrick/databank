@@ -136,20 +136,27 @@
               ="[corresponding creator name not provided]"
             -else
               = dataset.corresponding_creator_name
-          -if can? :manage, dataset
-            %tr.row
-              %td
-                %span.metadata-label Depositor:
-              %td>
-                = dataset.depositor_name
+
+        -if dataset.contributor_list && dataset.contributor_list != ''
+          %tr.row
+            %td
+              %span.metadata-label
+                Additional Contact(s)
+            %td
+              =dataset.contributor_list
 
         -if can? :manage, dataset
-          %tr.row
+          %tr.row.curator-only
+            %td
+              %span.metadata-label Depositor:
+            %td
+              = dataset.depositor_name
+          %tr.row.curator-only
             %td
               %span.metadata-label Corresponding Creator Email
             %td
               = (!dataset.corresponding_creator_email || dataset.corresponding_creator_email.empty?) ? "[corresponding creator email not provided]" : dataset.corresponding_creator_email
-          %tr.row
+          %tr.row.curator-only
             %td
               %span.metadata-label Depositor Email:
             %td

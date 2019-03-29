@@ -5,14 +5,13 @@ class DatabankMailer < ActionMailer::Base
   default from: "databank@library.illinois.edu"
 
   def confirm_deposit(dataset_key)
-    @dataset = Dataset.where(key: dataset_key).first
 
-    subject = prepend_system_code("Illinois Data Bank] Dataset successfully deposited (#{@dataset.identifier})")
-
+    @dataset = Dataset.find_by_key(dataset_key)
 
     if @dataset
-      to_array = Array.new
 
+      subject = prepend_system_code("Illinois Data Bank] Dataset successfully deposited (#{@dataset.identifier})")
+      to_array = Array.new
       to_array << @dataset.depositor_email
 
       @dataset.creators.each do |creator|
@@ -27,11 +26,10 @@ class DatabankMailer < ActionMailer::Base
 
   def confirm_deposit_update(dataset_key)
 
-    subject = prepend_system_code("Illinois Data Bank] Dataset successfully updated (#{@dataset.identifier})")
+    @dataset = Dataset.find_by_key(dataset_key)
 
-
-    @dataset = Dataset.where(key: dataset_key).first
     if @dataset
+      subject = prepend_system_code("Illinois Data Bank] Dataset successfully updated (#{@dataset.identifier})")
       mail(to: 'databank@library.illinois.edu', subject: subject)
     else
       Rails.logger.warn "Update confirmation email not sent because dataset not found for key: #{dataset_key}."
@@ -53,7 +51,7 @@ class DatabankMailer < ActionMailer::Base
 
     subject = prepend_system_code('Illinois Data Bank] Incomplete dataset deposit')
 
-    @dataset = Dataset.where(key: dataset_key).first
+    @dataset = Dataset.find_by_key(dataset_key)
     if @dataset
       mail(to: dataset.depositor_email, cc: 'databank@library.illinois.edu', subject: subject)
     else
@@ -65,7 +63,7 @@ class DatabankMailer < ActionMailer::Base
 
     subject = prepend_system_code('Illinois Data Bank] Dataset release date approaching')
 
-    @dataset = Dataset.where(key: dataset_key).first
+    @dataset = Dataset.find_by_key(dataset_key)
     if @dataset
       mail(to: @dataset.depositor_email, cc: 'databank@library.illinois.edu', subject: subject)
     else
@@ -77,7 +75,7 @@ class DatabankMailer < ActionMailer::Base
 
     subject = prepend_system_code('Illinois Data Bank] Dataset release date approaching')
 
-    @dataset = Dataset.where(key: dataset_key).first
+    @dataset = Dataset.find_by_key(dataset_key)
     if @dataset
       mail(to: @dataset.depositor_email, cc: 'databank@library.illinois.edu', subject: subject )
     else
@@ -123,7 +121,7 @@ class DatabankMailer < ActionMailer::Base
     subject = prepend_system_code('Illinois Data Bank] Dataset confirmation email not sent')
 
     @err = err
-    @dataset = Dataset.where(key: dataset_key).first
+    @dataset = Dataset.find_by_key(dataset_key)
     if @dataset
       mail(to: 'databank@library.illinois.edu', subject: subject )
     else
@@ -132,6 +130,15 @@ class DatabankMailer < ActionMailer::Base
 
   end
 
+  def account_activation(identity)
+    @identity = identity
+    mail(to: @identity.email, subject: "Illinois Data Bank account activation")
+  end
+
+  def password_reset(identity)
+    @identity = identity
+    mail(to: @identity.email, subject: "Illinois Data Bank password reset")
+  end
 
   def link_report()
     subject = prepend_system_code('Illinois Data Bank] Related Materials Links Status Report')

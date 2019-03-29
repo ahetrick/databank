@@ -69,7 +69,7 @@ module Datacite
 
     def post_doi_metadata(dataset, current_user)
 
-      system_user = User.find_by_provider_and_uid("system", IDB_CONFIG[:system_user_email])
+      system_user = User::Shibboleth.find_by_provider_and_uid("system", IDB_CONFIG[:system_user_email])
 
       raise("cannot create or update doi for incomplete dataset") unless current_user = system_user || Dataset.completion_check(dataset, current_user) == 'ok'
 
@@ -171,7 +171,7 @@ module Datacite
       existing_datacite_record = get_doi_metadata(dataset)
 
       if !existing_datacite_record
-        Rails.logger.warn "No Datacite record found when attempting to delete DataCite record for dataset #{dataset.key}."
+        Rails.logger.warn "No DataCite record found when attempting to delete DataCite record for dataset #{dataset.key}."
         return true
       end
 
@@ -209,7 +209,7 @@ module Datacite
       case response
       when Net::HTTPUnprocessableEntity
         # fix bad state of no metadata, from previous api state
-        system_user = User.find_by_provider_and_uid("system", IDB_CONFIG[:system_user_email])
+        system_user = User::User.find_by_provider_and_uid("system", IDB_CONFIG[:system_user_email])
         Dataset.post_doi_metadata(dataset, system_user)
 
         uri = URI.parse("https://#{host}/metadata/#{dataset.identifier}" )
@@ -339,7 +339,6 @@ module Datacite
       creatorNameNode.content = "[Redacted]"
       creatorNameNode.parent = creatorNode
 
-
       titlesNode = doc.create_element('titles')
       titlesNode.parent = resourceNode
 
@@ -398,7 +397,14 @@ module Datacite
 
           creatorNameNode = doc.create_element('creatorName')
 
-          creatorNameNode.content = "#{creator.family_name.strip}, #{creator.given_name.strip}"
+          if creator.family_name && creator.family_name != '' && creator.given_name && creator.given_name != ''
+            creatorNameNode.content = "#{creator.family_name.strip}, #{creator.given_name.strip}"
+          elsif creator.institution_name && creator.institution_name != ''
+            creatorNameNode.content = creator.institution_name.strip
+          else
+            raise("invalid creator record")
+          end
+
           creatorNameNode.parent = creatorNode
 
           # ORCID assumption hard-coded here, but in the model there is a field for identifier_scheme
@@ -420,25 +426,59 @@ module Datacite
         titleNode.parent = titlesNode
 
         contributorsNode = doc.create_element('contributors')
-        contributorsNode.parent = resourceNode
 
         contactNode = doc.create_element('contributor')
         contactNode['contributorType'] = "ContactPerson"
-        contactNode.parent = contributorsNode
+
+
+        contactNameNode = doc.create_element('contributorName')
 
         if contact.family_name && contact.given_name
-          contactNameNode = doc.create_element('contributorName')
-          contactNameNode.content = "#{contact.family_name}, #{contact.given_name}"
-          contactNameNode.parent = contactNode
+          contactNameNode.content = "#{contact.family_name.strip}, #{contact.given_name.strip}"
+        elsif contact.institution_name
+          contactNameNode.content = contact.institution_name.strip
+        else
+          raise "missing name for contact #{contact.to_yaml}"
+        end
 
-          if contact.identifier && contact.identifier != ""
-            contactIdentifierNode = doc.create_element('nameIdentifier')
-            contactIdentifierNode["schemeURI"] = "http://orcid.org/"
-            contactIdentifierNode["nameIdentifierScheme"] = "ORCID"
-            contactIdentifierNode.content = "#{contact.identifier}"
-            contactIdentifierNode.parent = contactNode
+        contactNameNode.parent = contactNode
+
+        if contact.identifier && contact.identifier != ""
+          contactIdentifierNode = doc.create_element('nameIdentifier')
+          contactIdentifierNode["schemeURI"] = "http://orcid.org/"
+          contactIdentifierNode["nameIdentifierScheme"] = "ORCID"
+          contactIdentifierNode.content = "#{contact.identifier}"
+          contactIdentifierNode.parent = contactNode
+        end
+
+        contactNode.parent = contributorsNode
+
+        if dataset.contributors.count > 0
+
+          dataset.contributors.each do |contributor|
+
+            contributorNode = doc.create_element('contributor')
+            contributorNode['contributorType'] = "ContactPerson"
+
+            contributorNameNode = doc.create_element('contributorName')
+
+            contributorNameNode.content = "#{contributor.family_name.strip}, #{contributor.given_name.strip}"
+            contributorNameNode.parent = contributorNode
+
+            # ORCID assumption hard-coded here, but in the model there is a field for identifier_scheme
+            if contributor.identifier && contributor.identifier != ""
+              contributorIdentifierNode = doc.create_element('nameIdentifier')
+              contributorIdentifierNode['schemeURI'] = "http://orcid.org/"
+              contributorIdentifierNode['nameIdentifierScheme'] = "ORCID"
+              contributorIdentifierNode.content = "#{contributor.identifier}"
+              contributorIdentifierNode.parent = contributorNode
+            end
+
+            contributorNode.parent = contributorsNode
           end
         end
+
+        contributorsNode.parent = resourceNode
 
         dataset.funders.each do |funder|
           if (funder.name && funder.name != '') || (funder.identifier && funder.identifer != '')
@@ -579,7 +619,7 @@ module Datacite
                 ready_count = ready_count + 1
                 relatedMaterialNode = doc.create_element('relatedIdentifier')
                 relatedMaterialNode['relatedIdentifierType'] = material.uri_type || 'URL'
-                relatedMaterialNode['relationType'] = relationship
+                relatedMaterialNode['relationType'] = relationship.strip!
                 relatedMaterialNode.content = material.uri
                 relatedMaterialNode.parent = relatedIdentifiersNode
               end
@@ -597,8 +637,9 @@ module Datacite
 
       rescue StandardError => error
 
-        default_doc = Nokogiri::XML::Document.parse(%Q[<?xml version="1.0 encoding="UTF-8"?><error>Dataset Incomplete.</error>])
-        return default_doc.to_xml
+        raise error
+        #default_doc = Nokogiri::XML::Document.parse(%Q[<?xml version="1.0 encoding="UTF-8"?><error>Dataset Incomplete.</error>])
+        #return default_doc.to_xml
 
       end
 

@@ -20,7 +20,7 @@
         .col-md-9
           -if(can? :manage, @dataset)
             .curator-only
-              -if @dataset.publication_state == Databank::PublicationState::DRAFT && @dataset.identifier && @dataset.identifier != ''
+              -if @dataset.in_pre_publication_review
                 .label.label-danger
                   pre-publication review
                 &nbsp;
@@ -70,7 +70,13 @@
           .request-review-response
 
         .col-md-3
-          - if @completion_check == 'ok'
+
+          - if @completion_check == 'ok' && @dataset.in_pre_publication_review
+            %button(type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#deposit")
+              Continue
+              %span(class="glyphicon glyphicon-triangle-right" )
+
+          - elsif @completion_check == 'ok'
             -# confirm button conditional complex, so broken into three statements
             -if ((can? :manage, @dataset) && (@dataset.publication_state != Databank::PublicationState::DRAFT) && (@dataset.publication_state != Databank::PublicationState::Embargo::METADATA) && (@dataset.embargo == Databank::PublicationState::Embargo::METADATA))
               =render partial: 'datasets/offer_review_btn'

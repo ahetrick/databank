@@ -6,3 +6,7 @@
 = render partial: 'shared/loading_modal'
 = render partial: 'remote_file_modal'
 = render partial: 'api_modal'
+-if @dataset.org_creators
+  =render partial: 'offer_ind_auth_modal'
+-else
+  =render partial: 'offer_org_auth_modal'

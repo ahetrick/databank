@@ -4,7 +4,17 @@ require './lib/api/base'
 
 Rails.application.routes.draw do
 
+  resources :review_requests do
+    collection do
+      get 'report'
+    end
+  end
+  resources :password_resets, only: [:new, :create, :edit, :update]
+
+  resources :user_abilities
   resources :contributors
+  resources :contributors
+  resources :invitees
   resources :databank_tasks, only: [:index, :show]
   get '/databank_tasks/pending', to: 'databank_tasks#pending'
   post '/databank_tasks/update_status', to: 'databank_tasks#update_status', defaults: {format: 'json'}
@@ -21,7 +31,17 @@ Rails.application.routes.draw do
     end
   end
 
-  get '/featured_researchers/:id', to: 'feaatured_researchers#show'
+  get '/data_curation_network', to: 'data_curation_network#index'
+  get '/data_curation_network/accounts', to: 'data_curation_network#accounts'
+  get '/data_curation_network/log_in', to: 'data_curation_network#log_in'
+  get '/data_curation_network/register', to: 'data_curation_network#register'
+  get '/data_curation_network/my_account', to: 'data_curation_network#my_account'
+  get '/data_curation_network/datasets', to: 'data_curation_network#datasets'
+  get '/data_curation_network/account/add', to: 'data_curation_network#add_account'
+  get '/data_curation_network/accounts/:id/edit', to: 'data_curation_network#edit_account'
+  patch '/data_curation_network/identity/:id/update', to: 'data_curation_network#update_identity'
+
+  get '/featured_researchers/:id', to: 'featured_researchers#show'
 
   get '/datasets/download_citation_report', to: 'datasets#download_citation_report'
 
@@ -34,6 +54,10 @@ Rails.application.routes.draw do
   resources :deckfiles
   get "/datasets/pre_deposit", to: "datasets#pre_deposit"
 
+  get "/on_failed_registration", to: "welcome#on_failed_registration"
+
+  resources :account_activations, only: [:edit]
+
   resources :related_materials
   resources :funders
   resources :definitions
@@ -42,6 +66,11 @@ Rails.application.routes.draw do
   resources :users
   resources :identities
   resources :datasets do
+
+    member do
+      post 'permissions', to: 'datasets#update_permissions'
+    end
+
     resources :datafiles do
       member do
         get 'upload', to: 'datafiles#upload'
@@ -112,6 +141,8 @@ Rails.application.routes.draw do
 
   get '/datasets/:id/get_current_token', to: 'datasets#get_current_token', defaults: {format: 'json'}
 
+  #add pre-publication review record
+  get '/datasets/:id/add_review_request', to: 'dataset#add_review_request'
 
   # authentication routes
   match '/auth/:provider/callback', to: 'sessions#create', via: [:get, :post]

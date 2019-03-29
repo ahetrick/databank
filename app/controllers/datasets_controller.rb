@@ -12,23 +12,7 @@ class DatasetsController < ApplicationController
 
   protect_from_forgery except: [:cancel_box_upload, :validate_change2published]
   skip_before_filter :verify_authenticity_token, :only => :validate_change2published
-
-  load_resource :find_by => :key
-  authorize_resource
-  skip_load_and_authorize_resource :only => :download_endNote_XML
-  skip_load_and_authorize_resource :only => :download_plaintext_citation
-  skip_load_and_authorize_resource :only => :download_BibTeX
-  skip_load_and_authorize_resource :only => :download_RIS
-  skip_load_and_authorize_resource :only => :stream_file
-  skip_load_and_authorize_resource :only => :show_agreement
-  skip_load_and_authorize_resource :only => :review_deposit_agreement
-  skip_load_and_authorize_resource :only => :datacite_record
-  skip_load_and_authorize_resource :only => :download_link
-  skip_load_and_authorize_resource :only => :pre_deposit
-  skip_load_and_authorize_resource :only => :confirmation_message
-  skip_load_and_authorize_resource :only => :validate_change2published
-
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :request_review, :reserve_doi, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message, :get_new_token, :send_to_medusa]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :download_link, :download_endNote_XML, :download_plaintext_citation, :download_BibTeX, :download_RIS, :publish, :zip_and_download_selected, :request_review, :reserve_doi, :cancel_box_upload, :citation_text, :changelog, :serialization, :download_metrics, :confirmation_message, :get_new_token, :send_to_medusa, :validate_change2published, :update_permissions, :add_review_request]
 
   @@num_box_ingest_deamons = 10
 
@@ -609,11 +593,11 @@ class DatasetsController < ApplicationController
   # GET /datasets/1.json
   def show
 
+    authorize! :view, @dataset
+
     if params.has_key?(:selected_files)
       zip_and_download_selected
-    end
-
-    if params.has_key?(:suppression_action)
+    elsif params.has_key?(:suppression_action)
       case params[:suppression_action]
       when "temporarily_suppress_files"
         temporarily_suppress_files
@@ -633,9 +617,28 @@ class DatasetsController < ApplicationController
     end
 
     @completion_check = Dataset.completion_check(@dataset, current_user)
+    @review_request = ReviewRequest.new(dataset_key: @dataset.key, requested_at: Time.now)
 
     set_file_mode
 
+  end
+
+  def update_permissions
+
+    #Rails.logger.warn params
+    authorize! :manage, @dataset
+    if params.has_key?(:permission_action)
+      if params.has_key?(:can_read)
+        if params[:can_read].include?(Databank::IdentityGroup::NETWORK_CURATOR)
+          @dataset.update_attribute(:data_curation_network, true)
+        else
+          @dataset.update_attribute(:data_curation_network, false)
+        end
+      else
+        @dataset.update_attribute(:data_curation_network, false)
+      end
+    end
+    redirect_to "/datasets/#{@dataset.key}"
   end
 
   def cancel_box_upload
@@ -732,6 +735,7 @@ class DatasetsController < ApplicationController
 
   # GET /datasets/new
   def new
+    authorize! :create, Dataset
     @dataset = Dataset.new
     @dataset.publication_state = Databank::PublicationState::DRAFT
     @dataset.creators.build
@@ -742,10 +746,14 @@ class DatasetsController < ApplicationController
 
   # GET /datasets/1/edit
   def edit
+    if @dataset.org_creators && @dataset.org_creators == true
+      @dataset.contributors.build unless @dataset.contributors.count > 0
+    end
     @dataset.creators.build unless @dataset.creators.count > 0
     @dataset.funders.build unless @dataset.funders.count > 0
     @dataset.related_materials.build unless @dataset.related_materials.count > 0
     @completion_check = Dataset.completion_check(@dataset, current_user)
+    @dataset.org_creators = @dataset.org_creators || false
     #set_license(@dataset)
     @publish_modal_msg = Dataset.publish_modal_msg(@dataset)
     if @dataset.has_deck_content
@@ -769,10 +777,12 @@ class DatasetsController < ApplicationController
     @license_info_arr = LICENSE_INFO_ARR
 
     @dataset.subject = Databank::Subject::NONE unless @dataset.subject
+    authorize! :edit, @dataset
 
   end
 
   def get_new_token
+    authorize! :edit, @dataset
     @token = @dataset.new_token
     render json: {token: @token.identifier, expires: @token.expires}
   end
@@ -795,6 +805,8 @@ class DatasetsController < ApplicationController
 
     @dataset = Dataset.new(dataset_params)
 
+    authorize! :edit, @dataset
+
     set_file_mode
 
     respond_to do |format|
@@ -808,18 +820,43 @@ class DatasetsController < ApplicationController
     end
 
 
+
   end
 
   # PATCH/PUT /datasets/1
   # PATCH/PUT /datasets/1.json
   def update
 
+    authorize! :edit, @dataset
+
     old_publication_state = @dataset.publication_state
+
+    old_creator_state = @dataset.org_creators || false
+
+    Rails.logger.warn dataset_params
+
     @dataset.release_date ||= Date.current
 
     respond_to do |format|
 
       if @dataset.update(dataset_params)
+
+        if dataset_params[:org_creators] == 'true' && old_creator_state == false
+
+          # convert individual creators to additional contacts (contributors)
+          @dataset.ind_creators_to_contributors
+          params['context'] = 'continue_edit'
+
+        elsif dataset_params[:org_creators] == 'false' && old_creator_state == true
+
+          # delete all institutional creators
+          @dataset.institutional_creators.delete_all
+
+          # convert all additional contacts (contributors) to individual authors
+          @dataset.contributors_to_ind_creators
+          params['context'] = 'continue_edit'
+
+        end
 
         if params.has_key?('context') && params['context'] == 'exit'
 
@@ -868,11 +905,14 @@ class DatasetsController < ApplicationController
               format.json {render json: @dataset.errors, status: :unprocessable_entity}
             end
 
-
           else #this else means completion_check was not ok within publish context
-            # Rails.logger.warn Dataset.completion_check(@dataset, current_user)
+            Rails.logger.warn Dataset.completion_check(@dataset, current_user)
             raise "Error: Cannot update published dataset with incomplete information."
           end
+
+        elsif params.has_key?('context') && params['context'] == 'continue_edit'
+          format.html {redirect_to edit_dataset_path(@dataset)}
+          format.json {render :edit, status: :ok, location: edit_dataset_path(@dataset)}
 
         else #this else means context was not set to exit or publish - this is the normal draft update
           format.html {redirect_to dataset_path(@dataset.key)}
@@ -890,9 +930,7 @@ class DatasetsController < ApplicationController
 
   def validate_change2published
 
-    set_dataset
-
-    raise "dataset not found" unless @dataset
+    authorize! :edit, @dataset
 
     # Rails.logger.warn params.to_yaml
 
@@ -953,19 +991,42 @@ class DatasetsController < ApplicationController
 
         params[:dataset][:creators_attributes].each do |creator_params|
           creator_p = creator_params[1]
-          #Rails.logger.warn creator_p
+          Rails.logger.warn "creator_p: "
+          Rails.logger.warn creator_p
 
           temporary_creator = nil
 
           # Rails.logger.warn "inside create temporary creator"
           # Rails.logger.warn "creator_p has a family name key? #{creator_p.has_key?(:family_name)}"
-          if creator_p.has_key?(:family_name)
-            temporary_creator = Creator.create(dataset_id: proposed_dataset.id, family_name: creator_p[:family_name])
+          #
+          Rails.logger.warn "creator_p has type of key: #{creator_p.has_key?(:type_of)}"
+          if creator_p.has_key?(:type_of)
 
+            #Rails.logger.warn("creator_p type_of: #{creator_p[:type_of]}")
+
+            if creator_p[:type_of] == Databank::CreatorType::PERSON.to_s &&
+                creator_p.has_key?(:family_name) && creator_p.has_key?(:given_name) &&
+                creator_p[:family_name] != '' && creator_p[:given_name] != ''
+              temporary_creator = Creator.create(dataset_id: proposed_dataset.id,
+                                                 type_of: Databank::CreatorType::PERSON,
+                                                 family_name: creator_p[:family_name],
+                                                 given_name: creator_p[:given_name])
+
+
+            elsif creator_p[:type_of] == Databank::CreatorType::INSTITUTION.to_s &&
+                creator_p.has_key?(:institution_name) && creator_p[:institution_name] != ''
+              temporary_creator = Creator.create(dataset_id: proposed_dataset.id,
+                                                 type_of: Databank::CreatorType::INSTITUTION,
+                                                 institution_name: creator_p[:institution_name])
+            else
+              Rails.logger.warn("invalid creator record: #{creator.to_yaml}")
+              respond_to do |format|
+                format.html {render json: {"message": "invalid creator record found"}} and return
+                format.json {render json: {"message": "invalid creator record found"}, status: :unprocessable_entity} and return
+              end
+            end
           end
-          if creator_p.has_key?(:given_name)
-            temporary_creator.given_name = creator_p[:given_name]
-          end
+
           if creator_p.has_key?(:email)
             temporary_creator.email = creator_p[:email]
           end
@@ -974,6 +1035,7 @@ class DatasetsController < ApplicationController
           end
 
           temporary_creator.save
+          #Rails.logger.warn("temporary_creator: #{temporary_creator.to_yaml}")
           proposed_dataset.creators.push(temporary_creator)
         end
 
@@ -1003,6 +1065,8 @@ class DatasetsController < ApplicationController
   # DELETE /datasets/1.json
   def destroy
 
+    authorize! :edit, @dataset
+
     @dataset.destroy
     respond_to do |format|
       if current_user
@@ -1021,6 +1085,9 @@ class DatasetsController < ApplicationController
   end
 
   def suppress_changelog
+
+    authorize! :manage, @dataset
+
     @dataset.suppress_changelog = true
     respond_to do |format|
       if @dataset.save
@@ -1031,9 +1098,13 @@ class DatasetsController < ApplicationController
         format.json {render json: @dataset.errors, status: :unprocessable_entity}
       end
     end
+
   end
 
   def unsuppress_changelog
+
+    authorize! :manage, @dataset
+
     @dataset.suppress_changelog = false
     respond_to do |format|
       if @dataset.save
@@ -1044,9 +1115,12 @@ class DatasetsController < ApplicationController
         format.json {render json: @dataset.errors, status: :unprocessable_entity}
       end
     end
+
   end
 
   def temporarily_suppress_files
+
+    authorize! :manage, @dataset
 
     @dataset.hold_state = Databank::PublicationState::TempSuppress::FILE
 
@@ -1063,6 +1137,8 @@ class DatasetsController < ApplicationController
   end
 
   def temporarily_suppress_metadata
+
+    authorize! :manage, @dataset
 
     @dataset.hold_state = Databank::PublicationState::TempSuppress::METADATA
 
@@ -1087,7 +1163,10 @@ class DatasetsController < ApplicationController
   end
 
   def unsuppress
-    @dataset.hold_state = 'none'
+
+    authorize! :manage, @dataset
+
+    @dataset.hold_state = Databank::PublicationState::TempSuppress::NONE
 
     respond_to do |format|
 
@@ -1110,6 +1189,8 @@ class DatasetsController < ApplicationController
 
   def permanently_suppress_files
 
+    authorize! :manage, @dataset
+
     @dataset.publication_state = Databank::PublicationState::PermSuppress::FILE
     @dataset.hold_state = Databank::PublicationState::PermSuppress::FILE
     @dataset.tombstone_date = Date.current
@@ -1129,6 +1210,8 @@ class DatasetsController < ApplicationController
   end
 
   def permanently_suppress_metadata
+
+    authorize! :manage, @dataset
 
     @dataset.hold_state = Databank::PublicationState::PermSuppress::METADATA
     @dataset.publication_state = Databank::PublicationState::PermSuppress::METADATA
@@ -1207,6 +1290,8 @@ class DatasetsController < ApplicationController
       @dataset.identifier = "#{shoulder}#{@dataset.key}_V1"
     end
 
+    ReviewRequest.create(dataset_key: @dataset.key, requested_at: Time.now)
+
     help_request = DatabankMailer.contact_help(params)
     help_request.deliver_now
 
@@ -1227,6 +1312,8 @@ class DatasetsController < ApplicationController
   # publishing in IDB means interacting with DataCite and Medusa
   def publish
 
+    authorize! :edit, @dataset
+
     publish_attempt_result = @dataset.publish(current_user)
 
     respond_to do |format|
@@ -1245,7 +1332,10 @@ class DatasetsController < ApplicationController
   end
 
   def send_to_medusa
-    Rails.logger.warn(params.to_yaml)
+
+    authorize! :edit, @dataset
+
+    #Rails.logger.warn(params.to_yaml)
     MedusaIngest.send_dataset_to_medusa(@dataset)
     render json: {status: :ok} and return
   end
@@ -1560,7 +1650,6 @@ class DatasetsController < ApplicationController
     @datasets = Dataset.all
   end
 
-
   private
 
   # Use callbacks to share common setup or constraints between actions.
@@ -1596,7 +1685,13 @@ class DatasetsController < ApplicationController
   # def dataset_params
 
   def dataset_params
-    params.require(:dataset).permit(:medusa_dataset_dir, :title, :identifier, :publisher, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :dataset_version, :release_date, :is_test, :is_import, :audit_id, :removed_private, :have_permission, :agree, :web_ids, :version_comment, :subject, datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destroy, :_update, :audit_id], creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id], funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update, :audit_id], related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id], deckfiles_attributes: [:disposition, :remove, :path, :dataset_id, :id])
+    params.require(:dataset).permit(:medusa_dataset_dir, :title, :identifier, :publisher, :license, :key, :description, :keywords, :depositor_email, :depositor_name, :corresponding_creator_name, :corresponding_creator_email, :embargo, :complete, :search, :dataset_version, :release_date, :is_test, :is_import, :audit_id, :removed_private, :have_permission, :agree, :web_ids, :org_creators, :version_comment, :subject,
+                                    datafiles_attributes: [:datafile, :description, :attachment, :dataset_id, :id, :_destroy, :_update, :audit_id],
+                                    creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id],
+                                    contributors_attributes: [:dataset_id, :family_name, :given_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id],
+                                    funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update, :audit_id],
+                                    related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id],
+                                    deckfiles_attributes: [:disposition, :remove, :path, :dataset_id, :id])
   end
 
 

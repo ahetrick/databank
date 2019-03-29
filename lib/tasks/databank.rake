@@ -137,7 +137,7 @@ namespace :databank do
 
   desc "Clear users"
   task clear_users: :environment do
-    User.all.each do |user|
+    User::User.all.each do |user|
       user.destroy
     end
     Identity.all.each do |identity|
@@ -166,7 +166,7 @@ namespace :databank do
 
     # create rspec test user -- not just identity
     auth = OmniAuth.config.mock_auth[:identity]
-    user = User.create_with_omniauth(auth)
+    user = User::Identity.create_with_omniauth(auth)
     user.save!
 
   end

@@ -34,3 +34,22 @@ else
 
 end
 
+# create identity invitees for admins
+IDB_CONFIG[:admin_identities_list].split(", ").each do |email|
+
+  # weird logic to accomdate intitilzation/migration order for deploy
+
+  if ActiveRecord::Base.connection.table_exists? 'invitees'
+
+    invitee = Invitee.find_by_email(email);
+    if invitee && invitee.has_attribute?(:expires_at)
+      invitee.update_attribute(:expires_at, Time.now + 1.years)
+    elsif ActiveRecord::Base.connection.column_exists?(:invitees, :expires_at)
+      Invitee.create!(email:email, expires_at: Time.now + 1.years, group: Databank::IdentityGroup::ADMIN, role: Databank::UserRole::ADMIN)
+    end
+  end
+
+
+end
+
+

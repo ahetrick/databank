@@ -52,16 +52,19 @@ class Dataset < ActiveRecord::Base
 
   has_many :datafiles, dependent: :destroy
   has_many :creators, dependent: :destroy
+  has_many :contributors, dependent: :destroy
   has_many :funders, dependent: :destroy
   has_many :related_materials, dependent: :destroy
   has_many :deckfiles, dependent: :destroy
   has_many :system_files, dependent: :destroy
+  has_many :user_abilities, dependent: :destroy
 
   accepts_nested_attributes_for :datafiles, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :deckfiles, reject_if: :all_blank, allow_destroy: true
-  accepts_nested_attributes_for :creators, reject_if: proc { |attributes| ((attributes['family_name'].blank?) && (attributes['given_name'].blank?)) }, allow_destroy: true
-  accepts_nested_attributes_for :funders, reject_if: proc { |attributes| (attributes['name'].blank?) }, allow_destroy: true
-  accepts_nested_attributes_for :related_materials, reject_if: proc { |attributes| ((attributes['link'].blank?) && (attributes['citation'].blank?)) }, allow_destroy: true
+  accepts_nested_attributes_for :creators, reject_if: proc {|attributes| ((attributes['family_name'].blank?) && (attributes['given_name'].blank?) && (attributes['institution_name'].blank?))}, allow_destroy: true
+  accepts_nested_attributes_for :contributors, reject_if: proc {|attributes| ((attributes['family_name'].blank?) && (attributes['given_name'].blank?) && (attributes['institution_name'].blank?))}, allow_destroy: true
+  accepts_nested_attributes_for :funders, reject_if: proc {|attributes| (attributes['name'].blank?)}, allow_destroy: true
+  accepts_nested_attributes_for :related_materials, reject_if: proc {|attributes| ((attributes['link'].blank?) && (attributes['citation'].blank?))}, allow_destroy: true
 
   before_create :set_key
   after_create :store_agreement
@@ -123,10 +126,10 @@ class Dataset < ActiveRecord::Base
         begin
           notification = DatabankMailer.confirm_deposit(key)
           notification.deliver_now
-        rescue Exception::StandardError => err
+        rescue StandardError => error
           Rails.logger.warn "Confirmation email not sent for #{key}"
-          Rails.logger.warn err.to_yaml
-          notification = DatabankMailer.confirmation_not_sent(key, err)
+          Rails.logger.warn error.message
+          notification = DatabankMailer.confirmation_not_sent(key, error)
           notification.deliver_now
         end
       end
@@ -135,7 +138,7 @@ class Dataset < ActiveRecord::Base
       {status: :error_occurred, error_text: "Error in publishing dataset has been logged for review by the Research Data Service."}
     end
 
-    end
+  end
 
   def version_group
 
@@ -149,7 +152,7 @@ class Dataset < ActiveRecord::Base
     self_version_entry = self.related_version_entry_hash
     self_version_entry[:selected] = true
 
-    version_group_response = {:status=> 'ok', :entries=> [self_version_entry]}
+    version_group_response = {:status => 'ok', :entries => [self_version_entry]}
 
     # follow daisy chain of previous versions
     current_dataset = self
@@ -203,9 +206,20 @@ class Dataset < ActiveRecord::Base
 
     end
 
-    (version_group_response[:entries].sort_by! { |k| k[:version] }).reverse!
+    (version_group_response[:entries].sort_by! {|k| k[:version]}).reverse!
     version_group_response
 
+  end
+
+  def metadata_public?
+    [Databank::PublicationState::RELEASED,
+     Databank::PublicationState::Embargo::FILE,
+     Databank::PublicationState::TempSuppress::FILE,
+     Databank::PublicationState::PermSuppress::FILE].include?(publication_state) && hold_state == Databank::PublicationState::TempSuppress::NONE
+  end
+
+  def files_public?
+    Databank::PublicationState::RELEASED == publication_state && hold_state == Databank::PublicationState::TempSuppress::NONE
   end
 
   def related_version_entry_hash
@@ -341,7 +355,7 @@ class Dataset < ActiveRecord::Base
 
       dataset.creators.each do |creator|
         if !creator.email || creator.email == ''
-          validation_error_messages << "an email address for #{creator.given_name} #{creator.family_name}"
+          validation_error_messages << "an email address for all creators"
         elsif creator.email.include?('@illinois.edu')
           netid = creator.email.split('@').first
 
@@ -360,15 +374,22 @@ class Dataset < ActiveRecord::Base
       end
 
       dataset.creators.each do |creator|
-        if !creator.given_name || creator.given_name == ''
+        if creator.type_of == Databank::CreatorType::PERSON && (!creator.given_name || creator.given_name == '')
           validation_error_messages << "at least one given name for author(s)"
           break
         end
       end
 
       dataset.creators.each do |creator|
-        if !creator.given_name || creator.given_name == ''
+        if creator.type_of == Databank::CreatorType::PERSON && !creator.given_name || creator.given_name == ''
           validation_error_messages << "a family name for author(s)"
+          break
+        end
+      end
+
+      dataset.creators.each do |creator|
+        if creator.type_of == Databank::CreatorType::INSTITUTION && !creator.institution_name || creator.institution_name == ''
+          validation_error_messages << "a name for institution(s)"
           break
         end
       end
@@ -413,7 +434,7 @@ class Dataset < ActiveRecord::Base
           datafilesArr << datafile.bytestream_name
         end
 
-        firstDup = datafilesArr.detect { |e| datafilesArr.count(e) > 1 }
+        firstDup = datafilesArr.detect {|e| datafilesArr.count(e) > 1}
 
         if firstDup
           validation_error_messages << "no duplicate filenames (#{firstDup})"
@@ -482,37 +503,58 @@ class Dataset < ActiveRecord::Base
         response = 'ok'
       end
     ensure
-      return response
+      return response || 'error'
     end
 
   end
 
+  def individual_creators
+    self.creators.where(type_of: Databank::CreatorType::PERSON)
+  end
+
+  def institutional_creators
+    self.creators.where(type_of: Databank::CreatorType::INSTITUTION)
+  end
+
   def creator_list
-    return_list = ""
-
-    self.creators.each_with_index do |creator, i|
-
-      return_list << "; " unless i == 0
-
-      case creator.type_of
-        when Creator::PERSON
-          return_list << creator.family_name
-          return_list << ", "
-          return_list << creator.given_name
-        when Creator::INSTITUTION
-          return_list << creator.institution_name
+    if self.creators.count == 0
+      return "[Creator List]"
+    elsif self.creators.count == 1
+      creator = self.creators.first
+      if creator.institution_name && creator.institution_name != '' || creator.family_name && creator.family_name != ''
+        return creator.list_name
       end
-
+    else
+      return_list = ""
+      self.creators.each_with_index do |creator, i|
+        return_list << "; " unless i == 0
+        return_list << creator.list_name
+      end
+      return return_list
     end
-    return_list
+  end
 
+  def contributor_list
+    if self.contributors.count == 0
+      return nil
+    elsif self.contributors.count == 1
+      contributor = self.contributors.first
+      return contributor.list_name
+    else
+      return_list = ""
+      self.contributors.each_with_index do |contributor, i|
+        return_list << ", " unless i == 0
+        return_list << contributor.list_name
+      end
+      return return_list
+    end
   end
 
   def license_name
     license_name = "License not selected"
 
     LICENSE_INFO_ARR.each do |license_info|
-      if (license_info.code == self.license) && (self.license !='license.txt')
+      if (license_info.code == self.license) && (self.license != 'license.txt')
         license_name = license_info.name
       elsif self.license == 'license.txt'
         license_name = 'See license.txt file in dataset.'
@@ -623,7 +665,12 @@ class Dataset < ActiveRecord::Base
 
     self.creators.each do |creator|
       if creator.is_contact?
-        self.corresponding_creator_name = "#{creator.given_name} #{creator.family_name}"
+        if creator.type_of == Databank::CreatorType::PERSON
+          self.corresponding_creator_name = "#{creator.given_name} #{creator.family_name}"
+
+        elsif creator.type_of == Databank::CreatorType::INSTITUTION
+          self.corresponding_creator_name = creator.institution_name
+        end
         self.corresponding_creator_email = creator.email
       end
     end
@@ -696,7 +743,7 @@ class Dataset < ActiveRecord::Base
 
       datacite_arr.each do |relationship|
 
-        if ['IsPreviousVersionOf','IsNewVersionOf'].exclude?(relationship)
+        if ['IsPreviousVersionOf', 'IsNewVersionOf'].exclude?(relationship)
           external_relationship_count = external_relationship_count + 1
         end
 
@@ -719,7 +766,7 @@ class Dataset < ActiveRecord::Base
   end
 
   def sorted_datafiles
-    valid_datafiles.sort_by { |obj| obj.bytestream_name }
+    valid_datafiles.sort_by {|obj| obj.bytestream_name}
   end
 
   def complete_datafiles
@@ -803,9 +850,9 @@ class Dataset < ActiveRecord::Base
     agent_text << "  [x] Yes\n\n"
     agent_text << "  [ ] No\n\n"
     agent_text << "  Have you removed any private, confidential, or other legally protected information from the dataset?\n"
-    agent_text << "  [#{self.removed_private=='yes' ? 'x' : ' ' }] Yes\n"
-    agent_text << "  [#{self.removed_private=='no' ? 'x' : ' ' }] No\n"
-    agent_text << "  [#{self.removed_private=='na' ? 'x' : ' ' }] N/A\n\n"
+    agent_text << "  [#{self.removed_private == 'yes' ? 'x' : ' ' }] Yes\n"
+    agent_text << "  [#{self.removed_private == 'no' ? 'x' : ' ' }] No\n"
+    agent_text << "  [#{self.removed_private == 'na' ? 'x' : ' ' }] N/A\n\n"
     agent_text << "  Do you agree to the Illinois Data Bank Deposit Agreement in its entirety?\n"
     agent_text << "  [x] Yes\n\n"
     agent_text << "  [ ] No\n\n"
@@ -850,11 +897,11 @@ class Dataset < ActiveRecord::Base
     # if we get here, there was no change in changelog from draft to another state
 
     if self.publication_state == Databank::PublicationState::DRAFT
-      return DateTime.new(1,1,1)
-    elsif self.release_date && self.release_date > DateTime.new(1,1,1)
+      return DateTime.new(1, 1, 1)
+    elsif self.release_date && self.release_date > DateTime.new(1, 1, 1)
       return self.release_datetime
     else
-      return DateTime.new(1,1,1)
+      return DateTime.new(1, 1, 1)
     end
 
   end
@@ -868,21 +915,21 @@ class Dataset < ActiveRecord::Base
 
     begin
 
-    changes.each do |change|
+      changes.each do |change|
 
-      if (change.audited_changes.has_key?('medusa_uuid')) || (change.audited_changes.has_key?('binary_name')) || (change.audited_changes.has_key?('medusa_dataset_dir'))
-        medusaChangesArr << change.id
-      end
-
-      if (change.audited_changes.keys.include?("publication_state"))
-        
-        pub_change = (change.audited_changes)["publication_state"]
-        if pub_change.class == Array && pub_change[0] == Databank::PublicationState::DRAFT
-          publication = change.created_at
+        if (change.audited_changes.has_key?('medusa_uuid')) || (change.audited_changes.has_key?('binary_name')) || (change.audited_changes.has_key?('medusa_dataset_dir'))
           medusaChangesArr << change.id
         end
+
+        if (change.audited_changes.keys.include?("publication_state"))
+
+          pub_change = (change.audited_changes)["publication_state"]
+          if pub_change.class == Array && pub_change[0] == Databank::PublicationState::DRAFT
+            publication = change.created_at
+            medusaChangesArr << change.id
+          end
+        end
       end
-    end
 
     rescue StandardError => ex
       raise ex unless ex.message.include?('BinaryUploader')
@@ -910,7 +957,7 @@ class Dataset < ActiveRecord::Base
         agent = nil
         user = nil
         if change.user_id && change.user_id != ''
-          user = User.find(Integer(change.user_id))
+          user = User::Shibboleth.find(Integer(change.user_id))
         end
         if user
           agent = user.serializable_hash
@@ -1026,7 +1073,7 @@ class Dataset < ActiveRecord::Base
       license_link = nil
 
       LICENSE_INFO_ARR.each do |license_info|
-        if (license_info.code == self.license) && (self.license !='license.txt')
+        if (license_info.code == self.license) && (self.license != 'license.txt')
           license_link = license_info.external_info_url
         end
       end
@@ -1090,14 +1137,14 @@ class Dataset < ActiveRecord::Base
     end
 
     case self.license
-      when "CC01"
-        content = content + "[ License: ] CC0 - https://creativecommons.org/publicdomain/zero/1.0/\n"
-      when "CCBY4"
-        content = content + "[ License: ] CC BY - http://creativecommons.org/licenses/by/4.0/\n"
-      when "license.txt"
-        content = content + "[ License: ] Custom - See license.txt file in dataset.\n"
-      else
-        content = content + "[ License: ] Not found.\n"
+    when "CC01"
+      content = content + "[ License: ] CC0 - https://creativecommons.org/publicdomain/zero/1.0/\n"
+    when "CCBY4"
+      content = content + "[ License: ] CC BY - http://creativecommons.org/licenses/by/4.0/\n"
+    when "license.txt"
+      content = content + "[ License: ] Custom - See license.txt file in dataset.\n"
+    else
+      content = content + "[ License: ] Not found.\n"
     end
 
     content = content + "[ Corresponding Creator: ] #{self.corresponding_creator_name}\n"
@@ -1118,7 +1165,7 @@ class Dataset < ActiveRecord::Base
     if self.related_materials.count > 0
 
       self.related_materials.each do |material|
-        if material.uri && (material.relationship_arr.include?(Databank::Relationship::PREVIOUS_VERSION_OF) || material.relationship_arr.include?(Databank::Relationship::NEW_VERSION_OF) )
+        if material.uri && (material.relationship_arr.include?(Databank::Relationship::PREVIOUS_VERSION_OF) || material.relationship_arr.include?(Databank::Relationship::NEW_VERSION_OF))
           # handled in versions section
         elsif material.citation || material.link
           content = content + "[ Related"
@@ -1132,7 +1179,7 @@ class Dataset < ActiveRecord::Base
             content = content + "#{material.citation}"
           end
 
-          if material.citation && material.citation !='' && material.link && material.link !=''
+          if material.citation && material.citation != '' && material.link && material.link != ''
             content = content + ", "
           end
 
@@ -1143,7 +1190,7 @@ class Dataset < ActiveRecord::Base
       end
     end
 
-    content = content +  "\n[ #{'File'.pluralize(self.datafiles.count)} (#{self.datafiles.count}): ] \n"
+    content = content + "\n[ #{'File'.pluralize(self.datafiles.count)} (#{self.datafiles.count}): ] \n"
 
     self.complete_datafiles.each do |datafile|
       content = content + ". #{datafile.bytestream_name}, #{ApplicationController.helpers.number_to_human_size(datafile.bytestream_size)}\n"
@@ -1153,13 +1200,48 @@ class Dataset < ActiveRecord::Base
 
   end
 
+  def user_abilites
+    DatasetUserAbility.where(dataset_key: self.key)
+  end
+
+  def ind_creators_to_contributors
+    self.individual_creators.each do |creator|
+      Contributor.create(dataset_id: creator.dataset_id,
+                         given_name: creator.given_name,
+                         family_name: creator.family_name,
+                         email: creator.email,
+                         identifier: creator.identifier,
+                         identifier_scheme: creator.identifier_scheme,
+                         row_order: creator.row_order,
+                         row_position: creator.row_position,
+                         type_of: Databank::CreatorType::PERSON)
+      creator.destroy
+    end
+  end
+
+  def contributors_to_ind_creators
+    self.contributors.each do |contributor|
+      Creator.create(dataset_id: contributor.dataset_id,
+                         given_name: contributor.given_name,
+                         family_name: contributor.family_name,
+                         email: contributor.email,
+                         identifier: contributor.identifier,
+                         identifier_scheme: contributor.identifier_scheme,
+                         row_order: contributor.row_order,
+                         row_position: contributor.row_position,
+                         type_of: Databank::CreatorType::PERSON)
+      contributor.destroy
+    end
+
+  end
+
 
   def self.make_anvl(metadata)
     anvl = ""
     metadata_count = metadata.count
     metadata.each_with_index do |(n, v), i|
       anvl << Dataset.anvl_escape(n.to_s) << ": " << Dataset.anvl_escape(v.to_s)
-      if ((i+1) < metadata_count)
+      if ((i + 1) < metadata_count)
         anvl << "\n"
       end
       anvl.force_encoding("UTF-8")
@@ -1169,6 +1251,14 @@ class Dataset < ActiveRecord::Base
 
   def self.anvl_escape(s)
     URI.escape(s, /[%:\n\r]/)
+  end
+
+  def review_requests
+    ReviewRequest.where(dataset_key: self.key)
+  end
+
+  def in_pre_publication_review
+    publication_state == Databank::PublicationState::DRAFT && ( (identifier && identifier != '') || review_requests.count > 0)
   end
 
   private

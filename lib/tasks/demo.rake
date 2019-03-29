@@ -40,7 +40,7 @@ namespace :demo do
       creatorsArr.each do |demo_creator|
         creator = Creator.new(demo_creator)
         creator.dataset_id = dataset.id
-        creator.type_of = Creator::PERSON
+        creator.type_of = Databank::CreatorType::PERSON
         creator.save
       end
 

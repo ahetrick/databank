@@ -127,11 +127,11 @@
                   .facet
                     -if params.has_key?('depositors') && params['depositors'].include?(row.value)
                       %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
-                        = User.user_info_string(row.value)
+                        = User::Shibboleth.user_info_string("#{row.value}@illinois.edu")
                         ="(#{row.count})"
                     -else
                       %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
-                        = User.user_info_string(row.value)
+                        = User::Shibboleth.user_info_string("#{row.value}@illinois.edu")
                         ="(#{row.count})"
 
 

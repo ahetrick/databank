@@ -1,29 +1,61 @@
 class Creator < ActiveRecord::Base
   include ActiveModel::Serialization
   belongs_to :dataset
+
+
+  validate :has_name
+
   audited except: [:row_order, :type_of, :identifier_scheme, :dataset_id, :institution_name], associated_with: :dataset
 
   default_scope { order (:row_position) }
 
-  PERSON = 0
-  INSTITUTION = 1
-
-  enum type: [:person, :institution]
-
   def as_json(options={})
-    super(:only => [:family_name, :given_name, :identifier, :is_contact, :row_position, :created_at, :updated_at])
+    if self.institution_name && self.institution_name != ''
+      super(:only => [:institution_name, :identifier, :is_contact, :row_position, :created_at, :updated_at])
+    else
+      super(:only => [:family_name, :given_name, :identifier, :is_contact, :row_position, :created_at, :updated_at])
+    end
+
   end
 
   def display_name
 
-    return_text = "placeholder name"
-
-    if self.type_of == :institution
-      return_text = "#{self.institution_name}"
+    if self.institution_name && self.institution_name != ''
+       return_text = "#{self.institution_name}"
+    elsif self.given_name && self.given_name != '' && self.family_name && self.family_name != ''
+        return_text = "#{self.given_name} #{self.family_name}"
     else
-      return_text = "#{self.given_name} #{self.family_name}"
+      raise("institution_name: #{institution_name}, given_name: #{given_name}, family_name: #{family_name}")
+      #return_text  = 'University of Illinois at Urbana-Champaign'
     end
 
+    return_text
+
   end
+
+  def list_name
+
+    if self.institution_name && self.institution_name != ''
+      return_text = "#{self.institution_name}"
+    elsif self.family_name && self.family_name != ''
+      return_text = "#{self.family_name}"
+      if self.given_name && self.given_name != ''
+        return_text << ", #{self.given_name}"
+      end
+    elsif self.given_name && self.given_name != ''
+      return_text << "#{self.given_name}"
+    else
+      raise("institution_name: #{institution_name}, given_name: #{given_name}, family_name: #{family_name}")
+      #return_text  = 'University of Illinois at Urbana-Champaign'
+    end
+    return_text
+  end
+
+  def has_name
+    unless (self.institution_name && self.institution_name != '') || (self.given_name && self.given_name != '' && self.family_name && self.family_name != '')
+      errors.add(:base, "Creator must have a valid name.")
+    end
+  end
+
 
 end

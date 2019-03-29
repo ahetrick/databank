@@ -29,28 +29,5 @@
                 =current_user.name
             %li= link_to 'Log out', :logout
           - else
-            - if IDB_CONFIG.has_key?(:local_mode) && IDB_CONFIG[:local_mode]
-              %li.dropdown
-                %a.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :href => "#", :role => "button"}
-                  Log In
-                  %span.caret
-                %ul.dropdown-menu.login-form
-                  = form_tag '/auth/identity/callback' do
-                    %li
-                      .form-group
-                        = label_tag :auth_key, 'Email', class: 'control-label'
-                        %br/
-                        = text_field_tag :auth_key
-                    %li
-                      .form-group
-                        = label_tag :password, 'Password', class: 'control-label'
-                        %br/
-                        = password_field_tag :password
-                    %li
-                      .actions
-                        = submit_tag 'Log In'
-                        %br/
-                        = link_to 'Create Account', '/auth/identity/register'
-            - else
-              %li= link_to 'Log in with NetID', :login
+            %li= link_to 'Log in with NetID', :login
     / /.nav-collapse

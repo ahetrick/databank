@@ -22,4 +22,8 @@ class WelcomeController < ApplicationController
       render :json => {'isValid': false, 'error': 'no token provided'}
     end
   end
+
+  def on_failed_registration
+  end
+
 end

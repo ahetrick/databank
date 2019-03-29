@@ -12,6 +12,19 @@
         DataCite DOI: #{@dataset.identifier}
       %p
         Release date: #{@dataset.release_date}
+
+      -if @dataset.review_requests.count > 0
+        %p
+          Pre-publication revew request
+          = succeed ':' do
+            ="date".pluralize(@dataset.review_requests.count)
+          -@dataset.review_requests.each_with_index do |request, i|
+            -if i < (@dataset.review_requests.count - 1)
+              = succeed ', ' do
+                =request.requested_at.strftime("%Y-%m-%d")
+            -else
+              =request.requested_at.strftime("%Y-%m-%d")
+
       %p
         Depositor: #{@dataset.depositor_name}
       %p
@@ -19,10 +32,11 @@
       %p
         Deposit agreement link:
         %a{:href => "#{IDB_CONFIG[:root_url_text]}/datasets/#{@dataset.key}/review_deposit_agreement"}
-          = IDB_CONFIG[:root_url_text]
-          \/datasets/#{@dataset.key}/review_deposit_agreement
+          ="#{IDB_CONFIG[:root_url_text]}/datasets/#{@dataset.key}/review_deposit_agreement"
     %p
-      A curator may contact you with questions about this dataset. Please contact us at
+      -if @dataset.review_requests.count == 0
+        A curator may contact you with questions about this dataset.
+      Please contact us at
       %a{:href => "mailto:databank@library.illinois.edu"} databank@library.illinois.edu
       with any questions or if you believe you have received this message in error.
     = render partial: "sigblock_html"

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181002154923) do
+ActiveRecord::Schema.define(version: 20190325203307) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,6 +51,21 @@ ActiveRecord::Schema.define(version: 20181002154923) do
   add_index "audits", ["created_at"], name: "index_audits_on_created_at", using: :btree
   add_index "audits", ["request_uuid"], name: "index_audits_on_request_uuid", using: :btree
   add_index "audits", ["user_id", "user_type"], name: "user_index", using: :btree
+
+  create_table "contributors", force: :cascade do |t|
+    t.integer  "dataset_id"
+    t.string   "family_name"
+    t.string   "given_name"
+    t.string   "institution_name"
+    t.string   "identifier"
+    t.integer  "type_of"
+    t.integer  "row_order"
+    t.string   "email"
+    t.integer  "row_position"
+    t.string   "identifier_scheme"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
 
   create_table "creators", force: :cascade do |t|
     t.integer  "dataset_id"
@@ -141,6 +156,8 @@ ActiveRecord::Schema.define(version: 20181002154923) do
     t.boolean  "suppress_changelog",          default: false
     t.text     "version_comment"
     t.string   "subject"
+    t.boolean  "org_creators",                default: false
+    t.boolean  "data_curation_network",       default: false,   null: false
   end
 
   add_index "datasets", ["key"], name: "index_datasets_on_key", unique: true, using: :btree
@@ -231,8 +248,14 @@ ActiveRecord::Schema.define(version: 20181002154923) do
     t.string   "name"
     t.string   "email"
     t.string   "password_digest"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+    t.string   "activation_digest"
+    t.boolean  "activated",         default: false
+    t.datetime "activated_at"
+    t.string   "reset_digest"
+    t.integer  "invitee_id"
+    t.datetime "reset_sent_at"
   end
 
   create_table "ingest_responses", force: :cascade do |t|
@@ -244,6 +267,15 @@ ActiveRecord::Schema.define(version: 20181002154923) do
     t.string   "uuid"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+  end
+
+  create_table "invitees", force: :cascade do |t|
+    t.string   "email"
+    t.string   "group"
+    t.string   "role"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "expires_at"
   end
 
   create_table "medusa_ingests", force: :cascade do |t|
@@ -303,6 +335,13 @@ ActiveRecord::Schema.define(version: 20181002154923) do
     t.datetime "updated_at",           null: false
   end
 
+  create_table "review_requests", force: :cascade do |t|
+    t.string   "dataset_key"
+    t.datetime "requested_at"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
   create_table "robots", force: :cascade do |t|
     t.string   "source"
     t.string   "address"
@@ -325,6 +364,15 @@ ActiveRecord::Schema.define(version: 20181002154923) do
     t.datetime "expires"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+  end
+
+  create_table "user_abilities", force: :cascade do |t|
+    t.integer  "dataset_id"
+    t.string   "user_name"
+    t.string   "user_email"
+    t.string   "ability"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|

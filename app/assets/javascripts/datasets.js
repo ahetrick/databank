@@ -173,21 +173,23 @@ ready = function () {
 
     $('#update-save-button').click(function () {
 
-        if ($(".invalid-input").length == 0) {
 
-            if ($(".progress-bar").length == 0) {
-
-                window.onbeforeunload = null;
-
-                $("[id^=edit_dataset]").submit();
-            } else {
-                alert("UPLOADS IN PROGRESS. Try again once uploads are complete.")
-            }
-
-        } else {
-            alert("Email address must be in a valid format.");
-            $(".invalid-input").first().focus();
+        if ($(".invalid-name").length > 0) {
+            alert("All names must be complete.");
+            $(".invalid-name > input").first().focus();
+            return
         }
+
+        if ($(".progress-bar").length == 0) {
+
+            window.onbeforeunload = null;
+
+            $("[id^=edit_dataset]").submit();
+        } else {
+            alert("UPLOADS IN PROGRESS. Try again once uploads are complete.")
+            return
+        }
+
     });
 
     $('#update-confirm').prop('disabled', true);
@@ -202,7 +204,7 @@ ready = function () {
 
     $('#save-exit-button').click(function () {
 
-        if ($(".invalid-input").length == 0) {
+        if ($(".invalid-email").length == 0) {
 
             if ($(".progress-bar").length == 0) {
 
@@ -215,7 +217,7 @@ ready = function () {
             }
         } else {
             alert("Email address must be in a valid format.");
-            $(".invalid-input").first().focus();
+            $(".invalid-email").first().focus();
         }
 
     });
@@ -694,33 +696,37 @@ function confirm_update() {
     // console.log($("[id^=edit_dataset]").serialize());
 
     // using patch because that method designation is in the form already
-    if ($(".invalid-input").length == 0) {
-
-        // console.log("inside valid input ok");
-
-        $('#validation-warning').empty();
-        $.ajax({
-            url: '/datasets/' + dataset_key + '/validate_change2published',
-            type: 'patch',
-            data: $("[id^=edit_dataset]").serialize(),
-            datatype: 'json',
-            success: function (data) {
-                console.log(data);
-
-                if (data.message == "ok") {
-                    reset_confirm_msg();
-                    $('#deposit').modal('show');
-                } else {
-                    $('#validation-warning').html('<div class="alert alert-alert">' + data.message + '</div>');
-                    $('#update-confirm').prop('disabled', true);
-                }
-
-            }
-        });
-    } else {
+    if ($(".invalid-email").length > 0) {
         alert("Email address must be in a valid format.");
-        $(".invalid-input").first().focus();
+        $(".invalid-email").first().focus();
+        return
     }
+    if ($(".invalid-name").length > 0) {
+        alert("All names must be complete.");
+        $(".invalid-name > input").first().focus();
+        return
+    }
+    // console.log("inside valid input ok");
+
+    $('#validation-warning').empty();
+    $.ajax({
+        url: '/datasets/' + dataset_key + '/validate_change2published',
+        type: 'patch',
+        data: $("[id^=edit_dataset]").serialize(),
+        datatype: 'json',
+        success: function (data) {
+            console.log(data);
+
+            if (data.message == "ok") {
+                reset_confirm_msg();
+                $('#deposit').modal('show');
+            } else {
+                $('#validation-warning').html('<div class="alert alert-alert">' + data.message + '</div>');
+                $('#update-confirm').prop('disabled', true);
+            }
+
+        }
+    });
 }
 
 /*function confirm_update(){
@@ -863,6 +869,16 @@ function handleKeywordKeyup() {
         $('#keyword-text').attr("placeholder", "[Semicolon separated list of keywords or phrases, e.g.: institutional repositories; file formats]")
     }
 
+}
+
+function setOrgCreators(dataset_id, new_value) {
+
+    if (window.confirm("Are you sure?")) {
+        window.onbeforeunload = null;
+        $('#dataset_org_creators').val(new_value);
+        window.onbeforeunload = null;
+        $('#edit_dataset_' + dataset_id).submit();
+    }
 }
 
 $(document).ready(ready);

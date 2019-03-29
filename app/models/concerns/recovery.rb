@@ -308,11 +308,11 @@ module Recovery
         agent_user = nil
 
         if agent && agent['email']
-          agent_user = User.find_by(email: agent['email'])
+          agent_user = User::Shibboleth.find_by(email: agent['email'])
 
           unless agent_user
 
-            agent_user = User.create(provider: agent['provider'],
+            agent_user = User::Shibboleth.create(provider: agent['provider'],
                                      uid: agent['uid'],
                                      name: agent['name'],
                                      role: agent['role'],
@@ -320,7 +320,7 @@ module Recovery
 
           end
         else
-          agent_user = User.create(provider: 'recovery',
+          agent_user = User::Shibboleth.create(provider: 'recovery',
                                    uid: 'recovery',
                                    name: 'recovery',
                                    role: 'admin',

@@ -43,6 +43,15 @@ namespace :fix do
     end
   end
 
+  desc 'remove invalid creators'
+  task :remove_invalid_creators => :environment do
+    Creator.all do |creator|
+      unless (creator.institution_name && creator.institution_name != '') || (creator.given_name && creator.given_name != '' && creator.family_name && creatorbun.family_name != '')
+        creator.destroy
+      end
+    end
+  end
+
   desc 'pretend some dev datasets never happened'
   task :fix_dev => :environment do
 
@@ -236,14 +245,26 @@ namespace :fix do
   desc 'fix specific test records in datacite'
   task :fix_datacite_custom => :environment do
 
+    host = IDB_CONFIG[:datacite_endpoint]
+    user = IDB_CONFIG[:datacite_username]
+    password = IDB_CONFIG[:datacite_password]
+
     bad_records = ['10.26123/idbdev-1772206_v1',
      '10.26123/idbdev-2774199_v1',
      '10.26123/idblocal-5622337_v1',
-     '10.26123/idbdev-7539740_v1']
+     '10.26123/testidb-6183513']
 
     bad_records.each do |identifier|
-      tmp_dataset = Dataset.new(identifier: identifier, is_test: true, publication_state: Databank::PublicationState::TempSuppress::METADATA)
-      Dataset.delete_doi_metadata(tmp_dataset)
+      uri = URI.parse("https://#{host}/metadata/#{identifier}" )
+
+      request = Net::HTTP::Delete.new(uri.request_uri)
+      request.basic_auth(user, password)
+      request.content_type = "text/plain"
+
+      sock = Net::HTTP.new(uri.host, uri.port)
+      sock.use_ssl = true
+
+      sock.start { |http| http.request(request) }
     end
 
 

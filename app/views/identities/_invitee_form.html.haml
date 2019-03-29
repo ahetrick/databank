@@ -1,0 +1,36 @@
+-if @invitee
+
+  = form_for @invitee do |f|
+    .row
+      .col-md-6
+        .form-group
+          = f.label :email, "Email Address", :class => "control-label"
+          %br
+          = f.text_field :email, class: "form-control", placeholder: "[account@organization.org]"
+      .col-md-6
+        .form-group
+          %div(id="expiration-date-picker")
+            .form-group
+              =f.label :expires_at, "Expiration Date",  :class => "control-label"
+              =f.date_field :expires_at, class: "form-control dataset"
+
+
+    .row
+      .col-md-6
+        .form-group
+          = f.label :group, "Group", :class => "control-label"
+          %br
+          = f.select(:group, @group_arr, {:prompt => false, :class => "form-control dataset"})
+
+      .col-md-6
+        .form-group
+          = f.label :role, "Role", :class => "control-label"
+          %br
+          = f.select(:role, @role_arr, {:prompt => false, :class => "form-control dataset"})
+
+    .row
+      .col-md-2.col-md-offset-10.actions
+        %button(type="submit" class="btn btn-primary btn-block")
+          Submit
+-else
+  =debug(:params)
