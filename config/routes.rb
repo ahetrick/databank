@@ -37,6 +37,7 @@ Rails.application.routes.draw do
   get '/data_curation_network/register', to: 'data_curation_network#register'
   get '/data_curation_network/my_account', to: 'data_curation_network#my_account'
   get '/data_curation_network/datasets', to: 'data_curation_network#datasets'
+  get '/data_curation_netork/after_registration', to: 'data_curation_network#after_registration'
   get '/data_curation_network/account/add', to: 'data_curation_network#add_account'
   get '/data_curation_network/accounts/:id/edit', to: 'data_curation_network#edit_account'
   patch '/data_curation_network/identity/:id/update', to: 'data_curation_network#update_identity'

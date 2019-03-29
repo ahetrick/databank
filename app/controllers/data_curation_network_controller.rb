@@ -84,6 +84,9 @@ class DataCurationNetworkController < ApplicationController
   def log_in
   end
 
+  def after_registration
+  end
+
   def datasets
     @drafts = Dataset.where(data_curation_network: true).where(publication_state: Databank::PublicationState::DRAFT)
     @nondrafts = Dataset.where(data_curation_network: true).where(publication_state: [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA])
