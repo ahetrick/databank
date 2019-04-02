@@ -81,8 +81,8 @@ class DatasetsController < ApplicationController
 
           if params.has_key?('depositors')
             any_of do
-              params['depositors'].each do |depositor|
-                with :depositor, depositor
+              params['depositors'].each do |depositor_netid|
+                with :depositor_netid, depositor_netid
               end
             end
           end

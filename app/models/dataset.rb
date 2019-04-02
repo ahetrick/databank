@@ -1000,7 +1000,10 @@ class Dataset < ActiveRecord::Base
     else
       'error'
     end
+  end
 
+  def depositor_netid
+    self.depositor_email.split('@').first
   end
 
   def structured_data
