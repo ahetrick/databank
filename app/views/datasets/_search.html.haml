@@ -79,12 +79,12 @@
                 -@search.facet(:depositor).rows.each do |row|
                   -row_arr = row.value.split("|")
                   .facet
-                    -if row.value == current_user.username && params.has_key?('depositors') && params['depositors'].include?(row[0])
+                    -if row_arr[0] == current_user.username && params.has_key?('depositors') && params['depositors'].include?(row[0])
                       %input(id="justMine" type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row[0]}" onchange="handleFilterChange()" checked=true)
                         Just My Datasets
                         ="(#{row.count})"
                         -current_user_facet_exists = true
-                    -elsif row.value == current_user.username
+                    -elsif row_arr[0] == current_user.username
                       %input(id="justMine" type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row[0]}" onchange="handleFilterChange()" checked=false)
                         Just My Datasets
                         ="(#{row.count})"
