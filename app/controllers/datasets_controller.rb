@@ -239,7 +239,7 @@ class DatasetsController < ApplicationController
                 end
               end
             end
-            
+
             if params.has_key?('subjects')
               any_of do
                 params['subjects'].each do |subject|

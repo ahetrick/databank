@@ -24,6 +24,7 @@ class Dataset < ActiveRecord::Base
     string :publication_year
     string :license_code
     string :depositor
+    string :depositor_netid
     string :subject_text
     string :depositor_email
     string :visibility_code
