@@ -1,8 +1,6 @@
 class Creator < ActiveRecord::Base
   include ActiveModel::Serialization
   belongs_to :dataset
-
-
   validate :has_name
 
   audited except: [:row_order, :type_of, :identifier_scheme, :dataset_id, :institution_name], associated_with: :dataset
@@ -21,15 +19,12 @@ class Creator < ActiveRecord::Base
   def display_name
 
     if self.institution_name && self.institution_name != ''
-       return_text = "#{self.institution_name}"
+      return "#{self.institution_name}"
     elsif self.given_name && self.given_name != '' && self.family_name && self.family_name != ''
-        return_text = "#{self.given_name} #{self.family_name}"
+      return "#{self.given_name} #{self.family_name}"
     else
-      raise("institution_name: #{institution_name}, given_name: #{given_name}, family_name: #{family_name}")
-      #return_text  = 'University of Illinois at Urbana-Champaign'
+      return ""
     end
-
-    return_text
 
   end
 
@@ -45,12 +40,14 @@ class Creator < ActiveRecord::Base
     elsif self.given_name && self.given_name != ''
       return_text << "#{self.given_name}"
     else
-      raise("institution_name: #{institution_name}, given_name: #{given_name}, family_name: #{family_name}")
-      #return_text  = 'University of Illinois at Urbana-Champaign'
+      return_text = ""
     end
     return_text
   end
 
+  private
+
+  #validation
   def has_name
     unless (self.institution_name && self.institution_name != '') || (self.given_name && self.given_name != '' && self.family_name && self.family_name != '')
       errors.add(:base, "Creator must have a valid name.")
