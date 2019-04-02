@@ -1004,7 +1004,11 @@ class Dataset < ActiveRecord::Base
   end
 
   def depositor_netid
-    self.depositor_email.split('@').first
+    if self.depositor_email
+      self.depositor_email.split('@').first
+    else
+      'error'
+    end
   end
 
   def structured_data
