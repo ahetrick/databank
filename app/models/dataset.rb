@@ -994,9 +994,11 @@ class Dataset < ActiveRecord::Base
 
   def depositor
     if self.depositor_email
-      return self.depositor_email.split('@').first
+      netid = self.depositor_email.split('@').first
+      name = User::Shibboleth.user_info_string(self.depositor_email)
+      return "#{netid}|#{name}"
     else
-      return 'error'
+      'error'
     end
 
   end

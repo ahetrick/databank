@@ -77,14 +77,15 @@
               .panel-body
                 -current_user_facet_exists = false
                 -@search.facet(:depositor).rows.each do |row|
+                  -row_arr = row.value.split("|")
                   .facet
-                    -if row.value == current_user.username && params.has_key?('depositors') && params['depositors'].include?(row.value)
-                      %input(id="justMine" type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
+                    -if row.value == current_user.username && params.has_key?('depositors') && params['depositors'].include?(row[0])
+                      %input(id="justMine" type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row[0]}" onchange="handleFilterChange()" checked=true)
                         Just My Datasets
                         ="(#{row.count})"
                         -current_user_facet_exists = true
                     -elsif row.value == current_user.username
-                      %input(id="justMine" type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
+                      %input(id="justMine" type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row[0]}" onchange="handleFilterChange()" checked=false)
                         Just My Datasets
                         ="(#{row.count})"
                         -current_user_facet_exists = true
@@ -124,14 +125,15 @@
                   Depositor
               .panel-body
                 -for row in @search.facet(:depositor).rows
+                  -row_arr = row.value.split("|")
                   .facet
-                    -if params.has_key?('depositors') && params['depositors'].include?(row.value)
-                      %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=true)
-                        = User::Shibboleth.user_info_string("#{row.value}@illinois.edu")
+                    -if params.has_key?('depositors') && params['depositors'].include?(row_arr[0])
+                      %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row_arr[0]}" onchange="handleFilterChange()" checked=true)
+                        = row_arr[1]
                         ="(#{row.count})"
                     -else
-                      %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row.value}" onchange="handleFilterChange()" checked=false)
-                        = User::Shibboleth.user_info_string("#{row.value}@illinois.edu")
+                      %input(type="checkbox" class="checkFacet checkFacetGroup depositor_facet" name="depositors[]" value="#{row_arr[0]}" onchange="handleFilterChange()" checked=false)
+                        = row_arr[1]
                         ="(#{row.count})"
 
 
