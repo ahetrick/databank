@@ -157,6 +157,7 @@ class DatasetsController < ApplicationController
 
         search_get_facets.facet(:depositor).rows.each do |outer_row|
           has_this_row = false
+
           @search.facet(:depositor).rows.each do |inner_row|
             has_this_row = true if inner_row.value == outer_row.value
           end
@@ -233,12 +234,12 @@ class DatasetsController < ApplicationController
 
             if params.has_key?('depositors')
               any_of do
-                params['depositors'].each do |depositor|
-                  with :depositor, depositor
+                params['depositors'].each do |depositor_netid|
+                  with :depositor_netid, depositor_netid
                 end
               end
             end
-
+            
             if params.has_key?('subjects')
               any_of do
                 params['subjects'].each do |subject|
