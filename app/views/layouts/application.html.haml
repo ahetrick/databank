@@ -58,6 +58,9 @@
     - if @datafile
       = javascript_tag do
         window.datafile_web_id = '#{j @datafile.web_id}';
+    =javascript_tag do
+      window.rails_env = '#{Rails.env}';
+
     - if current_user && current_user.role
       = javascript_tag do
         window.user_role = '#{j current_user.role}';
