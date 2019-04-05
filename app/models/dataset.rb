@@ -220,7 +220,7 @@ class Dataset < ActiveRecord::Base
   end
 
   def files_public?
-    Databank::PublicationState::RELEASED == publication_state && hold_state == Databank::PublicationState::TempSuppress::NONE
+    Databank::PublicationState::RELEASED == publication_state && ((hold_state.nil?) || (hold_state == Databank::PublicationState::TempSuppress::NONE ))
   end
 
   def related_version_entry_hash
