@@ -216,7 +216,7 @@ class Dataset < ActiveRecord::Base
     [Databank::PublicationState::RELEASED,
      Databank::PublicationState::Embargo::FILE,
      Databank::PublicationState::TempSuppress::FILE,
-     Databank::PublicationState::PermSuppress::FILE].include?(publication_state) && hold_state == Databank::PublicationState::TempSuppress::NONE
+     Databank::PublicationState::PermSuppress::FILE].include?(publication_state) && ((hold_state.nil?) || (hold_state == Databank::PublicationState::TempSuppress::NONE ))
   end
 
   def files_public?
