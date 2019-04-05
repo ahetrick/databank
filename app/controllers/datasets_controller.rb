@@ -819,7 +819,6 @@ class DatasetsController < ApplicationController
     end
 
 
-
   end
 
   # PATCH/PUT /datasets/1
@@ -1215,59 +1214,18 @@ class DatasetsController < ApplicationController
     @dataset.hold_state = Databank::PublicationState::PermSuppress::METADATA
     @dataset.publication_state = Databank::PublicationState::PermSuppress::METADATA
     @dataset.tombstone_date = Date.current.iso8601
-    @dataset.save
+    @dataset.embargo = Databank::PublicationState::Embargo::NONE
 
-    if Dataset.get_doi_metadata(@dataset)
-      respond_to do |format|
-        if Dataset.delete_doi_metadata(@dataset)
-          format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been permenantly suppressed in IDB, and the DOI has been marked inactive in DataCite's Metadata Store.]}
-          format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
-        else
-          format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.]}
-          format.json {render json: @dataset.errors, status: :unprocessable_entity}
-        end
-      end
+    if @dataset.save
+      Dataset.post_doi_metadata(@dataset, current_user)
+      Dataset.delete_doi_metadata(@dataset)
+      format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Reserved DOI has been deleted and all files have been permanently supressed.]}
+      format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
     else
-      format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been permenantly suppressed in IDB, and the DOI was not registered in DataCite's Metadata Store.]}
+      format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been permenantly suppressed in IDB, but DataCite has not been updated.]}
       format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
     end
 
-    if old_state == Databank::PublicationState::Embargo::METADATA
-      respond_to do |format|
-
-        if @dataset.save
-          if Dataset.delete_doi_metadata(@dataset)
-            @dataset.save
-            format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Reserved DOI has been deleted and all files have been permanently supressed.]}
-            format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
-          else
-            format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been permenantly suppressed in IDB, but DataCite has not been updated.]}
-            format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
-          end
-        else
-          format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.]}
-          format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
-        end
-      end
-
-    else
-      respond_to do |format|
-
-        if @dataset.save
-          if Dataset.post_doi_metadata(@dataset, current_user)
-            format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and all files have been permanently supressed.]}
-            format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
-          else
-            format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been permanently supressed in IDB, but DataCite has not been updated.]}
-            format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
-          end
-        else
-          format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.]}
-          format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
-        end
-
-      end
-    end
   end
 
   def request_review
