@@ -71,23 +71,12 @@ class MedusaIngest < ActiveRecord::Base
     # send existing draft datafiles not yet in medusa
     dataset.datafiles.each do |datafile|
 
-      if !datafile.in_medusa &&
-          datafile&.storage_root &&
-          datafile&.storage_key &&
-          Application.storage_manager.draft_root.exist?(datafile.storage_key)
+      datafile_target_key = "#{dataset.dirname}/dataset_files/#{datafile.binary_name}"
 
-        datafile_target_key = "#{dataset.dirname}/dataset_files/#{datafile.binary_name}"
+      # does a medusa ingest record already exist for this record?
+      existing_ingest = MedusaIngest.find_by_target_key(datafile_target_key)
 
-        # send medusa ingest request if binary exists in draft storage but not medusa storage
-        medusa_ingest = MedusaIngest.new
-        medusa_ingest.staging_key = datafile.storage_key
-        medusa_ingest.target_key = datafile_target_key
-        medusa_ingest.idb_class = 'datafile'
-        medusa_ingest.idb_identifier = datafile.web_id
-        medusa_ingest.save
-        medusa_ingest.send_medusa_ingest_message
-
-      end
+      MedusaIngest.send_datafile_to_medusa(datafile.web_id) unless existing_ingest
 
     end
     # END datafiles
@@ -155,6 +144,28 @@ class MedusaIngest < ActiveRecord::Base
     medusa_ingest.save
     # END changelog
 
+  end
+
+  def self.send_datafile_to_medusa(datafile_web_id)
+
+    datafile = Datafile.find_by_web_id(datafile_web_id)
+
+    return nil unless datafile
+    return nil if datafile.in_medusa
+    return nil unless datafile.storage_root
+    return nil unless datafile.storage_key
+    return nil unless Application.storage_manager.draft_root.exist?(datafile.storage_key)
+
+    datafile_target_key = "#{dataset.dirname}/dataset_files/#{datafile.binary_name}"
+
+    medusa_ingest = MedusaIngest.new
+    medusa_ingest.staging_key = datafile.storage_key
+    medusa_ingest.target_key = datafile_target_key
+    medusa_ingest.idb_class = 'datafile'
+    medusa_ingest.idb_identifier = datafile.web_id
+    medusa_ingest.save
+    medusa_ingest.send_medusa_ingest_message
+    
   end
 
 
