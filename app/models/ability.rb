@@ -1,27 +1,32 @@
+# frozen_string_literal: true
+
+# The Ability class defines which users have permission to perform which actions
 class Ability
   include CanCan::Ability
 
   def initialize(user)
     # Define abilities for the passed in user here. For example:
-    #
 
     user ||= User::Shibboleth.new # guest user (not logged in)
 
     if user.is?(Databank::UserRole::ADMIN)
       can :manage, :all
-      
+
     elsif user.is?(Databank::UserRole::DEPOSITOR)
 
-      can [:read, :create], [Dataset, Datafile]
+      can %i[read create], [Dataset, Datafile]
 
-      can [:edit,
-           :update,
-           :destroy,
-           :request_review,
-           :get_new_token,
-           :get_current_token,
-           :validiate_change2published,
-           :publish,:destroy_file ], Dataset do |dataset|
+      can %i[
+        edit
+        update
+        destroy
+        request_review
+        get_new_token
+        get_current_token
+        validiate_change2published
+        publish
+        destroy_file
+      ], Dataset do |dataset|
         dataset.try(:depositor_email) == user.email
       end
       can :view, Dataset do |dataset|
@@ -32,9 +37,10 @@ class Ability
         dataset.try(:depositor_email) == user.email || dataset.files_public?
       end
 
-    elsif user.is?(Databank::UserRole::REVIEWER) && user.group == Databank::IdentityGroup::NETWORK_CURATOR
+    elsif user.is?(Databank::UserRole::REVIEWER) &&
+          user.group == Databank::IdentityGroup::NETWORK_CURATOR
       can [:view], Dataset do |dataset|
-         dataset.try(:data_curation_network) == true || dataset.metadata_public?
+        dataset.try(:data_curation_network) == true || dataset.metadata_public?
       end
 
       can [:view_files], Dataset do |dataset|
@@ -46,14 +52,8 @@ class Ability
       end
 
     else
-      can :view, Dataset do |dataset|
-        dataset.metadata_public?
-      end
-      can :view_files, Dataset do |dataset|
-        dataset.files_public?
-      end
+      can :view, &:metadata_public?
+      can :view_files, &:files_public?
     end
-
   end
-
 end
