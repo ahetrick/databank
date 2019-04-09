@@ -1,4 +1,3 @@
-=begin
 When(/^I select release date delay \((\d+)\+ years\)$/) do |num_years|
   fill_in('Release Date', with: Date.current + (num_years.to_i).years)
 
@@ -46,4 +45,4 @@ Then(/^I see only No Publication Delay option$/) do
   expect(page).to have_select('dataset_embargo'),
       selected: 'No Publication Delay',
       options: ['No Publication Delay']
-end=end
+end
