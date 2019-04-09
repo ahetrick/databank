@@ -1,58 +1,62 @@
+# frozen_string_literal: true
+
+# represents a creator as defined in DataCite metadata schema
 class Creator < ActiveRecord::Base
   include ActiveModel::Serialization
   belongs_to :dataset
-  validate :has_name
+  validate :name?
 
-  audited except: [:row_order, :type_of, :identifier_scheme, :dataset_id, :institution_name], associated_with: :dataset
+  audited except: %i[row_order
+                     type_of
+                     identifier_scheme
+                     dataset_id
+                     institution_name], associated_with: :dataset
 
-  default_scope { order (:row_position) }
+  default_scope { order(:row_position) }
 
-  def as_json(options={})
-    if self.institution_name && self.institution_name != ''
-      super(:only => [:institution_name, :identifier, :is_contact, :row_position, :created_at, :updated_at])
+  def as_json(*)
+    if institution_name && institution_name != ''
+      super(only: %i[institution_name
+                     identifier
+                     is_contact
+                     row_position
+                     created_at
+                     updated_at])
     else
-      super(:only => [:family_name, :given_name, :identifier, :is_contact, :row_position, :created_at, :updated_at])
+      super(only: %i[family_name
+                     given_name
+                     identifier
+                     is_contact
+                     row_position
+                     created_at
+                     updated_at])
     end
-
   end
 
   def display_name
-
-    if self.institution_name && self.institution_name != ''
-      return "#{self.institution_name}"
-    elsif self.given_name && self.given_name != '' && self.family_name && self.family_name != ''
-      return "#{self.given_name} #{self.family_name}"
+    if type_of == Databank::CreatorType::INSTITUTION
+      institution_name.to_s
     else
-      return ""
+      "#{given_name || ''} #{family_name || ''}"
     end
-
   end
 
+  # text for the name when used in a list
   def list_name
-
-    if self.institution_name && self.institution_name != ''
-      return_text = "#{self.institution_name}"
-    elsif self.family_name && self.family_name != ''
-      return_text = "#{self.family_name}"
-      if self.given_name && self.given_name != ''
-        return_text << ", #{self.given_name}"
-      end
-    elsif self.given_name && self.given_name != ''
-      return_text << "#{self.given_name}"
+    if type_of == Databank::CreatorType::INSTITUTION
+      institution_name.to_s
     else
-      return_text = ""
+      "#{family_name || ''}, #{given_name || ''}"
     end
-    return_text
   end
 
   private
 
-  #validation
-  def has_name
-    unless (self.institution_name && self.institution_name != '') || (self.given_name && self.given_name != '' && self.family_name && self.family_name != '')
-      errors.add(:base, "Creator must have a valid name.")
+  # validation
+  def name?
+    unless (institution_name && institution_name != '') ||
+           (given_name && given_name != '' && family_name && family_name != '')
+      errors.add(:base, 'Creator must have a valid name.')
     end
   end
-
-
 end
