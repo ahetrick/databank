@@ -161,6 +161,10 @@ gem 'modernizr-rails'
 # Call 'byebug' anywhere in the code to stop execution and get a debugger console
 gem 'byebug'
 
+# use rubocop linter to support consisitent style
+gem 'rubocop', '~> 0.67.2', require: false
+gem 'rubocop-performance'
+
 # Access an IRB console on exception pages or by using <%= console %> in views
 # gem 'web-console', '~> 2.0'
 
