@@ -1,16 +1,17 @@
+# frozen_string_literal: true
+
+# Interface for service message(s)
+# TODO: call this something else
 class Admin < ActiveRecord::Base
   validates_inclusion_of :singleton_guard, in: [0]
 
+  # there must be only one Admin record
   def self.instance
-    # there will be only one row, and its ID must be '1'
-    if Admin.all.count == 1
-      return Admin.all.first
-    else
-      Admin.destroy_all
-      admin = Admin.create(singleton_guard: 0)
-      return admin
-    end
+    admin_count = Admin.all.count
+    return Admin.all.first if admin_count == 1
 
+    Admin.destroy_all if admin_count > 1
+    # at this point, there are zero Admin instances
+    Admin.create(singleton_guard: 0)
   end
-
 end
