@@ -72,7 +72,7 @@ class RelatedMaterial < ActiveRecord::Base
 
   # link status given a validly formatted link
   def link_attempt_status
-    RestClient.get(URI.parse(link))
+    RestClient.get(link)
   rescue RestClient::Unauthorized, RestClient::Forbidden => err
     'access denied'
   rescue RestClient::RequestTimeout
