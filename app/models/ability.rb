@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# The Ability class defines which users have permission to perform which actions
+# defines which users have permission to perform which actions
 class Ability
   include CanCan::Ability
 

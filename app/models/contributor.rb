@@ -1,33 +1,41 @@
+# frozen_string_literal: true
+
+# represents a contributor as defined in DataCite metadata schema
 class Contributor < ActiveRecord::Base
   include ActiveModel::Serialization
   belongs_to :dataset
-  audited except: [:row_order, :type_of, :identifier_scheme, :dataset_id, :institution_name], associated_with: :dataset
+  audited except: %i[row_order
+                     type_of
+                     identifier_scheme
+                     dataset_id
+                     institution_name],
+          associated_with: :dataset
 
-  default_scope { order (:row_position) }
+  default_scope { order(:row_position) }
 
-  def as_json(options={})
-    super(:only => [:family_name, :given_name, :identifier, :row_position, :created_at, :updated_at])
+  def as_json(*)
+    super(only: %i[family_name
+                   given_name
+                   identifier
+                   row_position
+                   created_at
+                   updated_at])
   end
 
   def display_name
-    if self.type_of == Databank::CreatorType::INSTITUTION
-      "#{self.institution_name}"
+    if type_of == Databank::CreatorType::INSTITUTION
+      institution_name.to_s
     else
-      "#{self.given_name} #{self.family_name}"
+      "#{given_name || ''} #{family_name || ''}"
     end
   end
 
+  # text for the name when used in a list
   def list_name
-    return_text = ""
-    if self.family_name && self.family_name != ''
-      return_text = "#{self.family_name}"
-      if self.given_name && self.given_name != ''
-        return_text << ", #{self.given_name}"
-      end
-    elsif self.given_name && self.given_name != ''
-      return_text = "#{self.given_name}"
+    if type_of == Databank::CreatorType::INSTITUTION
+      institution_name.to_s
+    else
+      "#{family_name || ''}, #{given_name || ''}"
     end
-    return_text
   end
-
 end
