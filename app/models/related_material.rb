@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'rest-client'
 require 'uri'
 
 # represents a related material as defined in DataCite metadata schema
@@ -71,13 +72,16 @@ class RelatedMaterial < ActiveRecord::Base
 
   # link status given a validly formatted link
   def link_attempt_status
-    case Net::HTTP.get_response(URI.parse(link))
-    when Net::HTTPSuccess then
-      'ok'
-    else
-      'not responding'
-    end
-  rescue # Recover on DNS failures..
-    'invalid or not responding'
+    RestClient.get(URI.parse(link))
+  rescue RestClient::Unauthorized, RestClient::Forbidden => err
+    'access denied'
+  rescue RestClient::RequestTimeout
+    'timeout'
+  rescue RestClient::SSLCertificateNotVerified
+    'SSL certificate not verified'
+  rescue RestClient::Exception
+    'invalid or unresponsive'
+  else
+    'ok'
   end
 end
