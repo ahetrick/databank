@@ -180,8 +180,10 @@ gem 'selenium-webdriver'
 #Use rspec-rails to support testing
 gem 'rspec-rails', '~> 3.5'
 
-#Use factory girl for fixtures
-# gem 'factory_girl_rails'
+# new
+group :development, :test do
+  gem "factory_bot_rails"
+end
 
 #Use Cucumber for behavior testing
 gem 'cucumber-rails', :require => false

@@ -1,10 +1,10 @@
 =begin
 Given(/^Dataset exists with files named:$/) do |table|
 
-  @dataset = FactoryGirl.create(:dataset, publication_state: "released")
+  @dataset = FactoryBot.create(:dataset, publication_state: "released")
   @dataset.identifier =  "10.5027/FK2#{@dataset.key}_V1"
   @dataset.save
-  creator = FactoryGirl.create(:creator, dataset_id: @dataset.id)
+  creator = FactoryBot.create(:creator, dataset_id: @dataset.id)
 
   table.headers.each do |header|
     testfile_path = "/tmp/#{header}"

@@ -1,3 +1,25 @@
+Given(/^I am a current admin invitee$/) do
+  admin_email = "admin@mailinator.com"
+  invitee = Invitee.find_by_email(admin_email)
+  invitee = create(:invitee) unless invitee
+  invitee.update_attribute(expires_at, Time.now + 1.years)
+  invitee.update_attribute(role, Databank::UserRole::ADMIN)
+  invitee.update_attribute(group, Databank::IdentityGroup::ADMIN)
+end
+
+Given(/^I have an activated admin identity$/) do
+  step 'I am a current inviteee'
+  admin_email = "admin@mailinator.com"
+  identity = Identity.find_by_email(admin_email)
+  identity = create(:identity) unless identity
+  identity.update_attribute(activated, true)
+end
+
+
+
+
+
+
 When(/^I log in$/) do
   #cookie may already exist, in which case visiting hte login path with just log in
   step 'I visit the login page'
@@ -6,8 +28,8 @@ When(/^I log in$/) do
     fill_in('j_username', with: LoginManager.instance.name(:shibboleth))
     fill_in('j_password', with: LoginManager.instance.password(:shibboleth))
     step "I click on 'Login'"
-  # local mode login path if no cookie exists redirects to /auth/idenity
-  # creating a user logs in for local mode
+    # local mode login path if no cookie exists redirects to /auth/idenity
+    # creating a user logs in for local mode
   elsif current_path == "/auth/identity"
     click_on('Create')
     fill_in('name', with: 'Test User')
@@ -54,9 +76,9 @@ Then(/^I see logged in links$/) do
 end
 
 Then(/^I do not see logged in links$/) do
-    LOGGED_IN_LINKS.each do |text|
-      expect(page).to have_no_content(text)
-    end
+  LOGGED_IN_LINKS.each do |text|
+    expect(page).to have_no_content(text)
+  end
 end
 
 Then(/^I see switch to depositor confirmation message$/) do

@@ -16,7 +16,7 @@ When(/^I select no publication delay$/) do
 end
 
 Given(/^I have a published dataset with a file & metadata publication delay$/) do
-  @dataset = FactoryGirl.create(:dataset)
+  @dataset = FactoryBot.create(:dataset)
   @dataset.save
   step("I visit the dataset edit page")
   step("I fill in required dataset metadata")

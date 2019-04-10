@@ -63,4 +63,6 @@ Cucumber::Rails::Database.javascript_strategy = :truncation
 Capybara.default_driver = :selenium
 Capybara.server = :webrick
 
+World(FactoryBot::Syntax::Methods)
+
 $LOAD_PATH << File.dirname(__FILE__)
