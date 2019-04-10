@@ -3,6 +3,13 @@ require 'open-uri'
 
 namespace :databank do
 
+  namespace :rails_cache do
+    desc "Clear Rails cache (sessions, views, etc.)"
+    task clear: :environment do
+      Rails.cache.clear
+    end
+  end
+
   desc 'recover missing dois from file download tally records'
   task :recover_file_download => :environment do
     incomplete_records = FileDownloadTally.where(doi: "")
