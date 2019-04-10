@@ -2,7 +2,7 @@
 
   =render partial: 'heading'
 
-  -if current_user && [Databank::UserRole::REVIEWER, Databank::UserRole::ADMIN].include?(current_user.role)
+  -if current_user && [Databank::UserRole::NETWORK_REVIEWER, Databank::UserRole::ADMIN].include?(current_user.role)
 
     %h3  Draft datasets curated with the Data Curation Network
     -if @drafts && @drafts.count > 0

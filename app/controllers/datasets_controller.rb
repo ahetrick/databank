@@ -628,7 +628,7 @@ class DatasetsController < ApplicationController
     authorize! :manage, @dataset
     if params.has_key?(:permission_action)
       if params.has_key?(:can_read)
-        if params[:can_read].include?(Databank::IdentityGroup::NETWORK_CURATOR)
+        if params[:can_read].include?(Databank::UserRole::NETWORK_REVIEWER)
           @dataset.update_attribute(:data_curation_network, true)
         else
           @dataset.update_attribute(:data_curation_network, false)

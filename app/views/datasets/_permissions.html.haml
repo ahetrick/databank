@@ -15,9 +15,9 @@
               .col-md-1
                 .pull-right
                   -if @dataset.data_curation_network
-                    %input(type="checkbox" name="can_read[]" value="#{Databank::IdentityGroup::NETWORK_CURATOR}" checked="checked")
+                    %input(type="checkbox" name="can_read[]" value="#{Databank::UserRole::NETWORK_REVIEWER}" checked="checked")
                   -else
-                    %input(type="checkbox" name="can_read[]" value="#{Databank::IdentityGroup::NETWORK_CURATOR}")
+                    %input(type="checkbox" name="can_read[]" value="#{Databank::UserRole::NETWORK_REVIEWER}")
               .col-md-3
                 Data Curation Network
               .col-md-2

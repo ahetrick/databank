@@ -31,7 +31,7 @@ class InviteesController < ApplicationController
     respond_to do |format|
 
       if @invitee.save
-        if @invitee.group == Databank::IdentityGroup::NETWORK_CURATOR
+        if @invitee.role == Databank::UserRole::NETWORK_REVIEWER
           format.html { redirect_to '/data_curation_network/accounts', notice: 'Invitee was successfully created.' }
           format.json { render :show, status: :created, location: @invitee }
         else
@@ -39,7 +39,7 @@ class InviteesController < ApplicationController
           format.json { render :show, status: :created, location: @invitee }
         end
       else
-        if @invitee.group == Databank::IdentityGroup::NETWORK_CURATOR
+        if @invitee.role == Databank::UserRole::NETWORK_REVIEWER
           format.html { redirect_to '/data_curation_network/accounts', notice: 'Error attempting to create invitee.' }
           format.json { render :show, status: :created, location: @invitee }
         else
@@ -55,8 +55,7 @@ class InviteesController < ApplicationController
   # PATCH/PUT /invitees/1.json
   def update
     authorize! :manage, @invitee
-    if @invitee.group == Databank::IdentityGroup::NETWORK_CURATOR
-
+    if @invitee.role == Databank::UserRole::NETWORK_REVIEWER
         respond_to do |format|
           if @invitee.update(invitee_params)
             format.html { redirect_to "/data_curation_network/accounts", notice: 'Invitee was successfully updated.' }

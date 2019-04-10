@@ -4,7 +4,6 @@ Given(/^I am a current admin invitee$/) do
   invitee = create(:invitee) unless invitee
   invitee.update_attribute(expires_at, Time.now + 1.years)
   invitee.update_attribute(role, Databank::UserRole::ADMIN)
-  invitee.update_attribute(group, Databank::IdentityGroup::ADMIN)
 end
 
 Given(/^I have an activated admin identity$/) do

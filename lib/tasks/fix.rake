@@ -2,6 +2,17 @@ require 'csv'
 
 namespace :fix do
 
+  desc 'update reviewer roles to network_reviewer'
+  task :fix_reviewers => :environment do
+    Invitee.where(role: 'reviewer').each do |invitee|
+      invitee.update_attribute('role', Databank::UserRole::NETWORK_REVIEWER)
+    end
+
+    User::Identity.where(role: 'reviewer').each do |user|
+      user.update_attribute('role', Databank::UserRole::NETWORK_REVIEWER)
+    end
+  end
+
   desc 'fix storage root for preserved files'
   task :fix_storage_root => :environment do
     Datafile.where(storage_root: 'draft').each do |datafile|

@@ -12,7 +12,7 @@ class PasswordResetsController < ApplicationController
     if @identity
       @identity.create_reset_digest
       @identity.send_password_reset_email
-      if @identity.group == Databank::IdentityGroup::NETWORK_CURATOR
+      if @identity.role == Databank::UserRole::NETWORK_REVIEWER
         redirect_to '/data_curation_network', notice: "Email sent with password reset instructions"
       else
         redirect_to root_url, notice: "Email sent with password reset instructions"

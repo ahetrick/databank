@@ -2,7 +2,6 @@ FactoryBot.define do
 
   factory :invitee do
     email { 'testy@mailinator.com' }
-    group { Databank::IdentityGroup::ADMIN }
     role { Databank::UserRole::ADMIN }
     expires_at { Time.now + 1.years }
   end
@@ -18,7 +17,7 @@ FactoryBot.define do
     provider { 'identity' }
     uid { 'testy@mailinator.com' }
     name { 'Testy Tester' }
-    role { Databank::IdentityGroup::ADMIN }
+    role { Databank::UserRole::ADMIN }
     username { 'testy@mailinator.com' }
   end
 

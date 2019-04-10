@@ -4,7 +4,7 @@ class DataCurationNetworkController < ApplicationController
   end
 
   def accounts
-    @accounts=Invitee.where(group: Databank::IdentityGroup::NETWORK_CURATOR)
+    @accounts=Invitee.where(role: Databank::UserRole::NETWORK_REVIEWER)
     authorize! :manage, Invitee
   end
 
@@ -21,8 +21,6 @@ class DataCurationNetworkController < ApplicationController
   def update_identity
 
     Rails.logger.warn params
-
-    password_notice = nil
 
     @identity = Identity.find(params[:id])
 
@@ -56,12 +54,9 @@ class DataCurationNetworkController < ApplicationController
     authorize! :manage, Invitee
     @invitee = Invitee.new
     @invitee.expires_at = Time.now + 3.months
-    @invitee.group = Databank::IdentityGroup::NETWORK_CURATOR
-    @invitee.role = Databank::UserRole::REVIEWER
-    @group_arr = Array.new
-    @group_arr.push(Databank::IdentityGroup::NETWORK_CURATOR)
+    @invitee.role = Databank::UserRole::NETWORK_REVIEWER
     @role_arr = Array.new
-    @role_arr.push(Databank::UserRole::REVIEWER)
+    @role_arr.push(Databank::UserRole::NETWORK_REVIEWER)
     render 'data_curation_network/account/add'
   end
 
@@ -71,10 +66,6 @@ class DataCurationNetworkController < ApplicationController
       redirect_to("/data_curation_network", notice: "error: unable to validate account identifier") and return
     end
     authorize! :manage, @invitee
-    @group_arr = Array.new
-    @group_arr.push(Databank::IdentityGroup::NETWORK_CURATOR)
-    @role_arr = Array.new
-    @role_arr.push(Databank::UserRole::REVIEWER)
     render 'data_curation_network/account/edit'
   end
 
@@ -100,7 +91,7 @@ class DataCurationNetworkController < ApplicationController
       @invitee = Invitee.find(params[:invitee_id])
     end
     unless @invitee
-      if current_user && current_user.role == Databank::UserRole::REVIEWER
+      if current_user && current_user.role == Databank::UserRole::NETWORK_REVIEWER
         @invitee = Invitee.find_by_email(current_user.email)
       end
     end

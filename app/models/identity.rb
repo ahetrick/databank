@@ -1,4 +1,3 @@
-
 class Identity < OmniAuth::Identity::Models::ActiveRecord
 
   attr_accessor :activation_token, :reset_token
@@ -59,15 +58,6 @@ class Identity < OmniAuth::Identity::Models::ActiveRecord
   def send_password_reset_email
     notification = DatabankMailer.password_reset(self)
     notification.deliver_now
-  end
-
-  def group
-    set_invitee
-    if @invitee
-      @invitee.group
-    else
-      nil
-    end
   end
 
   # Creates and assigns the activation token and digest.

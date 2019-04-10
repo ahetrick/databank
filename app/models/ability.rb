@@ -37,8 +37,7 @@ class Ability
         dataset.try(:depositor_email) == user.email || dataset.files_public?
       end
 
-    elsif user.is?(Databank::UserRole::REVIEWER) &&
-          user.group == Databank::IdentityGroup::NETWORK_CURATOR
+    elsif user.is?(Databank::UserRole::NETWORK_REVIEWER)
       can [:view], Dataset do |dataset|
         dataset.try(:data_curation_network) == true || dataset.metadata_public?
       end

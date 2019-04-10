@@ -95,29 +95,14 @@ module Databank
     INSTITUTION = 1
   end
 
-  #GROUPS = %w[network_curator publisher collaborator]
-  #STATES = %w[pending active expired]
-
-  class IdentityGroup
-    NETWORK_CURATOR = 'network_curator'
-    PUBLISHER = 'publisher'
-    COLLABORATOR = 'collaborator'
-    ADMIN = 'admin'
-  end
-
-  class IdentityState
-    PENDING = 'pending'
-    ACTIVE = 'active'
-    EXPIRED = 'expired'
-  end
-
   class UserRole
     ADMIN = 'admin'
     DEPOSITOR = 'depositor'
     GUEST = 'guest'
     NO_DEPOSIT = 'no_deposit'
-    REVIEWER = 'reviewer'
-    EDITOR = 'editor'
+    NETWORK_REVIEWER = 'network_reviewer'
+    PUBLISHER_REVIEWER = 'publisher_reviewer'
+    CREATOR = 'creator'
   end
 
   class Application < Rails::Application
