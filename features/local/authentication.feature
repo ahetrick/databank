@@ -10,4 +10,6 @@ Feature: Authentication
 
   Scenario: Log in as admin
     When I am logged in as an "admin"
+    And I go to the site home
     Then I see "Log out" on the page
+    And I see "Switch Role" on the page

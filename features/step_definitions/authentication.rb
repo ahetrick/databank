@@ -49,6 +49,8 @@ def login_identity_user(role)
   invitee = Invitee.create!(email: email,
                  role: role,
                  expires_at: Time.current + 1.month)
+  expect(invitee).not_to be_nil
+  expect(invitee.email).to eq(email)
   identity = Identity.create!(email: invitee.email,
                   name: name,
                   password: password)

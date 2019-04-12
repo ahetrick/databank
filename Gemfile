@@ -191,7 +191,7 @@ gem 'cucumber-rails', :require => false
 #Use Capybara for behavior testing
 gem 'capybara'
 
-#Use DatabaseCleaner to clean the database (because transactional fixtures do not work with Selenium)
+#Use DatabaseCleaner to clean the database
 gem 'database_cleaner'
 
 # Use Capistrano for deployment
