@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Given "I am not logged in" do
   visit "/logout"
 end
@@ -11,17 +13,16 @@ When("I am logged in as an {string}") do |role|
 end
 
 Given "I relogin as {string}" do |login_type|
-  step 'I log out'
+  step "I log out"
   step "I am logged in as #{login_type}"
 end
 
-
 Given "I go to the identity log in page" do
-  visit '/identities/login'
+  visit "/identities/login"
 end
 
 Given "I go to the data_curation_network log in page" do
-  visit '/data_curation_network'
+  visit "/data_curation_network"
 end
 
 Then "I am on the identity log in page" do
@@ -35,7 +36,6 @@ end
 private
 
 def login_identity_user(role)
-
   # omniauth identity mock user defined in
   # /config/environments/test.rb
   # Login Manager credentials defined in
@@ -47,13 +47,13 @@ def login_identity_user(role)
   name = LoginManager.instance.name(:identity)
   password = LoginManager.instance.password(:identity)
   invitee = Invitee.create!(email: email,
-                 role: role,
-                 expires_at: Time.current + 1.month)
+                            role: role,
+                            expires_at: Time.current + 1.month)
   expect(invitee).not_to be_nil
   expect(invitee.email).to eq(email)
   identity = Identity.create!(email: invitee.email,
-                  name: name,
-                  password: password)
+                              name: name,
+                              password: password)
   expect(identity).not_to be_nil
   identity.update_attribute(:activated,    true)
   identity.update_attribute(:activated_at, Time.current - 1.month)
@@ -61,8 +61,7 @@ def login_identity_user(role)
 
   visit("/identities/login")
   fill_in("auth_key", with: email)
-  fill_in('password', with: password)
-  expect(page).to have_selector('#login', visible: true)
-  find('#login').click
-
+  fill_in("password", with: password)
+  expect(page).to have_selector("#login", visible: true)
+  find("#login").click
 end

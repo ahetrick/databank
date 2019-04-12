@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This type of user comes from the identity authentication strategy
 
 require_relative '../user'
@@ -5,8 +7,9 @@ require_relative '../user'
 class User::Identity < User::User
 
   def self.from_omniauth(auth)
-    if auth && auth[:uid]
-      identity = Identity.find_by_email(auth["info"]["email"])
+    if auth && auth[:uid] && auth["info"]["email"]
+      email = auth["info"]["email"].strip
+      identity = Identity.find_by_email(email)
       if identity&.activated
         user = User::Identity.find_by_provider_and_uid(auth["provider"], auth["uid"])
         if user

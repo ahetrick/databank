@@ -155,12 +155,6 @@ gem 'curb', '~> 0.9.4'
 # Use modernizr-rails to handle different browsers differently
 gem 'modernizr-rails'
 
-# Use trix to support rich text editing (for featured researcher cms)
-# gem 'trix', '~> 0.11.0'
-
-# Call 'byebug' anywhere in the code to stop execution and get a debugger console
-gem 'byebug'
-
 # use rubocop linter to support consisitent style
 gem 'rubocop', '~> 0.67.2', require: false
 gem 'rubocop-performance'
@@ -177,12 +171,14 @@ gem 'mocha', '~> 1.1'
 #Use Selenenium web driver in testing
 gem 'selenium-webdriver'
 
-#Use rspec-rails to support testing
-gem 'rspec-rails', '~> 3.5'
-
-# new
 group :development, :test do
-  gem "factory_bot_rails"
+  gem 'debase', '~> 0.2.1'
+  gem 'ruby-debug-ide', '~> 0.6.0'
+  gem 'rspec-rails'
+  gem 'factory_bot_rails'
+  gem 'shoulda-matchers'
+  gem 'byebug'
+  gem 'puma'
 end
 
 #Use Cucumber for behavior testing
