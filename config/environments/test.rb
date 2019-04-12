@@ -42,11 +42,10 @@ Rails.application.configure do
 
   # Fake test user
   OmniAuth.config.test_mode = true
-  OmniAuth.config.mock_auth[:identity] = OmniAuth::AuthHash.new({"uid" => "mfall3@mailinator.com",
+  OmniAuth.config.mock_auth[:identity] = OmniAuth::AuthHash.new({"uid" => "tester@example.com",
                                                                  "provider" => "identity",
-                                                                 "authname" => "Colleen Fallaw",
-                                                                 "info" => {"name" => "Colleen Fallaw", "email" => "mfall3@mailinator.com"}
+                                                                 "authname" => "Test User",
+                                                                 "info" => {"name" => "Test User",
+                                                                            "email" => "tester@example.com"}
                                                                 })
-
-  OmniAuth.config.add_mock(:shibboleth, {"uid" => "mfall3@mailinator.com"})
 end

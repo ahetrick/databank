@@ -21,7 +21,14 @@ class LoginManager
   def name(type)
     self.credentials(type)['name']
   end
-  alias :email :name
+
+  def email(type)
+    self.credentials(type)['auth_key']
+  end
+
+  def auth_key(type)
+    self.credentials(type)['auth_key']
+  end
 
   def password(type)
     self.credentials(type)['password']

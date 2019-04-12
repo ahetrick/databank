@@ -6,7 +6,7 @@ dcn_ready = function () {
     });
 
     $(".dcn-login").click(function () {
-        window.location.href = "/data_curation_network/log_in"
+        window.location.href = "/data_curation_network/login"
     });
 
     $(".dcn-home").click(function () {

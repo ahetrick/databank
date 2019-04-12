@@ -53,6 +53,7 @@ class Ability
     else
       can :view, &:metadata_public?
       can :view_files, &:files_public?
+      can :login, Identity
     end
   end
 end

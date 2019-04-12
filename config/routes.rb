@@ -1,7 +1,6 @@
 # config/routes.rb
 require './lib/api/base'
 
-
 Rails.application.routes.draw do
 
   resources :review_requests do
@@ -32,7 +31,7 @@ Rails.application.routes.draw do
 
   get '/data_curation_network', to: 'data_curation_network#index'
   get '/data_curation_network/accounts', to: 'data_curation_network#accounts'
-  get '/data_curation_network/log_in', to: 'data_curation_network#log_in'
+  get '/data_curation_network/login', to: 'data_curation_network#login'
   get '/data_curation_network/register', to: 'data_curation_network#register'
   get '/data_curation_network/my_account', to: 'data_curation_network#my_account'
   get '/data_curation_network/datasets', to: 'data_curation_network#datasets'
@@ -67,7 +66,7 @@ Rails.application.routes.draw do
   resources :identities do
     collection do
       get 'register'
-      get 'log_in'
+      get 'login'
     end
   end
   resources :datasets do

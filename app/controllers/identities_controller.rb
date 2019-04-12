@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 class IdentitiesController < ApplicationController
   load_and_authorize_resource
-  before_action :set_identity, only: [:show, :edit, :update, :destroy]
+  skip_authorize_resource only: %i[new login register]
+  before_action :set_identity, only: %i[show edit update destroy]
 
   # GET /identities
   # GET /identities.json
@@ -10,23 +13,19 @@ class IdentitiesController < ApplicationController
 
   # GET /identities/1
   # GET /identities/1.json
-  def show
-  end
+  def show; end
 
   # GET /identities/new
   def new
-    redirect_to action: 'register'
+    redirect_to action: "register"
   end
 
-  def register
-  end
+  def register; end
 
-  def log_in
-  end
+  def login; end
 
   # GET /identities/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /identities
   # POST /identities.json
@@ -35,7 +34,7 @@ class IdentitiesController < ApplicationController
 
     respond_to do |format|
       if @identity.save
-        format.html { redirect_to @identity, notice: 'Identity was successfully created.' }
+        format.html { redirect_to @identity, notice: "Identity was successfully created." }
         format.json { render :show, status: :created, location: @identity }
       else
         format.html { render :new }
@@ -49,7 +48,7 @@ class IdentitiesController < ApplicationController
   def update
     respond_to do |format|
       if @identity.update(identity_params)
-        format.html { redirect_to @identity, notice: 'Identity was successfully updated.' }
+        format.html { redirect_to @identity, notice: "Identity was successfully updated." }
         format.json { render :show, status: :ok, location: @identity }
       else
         format.html { render :edit }
@@ -63,19 +62,20 @@ class IdentitiesController < ApplicationController
   def destroy
     @identity.destroy
     respond_to do |format|
-      format.html { redirect_to identities_url, notice: 'Identity was successfully destroyed.' }
+      format.html { redirect_to identities_url, notice: "Identity was successfully destroyed." }
       format.json { head :no_content }
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_identity
-      @identity = Identity.find(params[:id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def identity_params
-      params.fetch(:identity, {})
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_identity
+    @identity = Identity.find(params[:id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def identity_params
+    params.fetch(:identity, {})
+  end
 end

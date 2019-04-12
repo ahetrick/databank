@@ -2,7 +2,7 @@
 
   =render partial: 'heading'
 
-  -if(can? :manage, Dataset)
+  -if(can? :manage, Invitee)
 
     -if @accounts && @accounts.count > 0
       %h3 Accounts

@@ -3,6 +3,8 @@ require 'aws-sdk-s3'
 require 'tus/storage/s3'
 require 'tus/storage/filesystem'
 
+VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
+
 IDB_CONFIG = YAML.load_file(File.join(Rails.root, 'config', 'databank.yml'))[Rails.env]
 
 Application.storage_manager = StorageManager.new
