@@ -18,20 +18,28 @@ Given("I go to the data curation network portal home") do
   visit "/data_curation_network"
 end
 
-Given("I go to the data curation network portal accounts page") do
+Given("I go to the Data Curation Network Portal accounts page") do
   visit "/data_curation_network/accounts"
+end
+
+Then("I am on the Data Curation Network Portal accounts page") do
+  expect(current_path).to eql("/data_curation_network/accounts")
 end
 
 Then("I am on Data Curation Network account add page") do
   expect(current_path).to eql("/data_curation_network/account/add")
 end
 
-When("I click on {string} button") do |button_label|
-  click_on(button_label)
+When("I go to the Data Curation Network Portal register page") do
+  visit("/data_curation_network/register")
 end
 
-When("I click on Data Curation Network Add New Account button") do
-  find("#add-account-btn").click
+Then("I am on the Data Curation Network Portal register page") do
+  expect(current_path).to eql("/data_curation_network/register")
+end
+
+When("I click on {string} button") do |button_label|
+  click_on(button_label)
 end
 
 Then("I see {string} on the page") do |string|

@@ -4,7 +4,8 @@ class AccountActivationsController < ApplicationController
     if identity && !identity.activated? && identity.authenticated?(:activation, params[:id])
       identity.update_attribute(:activated,    true)
       identity.update_attribute(:activated_at, Time.zone.now)
-      if identity.role == Databank::UserRole::NETWORK_REVIEWER
+      invitee = Invitee.find_by(email: identity.email)
+      if invitee&.role == Databank::UserRole::NETWORK_REVIEWER
         redirect_to '/data_curation_network', alert: "Account activated! Log in here."
       else
         redirect_to '/', alert: "Account activated!"

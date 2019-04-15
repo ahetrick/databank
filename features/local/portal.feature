@@ -4,7 +4,10 @@ Feature: Portal
   I want to provide group portals
 
   Scenario: Invite Data Curation Network curator
-    When I am logged in as "admin"
-    And I go to the data curation network portal accounts page
-    And I click on Data Curation Network Add New Account button
-    Then I am on Data Curation Network account add page
+    Given I am logged in as "admin"
+    And I go to the Data Curation Network Portal accounts page
+    When I add "portal@example.com" as an invitee
+    Then I am on the Data Curation Network Portal accounts page
+    And I see "Invitee was successfully created" on the page
+    And I see "portal@example.com" on the page
+    

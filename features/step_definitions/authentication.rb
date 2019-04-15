@@ -43,14 +43,8 @@ def login_identity_user(role)
 
   step "I am not logged in"
 
-  invitee = build(:invitee)
-  invitee.expires_at = Time.current + 1.month
-  invitee.role = role
-  invitee.save!
-  identity = build(:identity)
-  identity.email = invitee.email
-  identity.name = "#{role.capitalize} User"
-  identity.save
+  invitee = create(:invitee, expires_at: Time.current + 1.month, role: role)
+  identity = create(:identity, email: invitee.email, name:"#{role.capitalize} User")
   expect(identity.activated).to be true
   visit("/identities/login")
   fill_in("auth_key", with: identity.email)
