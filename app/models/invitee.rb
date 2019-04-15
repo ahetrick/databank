@@ -11,7 +11,7 @@ class Invitee < ActiveRecord::Base
   end
 
   def destroy_user
-    user = Identity::User.find_by(email: email)
+    user = User::Identity.find_by(email: email)
     user&.destroy!
   end
 end

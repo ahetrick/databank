@@ -6,7 +6,10 @@
 
     -if @accounts && @accounts.count > 0
       %h3 Accounts
-      %hr
+      .pull-right
+        %button(type="button" id="add-account-btn" class="btn btn-primary" onclick='window.location = "/data_curation_network/account/add"' )
+          %span(class="glyphicon glyphicon-plus" )
+          Add New Account
       %table.table.table-stripped
         %thead
           %tr.row
@@ -32,12 +35,6 @@
               %td.col-md-2
                 =button_to 'Delete', "/invitees/#{account.id}", class: "btn btn-danger btn-block idb", method: :delete, data: { confirm: 'Are you sure?' }
 
-    %hr
-
-    .pull-right
-      %button(type="button" class="btn btn-primary" onclick='window.location = "/data_curation_network/account/add"' )
-        %span(class="glyphicon glyphicon-plus" )
-        Add New Account
 
   -else
     .jumbotron

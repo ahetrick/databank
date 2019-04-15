@@ -41,11 +41,11 @@ Rails.application.configure do
   # config.action_view.raise_on_missing_translations = true
 
   # Fake test user
-  OmniAuth.config.test_mode = true
-  OmniAuth.config.mock_auth[:identity] = OmniAuth::AuthHash.new({"uid" => "tester@example.com",
-                                                                 "provider" => "identity",
-                                                                 "authname" => "Test User",
-                                                                 "info" => {"name" => "Test User",
-                                                                            "email" => "tester@example.com"}
-                                                                })
+  #OmniAuth.config.test_mode = true
+  #OmniAuth.config.mock_auth[:identity] = OmniAuth::AuthHash.new({"uid" => "tester@example.com",
+  #                                                               "provider" => "identity",
+  #                                                               "authname" => "Test User",
+  #                                                               "info" => {"name" => "Test User",
+  #                                                                          "email" => "tester@example.com"}
+  #                                                              })
 end
