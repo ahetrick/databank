@@ -23,7 +23,7 @@ Given("I go to the data curation network portal accounts page") do
 end
 
 Then("I am on Data Curation Network account add page") do
-  expect(current_path).to eql(URI.join(root_path, "data_curation_network", "account", "add"))
+  expect(current_path).to eql("/data_curation_network/account/add")
 end
 
 When("I click on {string} button") do |button_label|

@@ -4,12 +4,12 @@
 
   -if(can? :manage, Invitee)
 
+    %h3 Accounts
+    .pull-right
+      %button(type="button" id="add-account-btn" class="btn btn-primary" onclick='window.location = "/data_curation_network/account/add"' )
+        %span(class="glyphicon glyphicon-plus" )
+        Add New Account
     -if @accounts && @accounts.count > 0
-      %h3 Accounts
-      .pull-right
-        %button(type="button" id="add-account-btn" class="btn btn-primary" onclick='window.location = "/data_curation_network/account/add"' )
-          %span(class="glyphicon glyphicon-plus" )
-          Add New Account
       %table.table.table-stripped
         %thead
           %tr.row
