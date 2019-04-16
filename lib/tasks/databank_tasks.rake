@@ -38,18 +38,18 @@ namespace :databank_tasks do
       if initial_peek_type
         datafile.peek_type = initial_peek_type
         if initial_peek_type == Databank::PeekType::ALL_TEXT
-          all_text_peek = datafile.get_all_text_peek
+          all_text_peek = datafile.all_text_peek
           if all_text_peek
-            datafile.peek_text = datafile.get_all_text_peek
+            datafile.peek_text = datafile.all_text_peek
           else
             datafile.peek_type = Databank::PeekType::NONE
             datafile.peek_text = nil
           end
 
         elsif initial_peek_type == Databank::PeekType::PART_TEXT
-          part_text_peek = datafile.get_part_text_peek
+          part_text_peek = datafile.part_text_peek
           if part_text_peek
-            datafile.peek_text = datafile.get_part_text_peek
+            datafile.peek_text = datafile.part_text_peek
           else
             datafile.peek_type = Databank::PeekType::NONE
             datafile.peek_text = nil

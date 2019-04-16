@@ -71,9 +71,9 @@ class DatafilesController < ApplicationController
       if initial_peek_type
         @datafile.peek_type = initial_peek_type
         if initial_peek_type == Databank::PeekType::ALL_TEXT
-          @datafile.peek_text = @datafile.get_all_text_peek
+          @datafile.peek_text = @datafile.all_text_peek
         elsif initial_peek_type == Databank::PeekType::PART_TEXT
-          @datafile.peek_text = @datafile.get_part_text_peek
+          @datafile.peek_text = @datafile.part_text_peek
         elsif initial_peek_type == Databank::PeekType::LISTING
           @datafile.peek_type = Databank::PeekType::NONE
           begin

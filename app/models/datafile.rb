@@ -1,11 +1,12 @@
-require 'zip'
-require 'seven_zip_ruby'
-require 'filemagic'
-require 'mime/types'
-require 'minitar'
-require 'zlib'
-require 'rest-client'
+# frozen_string_literal: true
 
+require "zip"
+require "seven_zip_ruby"
+require "filemagic"
+require "mime/types"
+require "minitar"
+require "zlib"
+require "rest-client"
 
 class Datafile < ActiveRecord::Base
   include ActiveModel::Serialization
@@ -27,8 +28,8 @@ class Datafile < ActiveRecord::Base
     self.web_id
   end
 
-  def as_json(options={})
-    super(:only => [:web_id, :binary_name, :binary_size, :medusa_id, :storage_root, :storage_key, :created_at, :updated_at])
+  def as_json(_options={})
+    super(only: %i[web_id binary_name binary_size medusa_id storage_root storage_key created_at updated_at])
   end
 
   def file_download_tallies
@@ -40,40 +41,35 @@ class Datafile < ActiveRecord::Base
   end
 
   def bytestream_name
-    self.binary_name
+    binary_name
   end
 
   def bytestream_size
-
     if binary_size
       binary_size
-    elsif self.current_root && current_root.exist?(self.storage_key)
-      self.binary_size = self.current_root.size(self.storage_key)
-      self.save
+    elsif current_root&.exist?(storage_key)
+      self.binary_size = current_root.size(storage_key)
+      save
       binary_size
     else
-      Rails.logger.warn("binary not found for datafile: #{self.web_id} root: #{self.storage_root}, key: #{self.storage_key}")
+      Rails.logger.warn("binary not found for datafile: #{self.web_id} root: #{storage_root}, key: #{storage_key}")
       0
     end
   end
 
   def current_root
-    Application.storage_manager.root_set.at(self.storage_root)
+    Application.storage_manager.root_set.at(storage_root)
   end
 
   def storage_root_bucket
-    if IDB_CONFIG[:aws][:s3_mode]
-      self.current_root.bucket
-    else
-      nil
-    end
+    current_root.bucket if IDB_CONFIG[:aws][:s3_mode]
   end
 
   def storage_key_with_prefix
     if IDB_CONFIG[:aws][:s3_mode]
-      "#{self.current_root.prefix}#{self.storage_key}"
+      "#{current_root.prefix}#{storage_key}"
     else
-      self.storage_key
+      storage_key
     end
   end
 
@@ -81,29 +77,25 @@ class Datafile < ActiveRecord::Base
     if IDB_CONFIG[:aws][:s3_mode]
       nil
     else
-      if current_root
-        current_root.real_path
-      else
-        nil
-      end
+      current_root&.real_path
     end
   end
 
   # within the context of the databank server mounts
   def filepath
-    base = self.storage_root_path
+    base = storage_root_path
     if base
-      File.join(base, self.storage_key)
+      File.join(base, storage_key)
     else
       raise("no filesystem path found for datafile: #{self.web_id}")
     end
   end
 
-  #Set this up so that we use local storage for small files, for some definition of small
+  # Set this up so that we use local storage for small files, for some definition of small
   # might want to extract this elsewhere so that is generally available and easy to make
   # robust for whatever application.
   def tmpdir_for_with_input_file
-    expected_size = self.binary_size || current_root.size(self.storage_key)
+    expected_size = binary_size || current_root.size(storage_key)
     if expected_size > 500.megabytes
       Application.storage_manager.tmpdir
     else
@@ -111,26 +103,26 @@ class Datafile < ActiveRecord::Base
     end
   end
 
-  #wrap the storage root's ability to yield an io on the content
+  # wrap the storage root's ability to yield an io on the content
   def with_input_io
-    current_root.with_input_io(self.storage_key) do |io|
+    current_root.with_input_io(storage_key) do |io|
       yield io
     end
   end
 
-  #wrap the storage root's ability to yield a file path having the appropriate content in it
+  # wrap the storage root's ability to yield a file path having the appropriate content in it
   def with_input_file
-    current_root.with_input_file(self.storage_key, tmp_dir: tmpdir_for_with_input_file) do |file|
+    current_root.with_input_file(storage_key, tmp_dir: tmpdir_for_with_input_file) do |file|
       yield file
     end
   end
 
   def exists_on_storage?
-    current_root.exist?(self.key)
+    current_root.exist?(key)
   end
 
   def remove_from_storage
-    current_root.delete_content(self.key)
+    current_root.delete_content(key)
   end
 
   def name
@@ -139,19 +131,17 @@ class Datafile < ActiveRecord::Base
 
   # medusa mounts are different on iiif server
   def iiif_bytestream_path
-
-    if storage_root == 'draft'
-      File.join(IDB_CONFIG[:iiif][:draft_base], storage_key )
-    elsif storage_root == 'medusa'
-      File.join(IDB_CONFIG[:iiif][:medusa_base], storage_key )
+    if storage_root == "draft"
+      File.join(IDB_CONFIG[:iiif][:draft_base], storage_key)
+    elsif storage_root == "medusa"
+      File.join(IDB_CONFIG[:iiif][:medusa_base], storage_key)
     else
       raise("invalid storage_root found for datafile: #{self.web_id}")
     end
-
   end
 
   def file_extension
-    filename_split = self.bytestream_name.split(".")
+    filename_split = bytestream_name.split(".")
     if filename_split.count > 1 # otherwise cannot determine extension
       return filename_split.last
     else
@@ -166,9 +156,7 @@ class Datafile < ActiveRecord::Base
                            Date.current]).count > 0
   end
 
-  def dataset_key
-    dataset.key
-  end
+  delegate :key, to: :dataset, prefix: true
 
   def target_key
     "#{dataset.dirname}/dataset_files/#{binary_name}"
@@ -177,34 +165,33 @@ class Datafile < ActiveRecord::Base
   # has side-effect of updating record if the bytestream is in medusa, but the record did not indicate
   # if bytestream is found the same in draft and medusa roots, the draft bytestream is deleted
   def in_medusa
-
     return false unless dataset
-    return false unless (dataset.identifier && dataset.identifier != '')
+    return false unless dataset.identifier && dataset.identifier != ""
 
     in_medusa = false # start out with the assumption that it is not in medusa, then check and handle
 
-    #datafile_target_key = "#{dataset.dirname}/dataset_files/#{self.binary_name}"
+    # datafile_target_key = "#{dataset.dirname}/dataset_files/#{self.binary_name}"
 
-    if Application.storage_manager.medusa_root.exist?(self.target_key)
+    if Application.storage_manager.medusa_root.exist?(target_key)
       in_medusa = true
 
-      if storage_root && storage_key && storage_root == 'draft' && storage_key != ''
+      if storage_root && storage_key && storage_root == "draft" && storage_key != ""
 
         # If the binary object also exists in draft system, delete duplicate.
         #  Can't do full equivalence check (S3 etag is not always MD5), so check sizes.
-        if Application.storage_manager.draft_root.exist?(self.storage_key)
-          draft_size = Application.storage_manager.draft_root.size(self.storage_key)
-          medusa_size = Application.storage_manager.medusa_root.size(self.target_key)
+        if Application.storage_manager.draft_root.exist?(storage_key)
+          draft_size = Application.storage_manager.draft_root.size(storage_key)
+          medusa_size = Application.storage_manager.medusa_root.size(target_key)
 
           if draft_size == medusa_size
             # If the ingest into Medusa was successful,
             # delete redundant binary object
             # and update Illinois Data Bank datafile record
-            Application.storage_manager.draft_root.delete_content(self.storage_key)
+            Application.storage_manager.draft_root.delete_content(storage_key)
             in_medusa = true
           else
             in_medusa = false
-            exception_string("Datafile exists in both draft and medusa storage systems, but the sizes are different. Dataset: #{dataset.key}, Datafile: #{datafile.web_id}")
+            exception_string("Different size draft vs medusa. Dataset: #{dataset.key}, Datafile: #{datafile.web_id}")
             notification = DatabankMailer.error(exception_string)
             notification.deliver_now
           end
@@ -216,134 +203,118 @@ class Datafile < ActiveRecord::Base
       end
 
       if in_medusa
-        self.storage_root = 'medusa'
+        self.storage_root = "medusa"
         self.storage_key = target_key
-        self.save
+        save
       end
-    else
-      #Rails.logger.warn("Did not find in medusa")
     end
-      in_medusa
+    in_medusa
   end
 
-  def has_bytestream
-    self.storage_root &&
-        self.storage_root != "" &&
-        self.storage_key &&
-        self.storage_key != "" &&
-        current_root.exist?(self.storage_key)
+  def bytestream?
+    storage_root &&
+        storage_root != "" &&
+        storage_key &&
+        storage_key != "" &&
+        current_root.exist?(storage_key)
   end
 
   def record_download(request_ip)
+    return nil if Robot.exists?(address: request_ip)
 
-    if Robot.exists?(address: request_ip)
-      return nil
-    end
+    return nil unless dataset.publication_state != Databank::PublicationState::DRAFT
 
-    if dataset.publication_state != Databank::PublicationState::DRAFT # ignore draft datasets
+    unless dataset.ip_downloaded_dataset_today(request_ip)
 
-      unless dataset.ip_downloaded_dataset_today(request_ip)
+      day_ds_download_set = DatasetDownloadTally.where(["dataset_key= ? and download_date = ?",
+                                                        dataset.key,
+                                                        Date.current])
 
-        day_ds_download_set = DatasetDownloadTally.where(["dataset_key= ? and download_date = ?",
-                                                          dataset.key,
-                                                          Date.current])
+      if day_ds_download_set.count == 1
 
-        if day_ds_download_set.count == 1
-
-          today_dataset_download = day_ds_download_set.first
-          today_dataset_download.tally = today_dataset_download.tally + 1
-          today_dataset_download.save
-        elsif day_ds_download_set.count == 0
-          DatasetDownloadTally.create(tally: 1,
-                                      download_date: Date.current,
-                                      dataset_key: dataset.key,
-                                      doi: dataset.identifier)
-        else
-          Rails.logger.warn "unexpected number of dataset tally records for download of #{self.web_id} on #{Date.current} from #{request_ip}"
-        end
-
+        today_dataset_download = day_ds_download_set.first
+        today_dataset_download.tally = today_dataset_download.tally + 1
+        today_dataset_download.save
+      elsif day_ds_download_set.count.zero?
+        DatasetDownloadTally.create(tally:         1,
+                                    download_date: Date.current,
+                                    dataset_key:   dataset.key,
+                                    doi:           dataset.identifier)
+      else
+        Rails.logger.warn "wrong # dataset tally download of #{self.web_id} on #{Date.current} ip: #{request_ip}"
       end
 
-      unless ip_downloaded_file_today(request_ip)
+    end
 
+    return nil if ip_downloaded_file_today(request_ip)
 
-        DayFileDownload.create(ip_address: request_ip,
+    DayFileDownload.create(ip_address:    request_ip,
+                           download_date: Date.current,
+                           file_web_id:   self.web_id,
+                           filename:      bytestream_name,
+                           dataset_key:   dataset.key,
+                           doi:           dataset.identifier)
+
+    day_df_download_set = FileDownloadTally.where(["file_web_id = ? and download_date = ?",
+                                                   self.web_id,
+                                                   Date.current])
+
+    if day_df_download_set.count == 1
+      today_file_download = day_df_download_set.first
+      today_file_download.tally = today_file_download.tally + 1
+      today_file_download.save
+    elsif day_df_download_set.count.zero?
+      FileDownloadTally.create(tally:         1,
                                download_date: Date.current,
-                               file_web_id: self.web_id,
-                               filename: self.bytestream_name,
-                               dataset_key: dataset.key,
-                               doi: dataset.identifier)
-
-        day_df_download_set = FileDownloadTally.where(["file_web_id = ? and download_date = ?",
-                                                       self.web_id,
-                                                       Date.current])
-
-        if day_df_download_set.count == 1
-          today_file_download = day_df_download_set.first
-          today_file_download.tally = today_file_download.tally + 1
-          today_file_download.save
-        elsif day_df_download_set.count == 0
-          FileDownloadTally.create(tally: 1, download_date: Date.current, dataset_key: dataset.key, doi: dataset.identifier, file_web_id: self.web_id, filename: self.bytestream_name)
-        else
-          Rails.logger.warn "unexpected number of file tally records for download of #{self.web_id} on #{Date.current} from #{request_ip}"
-        end
-
-      end
-
+                               dataset_key:   dataset.key,
+                               doi:           dataset.identifier,
+                               file_web_id:   web_id,
+                               filename:      bytestream_name)
+    else
+      Rails.logger.warn "wrong # of file tally download of #{web_id} on #{Date.current} ip: #{request_ip}"
     end
-
   end
 
   def remove_binary
-    if storage_key
-      if Application.storage_manager.draft_root.exist?(storage_key)
-        Application.storage_manager.draft_root.delete_content(storage_key)
-      end
-      if Application.storage_manager.draft_root.exist?("#{storage_key}.info")
-        Application.storage_manager.draft_root.delete_content("#{storage_key}.info")
-      end
+    return nil unless storage_key
+
+    if Application.storage_manager.draft_root.exist?(storage_key)
+      Application.storage_manager.draft_root.delete_content(storage_key)
     end
+
+    return nil unless Application.storage_manager.draft_root.exist?("#{storage_key}.info")
+
+    Application.storage_manager.draft_root.delete_content("#{storage_key}.info")
   end
 
   def initiate_processing_task
-
     databank_task = DatabankTask.create_remote(self.web_id)
+    raise("error attempting to send datafile for processing: #{self.web_id}") unless databank_task
 
-    if databank_task
-      self.task_id = databank_task
-      if self.task_id
-        self.save
-      else
-        raise("error attempting to create remote task: #{self.web_id}")
-      end
-    else
-      raise("error attempting to send datafile for processing: #{self.web_id}")
-    end
+    task_id = databank_task
+    raise("error attempting to create remote task: #{web_id}") unless task_id
 
+    save
   end
 
   def job
-    if self.job_id
-      Delayed::Job.where(id: self.job_id).first
-    end
+    Delayed::Job.find_by(id: job_id) if job_id
   end
 
   def job_status
-    if self.job
+    if job
       if job.locked_by
-        return :processing
+        :processing
       else
-        return :pending
+        :pending
       end
     else
-      return :complete
+      :complete
     end
   end
 
   def destroy_job
-    if self.job
-      self.job.destroy
-    end
+    job&.destroy
   end
 
   def download_link
@@ -351,129 +322,98 @@ class Datafile < ActiveRecord::Base
     when :filesystem
       download_cfs_file_path(cfs_file)
     when :s3
-      cfs_file.storage_root.presigned_get_url(cfs_file.key, response_content_disposition: disposition('attachment', cfs_file),
-                                              response_content_type: safe_content_type(cfs_file))
+      cfs_file.storage_root.presigned_get_url(cfs_file.key,
+                                              response_content_disposition: disposition("attachment", cfs_file),
+                                              response_content_type:        safe_content_type(cfs_file))
     else
       raise "Unrecognized storage root type #{cfs_file.storage_root.type}"
     end
   end
 
   def self.peek_type_from_mime(mime_type, num_bytes)
-
-    return Databank::PeekType::NONE unless num_bytes && mime_type && mime_type.length > 0
+    return Databank::PeekType::NONE unless num_bytes && mime_type && !mime_type.empty?
 
     mime_parts = mime_type.split("/")
-
     return Databank::PeekType::NONE unless mime_parts.length == 2
 
-    text_subtypes = ['csv', 'xml', 'x-sh', 'x-javascript', 'json', 'r', 'rb']
-
-    supported_image_subtypes = ['jp2', 'jpeg', 'dicom', 'gif', 'png', 'bmp']
-
-    nonzip_archive_subtypes = ['x-7z-compressed', 'x-tar']
-
-    pdf_subtypes = ['pdf', 'x-pdf']
-
-    microsoft_subtypes = ['msword',
-                          'vnd.openxmlformats-officedocument.wordprocessingml.document',
-                          'vnd.openxmlformats-officedocument.wordprocessingml.template',
-                          'vnd.ms-word.document.macroEnabled.12',
-                          'vnd.ms-word.template.macroEnabled.12',
-                          'vnd.ms-excel',
-                          'vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                          'vnd.openxmlformats-officedocument.spreadsheetml.template',
-                          'vnd.ms-excel.sheet.macroEnabled.12',
-                          'vnd.ms-excel.template.macroEnabled.12',
-                          'vnd.ms-excel.addin.macroEnabled.12',
-                          'vnd.ms-excel.sheet.binary.macroEnabled.12',
-                          'vnd.ms-powerpoint',
-                          'vnd.openxmlformats-officedocument.presentationml.presentation',
-                          'vnd.openxmlformats-officedocument.presentationml.template',
-                          'vnd.openxmlformats-officedocument.presentationml.slideshow',
-                          'vnd.ms-powerpoint.addin.macroEnabled.12',
-                          'vnd.ms-powerpoint.presentation.macroEnabled.12',
-                          'vnd.ms-powerpoint.template.macroEnabled.12',
-                          'vnd.ms-powerpoint.slideshow.macroEnabled.12']
-
+    text_subtypes = ["csv", "xml", "x-sh", "x-javascript", "json", "r", "rb"]
+    supported_image_subtypes = %w[jp2 jpeg dicom gif png bmp]
+    nonzip_archive_subtypes = ["x-7z-compressed", "x-tar"]
+    pdf_subtypes = ["pdf", "x-pdf"]
+    microsoft_subtypes = ["msword",
+                          "vnd.openxmlformats-officedocument.wordprocessingml.document",
+                          "vnd.openxmlformats-officedocument.wordprocessingml.template",
+                          "vnd.ms-word.document.macroEnabled.12",
+                          "vnd.ms-word.template.macroEnabled.12",
+                          "vnd.ms-excel",
+                          "vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                          "vnd.openxmlformats-officedocument.spreadsheetml.template",
+                          "vnd.ms-excel.sheet.macroEnabled.12",
+                          "vnd.ms-excel.template.macroEnabled.12",
+                          "vnd.ms-excel.addin.macroEnabled.12",
+                          "vnd.ms-excel.sheet.binary.macroEnabled.12",
+                          "vnd.ms-powerpoint",
+                          "vnd.openxmlformats-officedocument.presentationml.presentation",
+                          "vnd.openxmlformats-officedocument.presentationml.template",
+                          "vnd.openxmlformats-officedocument.presentationml.slideshow",
+                          "vnd.ms-powerpoint.addin.macroEnabled.12",
+                          "vnd.ms-powerpoint.presentation.macroEnabled.12",
+                          "vnd.ms-powerpoint.template.macroEnabled.12",
+                          "vnd.ms-powerpoint.slideshow.macroEnabled.12"]
     subtype = mime_parts[1].downcase
+    if mime_parts[0] == "text" || text_subtypes.include?(subtype)
+      return return Databank::PeekType::ALL_TEXT unless num_bytes > ALLOWED_DISPLAY_BYTES
 
-    if mime_parts[0] == 'text' || text_subtypes.include?(subtype)
-      if num_bytes > ALLOWED_DISPLAY_BYTES
-        return Databank::PeekType::PART_TEXT
-      else
-        return Databank::PeekType::ALL_TEXT
-      end
-    elsif mime_parts[0] == 'image'
-      if supported_image_subtypes.include?(subtype)
-        return Databank::PeekType::IMAGE
-      else
-        return Databank::PeekType::NONE
-      end
+      return Databank::PeekType::PART_TEXT
+    elsif mime_parts[0] == "image"
+      return Databank::PeekType::NONE unless supported_image_subtypes.include?(subtype)
+
+      return Databank::PeekType::IMAGE
     elsif microsoft_subtypes.include?(subtype)
       return Databank::PeekType::MICROSOFT
     elsif pdf_subtypes.include?(subtype)
       return Databank::PeekType::PDF
-    elsif subtype == 'zip'
+    elsif subtype == "zip"
       return Databank::PeekType::LISTING
     elsif nonzip_archive_subtypes.include?(subtype)
       return Databank::PeekType::LISTING
     else
       return Databank::PeekType::NONE
     end
-
   end
 
-  def get_part_text_peek
-
-    return nil unless self.current_root.exist?(self.storage_key)
+  def part_text_peek
+    return nil unless current_root.exist?(storage_key)
 
     begin
-
       part_text_string = nil
-
       if IDB_CONFIG[:aws][:s3_mode]
-        first_bytes = self.current_root.get_bytes(self.storage_key, 0, ALLOWED_DISPLAY_BYTES)
-
+        first_bytes = current_root.get_bytes(storage_key, 0, ALLOWED_DISPLAY_BYTES)
         part_text_string = first_bytes.string
-
       else
-        File.open(self.filepath) do |file|
+        File.open(filepath) do |file|
           part_text_string = file.read(ALLOWED_DISPLAY_BYTES)
         end
       end
-
-      if part_text_string.encoding == Encoding::ASCII_8BIT
-        part_text_string.force_encoding(Encoding::UTF_8)
+      part_text_string.force_encoding(Encoding::UTF_8) if part_text_string.encoding == Encoding::ASCII_8BIT
+      unless part_text_string.encoding == Encoding::UTF_8
+        part_text_string.encode("UTF-8", invalid: :replace, undef: :replace)
       end
-
-      if part_text_string.encoding == Encoding::UTF_8
-        return part_text_string
-      else
-        part_text_string = part_text_string.encode("UTF-8",{invalid: :replace, undef: :replace})
-        return part_text_string
-      end
+      part_text_string
     rescue Aws::S3::Errors::NotFound
       return nil
     end
   end
 
-  def get_all_text_peek
-
-    return nil unless self.current_root.exist?(self.storage_key)
+  def all_text_peek
+    return nil unless current_root.exist?(storage_key)
 
     begin
-      all_text_string = current_root.as_string(self.storage_key)
+      all_text_string = current_root.as_string(storage_key)
+      all_text_string.force_encoding(Encoding::UTF_8) if all_text_string.encoding == Encoding::ASCII_8BIT
+      return all_text_string if all_text_string.encoding == Encoding::UTF_8
 
-      if all_text_string.encoding == Encoding::ASCII_8BIT
-        all_text_string.force_encoding(Encoding::UTF_8)
-      end
-
-      if all_text_string.encoding == Encoding::UTF_8
-        return all_text_string
-      else
-        all_text_string = all_text_string.encode("UTF-8",{invalid: :replace, undef: :replace})
-        return all_text_string
-      end
+      all_text_string.encode("UTF-8", invalid: :replace, undef: :replace)
     rescue Aws::S3::Errors::NotFound
       return nil
     end
@@ -485,12 +425,11 @@ class Datafile < ActiveRecord::Base
   #
   def generate_web_id
     proposed_id = nil
-    while true
-      proposed_id = (36 ** (WEB_ID_LENGTH - 1) +
-          rand(36 ** WEB_ID_LENGTH - 36 ** (WEB_ID_LENGTH - 1))).to_s(36)
-      break unless Datafile.find_by_web_id(proposed_id)
+    loop do
+      proposed_id = (36**(WEB_ID_LENGTH - 1) +
+          rand(36**WEB_ID_LENGTH - 36**(WEB_ID_LENGTH - 1))).to_s(36)
+      break unless Datafile.find_by(web_id: proposed_id)
     end
     proposed_id
   end
-
 end
