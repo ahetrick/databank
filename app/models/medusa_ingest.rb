@@ -48,7 +48,7 @@ class MedusaIngest < ActiveRecord::Base
 
     ### skip datafiles already ingested, but send new system files ###
 
-    file_time = Time.now.strftime('%Y-%m-%d_%H-%M')
+    file_time = Time.now.strftime('%Y-%m-%d_%H-%M-%S')
 
     # START description file
     # always send a description file
