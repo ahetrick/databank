@@ -8,4 +8,8 @@ class Invitee < ActiveRecord::Base
     end
   end
 
+  def group
+    "reviewer"
+  end
+
 end

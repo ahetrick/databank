@@ -34,9 +34,6 @@ class ApplicationController < ActionController::Base
   
   def error_occurred(exception)
 
-    Rails.logger.warn "inside error_occurred"
-    Rails.logger.warn exception.class
-
     if exception.class == CanCan::AccessDenied
       alert_message = "You are not authorized to access the requested resource."
 

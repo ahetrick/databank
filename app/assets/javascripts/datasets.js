@@ -298,7 +298,7 @@ ready = function () {
     $("#api-modal-btn").click(function () {
 
         $.getJSON("/datasets/" + dataset_key + "/get_current_token", function (data) {
-            //console.log(data);
+            console.log(data);
             if (data.token && data.expires && data.token != "none") {
                 $('#token-header').text('Here is your token:');
                 setTokenExamples(data.token, data.expires);
