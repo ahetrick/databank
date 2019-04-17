@@ -783,8 +783,6 @@ function getNewToken() {
 }
 
 function setTokenExamples(upload_token, token_expiration) {
-
-
     $('.current-token').html("<p><strong>Current HTTP Authentication Token: </strong>" + upload_token + "<br/><strong>Expires:</strong> " + (new Date(token_expiration)).toISOString() + "</p>");
     $('#token-button-text').text('View token for command line tools');
 
