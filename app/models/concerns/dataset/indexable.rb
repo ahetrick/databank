@@ -4,275 +4,248 @@ module Indexable
   extend ActiveSupport::Concern
 
   def visibility
-    return_string = ""
-    case self.hold_state
-      when Databank::PublicationState::TempSuppress::METADATA
-        return_string = "Metadata and Files Temporarily Suppressed"
-      when Databank::PublicationState::TempSuppress::FILE
-        case self.publication_state
-          when Databank::PublicationState::DRAFT
-            return_string = "Draft"
-          when Databank::PublicationState::Embargo::FILE
-            return_string = "Metadata Published, Files Publication Delayed (Embargoed)"
-          when Databank::PublicationState::Embargo::METADATA
-            return_string = "Metadata and Files Publication Delayed (Embargoed)"
-          when Databank::PublicationState::PermSuppress::FILE
-            return_string = "Metadata Published, Files Withdrawn"
-          when Databank::PublicationState::PermSuppress::METADATA
-            return_string = "Metadata and Files Withdrawn"
-          else
-            return_string = "Metadata Published, Files Temporarily Suppressed"
-        end
+    return_string = case hold_state
+                    when Databank::PublicationState::TempSuppress::METADATA
+                      "Metadata and Files Temporarily Suppressed"
+                    when Databank::PublicationState::TempSuppress::FILE
+                      case publication_state
+                      when Databank::PublicationState::DRAFT
+                        "Draft"
+                      when Databank::PublicationState::Embargo::FILE
+                        "Metadata Published, Files Publication Delayed (Embargoed)"
+                      when Databank::PublicationState::Embargo::METADATA
+                        "Metadata and Files Publication Delayed (Embargoed)"
+                      when Databank::PublicationState::PermSuppress::FILE
+                        "Metadata Published, Files Withdrawn"
+                      when Databank::PublicationState::PermSuppress::METADATA
+                        "Metadata and Files Withdrawn"
+                      else
+                        "Metadata Published, Files Temporarily Suppressed"
+                      end
 
-      else
-        case self.publication_state
-          when Databank::PublicationState::DRAFT
-            return_string = "Draft"
-          when Databank::PublicationState::RELEASED
-            return_string = "Metadata and Files Published"
-          when Databank::PublicationState::Embargo::FILE
-            return_string = "Metadata Published, Files Publication Delayed (Embargoed)"
-          when Databank::PublicationState::Embargo::METADATA
-            return_string = "Metadata and Files Publication Delayed (Embargoed)"
-          when Databank::PublicationState::PermSuppress::FILE
-            return_string = "Metadata Published, Files Withdrawn"
-          when Databank::PublicationState::PermSuppress::METADATA
-            return_string = "Metadata and Files Withdrawn"
-          else
-            #should never get here
-            return_string = "Unknown, please contact the Research Data Service"
-        end
-    end
+                    else
+                      case publication_state
+                      when Databank::PublicationState::DRAFT
+                        "Draft"
+                      when Databank::PublicationState::RELEASED
+                        "Metadata and Files Published"
+                      when Databank::PublicationState::Embargo::FILE
+                        "Metadata Published, Files Publication Delayed (Embargoed)"
+                      when Databank::PublicationState::Embargo::METADATA
+                        "Metadata and Files Publication Delayed (Embargoed)"
+                      when Databank::PublicationState::PermSuppress::FILE
+                        "Metadata Published, Files Withdrawn"
+                      when Databank::PublicationState::PermSuppress::METADATA
+                        "Metadata and Files Withdrawn"
+                      else
+                        # should never get here
+                        "Unknown, please contact the Research Data Service"
+                      end
+                    end
 
-    if self.new_record?
-      return_string = "Unsaved Draft"
-    end
+    return_string = "Unsaved Draft" if new_record?
 
     return_string
   end
 
   def self.visibility_name_from_code(code)
-
     case code
-      when 'released'
-        return 'Metadata and Files Published'
-      when 'draft'
-        return 'Draft'
-      when 'new'
-        return 'Unsaved Draft'
-      when 'suppressed_mf'
-        return 'Metadata and Files Temporarily Suppressed'
-      when 'suppressed_f'
-        return 'Metadata Published, Files Temporarily Suppressed'
-      when 'embargoed_mf'
-        return 'Metadata and Files Publication Delayed (Embargoed)'
-      when 'embargoed_f'
-        return 'Metadata Published, Files Publication Delayed (Embargoed)'
+    when "released"
+      "Metadata and Files Published"
+    when "draft"
+      "Draft"
+    when "new"
+      "Unsaved Draft"
+    when "suppressed_mf"
+      "Metadata and Files Temporarily Suppressed"
+    when "suppressed_f"
+      "Metadata Published, Files Temporarily Suppressed"
+    when "embargoed_mf"
+      "Metadata and Files Publication Delayed (Embargoed)"
+    when "embargoed_f"
+      "Metadata Published, Files Publication Delayed (Embargoed)"
 
-      when 'withdrawn_mf'
-        return 'Metadata and Files Withdrawn'
-      when 'withdrawn_f'
-        return 'Metadata Published, Files Withdrawn'
-      else
-        return 'Error: publication state not found'
+    when "withdrawn_mf"
+      "Metadata and Files Withdrawn"
+    when "withdrawn_f"
+      "Metadata Published, Files Withdrawn"
+    else
+      "Error: publication state not found"
     end
-
   end
 
   def visibility_code
-    return_string = ""
-    case self.hold_state
-      when Databank::PublicationState::TempSuppress::METADATA
-        return_string = 'suppressed_mf'
-      when Databank::PublicationState::TempSuppress::FILE
-        case self.publication_state
-          when Databank::PublicationState::DRAFT
-            return_string = 'draft'
-          when Databank::PublicationState::Embargo::FILE
-            return_string = 'embargoed_f'
-          when Databank::PublicationState::Embargo::METADATA
-            return_string = 'embargoed_mf'
-          when Databank::PublicationState::PermSuppress::FILE
-            return_string = 'withdrawn_f'
-          when Databank::PublicationState::PermSuppress::METADATA
-            return_string = 'withdrawn_mf'
-          else
-            return_string = 'suppressed_f'
-        end
+    return_string = case hold_state
+                    when Databank::PublicationState::TempSuppress::METADATA
+                      "suppressed_mf"
+                    when Databank::PublicationState::TempSuppress::FILE
+                      case publication_state
+                      when Databank::PublicationState::DRAFT
+                        "draft"
+                      when Databank::PublicationState::Embargo::FILE
+                        "embargoed_f"
+                      when Databank::PublicationState::Embargo::METADATA
+                        "embargoed_mf"
+                      when Databank::PublicationState::PermSuppress::FILE
+                        "withdrawn_f"
+                      when Databank::PublicationState::PermSuppress::METADATA
+                        "withdrawn_mf"
+                      else
+                        "suppressed_f"
+                      end
 
-      else
-        case self.publication_state
-          when Databank::PublicationState::DRAFT
-            return_string = 'draft'
-          when Databank::PublicationState::RELEASED
-            return_string = 'released'
-          when Databank::PublicationState::Embargo::FILE
-            return_string = 'embargoed_f'
-          when Databank::PublicationState::Embargo::METADATA
-            return_string = 'embargoed_mf'
-          when Databank::PublicationState::PermSuppress::FILE
-            return_string = 'withdrawn_f'
-          when Databank::PublicationState::PermSuppress::METADATA
-            return_string = 'withdrawn_mf'
-          else
-            #should never get here
-            return_string = "unknown"
-        end
-    end
+                    else
+                      case publication_state
+                      when Databank::PublicationState::DRAFT
+                        "draft"
+                      when Databank::PublicationState::RELEASED
+                        "released"
+                      when Databank::PublicationState::Embargo::FILE
+                        "embargoed_f"
+                      when Databank::PublicationState::Embargo::METADATA
+                        "embargoed_mf"
+                      when Databank::PublicationState::PermSuppress::FILE
+                        "withdrawn_f"
+                      when Databank::PublicationState::PermSuppress::METADATA
+                        "withdrawn_mf"
+                      else
+                        # should never get here
+                        "unknown"
+                      end
+                    end
 
-    if self.new_record?
-      return_string = 'new'
-    end
+    return_string = "new" if new_record?
 
     return_string
   end
 
-
   def self.license_name_from_code(code)
-
-    if ['unselected', 'custom'].include?(code)
-      return code
-
+    if %w[unselected custom].include?(code)
+      code
     else
-      licenses = LICENSE_INFO_ARR.select{|license| license.code == code}
-      if licenses && licenses.length > 0
-        return licenses[0].name
-      else
-        return code
-      end
+      licenses = LICENSE_INFO_ARR.select {|license| license.code == code }
+      return code if licenses.blank?
 
+      licenses[0].name
     end
-
-
   end
 
   def self.funder_name_from_code(code)
-
-    if code == 'other'
-      return "Other"
+    if code == "other"
+      "Other"
     else
-      funders = FUNDER_INFO_ARR.select{|funder| funder.code == code}
-      if funders && funders.length > 0
-        return funders[0].name
-      else
-        return 'funder not found'
-      end
-    end
+      funders = FUNDER_INFO_ARR.select {|funder| funder.code == code }
+      return "funder not found" if funders.blank?
 
+      funders[0].name
+    end
   end
 
   def funder_names
-    Funder.where(dataset_id: self.id).pluck(:name)
+    Funder.where(dataset_id: id).pluck(:name)
   end
 
   def funder_codes
-    Funder.where(dataset_id: self.id).pluck(:code)
+    Funder.where(dataset_id: id).pluck(:code)
   end
 
   def funder_names_fulltext
-    self.funder_names.join(" ").to_s
+    funder_names.join(" ").to_s
   end
 
   def grant_numbers
-    Funder.where(dataset_id: self.id).pluck(:grant)
+    Funder.where(dataset_id: id).pluck(:grant)
   end
 
   def grant_numbers_fulltext
-    self.grant_numbers.join(" ")
+    grant_numbers.join(" ")
   end
 
   def creator_names
-    return_arr = Array.new
-    self.creators.each do |creator|
+    return_arr = []
+    creators.each do |creator|
       return_arr << creator.display_name
     end
     return_arr
   end
 
   def creator_names_fulltext
-    self.creator_names.join(" ")
+    creator_names.join(" ")
   end
 
   def subject_text
-    if self.subject && self.subject != ''
-      return self.subject
+    if subject && subject != ""
+      subject
     else
-      return 'None'
+      "None"
     end
   end
 
-
   def filenames
-    return_arr = Array.new
-    self.datafiles.each do |datafile|
+    return_arr = []
+    datafiles.each do |datafile|
       return_arr << datafile.bytestream_name
     end
     return_arr
   end
 
   def filenames_fulltext
-    self.filenames.join(" ")
+    filenames.join(" ")
   end
 
   def self.pubstate_name_from_code(code)
     case code
-      when Databank
-        return "draft"
-      else
-        return "not draft"
+    when Databank
+      "draft"
+    else
+      "not draft"
     end
   end
+
   def datafile_extensions
-    return_arr = Array.new
-    self.datafiles.each do |datafile|
+    return_arr = []
+    datafiles.each do |datafile|
       return_arr << datafile.file_extension
     end
     return_arr
   end
 
   def datafile_extensions_fulltext
-    self.datafile_extensions.join(" ")
+    datafile_extensions.join(" ")
   end
 
   def self.citation_report(search, request_url, current_user)
-
     report_text = ""
 
     15.times do
-      report_text = report_text + "="
+      report_text += "="
     end
 
-    report_text = report_text + "\nIllinois Data Bank\nDatasets Report, generated #{Date.current.iso8601}"
-    if current_user && current_user.username
-      report_text = report_text + " by #{current_user.username}"
-    end
-    report_text = report_text + "\nQuery URL: #{request_url}\n"
+    report_text += "\nIllinois Data Bank\nDatasets Report, generated #{Date.current.iso8601}"
+    report_text += " by #{current_user.username}" if current_user&.username
+    report_text += "\nQuery URL: #{request_url}\n"
 
     15.times do
-      report_text = report_text + "="
+      report_text += "="
     end
 
-    report_text = report_text + "\n"
+    report_text += "\n"
 
-    search.each_hit_with_result do |hit, dataset|
-
-      report_text = report_text + "\n\n#{dataset.plain_text_citation}"
-      if dataset.funders.count > 0
+    search.each_hit_with_result do |_hit, dataset|
+      report_text += "\n\n#{dataset.plain_text_citation}"
+      if dataset.funders.count.positive?
         dataset.funders.each do |funder|
-          report_text = report_text + "\nFunder: #{funder.name}"
-          if funder.grant && funder.grant != ""
-            report_text = report_text + ", Grant: #{funder.grant}"
-          end
-
+          report_text += "\nFunder: #{funder.name}"
+          report_text += ", Grant: #{funder.grant}" if funder.grant && funder.grant != ""
         end
       end
-      report_text = report_text + "\nDownloads: #{dataset.total_downloads} (#{dataset.release_datetime.to_date.iso8601} to #{Date.current.iso8601} )\n"
+      report_text += "\nDownloads: #{dataset.total_downloads} "
+      report_text += "(#{dataset.release_datetime.to_date.iso8601} to #{Date.current.iso8601} )\n"
       5.times do
-        report_text = report_text + "-"
+        report_text += "-"
       end
     end
 
     report_text
-
   end
 end

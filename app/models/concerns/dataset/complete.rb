@@ -6,153 +6,86 @@ module Complete
   class_methods do
     # making completion_check a class method with passed-in dataset, so it can be used by controller before save
     def completion_check(dataset, current_user)
-      response = "An unexpected exception was raised and logged during completion check."
+      e_arr = []
+      e_arr << "title" if dataset.title.blank?
+      e_arr << "at least one creator" if dataset.creators.count < 1
+      e_arr << "license" if dataset.license.blank?
+      e_arr << "at least one file" unless dataset.datafiles.count.positive?
+      e_arr << "select primary contact from author list" unless dataset.contact
+      e_arr << "identifier to import" if dataset.is_import? && !dataset.identifier
+      e_arr += Dataset.license_error(dataset) || []
+      e_arr += Dataset.creator_email_errors(dataset) || []
+      e_arr += Dataset.release_date_error(dataset, current_user) || []
+      e_arr += Dataset.duplicate_doi_error(dataset) || []
+      e_arr += Dataset.duplicate_datafile_error(dataset) || []
+      e_arr += Dataset.embargo_errors(dataset) || []
+      return "ok" if e_arr.empty?
 
-      begin
-        validation_error_messages = []
-        validation_error_message = ""
+      validation_error_message += "Required elements for a complete dataset missing: "
+      e_arr.each_with_index do |m, i|
+        validation_error_message += ", " if i.positive?
+        validation_error_message += m
+      end
+      validation_error_message += "."
+      validation_error_message
+    end
 
-        datafilesArr = []
+    def creator_email_errors(dataset)
+      e_arr = []
+      dataset.creators.each do |creator|
+        return ["an email address for all creators"] unless creator.email && creator.email != ""
 
-        validation_error_messages << "title" if dataset.title.blank?
+        next unless creator.email.include?("@illinois.edu")
 
-        validation_error_messages << "at least one creator" if dataset.creators.count < 1
-
-        validation_error_messages << "license" if dataset.license.blank?
-
-        contact = nil
-        dataset.creators.each do |creator|
-          contact = creator if creator.is_contact?
+        netid = creator.email.split("@").first
+        # check to see if netid is found, to prevent email system errors
+        begin
+          open("http://quest.grainger.uiuc.edu/directory/ed/person/#{netid}").read
+        rescue OpenURI::HTTPError
+          e_arr << "correct netid in email for #{creator.given_name} #{creator.family_name}"
         end
+      end
+      e_arr
+    end
 
-        dataset.creators.each do |creator|
-          if !creator.email || creator.email == ""
-            validation_error_messages << "an email address for all creators"
-          elsif creator.email.include?("@illinois.edu")
-            netid = creator.email.split("@").first
+    def release_date_error(dataset, current_user)
+      return nil if (current_user.role == "admin") ||
+          !dataset.release_date ||
+          dataset.release_date > (Date.current + 1.year)
 
-            creator_record = nil
+      ["a release date no more than one year in the future"]
+    end
 
-            # check to see if netid is found, to prevent email system errors
-            begin
-              creator_record = open("http://quest.grainger.uiuc.edu/directory/ed/person/#{netid}").read
-            rescue OpenURI::HTTPError => err
-              validation_error_messages << "a valid email address for #{creator.given_name} #{creator.family_name} (please check and correct the netid)"
-            end
+    def license_error(dataset)
+      return nil if !dataset.license || dataset.license != "license.txt"
 
-          end
-        end
+      has_file = false
+      dataset.datafiles&.each do |datafile|
+        has_file = true if datafile.bytestream_name&.casecmp("license.txt")&.zero?
+      end
+      return ["a license file named license.txt or a different license selection"] unless has_file
+    end
 
-        dataset.creators.each do |creator|
-          if creator.type_of == Databank::CreatorType::PERSON && (!creator.given_name || creator.given_name == "")
-            validation_error_messages << "at least one given name for author(s)"
-            break
-          end
-        end
+    def duplicate_doi_error(dataset)
+      ["a unique DOI"] if Dataset.where(identifier: dataset.identifier).count > 1
+    end
 
-        dataset.creators.each do |creator|
-          if creator.type_of == Databank::CreatorType::PERSON && !creator.given_name || creator.given_name == ""
-            validation_error_messages << "a family name for author(s)"
-            break
-          end
-        end
+    def duplicate_datafile_error(dataset)
+      datafiles_arr = []
+      dataset.datafiles.each do |datafile|
+        datafiles_arr << datafile.bytestream_name
+      end
+      first_dup = datafiles_arr.find {|e| datafiles_arr.count(e) > 1 }
+      ["no duplicate filenames (#{first_dup})"] if first_dup
+    end
 
-        dataset.creators.each do |creator|
-          if creator.type_of == Databank::CreatorType::INSTITUTION && !creator.institution_name || creator.institution_name == ""
-            validation_error_messages << "a name for institution(s)"
-            break
-          end
-        end
-
-        validation_error_messages << "select primary contact from author list" unless contact
-
-        if current_user
-          if (current_user.role != "admin") && (dataset.release_date && (dataset.release_date > (Date.current + 1.year)))
-            validation_error_messages << "a release date no more than one year in the future"
-          end
-        end
-
-        if dataset.license && dataset.license == "license.txt"
-          has_file = false
-          dataset.datafiles&.each do |datafile|
-            has_file = true if datafile.bytestream_name&.casecmp("license.txt")&.zero?
-          end
-
-          validation_error_messages << "a license file named license.txt or a different license selection" unless has_file
-
-        end
-
-        if dataset.identifier && dataset.identifier != ""
-          dupcheck = Dataset.where(identifier: dataset.identifier)
-          validation_error_messages << "a unique DOI" if dupcheck.count > 1
-        end
-
-        if dataset.datafiles.count < 1
-          validation_error_messages << "at least one file"
-        else
-          dataset.datafiles.each do |datafile|
-            datafilesArr << datafile.bytestream_name
-          end
-
-          firstDup = datafilesArr.find {|e| datafilesArr.count(e) > 1 }
-
-          validation_error_messages << "no duplicate filenames (#{firstDup})" if firstDup
-
-        end
-
-        if dataset.embargo && [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA].include?(dataset.embargo)
-          if !dataset.release_date || dataset.release_date <= Date.current
-            validation_error_messages << "a future release date for delayed publication (embargo) selection"
-          end
-
-        else
-          if dataset.release_date && dataset.release_date > Date.current
-            validation_error_messages << "a delayed publication (embargo) selection for a future release date"
-          end
-        end
-
-        validation_error_messages << "identifier to import" if dataset.is_import? && !dataset.identifier
-      rescue Exception => exception
-        # temporary debugging strategy
-        # I expect something terrible is happening here at runtime,
-        # and my overall rescue of Standard Exception
-        # is not catching anything.
-        # This is totally the desparate measure it looks like.
-
-        Rails.logger.warn exception.to_yaml
-
-        exception_string = "*** Standard Error caught in application_controller.rb on #{IDB_CONFIG[:root_url_text]} ***\nclass: #{exception.class}\nmessage: #{exception.message}\n"
-        exception_string << Time.now.utc.iso8601
-
-        exception_string << "\nstack:\n"
-        exception.backtrace.each do |line|
-          exception_string << line
-          exception_string << "\n"
-        end
-
-        Rails.logger.warn(exception_string)
-
-        exception_string << "\nCurrent User: #{current_user.name} | #{current_user.email}" if current_user
-
-        notification = DatabankMailer.error(exception_string)
-        notification.deliver_now
-
-        raise exception
-      else
-        if !validation_error_messages.empty?
-          validation_error_message << "Required elements for a complete dataset missing: "
-          validation_error_messages.each_with_index do |m, i|
-            validation_error_message << ", " if i > 0
-            validation_error_message << m
-          end
-          validation_error_message << "."
-
-          response = validation_error_message
-        else
-          response = "ok"
-        end
-      ensure
-        return response || "error"
+    def embargo_errors(dataset)
+      embargo_states = [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA]
+      if dataset.embargo && embargo_states.include?(dataset.embargo) &&
+          (!dataset.release_date || dataset.release_date <= Date.current)
+        ["a future release date for delayed publication (embargo) selection"]
+      elsif dataset.release_date && dataset.release_date > Date.current
+        ["a delayed publication (embargo) selection for a future release date"]
       end
     end
   end

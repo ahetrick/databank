@@ -53,7 +53,7 @@ class Dataset < ActiveRecord::Base
     string :hold_state
     string :publication_state
     boolean :is_test
-    boolean :is_most_recent_version
+    boolean :most_recent_version?
     time :ingest_datetime
     time :release_date
     time :created_at
@@ -380,6 +380,14 @@ class Dataset < ActiveRecord::Base
     else
       "unselected"
     end
+  end
+
+  def contact
+    contact = nil
+    creators.each do |creator|
+      contact = creator if creator.is_contact?
+    end
+    contact
   end
 
   def depositor
