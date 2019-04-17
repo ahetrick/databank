@@ -755,7 +755,7 @@ class DatasetsController < ApplicationController
     @dataset.org_creators = @dataset.org_creators || false
     #set_license(@dataset)
     @publish_modal_msg = Dataset.publish_modal_msg(@dataset)
-    if @dataset.has_deck_content
+    if @dataset.deck_content?
       @dataset.deck_filepaths.each do |filepath|
         Deckfile.find_or_create_by!(path: filepath, dataset_id: @dataset.id)
       end
@@ -788,7 +788,7 @@ class DatasetsController < ApplicationController
 
   def get_current_token
 
-    if @dataset.current_token && @dataset.current_token != "token"
+    if @dataset.current_token && !@dataset.current_token.nil?
       @token = @dataset.current_token
       render json: {token: @token.identifier, expires: @token.expires}
     else

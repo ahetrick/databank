@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Indexable
   extend ActiveSupport::Concern
 
@@ -231,21 +233,6 @@ module Indexable
   def datafile_extensions_fulltext
     self.datafile_extensions.join(" ")
   end
-
-  def release_datetime
-
-    if self.publication_state == Databank::PublicationState::DRAFT
-      return DateTime.new(1,1,1)
-    elsif self.release_date
-      return DateTime.new(self.release_date.year, self.release_date.mon, self.release_date.mday)
-    elsif self.publication_state == Databank::PublicationState::RELEASED && self.ingest_datetime > DateTime.new(1,1,1)
-      return self.ingest_datetime
-    else
-      return DateTime.new(1,1,1)
-    end
-
-  end
-
 
   def self.citation_report(search, request_url, current_user)
 

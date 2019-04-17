@@ -27,18 +27,19 @@
               .label.label-default
                 ="updated: #{@dataset.updated_at.to_date.iso8601}"
               &nbsp;
-              -if @dataset.publication_state == Databank::PublicationState::DRAFT
-                .label.label-default
-                  ="ingested: N/A"
-                &nbsp;
-                .label.label-default
-                  ="released: N/A"
-              -else
+              -if @dataset.ingest_datetime
                 .label.label-default
                   ="ingested: #{@dataset.ingest_datetime.to_date.iso8601}"
-                &nbsp;
+              -else
                 .label.label-default
-                  ="released: #{@dataset.release_datetime.to_date.iso8601}"
+                ="ingested: N/A"
+              &nbsp;
+              -if @dataset.release_datetime
+                .label.label-default
+                ="released: #{@dataset.release_datetime.to_date.iso8601}"
+              -else
+                .label.label-default
+                ="released: N/A"
             %br
 
           - if @completion_check == 'ok'

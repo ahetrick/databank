@@ -8,7 +8,7 @@
             %span(class="metadata-label" ) Files
       .panel-collapse.collapse.in(id="collapseFiles" role="tabpanel" aria-labelledby="filesHeading" )
         .panel-body
-          - if @dataset.has_deck_content
+          - if @dataset.deck_content?
             .deckfiles_div
               %span(class="metadata-label") Files pending approval to be included in this dataset:
               %br

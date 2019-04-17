@@ -329,10 +329,10 @@
                 %span(class="fileinput-button-content")
                   %span(class="glyphicon glyphicon-open" )
                   %span(id='token-button-text')
-                    - if @dataset.has_expired_token_only
+                    - if @dataset.expired_token_only?
                       %span(class="strong" ) TOKEN EXPIRED
                       Get new upload token
-                    - elsif @dataset.current_token == "token"
+                    - elsif @dataset.current_token.nil?
                       Get token for command line tools
                     - else
                       View token for command line tools
