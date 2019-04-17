@@ -53,17 +53,17 @@
     = render partial: "shared/library_footer"
     - if @dataset
       = javascript_tag do
-        window.dataset_key = '#{j @dataset.key}';
-        window.dataset_id = '#{j @dataset.id.to_s}';
+        window.dataset_key = "#{j @dataset.key}";
+        window.dataset_id = "#{j @dataset.id.to_s}";
     - if @datafile
       = javascript_tag do
-        window.datafile_web_id = '#{j @datafile.web_id}';
+        window.datafile_web_id = "#{j @datafile.web_id}";
     =javascript_tag do
-      window.rails_env = '#{Rails.env}';
+      window.rails_env = "#{Rails.env}";
 
     - if current_user && current_user.role
       = javascript_tag do
-        window.user_role = '#{j current_user.role}';
+        window.user_role = "#{j current_user.role}";
     - else
       = javascript_tag do
-        window.user_role = '#{j 'guest'}';
+        window.user_role = "#{j 'guest'}";
