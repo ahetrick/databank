@@ -77,6 +77,7 @@ class ApplicationController < ActionController::Base
       respond_to do |format|
         format.html { render ('errors/error500'), status: 500}
         format.json { render nothing: true, status: 500 }
+        format.all { render ('errors/error500'), status: 500}
       end
 
     end

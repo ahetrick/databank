@@ -38,6 +38,15 @@ Then("I am on the Data Curation Network Portal register page") do
   expect(current_path).to eql("/data_curation_network/register")
 end
 
+When("I go to the Illinois Experts xml page") do
+  visit("/illinois_experts.xml")
+end
+
+Then("I am on the Illinois Experts xml page") do
+  expect(current_path).to eql("/illinois_experts.xml")
+end
+
+
 When("I click on {string} button") do |button_label|
   click_on(button_label)
 end

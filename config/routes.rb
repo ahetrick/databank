@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     end
   end
   resources :password_resets, only: [:new, :create, :edit, :update]
+  resources :illinois_experts, only: [:index]
 
   resources :user_abilities
   resources :contributors
