@@ -143,7 +143,7 @@ class MedusaIngest < ActiveRecord::Base
     return nil unless datafile.storage_key
     return nil unless Application.storage_manager.draft_root.exist?(datafile.storage_key)
 
-    datafile_target_key = "#{dataset.dirname}/dataset_files/#{datafile.binary_name}"
+    datafile_target_key = "#{datafile.dataset.dirname}/dataset_files/#{datafile.binary_name}"
 
     medusa_ingest = MedusaIngest.new
     medusa_ingest.staging_key = datafile.storage_key
