@@ -67,6 +67,7 @@ module Complete
     end
 
     def duplicate_doi_error(dataset)
+      return nil if dataset.identifier.blank?
       ["a unique DOI"] if Dataset.where(identifier: dataset.identifier).count > 1
     end
 
