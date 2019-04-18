@@ -1,35 +1,33 @@
-# frozen_string_literal: true
-
+#Represent AMQP connection and provide convenience methods.
+#The amqp section of databank.yml can contain any option appropriate for Bunny.new.
 require 'singleton'
 require 'set'
 
-# Represent AMQP connection and provide convenience methods.
-# amqp section of databank.yml can contain any option appropriate for Bunny.new.
 class AmqpConnector < Object
   include Singleton
 
   attr_accessor :connection, :known_queues
 
   def initialize
-    reinitialize
+    self.reinitialize
   end
 
   def reinitialize
     config = (IDB_CONFIG['amqp'] || {}).symbolize_keys
-    config[:recover_from_connection_close] = true
+    config.merge!(recover_from_connection_close: true)
     self.known_queues = Set.new
-    connection&.close
-    connection = Bunny.new(config)
-    connection.start
+    self.connection.close if self.connection
+    self.connection = Bunny.new(config)
+    self.connection.start
   end
 
   def clear_queues(*queue_names)
     queue_names.each do |queue_name|
       continue = true
       while continue
-        with_message(queue_name) do |msg|
-          continue = msg
-          puts "#{self.class} clearing: #{msg} from: #{queue_name}" if msg
+        with_message(queue_name) do |message|
+          continue = message
+          puts "#{self.class} clearing: #{message} from: #{queue_name}" if message
         end
       end
     end
@@ -39,7 +37,9 @@ class AmqpConnector < Object
     channel = connection.create_channel
     yield channel
   ensure
-    channel&.close
+    if !channel.nil?
+      channel.close
+    end
   end
 
   def with_queue(queue_name)
@@ -50,11 +50,11 @@ class AmqpConnector < Object
   end
 
   def ensure_queue(queue_name)
-    unless known_queues.include?(queue_name)
+    unless self.known_queues.include?(queue_name)
       with_queue(queue_name) do |queue|
-        # no-op, just ensuring queue exists
+        #no-op, just ensuring queue exists
       end
-      known_queues << queue_name
+      self.known_queues << queue_name
     end
   end
 
@@ -86,4 +86,5 @@ class AmqpConnector < Object
       exchange.publish(message, routing_key: queue_name, persistent: true)
     end
   end
+
 end
