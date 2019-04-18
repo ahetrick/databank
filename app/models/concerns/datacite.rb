@@ -10,7 +10,8 @@ module Datacite
 
     def post_doi(dataset, current_user)
 
-      raise("cannot create or update doi for incomplete dataset") unless Dataset.completion_check(dataset, current_user) == 'ok'
+      completion_status = Dataset.completion_check(dataset, current_user)
+      raise("no doi for incomplete dataset: #{completion_status}") unless completion_status == 'ok'
 
       if dataset.is_test?
         host = IDB_CONFIG[:test_datacite_endpoint]

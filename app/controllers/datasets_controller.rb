@@ -989,15 +989,7 @@ class DatasetsController < ApplicationController
 
         params[:dataset][:creators_attributes].each do |creator_params|
           creator_p = creator_params[1]
-          Rails.logger.warn "creator_p: "
-          Rails.logger.warn creator_p
-
           temporary_creator = nil
-
-          # Rails.logger.warn "inside create temporary creator"
-          # Rails.logger.warn "creator_p has a family name key? #{creator_p.has_key?(:family_name)}"
-          #
-          Rails.logger.warn "creator_p has type of key: #{creator_p.has_key?(:type_of)}"
           if creator_p.has_key?(:type_of)
 
             #Rails.logger.warn("creator_p type_of: #{creator_p[:type_of]}")
