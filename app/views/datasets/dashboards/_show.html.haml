@@ -32,14 +32,14 @@
                   ="ingested: #{@dataset.ingest_datetime.to_date.iso8601}"
               -else
                 .label.label-default
-                ="ingested: N/A"
+                  ="ingested: N/A"
               &nbsp;
               -if @dataset.release_datetime
                 .label.label-default
-                ="released: #{@dataset.release_datetime.to_date.iso8601}"
+                  ="released: #{@dataset.release_datetime.to_date.iso8601}"
               -else
                 .label.label-default
-                ="released: N/A"
+                  ="released: N/A"
             %br
 
           - if @completion_check == 'ok'
