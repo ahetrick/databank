@@ -7,6 +7,10 @@ require "uri"
 require "net/http"
 require "securerandom"
 require "concerns/dataset/indexable"
+require 'concerns/dataset/stringable'
+require 'concerns/dataset/complete'
+require 'concerns/dataset/versionable'
+require 'concerns/dataset/publishable'
 require "action_pack"
 require "openssl"
 
@@ -53,7 +57,7 @@ class Dataset < ActiveRecord::Base
     string :hold_state
     string :publication_state
     boolean :is_test
-    boolean :most_recent_version?
+    boolean :is_most_recent_version
     time :ingest_datetime
     time :release_date
     time :created_at

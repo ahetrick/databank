@@ -21,7 +21,7 @@ module Complete
       e_arr += Dataset.embargo_errors(dataset) || []
       return "ok" if e_arr.empty?
 
-      validation_error_message += "Required elements for a complete dataset missing: "
+      validation_error_message = "Required elements for a complete dataset missing: "
       e_arr.each_with_index do |m, i|
         validation_error_message += ", " if i.positive?
         validation_error_message += m

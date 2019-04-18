@@ -362,7 +362,7 @@ class Datafile < ActiveRecord::Base
                           "vnd.ms-powerpoint.slideshow.macroEnabled.12"]
     subtype = mime_parts[1].downcase
     if mime_parts[0] == "text" || text_subtypes.include?(subtype)
-      return return Databank::PeekType::ALL_TEXT unless num_bytes > ALLOWED_DISPLAY_BYTES
+      return Databank::PeekType::ALL_TEXT unless num_bytes > ALLOWED_DISPLAY_BYTES
 
       return Databank::PeekType::PART_TEXT
     elsif mime_parts[0] == "image"

@@ -240,7 +240,13 @@ module Indexable
         end
       end
       report_text += "\nDownloads: #{dataset.total_downloads} "
-      report_text += "(#{dataset.release_datetime.to_date.iso8601} to #{Date.current.iso8601} )\n"
+      if dataset.release_datetime
+        start_time = dataset.release_datetime.to_date.iso8601
+      else
+        start_time = Date.current.iso8601
+      end
+
+      report_text += "(#{start_time} to #{Date.current.iso8601} )\n"
       5.times do
         report_text += "-"
       end

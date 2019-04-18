@@ -27,20 +27,20 @@ module Stringable
 
       return_string = ""
 
-      return_string << %(<script type="application/ld+json">{"@context": "http://schema.org", "@type": "Dataset", "name": "#{title.gsub('"', '\\"')}")
+      return_string += %(<script type="application/ld+json">{"@context": "http://schema.org", "@type": "Dataset", "name": "#{title.gsub('"', '\\"')}")
 
-      return_string << %(, "author": [)
+      return_string += %(, "author": [)
 
       creators.each_with_index do |creator, index|
-        return_string << ", " if index > 0
+        return_string += ", " if index > 0
 
         if creator.identifier && creator.identifier != ""
-          return_string << %({"@type": "Person", "name":"#{creator.given_name} #{creator.family_name}", "url":"http://orcid.org/#{creator.identifier}"})
+          return_string += %({"@type": "Person", "name":"#{creator.given_name} #{creator.family_name}", "url":"http://orcid.org/#{creator.identifier}"})
         else
-          return_string << %({"@type": "Person", "name":"#{creator.given_name} #{creator.family_name}"})
+          return_string += %({"@type": "Person", "name":"#{creator.given_name} #{creator.family_name}"})
         end
       end
-      return_string << "]"
+      return_string += "]"
 
       if keywords && keywords != ""
 
@@ -51,38 +51,38 @@ module Stringable
           keyword_commas = ""
 
           keyword_arr.each_with_index do |keyword, i|
-            keyword_commas << ", " if i != 0
-            keyword_commas << keyword.strip
+            keyword_commas += ", " if i != 0
+            keyword_commas += keyword.strip
           end
 
-          return_string << %(, "keywords": "#{keyword_commas}" )
+          return_string += %(, "keywords": "#{keyword_commas}" )
 
         else
-          return_string << %(, "keywords": "#{keyword_arr[0]}" )
+          return_string += %(, "keywords": "#{keyword_arr[0]}" )
         end
 
       end
 
-      return_string << %(, "description":"#{description.gsub('"', '\\"')}") if description
+      return_string += %(, "description":"#{description.gsub('"', '\\"')}") if description
 
-      return_string << %(, "version":"#{dataset_version}")
+      return_string += %(, "version":"#{dataset_version}")
 
-      return_string << %(, "url":"https://doi.org/#{identifier}")
+      return_string += %(, "url":"https://doi.org/#{identifier}")
 
-      return_string << %(, "sameAs":"#{IDB_CONFIG[:root_url_text]}/#{self.key}")
+      return_string += %(, "sameAs":"#{IDB_CONFIG[:root_url_text]}/#{key}")
 
       if funders&.count&.positive?
 
-        return_string << %(, "funder": [)
+        return_string += %(, "funder": [)
 
         funders.each_with_index do |funder, index|
-          return_string << ", " if index > 0
-          return_string << %({"@type": "Organization", "name":"#{funder.name}", "url":"https://doi.org/#{funder.identifier}"})
+          return_string += ", " if index > 0
+          return_string += %({"@type": "Organization", "name":"#{funder.name}", "url":"https://doi.org/#{funder.identifier}"})
         end
-        return_string << "]"
+        return_string += "]"
       end
 
-      return_string << %(, "citation":"#{plain_text_citation.gsub('"', '\\"')}")
+      return_string ++ %(, "citation":"#{plain_text_citation.gsub('"', '\\"')}")
 
       license_link = nil
 
@@ -90,15 +90,15 @@ module Stringable
         license_link = license_info.external_info_url if (license_info.code == license) && (license != "license.txt")
       end
 
-      return_string << if license_link
+      return_string += if license_link
                          %(, "license":"#{license_link}")
                        else
                          %(, "license":"See license.txt")
                        end
 
-      return_string << %(, "includedInDataCatalog":{"@type":"DataCatalog", "name":"Illinois Data Bank", "url":"https://databank.illinois.edu"})
+      return_string += %(, "includedInDataCatalog":{"@type":"DataCatalog", "name":"Illinois Data Bank", "url":"https://databank.illinois.edu"})
 
-      return_string << %(}</script>)
+      return_string += %(}</script>)
 
       return_string
 
@@ -203,18 +203,18 @@ module Stringable
                    end
 
     agent_text = "License granted by #{depositor_name} on #{created_at.iso8601}\n\n"
-    agent_text << "=================================================================================================================\n\n"
-    agent_text << "  Are you a creator of this dataset or have you been granted permission by the creator to deposit this dataset?\n"
-    agent_text << "  [x] Yes\n\n"
-    agent_text << "  [ ] No\n\n"
-    agent_text << "  Have you removed any private, confidential, or other legally protected information from the dataset?\n"
-    agent_text << "  [#{removed_private == 'yes' ? 'x' : ' '}] Yes\n"
-    agent_text << "  [#{removed_private == 'no' ? 'x' : ' '}] No\n"
-    agent_text << "  [#{removed_private == 'na' ? 'x' : ' '}] N/A\n\n"
-    agent_text << "  Do you agree to the Illinois Data Bank Deposit Agreement in its entirety?\n"
-    agent_text << "  [x] Yes\n\n"
-    agent_text << "  [ ] No\n\n"
-    agent_text << "================================================================================================================="
+    agent_text += "=================================================================================================================\n\n"
+    agent_text += "  Are you a creator of this dataset or have you been granted permission by the creator to deposit this dataset?\n"
+    agent_text += "  [x] Yes\n\n"
+    agent_text += "  [ ] No\n\n"
+    agent_text += "  Have you removed any private, confidential, or other legally protected information from the dataset?\n"
+    agent_text += "  [#{removed_private == 'yes' ? 'x' : ' '}] Yes\n"
+    agent_text += "  [#{removed_private == 'no' ? 'x' : ' '}] No\n"
+    agent_text += "  [#{removed_private == 'na' ? 'x' : ' '}] N/A\n\n"
+    agent_text += "  Do you agree to the Illinois Data Bank Deposit Agreement in its entirety?\n"
+    agent_text += "  [x] Yes\n\n"
+    agent_text += "  [ ] No\n\n"
+    agent_text += "================================================================================================================="
     content = "#{agent_text}\n\n#{base_content}"
 
     Application.storage_manager.draft_root.write_string_to(draft_agreement_key, content)
@@ -292,8 +292,8 @@ module Stringable
     else
       return_list = ""
       creators.each_with_index do |creator, i|
-        return_list << "; " unless i.zero?
-        return_list << creator.list_name
+        return_list += "; " unless i.zero?
+        return_list += creator.list_name
       end
       return_list
     end
@@ -308,8 +308,8 @@ module Stringable
     else
       return_list = ""
       contributors.each_with_index do |contributor, i|
-        return_list << "; " unless i.zero?
-        return_list << contributor.display_name
+        return_list += "; " unless i.zero?
+        return_list += contributor.display_name
       end
       return_list
     end
@@ -340,5 +340,4 @@ module Stringable
                        "materials" => materials,
                        "datafiles" => datafiles}}
   end
-
 end

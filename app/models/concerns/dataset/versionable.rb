@@ -59,7 +59,7 @@ module Versionable
      publication_date: release_date ? release_date.iso8601 : "not yet set"}
   end
 
-  def most_recent_version?
+  def is_most_recent_version
     if !version_group.empty?
       (version_group[:entries][0])[:version] == dataset_version.to_i
     else
