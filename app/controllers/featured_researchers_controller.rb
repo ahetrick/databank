@@ -1,8 +1,8 @@
 class FeaturedResearchersController < ApplicationController
 
   authorize_resource
-  skip_load_and_authorize_resource :only => :show
-  before_action :set_featured_researcher, only: [:show, :preview, :to_fileupload, :edit, :update, :destroy, :feature]
+  skip_load_and_authorize_resource :only => [:show, :index]
+  before_action :set_featured_researcher, only: [:show, :preview, :edit, :update, :destroy]
 
   # GET /featured_researchers
   # GET /featured_researchers.json
