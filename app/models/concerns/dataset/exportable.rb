@@ -44,10 +44,10 @@ module Exportable
           else
             person_node["origin"] = "external" unless creator.at_illinois?
             first_name_node = doc.create_element("v1:firstName")
-            first_name_node.content = creator.first_name || "Unknown"
+            first_name_node.content = creator.given_name
             first_name_node.parent = person_node
             last_name_node = doc.create_element("v1:lastName")
-            last_name_node.content = creator.last_name || "Unknown"
+            last_name_node.content = creator.family_name
             last_name_node.parent = person_node
           end
           person_node[:id] = creator.email
