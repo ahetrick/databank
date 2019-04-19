@@ -35,18 +35,20 @@ class ApplicationController < ActionController::Base
   def error_occurred(exception)
 
     if exception.class == CanCan::AccessDenied
-      alert_message = "You are not authorized to access the requested resource."
-
       if exception.action == :create
         if current_user && current_user.role == 'no_deposit'
           redirect_to redirect_path, alert: "ACCOUNT NOT ELIGIBLE TO DEPOSIT DATA.<br/>Faculty, staff, and graduate students are eligible to deposit data in Illinois Data Bank.<br/>Please <a href='/help'>contact the Research Data Service</a> if this determination is in error, or if you have any questions."
         else
-
           redirect_to '/welcome/deposit_login_modal'
         end
-
       else
-        redirect_to redirect_path, alert: alert_message
+        respond_to do |format|
+          format.html { redirect_to redirect_path,
+                                    alert: "You are not authorized to access the requested resource.",
+                                    status: 403}
+          format.json { render nothing: true, status: 403 }
+          format.xml { render xml: {error: "unauthorized"}.to_xml, status: 403 }
+        end
       end
 
     elsif exception.class == ActiveRecord::RecordNotFound
@@ -77,7 +79,7 @@ class ApplicationController < ActionController::Base
       respond_to do |format|
         format.html { render ('errors/error500'), status: 500}
         format.json { render nothing: true, status: 500 }
-        format.all { render ('errors/error500'), status: 500}
+        format.xml { render xml: {status: 500}.to_xml}
       end
 
     end

@@ -15,7 +15,7 @@ class Creator < ActiveRecord::Base
   default_scope { order(:row_position) }
 
   def as_json(*)
-    if institution_name && institution_name != ''
+    if institution_name && institution_name != ""
       super(only: %i[institution_name
                      identifier
                      is_contact
@@ -50,13 +50,21 @@ class Creator < ActiveRecord::Base
     end
   end
 
+  def at_illinois?
+    if type_of && type_of == Databank::CreatorType::PERSON && email && !email.empty?
+      email_parts = email.split("@")
+      email_parts.length > 1 && email_parts[1] == "illinois.edu"
+    else
+      false
+    end
+  end
+
   private
 
   # validation
   def name?
-    unless (institution_name && institution_name != '') ||
-           (given_name && given_name != '' && family_name && family_name != '')
-      errors.add(:base, 'Creator must have a valid name.')
-    end
+    has_institution_name = institution_name && institution_name != ""
+    has_individual_name = given_name && given_name != "" && family_name && family_name != ""
+    has_institution_name || has_individual_name
   end
 end

@@ -9,8 +9,6 @@ Rails.application.routes.draw do
     end
   end
   resources :password_resets, only: [:new, :create, :edit, :update]
-  resources :illinois_experts, only: [:index]
-
   resources :user_abilities
   resources :contributors
   resources :invitees
@@ -29,6 +27,10 @@ Rails.application.routes.draw do
       get 'preview'
     end
   end
+
+  get "/illinois_experts", to: "illinois_experts#index", defaults: {format: "xml"}
+  get "/illinois_experts/example", to: "illinois_experts#example", defaults: {format: "xml"}
+  get "/illinois_experts/persons", to: "illinois_experts#persons", defaults: {format: "xml"}
 
   get '/data_curation_network', to: 'data_curation_network#index'
   get '/data_curation_network/accounts', to: 'data_curation_network#accounts'

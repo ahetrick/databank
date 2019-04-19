@@ -11,6 +11,7 @@ require 'concerns/dataset/stringable'
 require 'concerns/dataset/complete'
 require 'concerns/dataset/versionable'
 require 'concerns/dataset/publishable'
+require 'concerns/dataset/exportable'
 require "action_pack"
 require "openssl"
 
@@ -24,6 +25,7 @@ class Dataset < ActiveRecord::Base
   include Complete
   include Versionable
   include Publishable
+  include Exportable
 
   audited except: %i[creator_text key complete is_test is_import updated_at embargo], allow_mass_assignment: true
   has_associated_audits
