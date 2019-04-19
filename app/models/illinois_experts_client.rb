@@ -14,6 +14,8 @@ class IllinoisExpertsClient
 
     uri = URI.parse("#{ENDPOINT}/persons/#{email}")
 
+    return nil unless uri.respond_to?(:request_uri)
+
     request = Net::HTTP::Get.new(uri.request_uri)
     request.add_field("api-key", KEY)
 
@@ -21,7 +23,9 @@ class IllinoisExpertsClient
     sock.set_debug_output $stderr
     sock.use_ssl = true
 
+
     begin
+
       response = sock.start {|http| http.request(request) }
     rescue Net::HTTPBadResponse, Net::HTTPServerError
       return nil
