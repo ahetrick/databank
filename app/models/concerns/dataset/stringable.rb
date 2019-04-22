@@ -22,6 +22,10 @@ module Stringable
     "#{creator_list} (#{publication_year}): #{citationTitle}. #{publisher}. #{citation_id}"
   end
 
+  def to_datacite_json
+    raise "not yet implemented"
+  end
+
   def structured_data
     if publication_state == Databank::PublicationState::RELEASED
 
