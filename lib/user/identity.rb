@@ -62,21 +62,19 @@ class User::Identity < User::User
   end
 
   def self.can_deposit(email)
-    # Depositing is only for current members of the University, who could log in with Shibboleth
-    false
-  end
-
-  def self.user_info_string(email)
-    email
-  end
-
-  def self.user_display_name(email)
-    identity = Identity.find_by_email(email)
-    if identity
-      return identity.name
+    if rails_env.test? || rails_env.development?
+      # admin permission is handled elsewhere
+      user_role(email) == Databank::UserRole::DEPOSITOR
     else
-      return email
+      # in production and demo systems, only Shibboleth users can deposit
+      false
     end
+  end
+
+  def self.display_name(email)
+    identity = find_by(email: email)
+    return email unless identity
+    identity.name || email
   end
 
 end

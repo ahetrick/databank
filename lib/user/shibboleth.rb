@@ -164,31 +164,15 @@ class User::Shibboleth < User::User
     end
   end
 
-  def self.user_info_string(email)
-
-    netid = netid_from_email(email)
-    if netid
-      begin
-        return("#{User::Shibboleth.user_display_name(email)}" || email)
-      rescue StandardError
-        #raise error
-
-        return email
-      end
-    else
-      return email
-    end
-  end
-
-  def self.user_display_name(email)
+  def self.display_name(email)
 
     netid = netid_from_email(email)
 
-    return nil unless netid
+    return "Unknown" unless netid
 
     # exception for Neil Smalheiser, UIC faculty who is also Affiliated Faculty with the iSchool at Illinois
     if netid == 'neils'
-      return "Neil Smalheiser"
+      "Neil Smalheiser"
     else
 
       begin
@@ -199,13 +183,11 @@ class User::Shibboleth < User::User
         display_name = xml_doc.xpath("//attr[@name='displayname']").text()
         display_name.strip!
 
-        return display_name
+        display_name
 
-      rescue OpenURI::HTTPError => err
+      rescue OpenURI::HTTPError
 
-        Rails.logger.warn err.message
-
-        return "Guest"
+        "Unknown"
 
       end
 

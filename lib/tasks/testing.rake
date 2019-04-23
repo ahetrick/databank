@@ -4,40 +4,6 @@ require 'json'
 
 namespace :testing do
 
-  desc 'get DataCite metadata'
-  task :get_doi_metadata => :environment do
-
-    tempid = '10.13012/B2IDB-4803136_V1'
-
-    puts "getting metadata for #{tempid}"
-
-    host = IDB_CONFIG[:datacite_endpoint]
-    user = IDB_CONFIG[:datacite_username]
-    password = IDB_CONFIG[:datacite_password]
-
-    puts "host: #{host}"
-    puts "user: #{user}"
-    puts "password: #{password}"
-
-    uri = URI.parse("https://#{host}/metadata/#{tempid}")
-
-    request = Net::HTTP::Get.new(uri.request_uri)
-    request.basic_auth(user, password)
-
-    sock = Net::HTTP.new(uri.host, uri.port)
-
-    if uri.scheme == 'https'
-      sock.use_ssl = true
-    end
-
-    response = sock.start { |http| http.request(request) }
-
-    puts response.to_yaml
-
-
-
-  end
-
   desc 'send a RabbitMQ message'
   task :send_msg => :environment do
     puts "sending message"

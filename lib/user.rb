@@ -3,7 +3,8 @@ require 'json'
 
 module User
 
-  #This is an abstract class to represent a User
+  # This is an abstract class to represent a User
+  # Class methods used because Shibboleth identities are not persistent in databank
 
   class User < ActiveRecord::Base
     include ActiveModel::Serialization
@@ -81,11 +82,7 @@ module User
       raise "subclass responsibility"
     end
 
-    def self.user_info_string(email)
-      raise "subclass responsibility"
-    end
-
-    def self.user_display_name(email)
+    def self.display_name(email)
       raise "subclass responsibility"
     end
 

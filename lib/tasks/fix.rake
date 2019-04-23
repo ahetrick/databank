@@ -2,6 +2,15 @@ require 'csv'
 
 namespace :fix do
 
+  desc 'create doi objects from dataset identifiers'
+  task :retrofit_dois => :environment do
+    Dataset.each do |dataset|
+      if dataset.identifier && !dataset.identifier.empty?
+        Doi.create!(dataset_id: dataset.id, identifier: dataset.identifier)
+      end
+    end
+  end
+
   desc 'update reviewer roles to network_reviewer'
   task :fix_reviewers => :environment do
     Invitee.where(role: 'reviewer').each do |invitee|

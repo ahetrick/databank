@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+include Rails.application.routes.url_helpers
+
 module Stringable
   extend ActiveSupport::Concern
 
@@ -198,7 +200,7 @@ module Stringable
   end
 
   def store_agreement
-    uri = URI.parse("#{IDB_CONFIG[:root_url_text]}/deposit_agreement.txt")
+    uri = URI.parse(root_path.join("/deposit_agreement.txt"))
 
     base_content = if IDB_CONFIG[:root_url_text].include?("dev") || IDB_CONFIG[:root_url_text].include?("pilot")
                      open(uri, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)

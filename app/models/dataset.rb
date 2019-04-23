@@ -12,12 +12,12 @@ require 'concerns/dataset/complete'
 require 'concerns/dataset/versionable'
 require 'concerns/dataset/publishable'
 require 'concerns/dataset/exportable'
+require 'concerns/dataset/identifiable'
 require "action_pack"
 require "openssl"
 
 class Dataset < ActiveRecord::Base
   include ActiveModel::Serialization
-  include Datacite
   include Recovery
   include MessageText
   include Indexable
@@ -26,6 +26,7 @@ class Dataset < ActiveRecord::Base
   include Versionable
   include Publishable
   include Exportable
+  include Identifiable
 
   audited except: %i[creator_text key complete is_test is_import updated_at embargo], allow_mass_assignment: true
   has_associated_audits
@@ -397,21 +398,25 @@ class Dataset < ActiveRecord::Base
   end
 
   def depositor
-    if depositor_email
-      netid = depositor_email.split("@").first
-      name = User::Shibboleth.user_info_string(depositor_email)
-      "#{netid}|#{name}"
-    else
-      "error"
-    end
+    return "unknown|Unknown Depositor" unless depositor_email
+    email = depositor_email
+
+    display_name = User::Shibboleth.display_name(email)
+    return "#{email.split("@").first}|#{display_name}" unless display_name.nil? || display_name == "Unknown"
+
+    user = User::Identity.find_by(email: email)
+    return "unknown|Unknown Depositor" unless user
+
+    "#{user.uid}|#{User::Identity.display_name(email)}"
   end
 
   def depositor_netid
-    if depositor_email
-      depositor_email.split("@").first
-    else
-      "error"
-    end
+    return nil unless depositor_email
+
+    user = User::Shibboleth.find_by(email: depositor_email)
+    return user.email.split("@").first if user
+
+    nil
   end
 
   def mine_or_not_mine(email_address)
