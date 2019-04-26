@@ -200,13 +200,7 @@ module Stringable
   end
 
   def store_agreement
-    uri = URI.parse(root_path.join("/deposit_agreement.txt"))
-
-    base_content = if IDB_CONFIG[:root_url_text].include?("dev") || IDB_CONFIG[:root_url_text].include?("pilot")
-                     open(uri, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
-                   else
-                     uri.read
-                   end
+    base_content = File.join(Rails.root, "public", "deposit_agreement.txt")
 
     agent_text = "License granted by #{depositor_name} on #{created_at.iso8601}\n\n"
     agent_text += "=================================================================================================================\n\n"

@@ -51,8 +51,12 @@ class Ability
       end
 
     else
-      can :view, &:metadata_public?
-      can :view_files, &:files_public?
+      can :view, Dataset do |dataset|
+        dataset.metadata_public?
+      end
+      can :view_files, Dataset do |dataset|
+        dataset.files_public?
+      end
       can :login, Identity
     end
   end

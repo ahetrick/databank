@@ -25,9 +25,13 @@
         %ul.nav.navbar-nav.navbar-right
           - if current_user
             %li
-              %a(href="/datasets?q=#{URI.encode('depositors[]=')}#{current_user.username}" )
+              %a(href="/datasets?q=#{URI.encode('depositors[]=')}#{current_user.username}")
                 =current_user.name
-            %li= link_to 'Log out', :logout
+            %li
+              %a{href: "/logout"}
+                Log out
           - else
-            %li= link_to 'Log in with NetID', :login
+            %li
+              %a{href: "/login"}
+                Log in with NetID
     / /.nav-collapse

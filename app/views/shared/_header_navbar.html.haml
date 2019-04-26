@@ -11,7 +11,7 @@
     #navbar.navbar-collapse.collapse
       %ul.nav.navbar-nav
         %li
-          %a{:href => "/datasets/pre_deposit"}
+          %a{href: "/datasets/pre_deposit", id: "deposit_link"}
             %span.glyphicon.glyphicon-plus
             Deposit Dataset
         %li
@@ -30,13 +30,17 @@
         - if current_user
           -if current_user.role == Databank::UserRole::NETWORK_REVIEWER
             %li
-              %a(href="/data_curation_network/my_account")
+              %a{href: "/data_curation_network/my_account"}
                 =current_user.name
           -else
             %li
-              %a{:href => "/datasets?q=#{URI.encode('&depositors[]=')}#{current_user.username}"}
+              %a{href: "/datasets?q=#{URI.encode('&depositors[]=')}#{current_user.username}", class: "idb"}
                 =current_user.name
-          %li= link_to 'Log out', :logout
+          %li
+            %a{href: "/logout"}
+              Log out
         - else
-          %li= link_to 'Log in with NetID', :login
+          %li
+            %a{href: "/login"}
+              Log in with NetID
   / /.nav-collapse

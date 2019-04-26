@@ -27,7 +27,6 @@ module Complete
         validation_error_message += m
       end
       validation_error_message += "."
-      validation_error_message
     end
 
     def creator_email_errors(dataset)
@@ -49,7 +48,7 @@ module Complete
     end
 
     def release_date_error(dataset, current_user)
-      return nil if (current_user.role == "admin") ||
+      return nil if (current_user&.role == "admin") ||
           !dataset.release_date ||
           dataset.release_date > (Date.current + 1.year)
 
