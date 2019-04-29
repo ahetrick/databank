@@ -69,6 +69,7 @@ module Identifiable
   # hide - Triggers a state move from findable to registered
   def hide_doi; end
 
+  # PRIVATE CLASS METHOD: post_to_datacite
   def self.post_to_datacite(identifier, json_body)
     url = URI("#{URI_BASE}/#{identifier}")
     http = Net::HTTP.new(url.host, url.port)
@@ -86,7 +87,11 @@ module Identifiable
   private
 
   def doi_infohash
+
     response = doi_info_from_datacite
+
+    return {} unless response
+
     case response
 
     when Net::HTTPUnauthorized
@@ -105,7 +110,7 @@ module Identifiable
   end
 
   def doi_info_from_datacite
-    raise("dataset identifier does not exist") unless dataset_identifer_exist?
+    return nil unless dataset_identifer_exist?
 
     url = URI("#{URI_BASE}/#{dataset.identifier}")
     http = Net::HTTP.new(url.host, url.port)
