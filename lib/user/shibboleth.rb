@@ -27,7 +27,7 @@ class User::Shibboleth < User::User
       user.uid = auth["uid"]
       user.email = auth["info"]["email"]
       user.username = (auth["info"]["email"]).split('@').first
-      user.name = User::Shibboleth.user_display_name((auth["info"]["email"]).split('@').first)
+      user.name = User::Shibboleth.display_name((auth["info"]["email"]).split('@').first)
       user.role = user_role(auth["uid"])
     end
   end
@@ -37,7 +37,7 @@ class User::Shibboleth < User::User
     update_attribute(:uid, auth["uid"])
     update_attribute(:email, auth["info"]["email"])
     update_attribute(:username, self.email.split('@').first)
-    update_attribute(:name, User::Shibboleth.user_display_name(self.username))
+    update_attribute(:name, User::Shibboleth.display_name(self.username))
     update_attribute(:role, User::Shibboleth.user_role(auth["uid"]))
     self
   end
