@@ -34,7 +34,7 @@
                 =current_user.name
           -else
             %li
-              %a{href: "/datasets?q=#{URI.encode('&depositors[]=')}#{current_user.username}", class: "idb"}
+              %a{href: "/datasets?q=#{URI.encode('&depositors[]=')}#{current_user.username}"}
                 =current_user.name
           %li
             %a{href: "/logout"}

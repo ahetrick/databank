@@ -1,4 +1,4 @@
-require File.expand_path('../boot', __FILE__)
+require_relative 'boot'
 
 require 'rails/all'
 
@@ -105,6 +105,23 @@ module Databank
     CREATOR = 'creator'
   end
 
+  class DoiEvent
+    PUBLISH = "publish"
+    REGISTER = "register"
+    HIDE = "hide"
+  end
+
+  class DoiAction
+    CREATE = "create"
+    DELETE = "delete"
+  end
+
+  class DoiState
+    DRAFT = 'draft'
+    REGISTERED = 'registered'
+    FINDABLE = 'findable'
+  end
+
   class Application < Rails::Application
 
     attr_accessor :shibboleth_host
@@ -132,8 +149,7 @@ module Databank
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
 
-    # Do not swallow errors in after_commit/after_rollback callbacks.
-    config.active_record.raise_in_transactional_callbacks = true
+    config.load_defaults 5.0
 
     config.autoload_paths << File.join(Rails.root, 'helpers/admin')
     config.autoload_paths << File.join(Rails.root, 'jobs')

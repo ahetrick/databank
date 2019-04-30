@@ -183,6 +183,10 @@ class Dataset < ActiveRecord::Base
     license_name
   end
 
+  def databank_url
+    "#{IDB_CONFIG[:root_url_text]}/datasets/#{key}"
+  end
+
   def set_key
     self.key ||= generate_key
   end
@@ -361,8 +365,7 @@ class Dataset < ActiveRecord::Base
   end
 
   def ingest_datetime
-    changes = Audited::Adapters::ActiveRecord::Audit.where("(auditable_type=? AND auditable_id=?) ", "Dataset", id)
-    changes.each do |change|
+    audits.each do |change|
       next unless change.audited_changes.has_key?("publication_state")
 
       pub_change = change.audited_changes["publication_state"]
@@ -478,9 +481,8 @@ class Dataset < ActiveRecord::Base
   end
 
   def destroy_audit
-    filter = "(auditable_type=? AND auditable_id=?) OR (associated_id=?)"
-    changes = Audited::Adapters::ActiveRecord::Audit.where(filter, "Dataset", id, id)
-    changes.each(&:destroy)
+    associated_audits.each(&:destroy)
+    audits.each(&:destroy)
   end
 
   def remove_system_files

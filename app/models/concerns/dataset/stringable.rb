@@ -222,8 +222,8 @@ module Stringable
   end
 
   def full_changelog
-    filter = "(auditable_type=? AND auditable_id=?) OR (associated_id=?)"
-    changes = Audited::Adapters::ActiveRecord::Audit.where(filter, "Dataset", id, id)
+
+    changes = audits + associated_audits
     changes_arr = []
     changes.each do |change|
       change_hash = change.serializable_hash
@@ -247,13 +247,11 @@ module Stringable
   end
 
   def display_changelog
-    filter = "(auditable_type=? AND auditable_id=?) OR (associated_id=?)"
-    changes = Audited::Adapters::ActiveRecord::Audit.where(filter, "Dataset", id, id)
     medusa_changes_arr = []
     publication = nil
 
     begin
-      changes.each do |change|
+      audits.each do |change|
         if change.audited_changes.has_key?("medusa_uuid") ||
             change.audited_changes.has_key?("binary_name") ||
             change.audited_changes.has_key?("medusa_dataset_dir")
@@ -273,12 +271,13 @@ module Stringable
     end
 
     if publication
-      changes = changes.where("created_at >= ?", publication).where.not(id: medusa_changes_arr)
+      changes = audits.where("created_at >= ?", publication).where.not(id: medusa_changes_arr)
+      changes.reorder("created_at DESC")
     else
       Rails.logger.warn "no changes found for dataset #{attributes[:dataset_id]}"
-      changes = Audited::Adapters::ActiveRecord::Audit.none
+      {}
     end
-    changes.reorder("created_at DESC")
+
   end
 
   def creator_list

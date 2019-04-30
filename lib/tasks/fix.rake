@@ -2,6 +2,39 @@ require 'csv'
 
 namespace :fix do
 
+  # to be run BEFORE switching dev system config to test system
+  desc 'hide dev dois'
+  task :hide_dev_dois => :environment do
+    Dataset.each do |dataset|
+      puts dataset.key
+      next unless dataset.identifier && !dataset.identifier.empty?
+      if DEMO_PREFIXES.include?(dataset.identifier.split("/")[0])
+        puts dataset.hide_doi
+      end
+    end
+  end
+
+  # to be run AFTER switching dev system config to test system
+  desc 'add dev dois to DataCite test system'
+  task :add_test_dois => :environment do
+    Dataset.each do |dataset|
+      puts dataset.key
+      next unless dataset.identifier && !dataset.identifier.empty?
+      next unless DEMO_PREFIXES.include?(dataset.identifier.split("/")[0])
+      identifier_parts = dataset.identifier.split("/")
+      next unless identifier_parts.count == 2
+      dataset.identifier = "#{TEST_PREFIXES.first}/#{identifier_parts[1]}"
+      dataset.save
+      puts dataset.create_draft_doi
+      next if dataset.publication_state == Databank::PublicationState::DRAFT
+      if dataset.metadata_public?
+        puts dataset.publish(Databank::DoiState::FINDABLE)
+      else
+        puts dataset.publish(Databank::DoiState::REGISTERED)
+      end
+    end
+  end
+
   desc 'create doi objects from dataset identifiers'
   task :retrofit_dois => :environment do
     Dataset.each do |dataset|

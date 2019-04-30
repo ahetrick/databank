@@ -5,6 +5,12 @@ require 'tus/storage/filesystem'
 
 VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 
+PRODUCTION_PREFIXES = ["10.13012", "10.25988", "10.5072"]
+
+DEMO_PREFIXES = ["10.26123"]
+
+TEST_PREFIXES = ["10.70114"]
+
 IDB_CONFIG = YAML.load_file(File.join(Rails.root, 'config', 'databank.yml'))[Rails.env]
 
 Application.storage_manager = StorageManager.new
@@ -12,7 +18,6 @@ Application.storage_manager = StorageManager.new
 Tus::Server.opts[:max_size] = 2 * 1024*1024*1024*1024 # 2TB
 
 if IDB_CONFIG[:aws][:s3_mode] == true
-
 
   Aws.config.update({
                         region: IDB_CONFIG[:aws][:region],

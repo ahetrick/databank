@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
     render json: {}, status: :unprocessable_entity
   end
 
-  after_filter :store_location
+  after_action :store_location
 
   def store_location
     return unless request.get?

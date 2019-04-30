@@ -117,9 +117,6 @@ namespace :databank do
       puts "Not local!"
     end
 
-    Audited::Adapters::ActiveRecord::Audit.all.each do |audit|
-      audit.destroy
-    end
   end
 
   desc 'delete all datafiles'

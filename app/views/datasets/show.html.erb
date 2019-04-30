@@ -88,8 +88,6 @@
                   <td><%= entry[:version_comment] %></td>
                   <td><%= entry[:publication_date] %></td>
                 </tr>
-
-
               <% end %>
               </tbody>
             </table>
@@ -102,9 +100,6 @@
   </div>
 
   <!-- BEGIN file section -->
-
-
-
 
   <%= render partial: 'datasets/show_files', locals: {dataset: @dataset} %>
 

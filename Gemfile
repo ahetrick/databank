@@ -1,16 +1,17 @@
-source 'http://rubygems.org'
-ruby '2.5.1'
+source 'https://rubygems.org'
+ruby '2.5.2'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 4.2', '>= 4.2.10'
+gem 'rails', '~> 5.2', '>= 5.2.2'
+
 # Use postgresql as the database for Active Record
-gem 'pg', '~> 0.21'
+gem 'pg'
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 5.0'
+gem 'sass-rails'
 # Use Uglifier as compressor for JavaScript assets
-gem 'uglifier', '>= 1.3.0'
+gem 'uglifier'
 # Use CoffeeScript for .coffee assets and views
-gem 'coffee-rails', '~> 4.1.0'
+gem 'coffee-rails'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
@@ -21,7 +22,7 @@ gem 'medusa_storage', git: 'https://github.com/medusa-project/medusa_storage.git
 gem 'aws-sdk'
 
 # Use browser to detect request browser
-gem 'browser', '~> 1.1'
+gem 'browser'
 
 # Use tus-server to support chunked uploads of large files
 gem "tus-server"
@@ -38,17 +39,17 @@ gem 'highcharts-rails'
 gem 'zeroclipboard-rails'
 
 # Use filemagic to detect file types
-gem 'ruby-filemagic', '~> 0.7.2'
+gem 'ruby-filemagic'
 
 # Use rubyzip to stream dynamically generated zip files
 gem 'rubyzip'
 gem 'zipline'
 
 # Use seven_zip_ruby to handle 7zip archives
-gem 'seven_zip_ruby', '~> 1.2', '>= 1.2.5'
+gem 'seven_zip_ruby'
 
 # Use minitar to deal with POSIX tar archive files
-gem 'minitar', '~> 0.6.1'
+gem 'minitar'
 
 # Use rchardet to attempt to detect character encoding
 gem 'rchardet'
@@ -61,24 +62,21 @@ gem 'roda'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.0'
 # bundle exec rake doc:rails generates the API under doc/api.
-gem 'sdoc', '~> 0.4.0', group: :doc
+gem 'sdoc', group: :doc
 
 # Use figaro to set environment variables
 gem "figaro"
 
 # Use bootstrap for layout framework
-gem 'bootstrap-sass', '~> 3.3.4.1'
-gem 'font-awesome-sass', '~> 5.6.1'
+gem 'bootstrap-sass'
+gem 'font-awesome-sass'
 gem 'autoprefixer-rails'
 
 gem 'haml'
-gem 'haml-rails'
 
 gem 'uuid'
 
 gem 'open_uri_redirections'
-
-gem 'simple_form'
 
 # Use RMagick to connect with ImageMagick
 # gem 'rmagick'
@@ -110,10 +108,10 @@ gem 'will_paginate'
 gem 'will_paginate-bootstrap'
 
 # Use ActiveModel has_secure_password
-gem 'bcrypt', '~> 3.1.12'
+gem 'bcrypt'
 
 # Use Passenger standalone
-gem "passenger", ">= 5.0.25", require: "phusion_passenger/rack_handler"
+gem "passenger", require: "phusion_passenger/rack_handler"
 
 # Use email validator for model
 gem 'valid_email'
@@ -138,25 +136,25 @@ gem 'progress_job'
 gem 'cancancan'
 
 # User bunny to handle RabbitMQ messages
-gem "bunny", "2.8.1"
+gem "bunny"
 
 # Used audited-activerecord for dataset changelog
-gem "audited-activerecord", "~> 4.0"
+gem "audited"
 
 # Use google-analytics-rails to support Google Analytics
-gem 'google-analytics-rails', '1.1.0'
+gem 'google-analytics-rails'
 
 # Use builder to support sitemaps generator
-gem 'builder', '~> 3.2', '>= 3.2.2'
+gem 'builder'
 
 # Use curb to wrap curl
-gem 'curb', '~> 0.9.4'
+gem 'curb'
 
 # Use modernizr-rails to handle different browsers differently
 gem 'modernizr-rails'
 
 # use rubocop linter to support consisitent style
-gem 'rubocop', '~> 0.67.2', require: false
+gem 'rubocop', require: false
 gem 'rubocop-performance'
 
 # Access an IRB console on exception pages or by using <%= console %> in views
@@ -166,15 +164,18 @@ gem 'rubocop-performance'
 gem "spring", group: :development
 
 # Use mocha to support stubs for testing
-gem 'mocha', '~> 1.1'
+gem 'mocha'
 
 #Use Selenenium web driver in testing
 gem 'selenium-webdriver'
 
+gem 'bootsnap', require: false
+
+gem 'simple_form'
+
 group :development, :test do
-  gem 'debase', '~> 0.2.1'
-  gem 'ruby-debug-ide', '~> 0.6.0'
-  gem 'rspec-rails'
+  gem 'debase'
+  gem 'ruby-debug-ide'
   gem 'factory_bot_rails'
   gem 'shoulda-matchers'
   gem 'byebug'
