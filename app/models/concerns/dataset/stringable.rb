@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-include Rails.application.routes.url_helpers
-
 module Stringable
   extend ActiveSupport::Concern
 
