@@ -53,7 +53,7 @@ module Identifiable
 
   # publish - Triggers a state move from draft or registered to findable
   def publish_doi(_target_state)
-    return false if identifier.blank?
+    return false unless identifier&.present?
 
     current_state = doi_state
     return true if current_state == Databank::DoiState::FINDABLE
@@ -64,7 +64,7 @@ module Identifiable
 
   # register - Triggers a state move from draft to registered
   def register_doi
-    return false if identifier.blank?
+    return false unless identifier&.present?
 
     current_state = doi_state
     return true if current_state == Databank::DoiState::REGISTERED
@@ -75,7 +75,7 @@ module Identifiable
 
   # hide - Triggers a state move from findable to registered
   def hide_doi
-    return false if identifier.blank?
+    return false unless identifier&.present?
 
     current_state = doi_state
     return true if current_state == Databank::DoiState::REGISTERED
@@ -115,7 +115,7 @@ module Identifiable
   end
 
   def embargoed_datacite_xml
-    raise "missing dataset identifier" if identifier.blank?
+    raise "missing dataset identifier" unless identifier&.present?
 
     release_date_valid = release_date.present? && release_date.to_date > Date.current
     raise "missing release date for file and metadata publication delay for dataset #{key}" unless release_date_valid
@@ -183,7 +183,7 @@ module Identifiable
   end
 
   def withdrawn_datacite_xml
-    raise "cannot withdraw metadata from DataCite without identifier, dataset: #{key}" if identifier.blank?
+    raise "cannot withdraw metadata from DataCite without identifier, dataset: #{key}" unless identifier&.present?
 
     doc = Nokogiri::XML::Document.parse(datacite_xml_root_string)
     resource_node = doc.first_element_child
@@ -242,7 +242,7 @@ module Identifiable
   end
 
   def complete_datacite_xml
-    raise "cannot generate DataCite metadata w/o identifier, dataset: #{key}" if identifier.blank?
+    raise "cannot generate DataCite metadata w/o identifier, dataset: #{key}" unless identifier&.present?
 
     contact = Creator.find_by(dataset_id: id, is_contact: true)
     raise("cannot generate DataCite metadata xml without contact, dataset: #{key}") unless contact
@@ -494,7 +494,7 @@ module Identifiable
   end
 
   def doi_info_from_datacite
-    return nil if identifer.blank?
+    return nil unless identifer&.present?
 
     url = URI("#{URI_BASE}/#{identifier}")
     http = Net::HTTP.new(url.host, url.port)
