@@ -1054,8 +1054,6 @@ GEM
     simple_form (4.1.0)
       actionpack (>= 5.0)
       activemodel (>= 5.0)
-    spring (2.0.2)
-      activesupport (>= 4.2)
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -1180,7 +1178,6 @@ DEPENDENCIES
   seven_zip_ruby
   shoulda-matchers
   simple_form
-  spring
   sunspot_rails
   sunspot_solr
   tus-server
