@@ -9,6 +9,7 @@ namespace :fix do
       puts dataset.key
       next unless dataset.identifier && !dataset.identifier.empty?
       if DEMO_PREFIXES.include?(dataset.identifier.split("/")[0])
+        puts "trying to hide doi"
         puts dataset.hide_doi
       end
     end
