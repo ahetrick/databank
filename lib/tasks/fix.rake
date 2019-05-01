@@ -5,7 +5,7 @@ namespace :fix do
   # to be run BEFORE switching dev system config to test system
   desc 'hide dev dois'
   task :hide_dev_dois => :environment do
-    Dataset.each do |dataset|
+    Dataset.all.each do |dataset|
       puts dataset.key
       next unless dataset.identifier && !dataset.identifier.empty?
       if DEMO_PREFIXES.include?(dataset.identifier.split("/")[0])
@@ -18,7 +18,7 @@ namespace :fix do
   # to be run AFTER switching dev system config to test system
   desc 'add dev dois to DataCite test system'
   task :add_test_dois => :environment do
-    Dataset.each do |dataset|
+    Dataset.all.each do |dataset|
       puts dataset.key
       next unless dataset.identifier && !dataset.identifier.empty?
       next unless DEMO_PREFIXES.include?(dataset.identifier.split("/")[0])
