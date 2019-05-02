@@ -62,7 +62,7 @@ module Identifiable
     return true if current_state == Databank::DoiState::FINDABLE
     return false unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
 
-    Databank.post_to_datacite(id, datacite_json_body(Databank::DoiEvent::PUBLISH))
+    Dataset.post_to_datacite(id, datacite_json_body(Databank::DoiEvent::PUBLISH))
   end
 
   # register - Triggers a state move from draft to registered
@@ -73,7 +73,7 @@ module Identifiable
     return true if current_state == Databank::DoiState::REGISTERED
     return false unless current_state == Databank::DoiState::DRAFT
 
-    Databank.post_to_datacite(id, datacite_json_body(Databank::DoiEvent::REGISTER))
+    Dataset.post_to_datacite(id, datacite_json_body(Databank::DoiEvent::REGISTER))
   end
 
   # hide - Triggers a state move from findable to registered
@@ -84,7 +84,7 @@ module Identifiable
     return true if current_state == Databank::DoiState::REGISTERED
     return false unless current_state == Databank::DoiState::FINDABLE
 
-    Databank.post_to_datacite(id, datacite_json_body(Databank::DoiEvent::HIDE))
+    Dataset.post_to_datacite(id, datacite_json_body(Databank::DoiEvent::HIDE))
   end
 
   def update_doi
