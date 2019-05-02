@@ -374,7 +374,7 @@ module Identifiable
     resource_type_node.content = "Dataset"
     resource_type_node.parent = resource_node
 
-    keyword_arr = keywords.split(";") if defined?(keywords)
+    keyword_arr = keywords.split(";") if (defined?(keywords)) && keywords.present?
     keyword_arr ||= []
     if keyword_arr.length.positive?
       subjects_node = doc.create_element("subjects")
@@ -397,7 +397,7 @@ module Identifiable
     version_node.content = dataset_version || "1"
     version_node.parent = resource_node
 
-    if defined?(license) && ["CC01", "CCBY4", "license.txt"].include?(license)
+    if (defined?(license)) && license.present? && ["CC01", "CCBY4", "license.txt"].include?(license)
       rights_list_node = doc.create_element("rightsList")
       rights_node = doc.create_element("rights")
       case license
@@ -418,7 +418,7 @@ module Identifiable
       end
     end
 
-    if defined?(descriptions)
+    if (defined?(description)) && description.present?
       descriptions_node = doc.create_element("descriptions")
       descriptions_node.parent = resource_node
       description_node = doc.create_element("description")
@@ -500,7 +500,7 @@ module Identifiable
   end
 
   def doi_info_from_datacite
-    return nil unless defined?(identifier)
+    return nil unless identifier_present?
 
     url = URI("#{URI_BASE}/#{identifier}")
     http = Net::HTTP.new(url.host, url.port)
