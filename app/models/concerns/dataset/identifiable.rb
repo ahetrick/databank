@@ -53,7 +53,7 @@ module Identifiable
 
   # publish - Triggers a state move from draft or registered to findable
   def publish_doi(_target_state)
-    return false unless identifier&.present?
+    return false unless non_blank_identifier_defined?
 
     current_state = doi_state
     return true if current_state == Databank::DoiState::FINDABLE
@@ -64,7 +64,7 @@ module Identifiable
 
   # register - Triggers a state move from draft to registered
   def register_doi
-    return false unless identifier&.present?
+    return false unless non_blank_identifier_defined?
 
     current_state = doi_state
     return true if current_state == Databank::DoiState::REGISTERED
@@ -75,7 +75,7 @@ module Identifiable
 
   # hide - Triggers a state move from findable to registered
   def hide_doi
-    return false unless identifier&.present?
+    return false unless non_blank_identifier_defined?
 
     current_state = doi_state
     return true if current_state == Databank::DoiState::REGISTERED
@@ -115,7 +115,7 @@ module Identifiable
   end
 
   def embargoed_datacite_xml
-    raise "missing dataset identifier" unless identifier&.present?
+    raise "missing dataset identifier" unless non_blank_identifier_defined?
 
     release_date_valid = release_date.present? && release_date.to_date > Date.current
     raise "missing release date for file and metadata publication delay for dataset #{key}" unless release_date_valid
@@ -183,7 +183,7 @@ module Identifiable
   end
 
   def withdrawn_datacite_xml
-    raise "cannot withdraw metadata from DataCite without identifier, dataset: #{key}" unless identifier&.present?
+    raise "cannot withdraw metadata from DataCite w/o identifier, dataset: #{key}" unless non_blank_identifier_defined?
 
     doc = Nokogiri::XML::Document.parse(datacite_xml_root_string)
     resource_node = doc.first_element_child
@@ -242,7 +242,7 @@ module Identifiable
   end
 
   def complete_datacite_xml
-    raise "cannot generate DataCite metadata w/o identifier, dataset: #{key}" unless identifier&.present?
+    raise "cannot generate DataCite metadata w/o identifier, dataset: #{key}" unless non_blank_identifier_defined?
 
     contact = Creator.find_by(dataset_id: id, is_contact: true)
     raise("cannot generate DataCite metadata xml without contact, dataset: #{key}") unless contact
@@ -374,7 +374,7 @@ module Identifiable
     resource_type_node.content = "Dataset"
     resource_type_node.parent = resource_node
 
-    keyword_arr = keywords.split(";") if keywords&.present?
+    keyword_arr = keywords.split(";") if defined?(keywords)
     keyword_arr ||= []
     if keyword_arr.length.positive?
       subjects_node = doc.create_element("subjects")
@@ -397,7 +397,7 @@ module Identifiable
     version_node.content = dataset_version || "1"
     version_node.parent = resource_node
 
-    if license&.present? && ["CC01", "CCBY4", "license.txt"].include?(license)
+    if defined?(license) && ["CC01", "CCBY4", "license.txt"].include?(license)
       rights_list_node = doc.create_element("rightsList")
       rights_node = doc.create_element("rights")
       case license
@@ -418,7 +418,7 @@ module Identifiable
       end
     end
 
-    if description&.present?
+    if defined?(descriptions)
       descriptions_node = doc.create_element("descriptions")
       descriptions_node.parent = resource_node
       description_node = doc.create_element("description")
@@ -471,6 +471,12 @@ module Identifiable
 
   private
 
+  def non_blank_identifier_defined?
+    return false unless defined?(identifier)
+
+    identifier.blank?
+  end
+
   def doi_infohash
     response = doi_info_from_datacite
 
@@ -494,7 +500,7 @@ module Identifiable
   end
 
   def doi_info_from_datacite
-    return nil unless identifer&.present?
+    return nil unless defined?(identifier)
 
     url = URI("#{URI_BASE}/#{identifier}")
     http = Net::HTTP.new(url.host, url.port)
