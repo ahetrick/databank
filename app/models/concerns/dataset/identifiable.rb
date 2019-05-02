@@ -430,7 +430,7 @@ module Identifiable
       description_node.parent = descriptions_node
     end
 
-    if related_materials.count.positive
+    if related_materials.count.positive?
       ready_count = 0
       related_identifiers_node = doc.create_element("relatedIdentifiers")
       related_identifiers_node.parent = resource_node
