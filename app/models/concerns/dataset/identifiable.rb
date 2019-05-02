@@ -3,7 +3,7 @@
 module Identifiable
   extend ActiveSupport::Concern
 
-  URI_BASE ||= "#{IDB_CONFIG[:datacite_rest_base]}/dois"
+  URI_BASE ||= "https://#{IDB_CONFIG[:datacite_rest_base]}/dois"
   CLIENT_ID ||= IDB_CONFIG[:datacite_username]
   PASSWORD ||= IDB_CONFIG[:datacite_password]
 
