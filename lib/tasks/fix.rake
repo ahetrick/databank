@@ -11,7 +11,7 @@ namespace :fix do
       if DEMO_PREFIXES.include?(dataset.identifier.split("/")[0])
         puts "trying to hide doi #{dataset.key}"
         puts dataset.doi_infohash.to_s
-        puts dataset.hide_doi
+        puts dataset.hide_doi.to_s
       end
     end
   end
