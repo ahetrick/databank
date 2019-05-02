@@ -457,7 +457,6 @@ module Identifiable
     doc.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
   end
 
-  # PRIVATE CLASS METHOD: post_to_datacite
   def self.post_to_datacite(identifier, json_body)
     url = URI("#{URI_BASE}/#{identifier}")
     http = Net::HTTP.new(url.host, url.port)
@@ -469,9 +468,6 @@ module Identifiable
     request.body = json_body
     http.request(request)
   end
-
-  private_class_method :post_to_datacite
-
 
   def doi_infohash
     response = doi_info_from_datacite
