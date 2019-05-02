@@ -487,11 +487,12 @@ module Identifiable
     when Net::HTTPNotFound
       return {}
     when Net::HTTPSuccess, Net::HTTPRedirection
-      raise("response not valid JSON: #{response}") unless json?(response)
+      response_body = response.body
+      raise("response not valid JSON: #{response_body}") unless json?(response_body)
 
-      return JSON.parse(response, symbolize_names: true)
+      return JSON.parse(response_body, symbolize_names: true)
     else
-      raise("unexpected response from DataCite for #{doi}: #{response}")
+      raise("unexpected response from DataCite for #{doi}: #{response.body}")
     end
   end
 
@@ -515,8 +516,6 @@ module Identifiable
     request["accept"] = "application/vnd.api+json"
     request.basic_auth(CLIENT_ID, PASSWORD)
     response = http.request(request)
-    Rails.logger.warn response
-    response
   end
 
   def json?(string)
