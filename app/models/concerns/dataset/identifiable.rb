@@ -514,7 +514,9 @@ module Identifiable
     request = Net::HTTP::Get.new(url)
     request["accept"] = "application/vnd.api+json"
     request.basic_auth(CLIENT_ID, PASSWORD)
-    http.request(request)
+    response = http.request(request)
+    Rails.logger.warn response
+    response
   end
 
   def json?(string)
