@@ -469,13 +469,6 @@ module Identifiable
 
   private_class_method :post_to_datacite
 
-  private
-
-  def identifier_present?
-    return false unless defined?(identifier)
-
-    identifier.present?
-  end
 
   def doi_infohash
     response = doi_info_from_datacite
@@ -498,6 +491,15 @@ module Identifiable
       raise("unexpected response from DataCite for #{doi}: #{response}")
     end
   end
+
+  private
+
+  def identifier_present?
+    return false unless defined?(identifier)
+
+    identifier.present?
+  end
+
 
   def doi_info_from_datacite
     return nil unless identifier_present?
