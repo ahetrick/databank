@@ -278,7 +278,7 @@ module Identifiable
       elsif creator.type_of == Databank::CreatorType::INSTITUTION
         creator_name_node["nameType"] = "Organizational"
       end
-      creator_name_node.conent = creator.list_name
+      creator_name_node.content = creator.list_name
       creator_name_node.parent = creator_node
 
       # ORCID assumption hard-coded here, but in the model there is a field for identifier_scheme
