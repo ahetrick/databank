@@ -50,9 +50,6 @@ module Identifiable
     # minimal json to create draft record
     draft_json = %Q({"data": {"type": "dois", "attributes": {"doi": "#{identifier}}})
     response = Dataset.post_to_datacite(draft_json)
-    puts response.body if response.body_permitted?
-    puts response.code
-    puts response.message
     response
   end
 
@@ -81,19 +78,14 @@ module Identifiable
   # hide - Triggers a state move from findable to registered
   def hide_doi
     return false unless identifier_present?
-
     current_state = doi_state
-    #DEBUG
-    puts current_state
     return true if current_state == Databank::DoiState::REGISTERED
     return false unless current_state == Databank::DoiState::FINDABLE
 
-    response = Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::HIDE))
+    Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::HIDE))
 
-    puts response.code
-    puts response.message
-    puts response.body
-    response.code == 200
+    doi_state == Databank::DoiState::REGISTERED
+
   end
 
   def update_doi
@@ -101,9 +93,7 @@ module Identifiable
 
     response = Dataset.put_to_datacite(identifier, datacite_json_body(nil))
 
-    puts response.code
-    puts response.message
-    puts response.body
+    puts "response code: #{response.code}, #{response.code.class}"
     response.code == 200
 
   end
@@ -330,7 +320,7 @@ module Identifiable
       contact_name_node["nameType"] = "Organizational"
       contact_name_node.parent = contact_node
     end
-    
+
     if contact.identifier && contact.identifier != ""
       contact_identifier_node = doc.create_element("nameIdentifier")
       contact_identifier_node["schemeURI"] = "http://orcid.org/"
