@@ -283,8 +283,8 @@ module Identifiable
     creators_node = doc.create_element("creators")
     creators.each do |creator|
       creator_node = doc.create_element("creator")
-      creator_name_node = doc.create_element("creatorName")
       if creator.type_of == Databank::CreatorType::PERSON
+        creator_name_node = doc.create_element("creatorName")
         creator_name_node["nameType"] = "Personal"
         creator_name_node.content = creator.list_name
         creator_name_node.parent = creator_node
@@ -295,11 +295,11 @@ module Identifiable
         family_name_node.content = creator.family_name
         family_name_node.parent = creator_node
       elsif creator.type_of == Databank::CreatorType::INSTITUTION
+        creator_name_node = doc.create_element("creatorName")
         creator_name_node["nameType"] = "Organizational"
         creator_name_node.content = creator.list_name
         creator_name_node.parent = creator_node
       end
-
 
       # ORCID assumption hard-coded here, but in the model there is a field for identifier_scheme
       if creator.identifier.present?
