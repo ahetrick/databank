@@ -47,9 +47,7 @@ module Identifiable
     raise("record already exists in DataCite for dataset #{key}") if doi_infohash.has_key(:data)
 
     # minimal json to create draft record
-    draft_hash = {data: {type: "dois", attributes: {doi: identifier}}}
-    draft_json = draft_hash.to_json
-    puts draft_json.to_s
+    draft_json = %Q({"data": {"type": "dois", "attributes": {"doi": "#{identifier}}})
     response = Doi.post_to_datacite(identifier, draft_json)
     puts response.body if response.body_permitted?
     puts response.code
@@ -65,7 +63,7 @@ module Identifiable
     return true if current_state == Databank::DoiState::FINDABLE
     return false unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
 
-    Dataset.post_to_datacite(id, datacite_json_body(Databank::DoiEvent::PUBLISH))
+    Dataset.post_to_datacite(datacite_json_body(Databank::DoiEvent::PUBLISH))
   end
 
   # register - Triggers a state move from draft to registered
@@ -76,7 +74,7 @@ module Identifiable
     return true if current_state == Databank::DoiState::REGISTERED
     return false unless current_state == Databank::DoiState::DRAFT
 
-    Dataset.post_to_datacite(id, datacite_json_body(Databank::DoiEvent::REGISTER))
+    Dataset.post_to_datacite(datacite_json_body(Databank::DoiEvent::REGISTER))
   end
 
   # hide - Triggers a state move from findable to registered
@@ -104,7 +102,7 @@ module Identifiable
     return nil unless identifier_present?
 
     json_body = %Q({"data": {"id": "#{identifier}","type": "dois",)
-    json_body + %Q("attributes": {"event": "#{event}","doi": "#{identifier}","url": "#{databank_url}","xml": "#{to_datacite_xml}"}})
+    json_body + %Q("attributes": {"event": "#{event}","doi": "#{identifier}","url": "#{databank_url}","xml": %Q(#{to_datacite_xml})}})
   end
 
   def to_datacite_xml
