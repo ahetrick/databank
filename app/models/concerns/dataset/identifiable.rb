@@ -84,7 +84,7 @@ module Identifiable
     return true if current_state == Databank::DoiState::REGISTERED
     return false unless current_state == Databank::DoiState::FINDABLE
 
-    Dataset.post_to_datacite(id, datacite_json_body(Databank::DoiEvent::HIDE))
+    Dataset.post_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::HIDE))
   end
 
   def update_doi
