@@ -457,18 +457,6 @@ module Identifiable
     doc.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
   end
 
-  def self.post_to_datacite(identifier, json_body)
-    url = URI("#{URI_BASE}/#{identifier}")
-    http = Net::HTTP.new(url.host, url.port)
-    http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    request = Net::HTTP::Post.new(url)
-    request["accept"] = "application/vnd.api+json"
-    request.basic_auth(CLIENT_ID, PASSWORD)
-    request.body = json_body
-    http.request(request)
-  end
-
   def doi_infohash
     response = doi_info_from_datacite
 
@@ -492,6 +480,20 @@ module Identifiable
     end
   end
 
+  class_methods do
+    def post_to_datacite(identifier, json_body)
+      url = URI("#{URI_BASE}/#{identifier}")
+      http = Net::HTTP.new(url.host, url.port)
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      request = Net::HTTP::Post.new(url)
+      request["accept"] = "application/vnd.api+json"
+      request.basic_auth(CLIENT_ID, PASSWORD)
+      request.body = json_body
+      http.request(request)
+    end
+  end
+
   private
 
   def identifier_present?
@@ -499,7 +501,6 @@ module Identifiable
 
     identifier.present?
   end
-
 
   def doi_info_from_datacite
     return nil unless identifier_present?
@@ -520,4 +521,7 @@ module Identifiable
   rescue JSON::ParserError
     false
   end
+
+
+
 end
