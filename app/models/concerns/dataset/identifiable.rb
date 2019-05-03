@@ -494,10 +494,12 @@ module Identifiable
       request["accept"] = "application/vnd.api+json"
       request.basic_auth(CLIENT_ID, PASSWORD)
       request.body = json_body
-      puts request.code
-      puts request.message
       puts request.body
-      http.request(request)
+      response = http.request(request)
+      puts response.code
+      puts response.message
+      puts response.body
+      response
     end
   end
 
