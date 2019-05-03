@@ -6,9 +6,7 @@ namespace :fix do
   desc 'report on doi states'
   task :doi_report => :environment do
     Dataset.all.each do |dataset|
-      puts dataset.key
-      puts dataset.doi_state
-      puts dataset.publication_state
+      puts "#{dataset.key}, #{dataset.doi_state}, #{dataset.publication_state}"
     end
   end
 
