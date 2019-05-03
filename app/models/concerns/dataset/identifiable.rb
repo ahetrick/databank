@@ -105,8 +105,11 @@ module Identifiable
 
     json_body = %Q({"data": {"id": "#{identifier}","type": "dois",)
     json_body += %Q("attributes": {"event": "#{event}","doi": "#{identifier}",)
-    json_body + %Q("url": "#{databank_url}","xml": "#{Base64.encode64(to_datacite_xml)}"}})
+    json_body + %Q("url": "#{databank_url}","xml": "#{Base64.strict_encode64(to_datacite_xml)}"}})
+
   end
+
+
 
   def to_datacite_xml
     s = [Databank::PublicationState::PermSuppress::METADATA, Databank::PublicationState::TempSuppress::METADATA]
