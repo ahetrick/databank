@@ -90,12 +90,10 @@ module Identifiable
 
     response = Dataset.post_to_datacite(datacite_json_body(Databank::DoiEvent::HIDE))
 
-    false
-
-    # puts response.code
-    # puts response.message
-    # puts response.body
-    # response.code == 200
+    puts response.code
+    puts response.message
+    puts response.body
+    response.code == 200
   end
 
   def update_doi
@@ -492,14 +490,14 @@ module Identifiable
       puts url
       puts json_body
 
-      # http = Net::HTTP.new(url.host, url.port)
-      # http.use_ssl = true
-      # http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      # request = Net::HTTP::Post.new(url)
-      # request["accept"] = "application/vnd.api+json"
-      # request.basic_auth(CLIENT_ID, PASSWORD)
-      # request.body = json_body
-      # http.request(request)
+      http = Net::HTTP.new(url.host, url.port)
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      request = Net::HTTP::Post.new(url)
+      request["accept"] = "application/vnd.api+json"
+      request.basic_auth(CLIENT_ID, PASSWORD)
+      request.body = json_body
+      http.request(request)
     end
   end
 
