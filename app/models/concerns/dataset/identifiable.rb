@@ -95,8 +95,8 @@ module Identifiable
   end
 
   def datacite_json_body(event)
-    json_body = %Q({"data": {"id": identifier,"type": "dois",)
-    json_body + %Q("attributes": {"event": event,"doi": identifier,"url": databank_url,"xml": to_datacite_xml}}})
+    json_body = %Q({"data": {"id": "#{identifer}","type": "dois",)
+    json_body + %Q("attributes": {"event": event,"doi": identifier,"url": databank_url,"xml": "#{to_datacite_xml}"}})
   end
 
   def to_datacite_xml
@@ -483,11 +483,7 @@ module Identifiable
       request["accept"] = "application/vnd.api+json"
       request.basic_auth(CLIENT_ID, PASSWORD)
       request.body = json_body
-      puts request.body
       response = http.request(request)
-      puts response.code
-      puts response.message
-      puts response.body
       response
     end
   end
