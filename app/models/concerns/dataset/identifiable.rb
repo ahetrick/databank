@@ -483,7 +483,7 @@ module Identifiable
 
   class_methods do
     def post_to_datacite(identifier, json_body)
-      url = URI("#{URI_BASE}/#{identifier.downcase}")
+      url = URI(URI_BASE)
 
       puts "inside post to datacite"
       puts url
