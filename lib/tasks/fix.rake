@@ -10,10 +10,8 @@ namespace :fix do
       next unless dataset.identifier && !dataset.identifier.empty?
       if DEMO_PREFIXES.include?(dataset.identifier.split("/")[0])
         puts "trying to hide doi #{dataset.key}"
-        response = dataset.hide_doi.code
-        puts response.code
-        puts response.message
-        puts response.body
+        puts dataset.hide_doi.code
+
       end
     end
   end
