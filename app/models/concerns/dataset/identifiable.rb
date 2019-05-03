@@ -103,9 +103,9 @@ module Identifiable
   def datacite_json_body(event)
     return nil unless identifier_present?
 
-    json_body = %Q({"data": {"id": "#{identifier}","type": "dois",)
-    json_body += %Q("attributes": {"event": "#{event}","doi": "#{identifier}",)
-    json_body + %Q("url": "#{databank_url}","xml": "#{Base64.strict_encode64(to_datacite_xml)}"}})
+    json_body = %Q({"data": {"id": "#{identifier}", "type": "dois", "attributes": )
+    json_body += %Q({"event": "#{event}", "doi": "#{identifier}", "url": "#{databank_url}", )
+    json_body + %Q("xml": "#{Base64.strict_encode64(to_datacite_xml)}"}}})
 
   end
 
