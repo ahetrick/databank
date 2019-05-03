@@ -89,7 +89,7 @@ module Identifiable
 
     response = Dataset.post_to_datacite(datacite_json_body(Databank::DoiEvent::HIDE))
 
-    response.code != 400
+    false
 
     # puts response.code
     # puts response.message
@@ -105,7 +105,7 @@ module Identifiable
     return nil unless identifier_present?
 
     json_body = %Q({"data": {"id": "#{identifier}","type": "dois",)
-    json_body + %Q("attributes": {"event": "#{event}","doi": "#{identifier}","url": "#{databank_url}","xml": %Q(#{to_datacite_xml})}})
+    json_body + %Q("attributes": {"event": "#{event}","doi": "#{identifier}","url": "#{databank_url}","xml": %Q('#{to_datacite_xml}')}})
   end
 
   def to_datacite_xml
