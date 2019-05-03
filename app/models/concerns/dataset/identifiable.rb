@@ -75,7 +75,7 @@ module Identifiable
     return true if current_state == Databank::DoiState::REGISTERED
     return false unless current_state == Databank::DoiState::DRAFT
 
-    Dataset.put_to_datacite(datacite_json_body(Databank::DoiEvent::REGISTER))
+    Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::REGISTER))
   end
 
   # hide - Triggers a state move from findable to registered
@@ -88,7 +88,7 @@ module Identifiable
     return true if current_state == Databank::DoiState::REGISTERED
     return false unless current_state == Databank::DoiState::FINDABLE
 
-    response = Dataset.put_to_datacite(datacite_json_body(Databank::DoiEvent::HIDE))
+    response = Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::HIDE))
 
     puts response.code
     puts response.message
@@ -97,14 +97,25 @@ module Identifiable
   end
 
   def update_doi
-    raise("not yet implemented")
+    return nil unless identifier_present?
+
+    response = Dataset.put_to_datacite(identifier, datacite_json_body(nil))
+
+    puts response.code
+    puts response.message
+    puts response.body
+    response.code == 200
+
   end
 
   def datacite_json_body(event)
     return nil unless identifier_present?
 
-    json_body = %Q({"data": {"id": "#{identifier}", "type": "dois", "attributes": )
-    json_body += %Q({"event": "#{event}", "doi": "#{identifier}", "url": "#{databank_url}", )
+    json_body = %Q({"data": {"id": "#{identifier}", "type": "dois", "attributes": {)
+    if event.present?
+      json_body += %Q("event": "#{event}", )
+    end
+    json_body += %Q("doi": "#{identifier}", "url": "#{databank_url}", )
     json_body + %Q("xml": "#{Base64.strict_encode64(to_datacite_xml)}"}}})
   end
 
@@ -496,9 +507,8 @@ module Identifiable
       http.request(request)
     end
 
-    def put_to_datacite(json_body)
-      url = URI(URI_BASE)
-      puts "inside put to datacite"
+    def put_to_datacite(identifier, json_body)
+      url = URI("#{URI_BASE}/#{identifier}")
       http = Net::HTTP.new(url.host, url.port)
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
