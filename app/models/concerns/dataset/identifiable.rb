@@ -89,7 +89,7 @@ module Identifiable
     return true if current_state == Databank::DoiState::REGISTERED
     return false unless current_state == Databank::DoiState::FINDABLE
 
-    response = Dataset.post_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::HIDE))
+    response = Dataset.post_to_datacite(datacite_json_body(Databank::DoiEvent::HIDE))
     puts response.code
     puts response.message
     puts response.body
@@ -104,7 +104,7 @@ module Identifiable
     return nil unless identifier_present?
 
     json_body = %Q({"data": {"id": "#{identifier}","type": "dois",)
-    json_body + %Q("attributes": {"event": event,"doi": identifier,"url": databank_url,"xml": "#{to_datacite_xml}"}})
+    json_body + %Q("attributes": {"event": "#{event},"doi": identifier,"url": databank_url,"xml": "#{to_datacite_xml}"}})
   end
 
   def to_datacite_xml
@@ -482,7 +482,7 @@ module Identifiable
   end
 
   class_methods do
-    def post_to_datacite(identifier, json_body)
+    def post_to_datacite(json_body)
       url = URI(URI_BASE)
 
       puts "inside post to datacite"
