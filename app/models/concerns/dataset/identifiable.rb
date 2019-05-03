@@ -49,7 +49,7 @@ module Identifiable
 
     # minimal json to create draft record
     draft_json = %Q({"data": {"type": "dois", "attributes": {"doi": "#{identifier}}})
-    response = Doi.post_to_datacite(identifier, draft_json)
+    response = Dataset.post_to_datacite(draft_json)
     puts response.body if response.body_permitted?
     puts response.code
     puts response.message
@@ -75,7 +75,7 @@ module Identifiable
     return true if current_state == Databank::DoiState::REGISTERED
     return false unless current_state == Databank::DoiState::DRAFT
 
-    Dataset.post_to_datacite(datacite_json_body(Databank::DoiEvent::REGISTER))
+    Dataset.put_to_datacite(datacite_json_body(Databank::DoiEvent::REGISTER))
   end
 
   # hide - Triggers a state move from findable to registered
@@ -88,7 +88,7 @@ module Identifiable
     return true if current_state == Databank::DoiState::REGISTERED
     return false unless current_state == Databank::DoiState::FINDABLE
 
-    response = Dataset.post_to_datacite(datacite_json_body(Databank::DoiEvent::HIDE))
+    response = Dataset.put_to_datacite(datacite_json_body(Databank::DoiEvent::HIDE))
 
     puts response.code
     puts response.message
@@ -485,11 +485,6 @@ module Identifiable
   class_methods do
     def post_to_datacite(json_body)
       url = URI(URI_BASE)
-
-      puts "inside post to datacite"
-      puts url
-      puts json_body
-
       http = Net::HTTP.new(url.host, url.port)
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -500,6 +495,21 @@ module Identifiable
       request.body = json_body
       http.request(request)
     end
+
+    def put_to_datacite(json_body)
+      url = URI(URI_BASE)
+      puts "inside put to datacite"
+      http = Net::HTTP.new(url.host, url.port)
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      request = Net::HTTP::Put.new(url)
+      request["accept"] = "application/vnd.api+json"
+      request["content-type"] = "application/vnd.api+json"
+      request.basic_auth(CLIENT_ID, PASSWORD)
+      request.body = json_body
+      http.request(request)
+    end
+
   end
 
   private
