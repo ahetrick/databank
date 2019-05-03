@@ -88,7 +88,7 @@ module Identifiable
     return true if current_state == Databank::DoiState::REGISTERED
     return false unless current_state == Databank::DoiState::FINDABLE
 
-    puts dataset.complete_datacite_xml
+    puts complete_datacite_xml
 
     return false
 
