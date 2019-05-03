@@ -3,15 +3,12 @@ require 'csv'
 namespace :fix do
 
   # to be run BEFORE switching dev system config to test system
-  desc 'hide dev dois'
-  task :hide_dev_dois => :environment do
+  desc 'report on doi states'
+  task :doi_report => :environment do
     Dataset.all.each do |dataset|
       puts dataset.key
-      next unless dataset.identifier && !dataset.identifier.empty?
-      if DEMO_PREFIXES.include?(dataset.identifier.split("/")[0])
-        puts "trying to hide doi #{dataset.key}"
-        puts dataset.hide_doi
-      end
+      puts dataset.doi_state
+      puts dataset.publication_state
     end
   end
 
