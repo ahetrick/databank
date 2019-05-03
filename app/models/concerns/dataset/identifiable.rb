@@ -95,18 +95,8 @@ module Identifiable
   end
 
   def datacite_json_body(event)
-    {
-      "data": {
-        "id":         identifier,
-        "type":       "dois",
-        "attributes": {
-          "event": event,
-          "doi":   identifier,
-          "url":   databank_url,
-          "xml":   to_datacite_xml
-        }
-      }
-    }
+    json_body = %Q({"data": {"id": identifier,"type": "dois",)
+    json_body + %Q("attributes": {"event": event,"doi": identifier,"url": databank_url,"xml": to_datacite_xml}}})
   end
 
   def to_datacite_xml
@@ -486,7 +476,6 @@ module Identifiable
   class_methods do
     def post_to_datacite(identifier, json_body)
       url = URI("#{URI_BASE}/#{identifier}")
-      puts url
       http = Net::HTTP.new(url.host, url.port)
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -530,7 +519,6 @@ module Identifiable
   rescue JSON::ParserError
     false
   end
-
 
 
 end
