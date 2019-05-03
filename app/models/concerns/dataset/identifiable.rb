@@ -289,9 +289,10 @@ module Identifiable
         creator_name_node.parent = creator_node
         given_name_node = doc.create_element("givenName")
         given_name_node.content = creator.given_name
-        given_name_node.parent = creator_node
+        given_name_node.parent = creator_name_node
         family_name_node = doc.create_element("familyName")
         family_name_node.content = creator.family_name
+        family_name_node.parent = creator_name_node
       elsif creator.type_of == Databank::CreatorType::INSTITUTION
         creator_name_node["nameType"] = "Organizational"
       end
