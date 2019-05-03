@@ -313,9 +313,24 @@ module Identifiable
 
     contact_node = doc.create_element("contributor")
     contact_node["contributorType"] = "ContactPerson"
-    contact_name_node = doc.create_element("contributorName")
-    contact_name_node.parent = contact_node
 
+    if contact.type_of == Databank::CreatorType::PERSON
+      contact_name_node = doc.create_element("contributorName")
+      contact_name_node["nameType"] = "Personal"
+      contact_name_node.content = contact.list_name
+      contact_name_node.parent = contact_node
+      given_name_node = doc.create_element("givenName")
+      given_name_node.content = contact.given_name
+      given_name_node.parent = contact_node
+      family_name_node = doc.create_element("familyName")
+      family_name_node.content = contact.family_name
+      family_name_node.parent = contact_node
+    elsif creator.type_of == Databank::CreatorType::INSTITUTION
+      contact_name_node = doc.create_element("contributorName")
+      contact_name_node["nameType"] = "Organizational"
+      contact_name_node.parent = contact_node
+    end
+    
     if contact.identifier && contact.identifier != ""
       contact_identifier_node = doc.create_element("nameIdentifier")
       contact_identifier_node["schemeURI"] = "http://orcid.org/"
