@@ -49,8 +49,11 @@ module Identifiable
     # minimal json to create draft record
     draft_hash = {data: {type: "dois", attributes: {doi: identifier}}}
     draft_json = draft_hash.to_json
+    puts draft_json.to_s
     response = Doi.post_to_datacite(identifier, draft_json)
-    Rails.logger.warn response
+    puts response.body if response.body_permitted?
+    puts response.code
+    puts response.message
     response
   end
 
