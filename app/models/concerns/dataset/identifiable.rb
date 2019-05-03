@@ -483,6 +483,7 @@ module Identifiable
   class_methods do
     def post_to_datacite(identifier, json_body)
       url = URI("#{URI_BASE}/#{identifier}")
+      puts url
       http = Net::HTTP.new(url.host, url.port)
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -490,6 +491,7 @@ module Identifiable
       request["accept"] = "application/vnd.api+json"
       request.basic_auth(CLIENT_ID, PASSWORD)
       request.body = json_body
+      puts request
       http.request(request)
     end
   end
