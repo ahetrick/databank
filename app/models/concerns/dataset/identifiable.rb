@@ -84,6 +84,8 @@ module Identifiable
     return false unless identifier_present?
 
     current_state = doi_state
+    #DEBUG
+    puts current_state
     return true if current_state == Databank::DoiState::REGISTERED
     return false unless current_state == Databank::DoiState::FINDABLE
 
@@ -96,7 +98,7 @@ module Identifiable
 
   def datacite_json_body(event)
     return nil unless identifier_present?
-    
+
     json_body = %Q({"data": {"id": "#{identifier}","type": "dois",)
     json_body + %Q("attributes": {"event": event,"doi": identifier,"url": databank_url,"xml": "#{to_datacite_xml}"}})
   end
@@ -478,6 +480,11 @@ module Identifiable
   class_methods do
     def post_to_datacite(identifier, json_body)
       url = URI("#{URI_BASE}/#{identifier}")
+
+      puts "inside post to datacite"
+      puts url
+      puts json_body
+
       http = Net::HTTP.new(url.host, url.port)
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -485,8 +492,7 @@ module Identifiable
       request["accept"] = "application/vnd.api+json"
       request.basic_auth(CLIENT_ID, PASSWORD)
       request.body = json_body
-      response = http.request(request)
-      response
+      http.request(request)
     end
   end
 
