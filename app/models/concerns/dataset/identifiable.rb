@@ -106,10 +106,7 @@ module Identifiable
     json_body = %Q({"data": {"id": "#{identifier}", "type": "dois", "attributes": )
     json_body += %Q({"event": "#{event}", "doi": "#{identifier}", "url": "#{databank_url}", )
     json_body + %Q("xml": "#{Base64.strict_encode64(to_datacite_xml)}"}}})
-
   end
-
-
 
   def to_datacite_xml
     s = [Databank::PublicationState::PermSuppress::METADATA, Databank::PublicationState::TempSuppress::METADATA]
@@ -498,6 +495,7 @@ module Identifiable
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       request = Net::HTTP::Post.new(url)
       request["accept"] = "application/vnd.api+json"
+      request["content-type"] = "application/vnd.api+json"
       request.basic_auth(CLIENT_ID, PASSWORD)
       request.body = json_body
       http.request(request)
