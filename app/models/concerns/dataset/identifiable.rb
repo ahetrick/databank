@@ -494,7 +494,9 @@ module Identifiable
       request["accept"] = "application/vnd.api+json"
       request.basic_auth(CLIENT_ID, PASSWORD)
       request.body = json_body
-      puts request
+      puts request.body if request.request_body_permitted?
+      puts request.code
+      puts request.message
       http.request(request)
     end
   end
