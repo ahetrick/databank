@@ -511,14 +511,14 @@ module Identifiable
   def doi_info_from_datacite
     return nil unless identifier_present?
 
-    url = URI("#{URI_BASE}/#{identifier}")
+    url = URI("#{URI_BASE}/#{identifier.downcase}")
     http = Net::HTTP.new(url.host, url.port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Get.new(url)
     request["accept"] = "application/vnd.api+json"
     request.basic_auth(CLIENT_ID, PASSWORD)
-    response = http.request(request)
+    http.request(request)
   end
 
   def json?(string)
