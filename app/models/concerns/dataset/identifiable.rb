@@ -49,8 +49,7 @@ module Identifiable
 
     # minimal json to create draft record
     draft_json = %Q({"data": {"type": "dois", "attributes": {"doi": "#{identifier}}})
-    response = Dataset.post_to_datacite(draft_json)
-    response
+    Dataset.post_to_datacite(draft_json)
   end
 
   # publish - Triggers a state move from draft or registered to findable
@@ -65,7 +64,7 @@ module Identifiable
     return true if current_state == Databank::DoiState::FINDABLE
 
     if current_state.nil?
-      create_draft_doi
+      puts create_draft_doi
       current_state = doi_state
     end
 
@@ -90,7 +89,7 @@ module Identifiable
     return true if current_state == Databank::DoiState::REGISTERED
 
     if current_state.nil?
-      create_draft_doi
+      puts create_draft_doi
       current_state = doi_state
     end
 
