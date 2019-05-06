@@ -49,7 +49,11 @@ module Identifiable
 
     # minimal json to create draft record
     draft_json = %Q({"data": {"type": "dois", "attributes": {"doi": "#{identifier}"}}})
-    Dataset.post_to_datacite(draft_json)
+    response = Dataset.post_to_datacite(draft_json)
+    raise("response to attempt to create draft doi is nil") if response.nil?
+
+    puts response.code
+
   end
 
   # publish - Triggers a state move from draft or registered to findable
@@ -76,7 +80,9 @@ module Identifiable
 
     return false unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
 
-    Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::PUBLISH))
+    response = Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::PUBLISH))
+    puts response.code if defined?(response.code)
+    defined?(response.code) && response.code == "200"
   end
 
   # register - Triggers a state move from draft to registered
@@ -103,7 +109,9 @@ module Identifiable
 
     return false unless current_state == Databank::DoiState::DRAFT
 
-    Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::REGISTER))
+    response = Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::REGISTER))
+    puts response.code if defined?(response.code)
+    defined?(response.code) && response.code == "200"
   end
 
   # hide - Triggers a state move from findable to registered
