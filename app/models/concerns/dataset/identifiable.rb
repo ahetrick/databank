@@ -557,6 +557,7 @@ module Identifiable
       response = http.request(request)
       puts response.code
       puts response.body
+      response
     end
 
     def put_to_datacite(identifier, json_body)

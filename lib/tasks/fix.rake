@@ -25,9 +25,9 @@ namespace :fix do
       puts "result: "
 
       if dataset.metadata_public?
-        puts dataset.publish_doi.code
+        puts dataset.publish_doi
       else
-        puts dataset.register_doi.code
+        puts dataset.register_doi
       end
     end
   end
