@@ -51,8 +51,8 @@ module Identifiable
     draft_json = %Q({"data": {"type": "dois", "attributes": {"doi": "#{identifier}"}}})
     response = Dataset.post_to_datacite(draft_json)
     raise("response to attempt to create draft doi is nil") if response.nil?
-
     puts response.code
+    response.code == "201"
 
   end
 
@@ -123,7 +123,9 @@ module Identifiable
 
     Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::HIDE))
 
-    doi_state == Databank::DoiState::REGISTERED
+    response doi_state == Databank::DoiState::REGISTERED
+    puts response.code if defined?(response.code)
+    defined?(response.code) && response.code == "200"
 
   end
 

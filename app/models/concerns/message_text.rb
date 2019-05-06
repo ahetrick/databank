@@ -11,13 +11,13 @@ module MessageText
         when Databank::PublicationState::DRAFT
           case new_state
             when Databank::PublicationState::RELEASED
-              return %Q[Dataset was successfully published and the DataCite DOI is #{dataset.identifier}.<br/>The persistent link to this dataset is now <a href = "https://doi.org/#{dataset.identifier}">https://doi.org/#{dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.]
+              return %Q[Dataset was successfully published and the DataCite DOI is #{dataset.identifier}.<br/>The persistent link to this dataset is now <a href = "#{IDB_CONFIG[:datacite_url_prefix]}/#{dataset.identifier}">#{IDB_CONFIG[:datacite_url_prefix]}/#{dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.]
 
             when Databank::PublicationState::Embargo::METADATA
-              return %Q[DataCite DOI #{dataset.identifier} successfully reserved.<br/>The persistent link to this dataset will be <a href = "https://doi.org/#{dataset.identifier}">https://doi.org/#{dataset.identifier}</a> starting #{dataset.release_date}.]
+              return %Q[DataCite DOI #{dataset.identifier} successfully reserved.<br/>The persistent link to this dataset will be <a href = "#{IDB_CONFIG[:datacite_url_prefix]}/#{dataset.identifier}">#{IDB_CONFIG[:datacite_url_prefix]}/#{dataset.identifier}</a> starting #{dataset.release_date}.]
 
             when Databank::PublicationState::Embargo::FILE
-              return %Q[Dataset record was successfully published and the DataCite DOI is #{dataset.identifier}.<br/>Although the record for your dataset will be <strong>publicly</strong> visible, your data files will not be made available until #{dataset.release_date.iso8601}.<br/>The persistent link to this dataset is now <a href = "https://doi.org/#{dataset.identifier}">https://doi.org/#{dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.]
+              return %Q[Dataset record was successfully published and the DataCite DOI is #{dataset.identifier}.<br/>Although the record for your dataset will be <strong>publicly</strong> visible, your data files will not be made available until #{dataset.release_date.iso8601}.<br/>The persistent link to this dataset is now <a href = "#{IDB_CONFIG[:datacite_url_prefix]}/#{dataset.identifier}">#{IDB_CONFIG[:datacite_url_prefix]}/#{dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.]
             else
               return %Q[Unexpected error, please contact the <a href="/help">Research Data Service Team</help>.]
           end
@@ -28,7 +28,7 @@ module MessageText
               return %Q[Dataset record changes have been successfully published.]
 
             when Databank::PublicationState::Embargo::METADATA
-              return %Q[Placeholder metadata has replaced previously published metadata for this DataCite DOI #{dataset.identifier}.<br/>The persistent link to this dataset will be <a href = "https://doi.org/#{dataset.identifier}">https://doi.org/#{dataset.identifier}</a> starting #{dataset.release_date}.]
+              return %Q[Placeholder metadata has replaced previously published metadata for this DataCite DOI #{dataset.identifier}.<br/>The persistent link to this dataset will be <a href = "#{IDB_CONFIG[:datacite_url_prefix]}/#{dataset.identifier}">#{IDB_CONFIG[:datacite_url_prefix]}/#{dataset.identifier}</a> starting #{dataset.release_date}.]
 
             when Databank::PublicationState::Embargo::FILE
               return %Q[Dataset record changes have been was successfully published.<br/>Although the record for your dataset will be <strong>publicly</strong> visible, your data files will not be made available until #{dataset.release_date.iso8601}.]
@@ -39,13 +39,13 @@ module MessageText
         when Databank::PublicationState::Embargo::METADATA
           case new_state
             when Databank::PublicationState::RELEASED
-              return %Q[Dataset was successfully published and the DataCite DOI is #{dataset.identifier}.<br/>The persistent link to this dataset is <a href = "https://doi.org/#{dataset.identifier}">https://doi.org/#{dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.]
+              return %Q[Dataset was successfully published and the DataCite DOI is #{dataset.identifier}.<br/>The persistent link to this dataset is <a href = "#{IDB_CONFIG[:datacite_url_prefix]}/#{dataset.identifier}">#{IDB_CONFIG[:datacite_url_prefix]}/#{dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.]
 
             when Databank::PublicationState::Embargo::METADATA
-              return %Q[No changes have been published.<br/>The persistent link to this dataset will be <a href = "https://doi.org/#{dataset.identifier}">https://doi.org/#{dataset.identifier}</a> starting #{dataset.release_date}.]
+              return %Q[No changes have been published.<br/>The persistent link to this dataset will be <a href = "#{IDB_CONFIG[:datacite_url_prefix]}/#{dataset.identifier}">#{IDB_CONFIG[:datacite_url_prefix]}/#{dataset.identifier}</a> starting #{dataset.release_date}.]
 
             when Databank::PublicationState::Embargo::FILE
-              return %Q[Dataset record was successfully published and the DataCite DOI is #{dataset.identifier}.<br/>Although the record for your dataset will be <strong>publicly</strong> visible, your data files will not be made available until #{dataset.release_date.iso8601}.<br/>The persistent link to this dataset is now <a href = "https://doi.org/#{dataset.identifier}">https://doi.org/#{dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.]
+              return %Q[Dataset record was successfully published and the DataCite DOI is #{dataset.identifier}.<br/>Although the record for your dataset will be <strong>publicly</strong> visible, your data files will not be made available until #{dataset.release_date.iso8601}.<br/>The persistent link to this dataset is now <a href = "#{IDB_CONFIG[:datacite_url_prefix]}/#{dataset.identifier}">#{IDB_CONFIG[:datacite_url_prefix]}/#{dataset.identifier}</a>.<br/>There may be a delay before the persistent link will be in effect.  If this link does not redirect to the dataset immediately, try again in an hour.]
             else
               return %Q[Unexpected error, please contact the <a href="/help">Research Data Service Team</help>.]
           end
@@ -57,7 +57,7 @@ module MessageText
               return %Q[Dataset was successfully published and files are publically available.]
 
             when Databank::PublicationState::Embargo::METADATA
-              return %Q[A placeholder record has replaced the previously published record for this DataCite DOI #{dataset.identifier}.<br/>The persistent link to this dataset is <a href = "https://doi.org/#{dataset.identifier}">https://doi.org/#{dataset.identifier}</a> starting #{dataset.release_date}.]
+              return %Q[A placeholder record has replaced the previously published record for this DataCite DOI #{dataset.identifier}.<br/>The persistent link to this dataset is <a href = "#{IDB_CONFIG[:datacite_url_prefix]}/#{dataset.identifier}">#{IDB_CONFIG[:datacite_url_prefix]}/#{dataset.identifier}</a> starting #{dataset.release_date}.]
 
             when Databank::PublicationState::Embargo::FILE
               return %Q[Dataset record changes have been was successfully published.<br/>Although the record for your dataset will be <strong>publicly</strong> visible, your data files will not be made available until #{dataset.release_date.iso8601}.]

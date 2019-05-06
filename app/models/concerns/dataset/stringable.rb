@@ -17,7 +17,7 @@ module Stringable
 
                     end
 
-    citation_id = identifier.present? ? "https://doi.org/#{identifier}" : ""
+    citation_id = identifier.present? ? "#{IDB_CONFIG[:datacite_url_prefix]}/#{identifier}" : ""
 
     "#{creator_list} (#{publication_year}): #{citationTitle}. #{publisher}. #{citation_id}"
   end
@@ -71,7 +71,7 @@ module Stringable
 
       return_string += %(, "version":"#{dataset_version}")
 
-      return_string += %(, "url":"https://doi.org/#{identifier}")
+      return_string += %(, "url":"#{IDB_CONFIG[:datacite_url_prefix]}/#{identifier}")
 
       return_string += %(, "sameAs":"#{IDB_CONFIG[:root_url_text]}/#{key}")
 

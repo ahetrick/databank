@@ -1494,7 +1494,7 @@ class DatasetsController < ApplicationController
     if @dataset.identifier
       urlNode = doc.create_element('url')
       urlNode.parent = relatedurlsNode
-      urlNode.content = "https://doi.org/#{@dataset.identifier}"
+      urlNode.content = "#{IDB_CONFIG[:datacite_url_prefix]}/#{@dataset.identifier}"
     end
 
     electronicNode = doc.create_element('electronic-resource-num')
@@ -1521,7 +1521,7 @@ class DatasetsController < ApplicationController
 
     t.write(%Q[Provider: Illinois Data Bank\nContent: text/plain; charset=%Q[us-ascii]\nTY  - DATA\nT1  - #{@dataset.title}\n])
 
-    t.write(%Q[DO  - #{@dataset.identifier}\nPY  - #{@dataset.publication_year}\nUR  - https://doi.org/#{@dataset.identifier}\nPB  - #{@dataset.publisher}\nER  - ])
+    t.write(%Q[DO  - #{@dataset.identifier}\nPY  - #{@dataset.publication_year}\nUR  - #{IDB_CONFIG[:datacite_url_prefix]}/#{@dataset.identifier}\nPB  - #{@dataset.publisher}\nER  - ])
 
     if !@dataset.identifier
       @dataset.identifer = @dataset.key
@@ -1557,7 +1557,7 @@ class DatasetsController < ApplicationController
     t = Tempfile.new("#{@dataset.key}_endNote")
     citekey = SecureRandom.uuid
 
-    t.write("@data{#{citekey},\ndoi = {#{@dataset.identifier}},\nurl = {https://doi.org/#{@dataset.identifier}},\nauthor = {#{@dataset.creator_list}},\npublisher = {#{@dataset.publisher}},\ntitle = {#{@dataset.title} ﻿},\nyear = {#{@dataset.publication_year}}
+    t.write("@data{#{citekey},\ndoi = {#{@dataset.identifier}},\nurl = {#{IDB_CONFIG[:datacite_url_prefix]}/#{@dataset.identifier}},\nauthor = {#{@dataset.creator_list}},\npublisher = {#{@dataset.publisher}},\ntitle = {#{@dataset.title} ﻿},\nyear = {#{@dataset.publication_year}}
 }")
 
     send_file t.path, :type => 'application/application/x-bibtex',

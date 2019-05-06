@@ -377,7 +377,7 @@ class Dataset < ActiveRecord::Base
   end
 
   def persistent_url
-    identifier.present? ? "https://doi.org/#{identifier}" : ""
+    identifier.present? ? "#{IDB_CONFIG[:datacite_url_prefix]}/#{identifier}" : ""
   end
 
   def license_code

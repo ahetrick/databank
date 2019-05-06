@@ -22,10 +22,12 @@ namespace :fix do
 
       next if dataset.publication_state == Databank::PublicationState::DRAFT
 
+      puts "result: "
+
       if dataset.metadata_public?
-        dataset.publish_doi.code
+        puts dataset.publish_doi.code
       else
-        dataset.register_doi.code
+        puts dataset.register_doi.code
       end
     end
   end
