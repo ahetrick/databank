@@ -48,7 +48,7 @@ module Identifiable
     raise("record already exists in DataCite for dataset #{key}") if !doi_infohash.empty? && doi_infohash.has_key(:data)
 
     # minimal json to create draft record
-    draft_json = %Q({"data": {"type": "dois", "attributes": {"doi": "#{identifier}}})
+    draft_json = %Q({"data": {"type": "dois", "attributes": {"doi": "10.5438/0012"}}})
     Dataset.post_to_datacite(draft_json)
   end
 
@@ -533,6 +533,7 @@ module Identifiable
 
   class_methods do
     def post_to_datacite(json_body)
+      puts "json_body: #{json_body}"
       url = URI(URI_BASE)
       http = Net::HTTP.new(url.host, url.port)
       http.use_ssl = true
@@ -542,7 +543,9 @@ module Identifiable
       request["content-type"] = "application/vnd.api+json"
       request.basic_auth(CLIENT_ID, PASSWORD)
       request.body = json_body
-      http.request(request)
+      response = http.request(request)
+      puts response.code
+      puts response.body
     end
 
     def put_to_datacite(identifier, json_body)
