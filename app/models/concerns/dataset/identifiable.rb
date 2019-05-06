@@ -64,7 +64,9 @@ module Identifiable
     return true if current_state == Databank::DoiState::FINDABLE
 
     if current_state.nil?
-      puts create_draft_doi
+      result =  create_draft_doi
+      puts result.code
+      puts result.body
       current_state = doi_state
     end
 
@@ -89,7 +91,9 @@ module Identifiable
     return true if current_state == Databank::DoiState::REGISTERED
 
     if current_state.nil?
-      puts create_draft_doi
+      result =  create_draft_doi
+      puts result.code
+      puts result.body
       current_state = doi_state
     end
 
