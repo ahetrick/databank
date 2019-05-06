@@ -48,6 +48,8 @@ module Complete
     end
 
     def release_date_error(dataset, current_user)
+      puts current_user.class
+      puts current_user.to_yaml
       return nil if (current_user&.role == "admin") ||
           !dataset.release_date ||
           dataset.release_date > (Date.current + 1.year)
