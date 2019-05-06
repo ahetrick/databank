@@ -65,6 +65,7 @@ module Identifiable
 
     if current_state.nil?
       result =  create_draft_doi
+      raise("unknown problem creating draft doi") if result.nil?
       puts result.code
       puts result.body
       current_state = doi_state
