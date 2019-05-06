@@ -15,14 +15,13 @@ namespace :fix do
   task :add_test_dois => :environment do
     Dataset.all.each do |dataset|
       puts dataset.key
-      next unless dataset.identifier && !dataset.identifier.empty?
-      next unless DEMO_PREFIXES.include?(dataset.identifier.split("/")[0])
-      identifier_parts = dataset.identifier.split("/")
-      next unless identifier_parts.count == 2
-      dataset.identifier = "#{TEST_PREFIXES.first}/#{identifier_parts[1]}"
+      next unless dataset.identifier&.present?
+
+      dataset.identifier = dataset.default_identifier
       dataset.save
-      puts dataset.create_draft_doi
+
       next if dataset.publication_state == Databank::PublicationState::DRAFT
+
       if dataset.metadata_public?
         puts dataset.publish(Databank::DoiState::FINDABLE)
       else

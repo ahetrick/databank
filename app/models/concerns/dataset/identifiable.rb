@@ -58,7 +58,14 @@ module Identifiable
     return false unless identifier_present?
 
     current_state = doi_state
+
     return true if current_state == Databank::DoiState::FINDABLE
+
+    if current_state.nil?
+      create_draft_doi
+      current_state = doi_state
+    end
+
     return false unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
 
     Dataset.post_to_datacite(datacite_json_body(Databank::DoiEvent::PUBLISH))
@@ -70,6 +77,12 @@ module Identifiable
 
     current_state = doi_state
     return true if current_state == Databank::DoiState::REGISTERED
+
+    if current_state.nil?
+      create_draft_doi
+      current_state = doi_state
+    end
+
     return false unless current_state == Databank::DoiState::DRAFT
 
     Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::REGISTER))
