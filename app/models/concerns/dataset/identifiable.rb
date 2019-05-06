@@ -48,7 +48,7 @@ module Identifiable
     raise("record already exists in DataCite for dataset #{key}") if !doi_infohash.empty? && doi_infohash.has_key(:data)
 
     # minimal json to create draft record
-    draft_json = %Q({"data": {"type": "dois", "attributes": {"doi": "10.5438/0012"}}})
+    draft_json = %Q({"data": {"type": "dois", "attributes": {"doi": "#{identifier}"}}})
     Dataset.post_to_datacite(draft_json)
   end
 
