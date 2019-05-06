@@ -54,7 +54,7 @@ module Identifiable
   end
 
   # publish - Triggers a state move from draft or registered to findable
-  def publish_doi(_target_state)
+  def publish_doi
     return false unless identifier_present?
 
     current_state = doi_state

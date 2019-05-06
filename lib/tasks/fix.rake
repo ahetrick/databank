@@ -23,9 +23,9 @@ namespace :fix do
       next if dataset.publication_state == Databank::PublicationState::DRAFT
 
       if dataset.metadata_public?
-        puts dataset.publish_doi(Databank::DoiState::FINDABLE)
+        puts dataset.publish_doi
       else
-        puts dataset.publish_doi(Databank::DoiState::REGISTERED)
+        puts dataset.register_doi
       end
     end
   end
