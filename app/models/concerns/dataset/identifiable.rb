@@ -45,7 +45,7 @@ module Identifiable
     identifier ||= default_identifier
     save!
     # should not draft doi if doi record already exists in DataCite
-    raise("record already exists in DataCite for dataset #{key}") if doi_infohash.has_key(:data)
+    raise("record already exists in DataCite for dataset #{key}") if !doi_infohash.empty? && doi_infohash.has_key(:data)
 
     # minimal json to create draft record
     draft_json = %Q({"data": {"type": "dois", "attributes": {"doi": "#{identifier}}})
