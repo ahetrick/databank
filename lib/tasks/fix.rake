@@ -22,10 +22,14 @@ namespace :fix do
 
       next if dataset.publication_state == Databank::PublicationState::DRAFT
 
+      system_user = User::Shibboleth.find_by_provider_and_uid("system", IDB_CONFIG[:system_user_email])
+
+      next unless system_user
+
       if dataset.metadata_public?
-        puts dataset.publish(Databank::DoiState::FINDABLE)
+        puts dataset.publish(Databank::DoiState::FINDABLE, system_user)
       else
-        puts dataset.publish(Databank::DoiState::REGISTERED)
+        puts dataset.publish(Databank::DoiState::REGISTERED, system_user)
       end
     end
   end
