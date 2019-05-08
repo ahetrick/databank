@@ -199,7 +199,7 @@ module Identifiable
     publication_year_node.parent = resource_node
 
     descriptions_node = doc.create_element("descriptions")
-    descriptions_node.parent = resourceNode
+    descriptions_node.parent = resource_node
     description_node = doc.create_element("description")
     description_node["descriptionType"] = "Other"
     description_string = "This dataset will be available #{release_date.iso8601}. "
