@@ -51,7 +51,7 @@ module Identifiable
     draft_json = %Q({"data": {"type": "dois", "attributes": {"doi": "#{identifier}"}}})
     response = Dataset.post_to_datacite(draft_json)
     raise("response to attempt to create draft doi is nil") if response.nil?
-    puts response.code
+    #puts response.code
     response.code == "201"
 
   end
@@ -60,10 +60,10 @@ module Identifiable
   def publish_doi
     return false unless identifier_present?
 
-    puts identifier
+    #puts identifier
     current_state = doi_state
-    puts "publish doi current state 1"
-    puts current_state
+    #puts "publish doi current state 1"
+    #puts current_state
 
     return true if current_state == Databank::DoiState::FINDABLE
 
@@ -73,13 +73,13 @@ module Identifiable
       current_state = doi_state
     end
 
-    puts "publish doi current_state 2"
-    puts current_state
+    #puts "publish doi current_state 2"
+    #puts current_state
 
     return false unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
 
     response = Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::PUBLISH))
-    puts response.code if defined?(response.code)
+    #puts response.code if defined?(response.code)
     defined?(response.code) && response.code == "200"
   end
 
@@ -87,11 +87,11 @@ module Identifiable
   def register_doi
     return false unless identifier_present?
 
-    puts identifier
+    #puts identifier
 
     current_state = doi_state
-    puts "register doi current state 1"
-    puts current_state
+    #puts "register doi current state 1"
+    #puts current_state
 
     return true if current_state == Databank::DoiState::REGISTERED
 
@@ -100,13 +100,13 @@ module Identifiable
       current_state = doi_state
     end
 
-    puts "register doi current state 2"
-    puts current_state
+    #puts "register doi current state 2"
+    #puts current_state
 
     return false unless current_state == Databank::DoiState::DRAFT
 
     response = Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::REGISTER))
-    puts response.code if defined?(response.code)
+    #puts response.code if defined?(response.code)
     defined?(response.code) && response.code == "200"
   end
 
@@ -120,7 +120,7 @@ module Identifiable
     Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::HIDE))
 
     response doi_state == Databank::DoiState::REGISTERED
-    puts response.code if defined?(response.code)
+    #puts response.code if defined?(response.code)
     defined?(response.code) && response.code == "200"
 
   end
@@ -130,7 +130,7 @@ module Identifiable
 
     response = Dataset.put_to_datacite(identifier, datacite_json_body(nil))
 
-    puts "response code: #{response.code}, #{response.code.class}"
+    #puts "response code: #{response.code}, #{response.code.class}"
     response.code == 200
 
   end
@@ -277,7 +277,7 @@ module Identifiable
     releasedate_node.parent = dates_node
     withdrawn_date_node = doc.create_element("date")
     withdrawn_date_node["dateType"] = "Withdrawn"
-    withdrawn_date_node.content = tombstone_date.iso8601 || Date.current.iso8601
+    withdrawn_date_node.content = tombstone_date&.iso8601 || Date.current.iso8601
     withdrawn_date_node.parent = dates_node
     dates_node.parent = resource_node
 
@@ -540,7 +540,7 @@ module Identifiable
 
   class_methods do
     def post_to_datacite(json_body)
-      puts "json_body: #{json_body}"
+      #puts "json_body: #{json_body}"
       url = URI(URI_BASE)
       http = Net::HTTP.new(url.host, url.port)
       http.use_ssl = true
@@ -551,8 +551,8 @@ module Identifiable
       request.basic_auth(CLIENT_ID, PASSWORD)
       request.body = json_body
       response = http.request(request)
-      puts response.code
-      puts response.body
+      #puts response.code
+      #puts response.body
       response
     end
 

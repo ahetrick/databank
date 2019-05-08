@@ -34,7 +34,7 @@ namespace :fix do
 
   desc 'update embargo state for released datasets'
   task :fix_embargo_for_released => :environment do
-    Dataset.each do |dataset|
+    Dataset.all.each do |dataset|
       if dataset.publication_state == Databank::PublicationState::RELEASED && dataset.embargo != Databank::PublicationState::Embargo::NONE
         dataset.embargo = Databank::PublicationState::Embargo::NONE
         dataset.save!
@@ -44,7 +44,7 @@ namespace :fix do
 
   desc 'create doi objects from dataset identifiers'
   task :retrofit_dois => :environment do
-    Dataset.each do |dataset|
+    Dataset.all.each do |dataset|
       if dataset.identifier && !dataset.identifier.empty?
         Doi.create!(dataset_id: dataset.id, identifier: dataset.identifier)
       end
