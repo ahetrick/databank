@@ -70,11 +70,14 @@ module Identifiable
       current_state = doi_state
     end
 
+    puts "#{key}, #{identifier}, #{current_state}" unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
+
     return false unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
 
     Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::PUBLISH))
 
     current_state = doi_state
+    puts "state after put, #{current_state}" unless defined?(current_state) && current_state == Databank::DoiState::FINDABLE
     defined?(current_state) && current_state == Databank::DoiState::FINDABLE
   end
 
@@ -371,7 +374,7 @@ module Identifiable
         elsif contributor.type_of == Databank::CreatorType::INSTITUTION
           contributor_name_node["nameType"] = "Organizational"
         end
-        contributor_name_node.conent = contributor.list_name
+        contributor_name_node.content = contributor.list_name
         contributor_name_node.parent = contributor_node
 
         # ORCID assumption hard-coded here, but in the model there is a field for identifier_scheme
