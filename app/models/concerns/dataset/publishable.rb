@@ -4,10 +4,10 @@ module Publishable
   extend ActiveSupport::Concern
 
   def publish(user)
-    self.complete = Dataset.completion_check(self, user) == "ok"
+    complete = Dataset.completion_check(self, user) == "ok"
     return {status: :error_occurred, error_text: Dataset.completion_check(self, user)} unless complete
 
-    self.release_date ||= Date.current
+    release_date ||= Date.current
 
     old_publication_state = publication_state
 
@@ -19,7 +19,7 @@ module Publishable
 
     # set publication_state
     embargo_list = [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA]
-    self.publication_state = if embargo && embargo_list.include?(embargo)
+    publication_state = if embargo && embargo_list.include?(embargo)
                                embargo
                              else
                                Databank::PublicationState::RELEASED
@@ -33,7 +33,13 @@ module Publishable
       self.release_date = Date.current if publication_state == Databank::PublicationState::RELEASED
     end
 
-    if Dataset.post_doi_metadata(self, user) && Dataset.post_doi(self, user)
+    if metadata_public?
+      datacite_ok = publish_doi
+    else
+      datacite_ok = register_doi
+    end
+
+    if datacite_ok
       MedusaIngest.send_dataset_to_medusa(self)
 
       if IDB_CONFIG[:local_mode] && IDB_CONFIG[:local_mode] == true
@@ -49,6 +55,7 @@ module Publishable
       end
       {status: :ok, old_publication_state: old_publication_state}
     else
+      publication_state = old_publication_state
       {status:     :error_occurred,
        error_text: "Error in publishing dataset has been logged for review by the Research Data Service."}
     end

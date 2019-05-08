@@ -887,15 +887,7 @@ class DatasetsController < ApplicationController
             # send_dataset_to_medusa only sends metadata files unless old_publication_state is draft
             MedusaIngest.send_dataset_to_medusa(@dataset)
 
-            if !@dataset.is_test?
-              doi_update_ok = Dataset.post_doi(@dataset, current_user)
-              metadata_post_ok = Dataset.post_doi_metadata(@dataset, current_user)
-            else
-              doi_update_ok = 'na'
-              metadata_post_ok = 'na'
-            end
-
-            if metadata_post_ok == 'na' || (metadata_post_ok && doi_update_ok)
+            if @dataset.is_test? || @dataset.update_doi
               format.html {redirect_to dataset_path(@dataset.key)}
               format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
             else
@@ -1207,15 +1199,14 @@ class DatasetsController < ApplicationController
     @dataset.publication_state = Databank::PublicationState::PermSuppress::METADATA
     @dataset.tombstone_date = Date.current.iso8601
     @dataset.embargo = Databank::PublicationState::Embargo::NONE
+    @dataset.save
 
-    if @dataset.save
-      Dataset.post_doi_metadata(@dataset, current_user)
-      Dataset.delete_doi_metadata(@dataset)
-      format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Reserved DOI has been deleted and all files have been permanently supressed.]}
+    if @dataset.hide_doi
+      format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset has been permanently supressed in Illinois Data Bank and DataCite.]}
       format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
     else
-      format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been permenantly suppressed in IDB, but DataCite has not been updated.]}
-      format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
+      format.html {redirect_to dataset_path(@dataset.key), alert: %Q[Dataset metadata and files have been permenantly suppressed in Illinois Data Bank, but DataCite has not been updated.]}
+      format.json {render :show, status: :unprocessable_entity, location: dataset_path(@dataset.key)}
     end
 
   end
