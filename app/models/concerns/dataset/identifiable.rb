@@ -74,7 +74,9 @@ module Identifiable
 
     return false unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
 
-    Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::PUBLISH))
+    response = Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::PUBLISH))
+    puts response.code
+    puts response.body
 
     current_state = doi_state
     puts "state after put, #{current_state}" unless defined?(current_state) && current_state == Databank::DoiState::FINDABLE
@@ -96,9 +98,7 @@ module Identifiable
 
     return false unless current_state == Databank::DoiState::DRAFT
 
-    response = Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::REGISTER))
-    puts response.code
-    puts response.body
+    Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::REGISTER))
     current_state = doi_state
     raise("hold on a second here") unless current_state == Databank::DoiState::REGISTERED
     defined?(current_state) && current_state == Databank::DoiState::REGISTERED
