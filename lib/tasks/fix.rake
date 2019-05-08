@@ -15,7 +15,6 @@ namespace :fix do
   task :add_test_dois => :environment do
     Dataset.all.each do |dataset|
       next unless dataset.identifier&.present?
-
       dataset.identifier = dataset.default_identifier
       dataset.save
       next if dataset.publication_state == Databank::PublicationState::DRAFT

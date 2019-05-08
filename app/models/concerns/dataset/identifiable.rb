@@ -51,7 +51,6 @@ module Identifiable
     draft_json = %Q({"data": {"type": "dois", "attributes": {"doi": "#{identifier}"}}})
     response = Dataset.post_to_datacite(draft_json)
     raise("response to attempt to create draft doi is nil") if response.nil?
-    #puts response.code
     response.code == "201"
 
   end
@@ -70,16 +69,11 @@ module Identifiable
       current_state = doi_state
     end
 
-    puts "#{key}, #{identifier}, #{current_state}" unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
-
     return false unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
 
-    response = Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::PUBLISH))
-    puts response.code
-    puts response.body
+    Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::PUBLISH))
 
     current_state = doi_state
-    puts "state after put, #{current_state}" unless defined?(current_state) && current_state == Databank::DoiState::FINDABLE
     defined?(current_state) && current_state == Databank::DoiState::FINDABLE
   end
 
@@ -92,7 +86,7 @@ module Identifiable
     return true if current_state == Databank::DoiState::REGISTERED
 
     if current_state.nil?
-      result =  create_draft_doi
+      create_draft_doi
       current_state = doi_state
     end
 
@@ -100,7 +94,6 @@ module Identifiable
 
     Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::REGISTER))
     current_state = doi_state
-    raise("hold on a second here") unless current_state == Databank::DoiState::REGISTERED
     defined?(current_state) && current_state == Databank::DoiState::REGISTERED
   end
 
@@ -114,7 +107,6 @@ module Identifiable
     Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::HIDE))
 
     response doi_state == Databank::DoiState::REGISTERED
-    #puts response.code if defined?(response.code)
     defined?(response.code) && response.code == "200"
 
   end
@@ -124,7 +116,6 @@ module Identifiable
 
     response = Dataset.put_to_datacite(identifier, datacite_json_body(nil))
 
-    #puts "response code: #{response.code}, #{response.code.class}"
     response.code == 200
 
   end
@@ -383,7 +374,7 @@ module Identifiable
           contributor_name_node.content = contributor.list_name
           contributor_name_node.parent = contributor_node
         end
-        
+
         # ORCID assumption hard-coded here, but in the model there is a field for identifier_scheme
         if contributor.identifier.present?
           contributor_identifier_node = doc.create_element("nameIdentifier")
@@ -538,7 +529,6 @@ module Identifiable
 
   class_methods do
     def post_to_datacite(json_body)
-      #puts "json_body: #{json_body}"
       url = URI(URI_BASE)
       http = Net::HTTP.new(url.host, url.port)
       http.use_ssl = true
@@ -548,10 +538,7 @@ module Identifiable
       request["content-type"] = "application/vnd.api+json"
       request.basic_auth(CLIENT_ID, PASSWORD)
       request.body = json_body
-      response = http.request(request)
-      #puts response.code
-      #puts response.body
-      response
+      http.request(request)
     end
 
     def put_to_datacite(identifier, json_body)
