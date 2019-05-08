@@ -97,27 +97,42 @@ module Identifiable
     defined?(current_state) && current_state == Databank::DoiState::REGISTERED
   end
 
-  # hide - Triggers a state move from findable to registered
+  # hide - Triggers a state move from findable to registered, or deletes draft
   def hide_doi
     return false unless identifier_present?
     current_state = doi_state
+    return true if current_state.nil?
+
+    return delete_doi if current_state == Databank::DoiState::DRAFT
+
     return true if current_state == Databank::DoiState::REGISTERED
+
     return false unless current_state == Databank::DoiState::FINDABLE
 
     Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::HIDE))
 
-    response doi_state == Databank::DoiState::REGISTERED
-    defined?(response.code) && response.code == "200"
-
+    doi_state == Databank::DoiState::REGISTERED
   end
 
   def update_doi
     return nil unless identifier_present?
-
     response = Dataset.put_to_datacite(identifier, datacite_json_body(nil))
-
     response.code == 200
+  end
 
+  def delete_doi
+    return nil unless identifier_present?
+
+    url = URI("#{URI_BASE}/#{identifier}")
+    http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    request = Net::HTTP::Delete.new(url)
+    request["accept"] = "application/vnd.api+json"
+    request["content-type"] = "application/vnd.api+json"
+    request.basic_auth(CLIENT_ID, PASSWORD)
+    request.body = json_body
+    http.request(request)
   end
 
   def datacite_json_body(event)
