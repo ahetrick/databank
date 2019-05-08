@@ -14,20 +14,16 @@ namespace :fix do
   desc 'add dev dois to DataCite test system'
   task :add_test_dois => :environment do
     Dataset.all.each do |dataset|
-      puts dataset.key
       next unless dataset.identifier&.present?
 
       dataset.identifier = dataset.default_identifier
       dataset.save
-
       next if dataset.publication_state == Databank::PublicationState::DRAFT
 
-      puts "result: "
-
       if dataset.metadata_public?
-        puts dataset.publish_doi
+        puts "problem publishing #{dataset.key}" unless dataset.publish_doi
       else
-        puts dataset.register_doi
+        puts "problem registering #{dataset.key}" unless dataset.register_doi
       end
     end
   end

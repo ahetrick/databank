@@ -60,10 +60,7 @@ module Identifiable
   def publish_doi
     return false unless identifier_present?
 
-    #puts identifier
     current_state = doi_state
-    #puts "publish doi current state 1"
-    #puts current_state
 
     return true if current_state == Databank::DoiState::FINDABLE
 
@@ -73,25 +70,19 @@ module Identifiable
       current_state = doi_state
     end
 
-    #puts "publish doi current_state 2"
-    #puts current_state
-
     return false unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
 
-    response = Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::PUBLISH))
-    #puts response.code if defined?(response.code)
-    defined?(response.code) && response.code == "200"
+    Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::PUBLISH))
+
+    current_state = doi_state
+    defined?(current_state) && current_state == Databank::DoiState::FINDABLE
   end
 
   # register - Triggers a state move from draft to registered
   def register_doi
     return false unless identifier_present?
 
-    #puts identifier
-
     current_state = doi_state
-    #puts "register doi current state 1"
-    #puts current_state
 
     return true if current_state == Databank::DoiState::REGISTERED
 
@@ -100,14 +91,11 @@ module Identifiable
       current_state = doi_state
     end
 
-    #puts "register doi current state 2"
-    #puts current_state
-
     return false unless current_state == Databank::DoiState::DRAFT
 
-    response = Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::REGISTER))
-    #puts response.code if defined?(response.code)
-    defined?(response.code) && response.code == "200"
+    Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::REGISTER))
+    current_state = doi_state
+    defined?(current_state) && current_state == Databank::DoiState::REGISTERED
   end
 
   # hide - Triggers a state move from findable to registered
