@@ -143,13 +143,12 @@
 <% if can? :manage, @dataset && @dataset.publication_state != Databank::PublicationState::DRAFT %>
 
   <div class="curator-only">
-    <% if Rails.env.aws_production? %>
+    <% unless @datacite_fabrica_url.include("test") %>
       <p>DOIs will be indexed into DataCite Search 8 to 24 hrs after being created.</p>
       <p>Once it is available, see DataCite Search result at: <a href="https://search.datacite.org/works/<%= @dataset.identifier %>"><%="https://search.datacite.org/works/#{@dataset.identifier}"%></a></p>
-      <p>Log into <a href="https://doi.datacite.org/">DataCite Fabrica interface</a> for more details about DataCite's record for this DOI.</p>
-    <% else %>
-      <p><p>Log into <a href="https://doi.test.datacite.org/">DataCite Fabrica interface</a> for more details about DataCite's test record for this DOI.</p></p>
     <% end %>
+    <p>Log into <a href="<%=@datacite_fabrica_url%>">DataCite Fabrica interface</a> for more details about DataCite's test record for this DOI.</p>
+
   </div>
 
   <!--<div class="curator-only">

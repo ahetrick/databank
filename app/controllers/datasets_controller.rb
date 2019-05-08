@@ -594,6 +594,12 @@ class DatasetsController < ApplicationController
 
     authorize! :view, @dataset
 
+    if Rails.env.aws_production?
+      @datacite_fabrica_url = "https://doi.datacite.org/"
+    else
+      @datacite_fabrica_url = "https://doi.test.datacite.org/"
+    end
+
     if params.has_key?(:selected_files)
       zip_and_download_selected
     elsif params.has_key?(:suppression_action)
