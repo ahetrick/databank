@@ -270,7 +270,7 @@ namespace :fix do
 
     [test, held, suppressed, embargoed].each do |recordset|
       recordset.each do |dataset|
-        Dataset.delete_doi_metadata(dataset)
+        dataset.hide_doi
       end
     end
 
@@ -281,7 +281,7 @@ namespace :fix do
 
     if Rails.env.development?
       Dataset.where.not(publication_state: Databank::PublicationState::DRAFT).each do |dataset|
-        Dataset.delete_doi_metadata(dataset)
+        dataset.hide_doi
       end
     end
 
@@ -292,7 +292,7 @@ namespace :fix do
 
     Dataset.where.not(publication_state: Databank::PublicationState::DRAFT).where('identifier LIKE ?', '%TESTIDB%').each do |dataset|
       puts dataset.title
-      Dataset.delete_doi_metadata(dataset)
+      dataset.hide_doi
     end
 
   end

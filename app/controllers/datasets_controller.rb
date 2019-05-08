@@ -1128,7 +1128,7 @@ class DatasetsController < ApplicationController
 
       if @dataset.save
 
-        if Dataset.post_doi_metadata(@dataset, current_user)
+        if @dataset.update_doi
           format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been temporarily suppressed.]}
           format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
         else
@@ -1154,7 +1154,7 @@ class DatasetsController < ApplicationController
 
       if @dataset.save
 
-        if Dataset.post_doi_metadata(@dataset, current_user)
+        if @dataset.update_doi
           format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset has been unsuppressed.]}
           format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
         else
