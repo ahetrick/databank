@@ -349,6 +349,7 @@ module Identifiable
     elsif contact.type_of == Databank::CreatorType::INSTITUTION
       contact_name_node = doc.create_element("contributorName")
       contact_name_node["nameType"] = "Organizational"
+      contact_name_node.content = contact.list_name
       contact_name_node.parent = contact_node
     end
 
@@ -365,21 +366,24 @@ module Identifiable
       contributors.each do |contributor|
         contributor_node = doc.create_element("contributor")
         contributor_node["contributorType"] = "ContactPerson"
-        contributor_name_node = doc.create_element("contributorName")
         if contributor.type_of == Databank::CreatorType::PERSON
+          contributor_name_node = doc.create_element("contributorName")
           contributor_name_node["nameType"] = "Personal"
+          contributor_name_node.content = contributor.list_name
           contributor_name_node.parent = contributor_node
           given_name_node = doc.create_element("givenName")
           given_name_node.content = contributor.given_name
           given_name_node.parent = contributor_node
           family_name_node = doc.create_element("familyName")
           family_name_node.content = contributor.family_name
+          family_name_node.parent = contributor_node
         elsif contributor.type_of == Databank::CreatorType::INSTITUTION
+          contributor_name_node = doc.create_element("contributorName")
           contributor_name_node["nameType"] = "Organizational"
+          contributor_name_node.content = contributor.list_name
+          contributor_name_node.parent = contributor_node
         end
-        contributor_name_node.content = contributor.list_name
-        contributor_name_node.parent = contributor_node
-
+        
         # ORCID assumption hard-coded here, but in the model there is a field for identifier_scheme
         if contributor.identifier.present?
           contributor_identifier_node = doc.create_element("nameIdentifier")
@@ -402,7 +406,7 @@ module Identifiable
         funder_name_node.parent = funding_reference_node
         if funder.identifier.present?
           funder_identifier_node = doc.create_element("funderIdentifier")
-          funder_identifier_node["funderIdentiferType"] = "Crossref Funder ID"
+          funder_identifier_node["funderIdentifierType"] = "Crossref Funder ID"
           funder_identifier_node.content = "https://doi.org/#{funder.identifier}"
           funder_identifier_node.parent = funding_reference_node
         end
