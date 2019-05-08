@@ -340,7 +340,7 @@ module Identifiable
       family_name_node = doc.create_element("familyName")
       family_name_node.content = contact.family_name
       family_name_node.parent = contact_node
-    elsif creator.type_of == Databank::CreatorType::INSTITUTION
+    elsif contact.type_of == Databank::CreatorType::INSTITUTION
       contact_name_node = doc.create_element("contributorName")
       contact_name_node["nameType"] = "Organizational"
       contact_name_node.parent = contact_node
