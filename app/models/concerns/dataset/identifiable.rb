@@ -150,7 +150,7 @@ module Identifiable
     s = [Databank::PublicationState::PermSuppress::METADATA, Databank::PublicationState::TempSuppress::METADATA]
     if s.include?(hold_state)
       withdrawn_datacite_xml
-    elsif embargo == Databank::PublicationState::Embargo::METADATA
+    elsif embargo == Databank::PublicationState::Embargo::METADATA && release_date > Time.current
       embargoed_datacite_xml
     else
       complete_datacite_xml
