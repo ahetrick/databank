@@ -55,9 +55,10 @@ module Publishable
       end
       {status: :ok, old_publication_state: old_publication_state}
     else
-      publication_state = old_publication_state
-      {status:     :error_occurred,
-       error_text: "Error in publishing dataset has been logged for review by the Research Data Service."}
+      raise("error in publishing #{key}")
+
+      # {status:     :error_occurred,
+      #  error_text: "Error in publishing dataset has been logged for review by the Research Data Service."}
     end
   end
 end
