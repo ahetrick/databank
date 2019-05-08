@@ -96,8 +96,11 @@ module Identifiable
 
     return false unless current_state == Databank::DoiState::DRAFT
 
-    Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::REGISTER))
+    response = Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::REGISTER))
+    puts response.code
+    puts response.body
     current_state = doi_state
+    raise("hold on a second here") unless current_state == Databank::DoiState::REGISTERED
     defined?(current_state) && current_state == Databank::DoiState::REGISTERED
   end
 
