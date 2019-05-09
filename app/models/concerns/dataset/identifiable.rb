@@ -58,15 +58,11 @@ module Identifiable
   # publish - Triggers a state move from draft or registered to findable
   def publish_doi
 
-    Rails.logger.warn "identifier not present" unless identifier_present?
-
     return false unless identifier_present?
 
     current_state = doi_state
 
-    Rails.logger.warn "already findable" if current_state == Databank::DoiState::FINDABLE
-
-    return true if current_state == Databank::DoiState::FINDABLE
+    return update_doi if current_state == Databank::DoiState::FINDABLE
 
     if current_state.nil?
       result =  create_draft_doi
@@ -74,19 +70,12 @@ module Identifiable
       current_state = doi_state
     end
 
-    Rails.logger.warn "invalid state found" unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
     return false unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
 
     publish_body = datacite_json_body(Databank::DoiEvent::PUBLISH)
 
-    Rails.logger.warn publish_body
+    Dataset.put_to_datacite(identifier, publish_body)
 
-    response = Dataset.put_to_datacite(identifier, publish_body)
-
-    raise("no response to publish call for #{key}") unless response
-
-    Rails.logger.warn response.code
-    Rails.logger.warnresponse.body
     current_state = doi_state
     defined?(current_state) && current_state == Databank::DoiState::FINDABLE
   end
