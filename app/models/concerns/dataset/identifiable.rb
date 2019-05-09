@@ -58,9 +58,13 @@ module Identifiable
   # publish - Triggers a state move from draft or registered to findable
   def publish_doi
 
+    Rails.logger.warn "inside publish_doi"
+
     return false unless identifier_present?
 
     current_state = doi_state
+
+    Rails.logger.warn("current_state for #{key}: #{current_state}") if defined?(current_state)
 
     return update_doi if current_state == Databank::DoiState::FINDABLE
 
@@ -73,6 +77,8 @@ module Identifiable
     return false unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
 
     publish_body = datacite_json_body(Databank::DoiEvent::PUBLISH)
+
+    Rails.logger.warn publish_body
 
     Dataset.put_to_datacite(identifier, publish_body)
 
@@ -119,7 +125,12 @@ module Identifiable
 
   def update_doi
     return nil unless identifier_present?
+
     response = Dataset.put_to_datacite(identifier, datacite_json_body(nil))
+
+    Rails.logger.warn("inside update_doi after response should exist")
+    Rails.logger.warn(response.body)
+
     response.code == 200
   end
 
