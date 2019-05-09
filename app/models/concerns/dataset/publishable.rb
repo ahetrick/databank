@@ -33,17 +33,17 @@ module Publishable
       self.release_date = Date.current if publication_state == Databank::PublicationState::RELEASED
     end
 
-    puts "metadata_public is defined" if defined?(metadata_public)
+    Rails.logger.warn "metadata_public is defined" if defined?(metadata_public)
 
     if metadata_public?
-      puts "metadata public"
+      Rails.logger.warn "metadata public"
       datacite_ok = publish_doi
     else
-      puts "metadata not public"
+      Rails.logger.warn "metadata not public"
       datacite_ok = register_doi
     end
 
-    puts datacite_ok.class
+    Rails.logger.warn datacite_ok.class
 
     if datacite_ok
       MedusaIngest.send_dataset_to_medusa(self)
