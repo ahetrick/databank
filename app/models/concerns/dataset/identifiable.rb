@@ -57,9 +57,14 @@ module Identifiable
 
   # publish - Triggers a state move from draft or registered to findable
   def publish_doi
+
+    puts "identifier not present" unless identifier_present?
+
     return false unless identifier_present?
 
     current_state = doi_state
+
+    puts "already findable" if current_state == Databank::DoiState::FINDABLE
 
     return true if current_state == Databank::DoiState::FINDABLE
 
@@ -69,6 +74,7 @@ module Identifiable
       current_state = doi_state
     end
 
+    puts "invalid state found" unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
     return false unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
 
     publish_body = datacite_json_body(Databank::DoiEvent::PUBLISH)
