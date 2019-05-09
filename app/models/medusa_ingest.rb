@@ -38,7 +38,7 @@ class MedusaIngest < ActiveRecord::Base
 
     # START description file
     # always send a description file
-    description_xml = Dataset.to_datacite_xml(dataset)
+    description_xml = dataset.to_datacite_xml
     description_key = "#{dataset.dirname}/system/description.#{file_time}.xml"
     Application.storage_manager.draft_root.write_string_to(description_key, description_xml)
     SystemFile.create(dataset_id: dataset.id, storage_root: "draft", storage_key: description_key, file_type: "description")

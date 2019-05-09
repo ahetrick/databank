@@ -154,7 +154,7 @@ class Dataset < ActiveRecord::Base
   end
 
   def to_datacite_raw_xml
-    Nokogiri::XML::Document.parse(Dataset.to_datacite_xml(self)).to_xml
+    Nokogiri::XML::Document.parse(to_datacite_xml).to_xml
   end
 
   def individual_creators
