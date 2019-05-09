@@ -52,7 +52,7 @@ module Complete
       puts current_user.to_yaml
       return nil if (current_user&.role == "admin") ||
           !dataset.release_date ||
-          dataset.release_date > (Date.current + 1.year)
+          dataset.release_date <= (Date.current + 1.year)
 
       ["a release date no more than one year in the future"]
     end
