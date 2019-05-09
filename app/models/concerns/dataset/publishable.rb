@@ -44,10 +44,8 @@ module Publishable
         (hold_state.nil? || (hold_state == Databank::PublicationState::TempSuppress::NONE))
 
     if metadata_should_be_public
-      Rails.logger.warn "metadata should be public"
       datacite_ok = publish_doi
     else
-      Rails.logger.warn "metadata should NOT be public"
       datacite_ok = register_doi
     end
 

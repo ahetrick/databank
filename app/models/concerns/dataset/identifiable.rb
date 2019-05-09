@@ -58,8 +58,6 @@ module Identifiable
   # publish - Triggers a state move from draft or registered to findable
   def publish_doi
 
-    Rails.logger.warn "inside publish_doi"
-
     return false unless identifier_present?
 
     current_state = doi_state
@@ -128,10 +126,10 @@ module Identifiable
 
     response = Dataset.put_to_datacite(identifier, datacite_json_body(nil))
 
-    Rails.logger.warn("inside update_doi after response should exist")
-    Rails.logger.warn(response.body)
-
-    response.code == 200
+    puts "inside update_doi"
+    puts response.code
+    puts response.code.class
+    response.code == "200"
   end
 
   def delete_doi
