@@ -71,8 +71,16 @@ module Identifiable
 
     return false unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
 
-    Dataset.put_to_datacite(identifier, datacite_json_body(Databank::DoiEvent::PUBLISH))
+    publish_body = datacite_json_body(Databank::DoiEvent::PUBLISH)
 
+    puts publish_body
+
+    response = Dataset.put_to_datacite(identifier, publish_body)
+
+    raise("no response to publish call for #{key}") unless response
+
+    puts response.code
+    puts response.body
     current_state = doi_state
     defined?(current_state) && current_state == Databank::DoiState::FINDABLE
   end
@@ -160,7 +168,7 @@ module Identifiable
   def embargoed_datacite_xml
     raise "missing dataset identifier" unless identifier_present?
 
-    release_date_valid = release_date.present? && release_date.to_date > Date.current
+    release_date_valid = defined?(release_date) && release_date.present? && release_date.to_date > Date.current
     raise "missing release date for file and metadata publication delay for dataset #{key}" unless release_date_valid
 
     doc = Nokogiri::XML::Document.parse(datacite_xml_root_string)
@@ -202,7 +210,7 @@ module Identifiable
     descriptions_node.parent = resource_node
     description_node = doc.create_element("description")
     description_node["descriptionType"] = "Other"
-    description_string = "This dataset will be available #{release_date.iso8601}. "
+    description_string = "This dataset will be available #{release_date&.iso8601}. "
     description_string += "Contact us for more information. https://databank.illinois.edu/help#contact"
     description_node.content = description_string
     description_node.parent = descriptions_node
@@ -210,7 +218,7 @@ module Identifiable
     dates_node = doc.create_element("dates")
     releasedate_node = doc.create_element("date")
     releasedate_node["dateType"] = "Available"
-    releasedate_node.content = release_date.iso8601
+    releasedate_node.content = release_date&.iso8601
     releasedate_node.parent = dates_node
     dates_node.parent = resource_node
 
