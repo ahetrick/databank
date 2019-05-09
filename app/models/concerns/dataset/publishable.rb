@@ -17,6 +17,10 @@ module Publishable
               error_text: "Missing identifier for dataset that is not a draft. Dataset: #{key}"}
     end
 
+    if old_publication_state == Databank::PublicationState::DRAFT && (!self.identifier || self.identifier == "")
+      self.identifier = default_identifier
+    end
+
     # set publication_state
     embargo_list = [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA]
     publication_state = if embargo && embargo_list.include?(embargo)
@@ -33,13 +37,17 @@ module Publishable
       self.release_date = Date.current if publication_state == Databank::PublicationState::RELEASED
     end
 
-    Rails.logger.warn "metadata_public is defined" if defined?(metadata_public)
+    metadata_should_be_public = [Databank::PublicationState::RELEASED,
+                                 Databank::PublicationState::Embargo::FILE,
+                                 Databank::PublicationState::TempSuppress::FILE,
+                                 Databank::PublicationState::PermSuppress::FILE].include?(publication_state) &&
+        (hold_state.nil? || (hold_state == Databank::PublicationState::TempSuppress::NONE))
 
-    if metadata_public?
-      Rails.logger.warn "metadata public"
+    if metadata_should_be_public
+      Rails.logger.warn "metadata should be public"
       datacite_ok = publish_doi
     else
-      Rails.logger.warn "metadata not public"
+      Rails.logger.warn "metadata should NOT be public"
       datacite_ok = register_doi
     end
 
