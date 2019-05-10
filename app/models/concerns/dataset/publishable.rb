@@ -49,8 +49,6 @@ module Publishable
       datacite_ok = register_doi
     end
 
-    Rails.logger.warn datacite_ok.class
-
     if datacite_ok
       MedusaIngest.send_dataset_to_medusa(self)
 

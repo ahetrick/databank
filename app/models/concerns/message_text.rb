@@ -84,7 +84,6 @@ module MessageText
           return %Q[Unexpected error, please contact the <a href="/help">Research Data Service Team</help>.]
         end
 
-
       else
         Rails.logger.warn "unexpected state during publish for dataset #{dataset.key}."
         return %Q[Changes to this dataset's <strong>public</strong> record have been made effective.]
@@ -100,12 +99,10 @@ module MessageText
 
       if dataset.release_date && dataset.release_date >= Date.current
         if dataset.embargo && [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA].include?(dataset.embargo)
-          # Rails.logger.warn "inside embargo detected"
           effective_embargo = dataset.embargo
           effective_release_date = dataset.release_date.iso8601
         end
       end
-
 
       msg = "<div class='confirm-modal-text'>"
 

@@ -74,8 +74,6 @@ module Identifiable
 
     publish_body = datacite_json_body(Databank::DoiEvent::PUBLISH)
 
-    # Rails.logger.warn publish_body
-
     Dataset.put_to_datacite(identifier, publish_body)
 
     current_state = doi_state
