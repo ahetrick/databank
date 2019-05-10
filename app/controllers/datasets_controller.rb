@@ -1295,7 +1295,7 @@ class DatasetsController < ApplicationController
     if @dataset
       if Application.storage_manager.draft_root.exist?(@dataset.draft_agreement_key)
         @agreement_text = Application.storage_manager.draft_root.as_string(@dataset.draft_agreement_key)
-      elsif Application.storage_manager.medusa_root.exit?(@dataset.medusa_agreement_key)
+      elsif Application.storage_manager.medusa_root.exist?(@dataset.medusa_agreement_key)
         @agreement_text = Application.storage_manager.medusa_root.as_string(@dataset.medusa_agreement_key)
       else
         raise("Deposit agreement not found for dataset #{@dataset.key}.")
