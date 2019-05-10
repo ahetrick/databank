@@ -62,8 +62,6 @@ module Identifiable
 
     current_state = doi_state
 
-    Rails.logger.warn("current_state for #{key}: #{current_state}") if defined?(current_state)
-
     return update_doi if current_state == Databank::DoiState::FINDABLE
 
     if current_state.nil?
