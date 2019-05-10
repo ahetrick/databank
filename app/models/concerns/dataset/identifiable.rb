@@ -74,12 +74,20 @@ module Identifiable
 
     publish_body = datacite_json_body(Databank::DoiEvent::PUBLISH)
 
-    Rails.logger.warn publish_body
+    # Rails.logger.warn publish_body
 
     Dataset.put_to_datacite(identifier, publish_body)
 
     current_state = doi_state
-    defined?(current_state) && current_state == Databank::DoiState::FINDABLE
+
+    return false unless defined?(current_state) && current_state == Databank::DoiState::FINDABLE
+
+    if publication_state != Databank::PublicationState::RELEASED
+      update(publication_state: Databank::PublicationState::RELEASED)
+    end
+
+    true
+
   end
 
   # register - Triggers a state move from draft to registered
@@ -121,6 +129,10 @@ module Identifiable
 
   def update_doi
     return nil unless identifier_present?
+
+    if doi_state == Databank::DoiState::FINDABLE && publication_state != Databank::PublicationState::RELEASED
+      update(publication_state: Databank::PublicationState::RELEASED)
+    end
 
     response = Dataset.put_to_datacite(identifier, datacite_json_body(nil))
 
