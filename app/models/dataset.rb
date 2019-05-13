@@ -316,9 +316,7 @@ class Dataset < ActiveRecord::Base
   end
 
   def medusa_ingests
-    identifiers = Datafile.where(dataset_id: id).pluck(:web_id)
-    identifiers.push(self.key)
-    MedusaIngest.where(idb_identifier: identifiers)
+    MedusaIngest.all.select { |m| m.dataset_key == key }
   end
 
   def fileset_preserved?

@@ -4,10 +4,16 @@
     = f.input :idb_class
     = f.input :idb_identifier
     = f.input :staging_path
+    = f.input :target_path
     = f.input :request_status
     = f.input :medusa_path
     = f.input :medusa_uuid
     = f.input :response_time
     = f.input :error_text
   .form-actions
-    = f.button :submit
+    .pull-right
+      = f.button :submit
+      = link_to(medusa_ingest_path(@medusa_ingest), method: :delete, data: {confirm: 'Are you sure?'}, class: "btn idb btn-danger btn-block") do
+        %span(class="glyphicon glyphicon-trash" )
+        Delete
+

@@ -1,6 +1,27 @@
 # frozen_string_literal: true
 
 class MedusaIngest < ActiveRecord::Base
+
+  def dataset_key
+    if idb_class == 'datafile'
+      datafile = Datafile.find_by(web_id: idb_identifier)
+      dataset = datafile.dataset
+      dataset.key
+    else
+      idb_identifier
+    end
+  end
+
+  def draft_obj_exist?
+    return false unless staging_key
+    Application.storage_manager.draft_root.exist?(staging_key)
+  end
+
+  def medusa_obj_exist?
+    return false unless target_key
+    Application.storage_manager.medusa_root.exist?(target_key)
+  end
+
   def self.incoming_queue
     IDB_CONFIG["medusa"]["incoming_queue"]
   end

@@ -1,8 +1,3 @@
--if current_user
-  -current_email = current_user.email
--else
-  -current_email = 'placeholder@mailinator.com'
-
 .record
 
   -if(can? :manage, dataset)
@@ -48,7 +43,7 @@
 
   -if(can? :view, dataset) && dataset.release_date
     .label.label-info
-      -if dataset.release_date > Time.now()
+      -if dataset.release_date > Date.current()
         planned publication date:
       -else
         published:
