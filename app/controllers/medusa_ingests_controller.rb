@@ -4,7 +4,7 @@ class MedusaIngestsController < ApplicationController
   # GET /medusa_ingests
   # GET /medusa_ingests.json
   def index
-    @medusa_ingests = MedusaIngest.order(:status, created_at: :desc)
+    @medusa_ingests = MedusaIngest.order(created_at: :desc)
   end
 
   # GET /medusa_ingests/1
