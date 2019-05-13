@@ -4,39 +4,10 @@
     %input(type="hidden" value="placeholder" )
     =submit_tag("Send to Medusa")
 
--if @dataset.medusa_ingests.count < 1
+-if @dataset.medusa_ingests.count.positive?
+  - @dataset.medusa_ingests.each do |medusa_ingest|
+    = render 'brief_record', medusa_ingest: medusa_ingest
+-else
   %p No Medusa ingest requests have been sent for this dataset.
   -if @dataset.publication_state == Databank::PublicationState::DRAFT
     %p This is because it is in a draft state.
-
--@dataset.medusa_ingests.each do |ingest|
-  %strong staging key:
-  =ingest.staging_key
-  %br
-  %strong target key:
-  =ingest.target_key
-  %br
-  %strong filetype - identifier:
-  ="#{ingest.idb_class} - #{ingest.idb_identifier}"
-  %br
-  %strong time request sent:
-  =ingest.created_at.to_time.iso8601
-
-  -if ingest.response_time && ingest.response_time != ''
-    %br
-    %strong time response received:
-    =ingest.response_time.to_time.iso8601
-    %br
-    %strong response status:
-    =ingest.request_status
-    -if ingest.error_text
-      %br
-      %strong response error:
-      =ingest.error_text
-
-  -else
-    %br
-    %strong no response yet
-
-  %br
-  %br
