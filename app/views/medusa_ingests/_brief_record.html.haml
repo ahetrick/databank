@@ -10,9 +10,9 @@
       ="Ingest ##{medusa_ingest.id}"
     .label.label-primary
       ="status: #{medusa_ingest.request_status || "pending"}"
-&nbsp;
-.label.label-default
-  ="request_date: #{medusa_ingest.created_at.to_date.iso8601}"
+    &nbsp;
+    .label.label-default
+      ="request_date: #{medusa_ingest.created_at.to_date.iso8601}"
   .col-md-4
     = link_to 'Show', medusa_ingest, class: "btn btn-primary idb"
     = link_to 'Edit', edit_medusa_ingest_path(medusa_ingest), class: "btn btn-success idb"
