@@ -6,7 +6,7 @@
 
 -if @dataset.medusa_ingests.count.positive?
   - @dataset.medusa_ingests.each do |medusa_ingest|
-    = render 'brief_record', medusa_ingest: medusa_ingest
+    = render 'medusa_ingests/brief_record', medusa_ingest: medusa_ingest
 -else
   %p No Medusa ingest requests have been sent for this dataset.
   -if @dataset.publication_state == Databank::PublicationState::DRAFT
