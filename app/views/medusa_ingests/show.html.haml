@@ -1,16 +1,11 @@
-%p#notice= notice
+= render 'brief_record', medusa_ingest: @medusa_ingest
+
 %p
   %strong Idb class:
   = @medusa_ingest.idb_class
 %p
   %strong Idb identifier:
   = @medusa_ingest.idb_identifier
-%p
-  %strong Staging key:
-  = @medusa_ingest.staging_key
-%p
-  %strong Target key:
-  = @medusa_ingest.target_key
 %p
   %strong Request status:
   = @medusa_ingest.request_status
@@ -26,6 +21,7 @@
 %p
   %strong Error text:
   = @medusa_ingest.error_text
+
 = link_to 'Edit', edit_medusa_ingest_path(@medusa_ingest)
 |
 = link_to 'Back', medusa_ingests_path

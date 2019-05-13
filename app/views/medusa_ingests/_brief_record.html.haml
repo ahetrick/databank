@@ -1,9 +1,5 @@
 -# expected local variable: medusa_ingest
-
-&nbsp;
--if medusa_ingest.response_time
-  .label.label-default
-    ="response_date: #{medusa_ingest.response_time.to_date.iso8601}"
+= render 'brief_record', medusa_ingest: @medusa_ingest
 .row
   .col-md-8
     %a(href="#{IDB_CONFIG[:root_url_text]}/medusa_ingests/#{medusa_ingest.id}")
@@ -13,8 +9,12 @@
     &nbsp;
     .label.label-default
       ="request_date: #{medusa_ingest.created_at.to_date.iso8601}"
+    &nbsp;
+    -if medusa_ingest.response_time
+      .label.label-default
+        ="response_date: #{medusa_ingest.response_time.to_date.iso8601}"
   .col-md-4
-    = link_to 'Show', medusa_ingest, class: "btn btn-primary idb"
+    = link_to 'Details', medusa_ingest, class: "btn btn-primary idb"
     = link_to 'Edit', edit_medusa_ingest_path(medusa_ingest), class: "btn btn-success idb"
     = link_to 'Destroy', medusa_ingest, method: :delete, data: {confirm: 'Are you sure?'}, class: "btn btn-danger idb"
 -if medusa_ingest.target_key.present? && medusa_ingest.staging_key.present?
