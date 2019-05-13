@@ -1,22 +1,24 @@
 %hr
 - @medusa_ingests.each do |medusa_ingest|
-  = medusa_ingest.idb_class
-  %br
-  = medusa_ingest.idb_identifier
-  %br
-  = medusa_ingest.staging_path
-  %br
-  = medusa_ingest.request_status
-  %br
-  = medusa_ingest.medusa_path
-  %br
-  = medusa_ingest.medusa_uuid
-  %br
-  = medusa_ingest.response_time
-  %br
-  = medusa_ingest.error_text
-  %br
-  = link_to 'Show', medusa_ingest, class: "btn btn-primary"
-  = link_to 'Edit', edit_medusa_ingest_path(medusa_ingest), class: "btn btn-success"
-  = link_to 'Destroy', medusa_ingest, method: :delete, data: {confirm: 'Are you sure?'}, class: "btn btn-danger"
-  %hr
+  = render 'brief_record', medusa_ingest:medusa_ingest
+
+  -#= medusa_ingest.idb_class
+  -#%br
+  -#= medusa_ingest.idb_identifier
+  -#%br
+  -#= medusa_ingest.staging_path
+  -#%br
+  -#= medusa_ingest.request_status
+  -#%br
+  -#= medusa_ingest.medusa_path
+  -#%br
+  -#= medusa_ingest.medusa_uuid
+  -#%br
+  -#= medusa_ingest.response_time
+  -#%br
+  -#= medusa_ingest.error_text
+  -#%br
+  -#= link_to 'Show', medusa_ingest, class: "btn btn-primary"
+  -#= link_to 'Edit', edit_medusa_ingest_path(medusa_ingest), class: "btn btn-success"
+  -#= link_to 'Destroy', medusa_ingest, method: :delete, data: {confirm: 'Are you sure?'}, class: "btn btn-danger"
+  -#%hr
