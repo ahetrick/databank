@@ -41,7 +41,7 @@
 .row
   .col-md-8
     associated_dataset:
-    %a(href="#{IDB_CONFIG[:root_url_text]}/datasets/#{dataset_key}")
+    %a(href="#{IDB_CONFIG[:root_url_text]}/datasets/#{dataset.key}")
       =dataset.title
 -if medusa_ingest.idb_class == 'datafile'
   .row
