@@ -5,11 +5,19 @@ class MedusaIngest < ActiveRecord::Base
   def dataset_key
     if idb_class == 'datafile'
       datafile = Datafile.find_by(web_id: idb_identifier)
+      return nil unless datafile
       dataset = datafile.dataset
       dataset.key
     else
       idb_identifier
     end
+  end
+
+  def datafile_web_id
+    return nil unless idb_class == 'datafile'
+    datafile = Datafile.find_by(web_id: idb_identifier)
+    return nil unless datafile
+    datafile.web_id
   end
 
   def draft_obj_exist?
