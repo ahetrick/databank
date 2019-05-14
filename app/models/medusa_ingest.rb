@@ -159,8 +159,11 @@ class MedusaIngest < ActiveRecord::Base
     medusa_ingest.idb_class = "changelog"
     medusa_ingest.idb_identifier = dataset.key
     medusa_ingest.send_medusa_ingest_message
-    medusa_ingest.save
-    # END changelog
+    if medusa_ingest.save
+      return "ingest record #{IDB_CONFIG[:root_url_text]}/medusa_ingests/#{medusa_ingest.id}"
+    else
+      return "error recording ingest record"
+    end
   end
 
   def self.send_datafile_to_medusa(datafile_web_id)

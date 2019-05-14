@@ -1279,8 +1279,8 @@ class DatasetsController < ApplicationController
 
     authorize! :edit, @dataset
 
-    MedusaIngest.send_dataset_to_medusa(@dataset)
-    render json: {status: :ok} and return
+    ingest_record_url = MedusaIngest.send_dataset_to_medusa(@dataset)
+    render json: {result: ingest_record_url || "error", status: :ok}
   end
 
   def review_deposit_agreement
