@@ -10,6 +10,7 @@ class MedusaIngestsController < ApplicationController
   # GET /medusa_ingests/1
   # GET /medusa_ingests/1.json
   def show
+    @ingest_responses = IngestResponse.where(staging_key: @medusa_ingest.staging_key)
   end
 
   # GET /medusa_ingests/new

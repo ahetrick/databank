@@ -22,6 +22,11 @@
   %strong Error text:
   = @medusa_ingest.error_text
 
+-if @ingest_responses&.count.positive?
+  %hr
+  -@ingest_responses.each do |ingest_resopnse|
+    =ingest_resopnse.as_text
+  %hr
 = link_to 'Edit', edit_medusa_ingest_path(@medusa_ingest)
 |
 = link_to 'Back', medusa_ingests_path
