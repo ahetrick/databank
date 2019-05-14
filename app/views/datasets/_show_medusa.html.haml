@@ -1,9 +1,11 @@
 -if @dataset.publication_state != Databank::PublicationState::DRAFT
-  %p You can send (or resend) the dataset to medusa now. (Best to check will Colleen and/or Howard first.)
-  =form_tag("/datasets/#{@dataset.key}/send_to_medusa") do
-    %input(type="hidden" value="placeholder" )
-    .pull-right
-      =submit_tag("Send to Medusa", {class: "btn btn-primary"})
+  .row
+    .col-md-10
+      You can send (or resend) the dataset to medusa now. (Best to check will Colleen and/or Howard first.)
+    .col-md-2
+      =form_tag("/datasets/#{@dataset.key}/send_to_medusa") do
+        %input(type="hidden" value="placeholder" )
+        =submit_tag("Send to Medusa", {class: "btn btn-primary"})
 %br
 -if @dataset.medusa_ingests.count.positive?
   - @dataset.medusa_ingests.each do |medusa_ingest|
