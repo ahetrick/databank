@@ -27,6 +27,8 @@
   -@ingest_responses.each do |ingest_resopnse|
     =ingest_resopnse.as_text
   %hr
+-else
+  no ingest response records found
 = link_to 'Edit', edit_medusa_ingest_path(@medusa_ingest)
 |
 = link_to 'Back', medusa_ingests_path
