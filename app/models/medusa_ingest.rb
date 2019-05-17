@@ -56,7 +56,7 @@ class MedusaIngest < ActiveRecord::Base
     response_hash = JSON.parse(response)
     raise "Unrecognized format for medusa ingest response: #{response.to_yaml}" unless response_hash.has_key? "status"
 
-    raise "Invalid medusa status #{response_hash}" unless %w[ok error].include?(response_hash[:status])
+    raise "Invalid medusa status #{response_hash}" unless %w[ok error].include?(response_hash["status"])
 
     true
   end

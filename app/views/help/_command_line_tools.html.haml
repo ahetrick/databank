@@ -184,8 +184,8 @@
           %p The file must be sent in a form in an element named binary.  In cURL, that can be done with the -F option and an element like "binary=@my_datafile.csv".
           %p The -o option must be used to send response output to a file to see the progress meter.
           %p Even after the cURL progress meter reaches 100%, additional processing is done, which may take as long as it took to reach 100%.
-          -if IDB_CONFIG[:root_url_text].include?("dev")
-            %p For rds-dev only, -k at at the end of the cURL command makes it tolerate the self-signed certificate.
+          -if IDB_CONFIG[:root_url_text].include?("dev") or IDB_CONFIG[:root_url_text].include?("demo")
+            %p For the development/demonstration server only, -k at at the end of the cURL command makes it tolerate the self-signed certificate.
           -else
           %p After upload is complete, refresh the dataset page to see the new datafile listing.
 

@@ -37,16 +37,3 @@
       -else
         .label.label-default
           medusa object does not exist
--if medusa_ingest.dataset_key.present?
-  .row
-    .col-md-8
-      associated_dataset:
-      %a(href="#{IDB_CONFIG[:root_url_text]}/datasets/#{medusa_ingest.dataset_key}")
-        ="#{IDB_CONFIG[:root_url_text]}/datasets/#{medusa_ingest.dataset_key}"
-  -if medusa_ingest.datafile_web_id.present?
-    .row
-      .col-md-8
-        associated_datafile:
-        %a(href="#{IDB_CONFIG[:root_url_text]}/datafiles/#{medusa_ingest.idb_identifier}")
-          ="#{IDB_CONFIG[:root_url_text]}/datafiles/#{medusa_ingest.idb_identifier}"
-%hr
