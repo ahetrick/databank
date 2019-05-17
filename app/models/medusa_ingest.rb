@@ -42,7 +42,7 @@ class MedusaIngest < ActiveRecord::Base
     response_hash = JSON.parse(response)
 
     if MedusaIngest.message_valid?(response) && response_hash["status"] == "ok"
-      ingest_response = IngestResponse.new(status: "ok", response_time: Time.current.iso8601, staging_key: response_hash["staging_key", medusa_key: response_hash["target_key"], uuid: response_hash["uuid"])
+      ingest_response = IngestResponse.new(status: "ok", response_time: Time.current.iso8601, staging_key: response_hash["staging_key"], medusa_key: response_hash["target_key"], uuid: response_hash["uuid"])
       ingest_response.as_text = response
       ingest_response.save!
       on_medusa_succeeded_message(response_hash)
