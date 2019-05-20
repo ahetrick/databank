@@ -29,6 +29,8 @@ namespace :fix do
 
   desc 'remove draft files if medusa ingest successful'
   task :remove_draft_if_in_medusa => :environment do
+    draft_root = Application.storage_manager.draft_root
+    medusa_root = Application.storage_manager.medusa_root
     MedusaIngest.all.each do |ingest|
       # dataset found - do things with dataset and ingest response
       exists_in_draft = draft_root.exist?(ingest.staging_key)
