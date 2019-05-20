@@ -283,11 +283,17 @@ class MedusaIngest < ActiveRecord::Base
           end
         end
 
-        system_file = SystemFile.find(dataset_id: dataset.id, storage_key: response_hash["staging_key"])
+        system_files = SystemFile.where(dataset_id: dataset.id, storage_key: response_hash['staging_key'])
+        system_file = nil
+        if system_files.count == 1
+          system_file = system_files.first
+        elsif system_files.count > 1
+          notification = DatabankMailer.error("multiple system files found dataset_id: #{dataset.id}, storage_key: #{response_hash['staging_key']}.")
+          notification.deliver_now
+        end
 
         if system_file
-          system_file.storage_root = "medusa"
-          system_file.save
+          system_file.update_attribute(storage_root: "medusa")
         else
           notification = DatabankMailer.error("Record not found for Medusa message. #{response_hash.to_yaml}")
           notification.deliver_now
