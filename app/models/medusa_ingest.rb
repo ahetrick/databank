@@ -45,7 +45,7 @@ class MedusaIngest < ActiveRecord::Base
       ingest_response = IngestResponse.new(status: "ok",
                                            response_time: Time.current.iso8601,
                                            staging_key: response_hash["staging_key"],
-                                           medusa_key: response_hash["target_key"],
+                                           medusa_key: response_hash["medusa_key"],
                                            uuid: response_hash["uuid"])
       ingest_response.as_text = response
       ingest_response.save!
@@ -58,11 +58,7 @@ class MedusaIngest < ActiveRecord::Base
 
   def self.message_valid?(response)
     response_hash = JSON.parse(response)
-    raise "Unrecognized format for medusa ingest response: #{response.to_yaml}" unless response_hash.has_key? "status"
-
-    raise "Invalid medusa status #{response_hash}" unless %w[ok error].include?(response_hash["status"])
-
-    true
+    response_hash.has_key? "status" && %w[ok error].include?(response_hash["status"])
   end
 
   def self.send_dataset_to_medusa(dataset)
@@ -288,8 +284,8 @@ class MedusaIngest < ActiveRecord::Base
   end
 
   def self.on_medusa_failed_message(response_hash)
-    Rails.logger.warn "medusa failed message:"
-    Rails.logger.warn response_hash.to_yaml
+    error_string = "Problem ingesting #{response_hash['staging_path']} into Medusa : #{response_hash['error']}"
+
     ingest_relation = MedusaIngest.where(staging_path: response_hash["staging_path"])
     if ingest_relation.count.positive?
       ingest = ingest_relation.first
@@ -297,16 +293,13 @@ class MedusaIngest < ActiveRecord::Base
       ingest.error_text = response_hash["error"]
       ingest.response_time = Time.current.iso8601
       ingest.save
-
-      if response_hash["status"] != "ok"
-        error_string = "Problem ingesting #{response_hash['staging_path']} into Medusa : #{response_hash['error']}"
-        notification = DatabankMailer.error(error_string)
-        notification.deliver_now
-      end
-
     else
-      Rails.logger.warn "could not find file for medusa failure message: #{response_hash['staging_path']}"
+      error_string += "\nand could not find file for medusa failure message: #{response_hash['staging_path']}"
     end
+
+    notification = DatabankMailer.error(error_string)
+    notification.deliver_now
+
   end
 
   def send_medusa_ingest_message
