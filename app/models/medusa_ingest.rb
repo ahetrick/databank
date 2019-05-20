@@ -40,9 +40,6 @@ class MedusaIngest < ActiveRecord::Base
 
   def self.on_medusa_message(response)
 
-    notification = DatabankMailer.error("on_medusa_message: #{response}")
-    notification.deliver_now
-
     response_hash = JSON.parse(response)
 
     if MedusaIngest.message_valid?(response) && response_hash["status"] == "ok"
@@ -62,7 +59,15 @@ class MedusaIngest < ActiveRecord::Base
 
   def self.message_valid?(response)
     response_hash = JSON.parse(response)
-    response_hash.has_key? "status" && %w[ok error].include?(response_hash["status"])
+    if
+      response_hash.has_key?(status) && ["ok", "error"].include?(response_hash['status'])
+      return true
+    else
+      notification = DatabankMailer.error("invalid message, #{response_hash['status']}")
+      notification.deliver_now
+      return false
+    end
+
   end
 
   def self.send_dataset_to_medusa(dataset)
