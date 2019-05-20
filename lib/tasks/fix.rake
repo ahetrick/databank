@@ -32,6 +32,9 @@ namespace :fix do
     draft_root = Application.storage_manager.draft_root
     medusa_root = Application.storage_manager.medusa_root
     MedusaIngest.all.each do |ingest|
+
+      next unless ingest.staging_key.present? && ingest.medusa_key.present?
+
       # dataset found - do things with dataset and ingest response
       exists_in_draft = draft_root.exist?(ingest.staging_key)
       exists_in_medusa = medusa_root.exist?(ingest.medusa_key)
