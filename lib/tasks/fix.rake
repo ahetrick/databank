@@ -33,17 +33,17 @@ namespace :fix do
     medusa_root = Application.storage_manager.medusa_root
     MedusaIngest.all.each do |ingest|
 
-      next unless ingest.staging_key.present? && ingest.medusa_key.present?
+      next unless ingest.staging_key.present? && ingest.target_key.present?
 
       # dataset found - do things with dataset and ingest response
       exists_in_draft = draft_root.exist?(ingest.staging_key)
-      exists_in_medusa = medusa_root.exist?(ingest.medusa_key)
+      exists_in_medusa = medusa_root.exist?(ingest.target_key)
       if exists_in_medusa
         puts "exists in medusa"
         if exists_in_draft
           puts "exists in draft"
           draft_size = draft_root.size(ingest.staging_key)
-          medusa_size = medusa_root.size(ingest.medusa_key)
+          medusa_size = medusa_root.size(ingest.target_key)
           if draft_size == medusa_size
             draft_root.delete_content(ingest.staging_key)
           else
