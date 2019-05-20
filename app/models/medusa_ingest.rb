@@ -192,10 +192,13 @@ class MedusaIngest < ActiveRecord::Base
 
     ingest = nil
 
-    ingest_relation = MedusaIngest.where(staging_key: response_hash["staging_key"])
+    ingest_relation = MedusaIngest.where(staging_key: response_hash["staging_key"]).order(:updated_at)
 
-    if ingest_relation.count.positive?
+    if ingest_relation.count == 1
       ingest = ingest_relation.first
+    elsif ingest_relation.count > 1
+      ingest = ingest_relation.first
+      ingest_relation.where.not(id: ingest.id).destroy_all
     else
       notification = DatabankMailer.error("Ingest not found. response_hash['pass_through'] #{response_hash['pass_through']} #{response_hash.to_yaml}")
       notification.deliver_now
@@ -261,7 +264,14 @@ class MedusaIngest < ActiveRecord::Base
         if exists_in_draft
           draft_size = draft_root.size(response_hash["staging_key"])
           medusa_size = medusa_root.size(response_hash["medusa_key"])
-          draft_root.delete_content(response_hash["staging_key"]) if draft_size == medusa_size
+          if draft_size == medusa_size
+            draft_root.delete_content(response_hash["staging_key"])
+            info_key = "#{response_hash["staging_key"]}.info"
+            draft_root.delete_contant(info_key) if draft_root.exist?(info_key)
+          else
+            notification = DatabankMailer.error("file exists in both draft and medusa, but not same size #{response_hash.to_yaml}")
+            notification.deliver_now
+          end
         end
 
         system_file = SystemFile.find(dataset_id: dataset.id, storage_key: response_hash["staging_key"])
