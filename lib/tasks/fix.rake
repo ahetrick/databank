@@ -46,6 +46,8 @@ namespace :fix do
           medusa_size = medusa_root.size(ingest.target_key)
           if draft_size == medusa_size
             draft_root.delete_content(ingest.staging_key)
+            info_key = "#{response_hash["staging_key"]}.info"
+            draft_root.delete_contant(info_key) if draft_root.exist?(info_key)
           else
             puts "draft and medusa sizes not equal for ingest: #{ingest.id}, draft_size: #{draft_size}, medusa_size: #{medusa_size}"
           end

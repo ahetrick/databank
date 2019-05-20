@@ -39,6 +39,10 @@ class MedusaIngest < ActiveRecord::Base
   end
 
   def self.on_medusa_message(response)
+
+    notification = DatabankMailer.error("on_medusa_message: #{response}")
+    notification.deliver_now
+
     response_hash = JSON.parse(response)
 
     if MedusaIngest.message_valid?(response) && response_hash["status"] == "ok"
@@ -294,7 +298,7 @@ class MedusaIngest < ActiveRecord::Base
   end
 
   def self.on_medusa_failed_message(response_hash)
-    error_string = "Problem ingesting #{response_hash['staging_path']} into Medusa : #{response_hash['error']}"
+    error_string = "Problem ingesting #{response_hash.to_yaml} into Medusa."
 
     ingest_relation = MedusaIngest.where(staging_path: response_hash["staging_path"])
     if ingest_relation.count.positive?
