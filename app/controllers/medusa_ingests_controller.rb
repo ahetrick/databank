@@ -62,6 +62,10 @@ class MedusaIngestsController < ApplicationController
     end
   end
 
+  def remove_draft_if_in_medusa
+    MedusaIngest.remove_draft_if_in_medusa
+  end
+
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_medusa_ingest

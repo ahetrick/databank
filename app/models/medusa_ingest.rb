@@ -327,6 +327,39 @@ class MedusaIngest < ActiveRecord::Base
 
   end
 
+  def self.remove_draft_if_in_medusa
+    draft_root = Application.storage_manager.draft_root
+    medusa_root = Application.storage_manager.medusa_root
+
+    MedusaIngest.all.each do |ingest|
+
+      next unless ingest.staging_key.present? && ingest.target_key.present?
+
+      # dataset found - do things with dataset and ingest response
+      exists_in_draft = draft_root.exist?(ingest.staging_key)
+      exists_in_medusa = medusa_root.exist?(ingest.target_key)
+      if exists_in_medusa
+        puts "exists in medusa"
+        if exists_in_draft
+          puts "exists in draft"
+          draft_size = draft_root.size(ingest.staging_key)
+          medusa_size = medusa_root.size(ingest.target_key)
+          if draft_size == medusa_size
+            draft_root.delete_content(ingest.staging_key)
+            info_key = "#{ingest.staging_key}.info"
+            draft_root.delete_content(info_key) if draft_root.exist?(info_key)
+          else
+            puts "draft and medusa sizes not equal for ingest: #{ingest.id}, draft_size: #{draft_size}, medusa_size: #{medusa_size}"
+          end
+        else
+          puts "does not exist in draft"
+        end
+      else
+        puts "does not exist in medusa"
+      end
+    end
+  end
+
   def send_medusa_ingest_message
     AmqpConnector.instance.send_message(MedusaIngest.outgoing_queue, medusa_ingest_message)
   end

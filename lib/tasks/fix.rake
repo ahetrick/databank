@@ -29,40 +29,7 @@ namespace :fix do
 
   desc 'remove draft files if medusa ingest successful'
   task :remove_draft_if_in_medusa => :environment do
-    draft_root = Application.storage_manager.draft_root
-    medusa_root = Application.storage_manager.medusa_root
-
-    MedusaIngest.all.each do |ingest|
-
-      puts "ingest #{ingest.id}"
-
-      next unless ingest.staging_key.present? && ingest.target_key.present?
-
-      puts "keys present"
-
-      # dataset found - do things with dataset and ingest response
-      exists_in_draft = draft_root.exist?(ingest.staging_key)
-      exists_in_medusa = medusa_root.exist?(ingest.target_key)
-      if exists_in_medusa
-        puts "exists in medusa"
-        if exists_in_draft
-          puts "exists in draft"
-          draft_size = draft_root.size(ingest.staging_key)
-          medusa_size = medusa_root.size(ingest.target_key)
-          if draft_size == medusa_size
-            draft_root.delete_content(ingest.staging_key)
-            info_key = "#{ingest.staging_key}.info"
-            draft_root.delete_contant(info_key) if draft_root.exist?(info_key)
-          else
-            puts "draft and medusa sizes not equal for ingest: #{ingest.id}, draft_size: #{draft_size}, medusa_size: #{medusa_size}"
-          end
-        else
-          puts "does not exist in draft"
-        end
-      else
-        puts "does not exist in medusa"
-      end
-    end
+    MedusaIngest.remove_draft_if_in_medusa
   end
 
   desc 'update embargo state for released datasets'

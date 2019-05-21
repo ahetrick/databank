@@ -64,6 +64,7 @@ Rails.application.routes.draw do
   resources :funders
   resources :definitions
   resources :medusa_ingests
+  post "/medusa_ingests/remove_draft_if_in_medusa", to: "medusa_ingests#remove_draft_if_in_medusa"
   resources :datafiles
   resources :users
   resources :identities do
