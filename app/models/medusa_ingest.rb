@@ -293,7 +293,7 @@ class MedusaIngest < ActiveRecord::Base
         end
 
         if system_file
-          system_file.update_attribute(storage_root: "medusa")
+          system_file.update_attribute('storage_root', 'medusa')
         else
           notification = DatabankMailer.error("Record not found for Medusa message. #{response_hash.to_yaml}")
           notification.deliver_now
