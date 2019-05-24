@@ -79,6 +79,9 @@ gem 'uuid'
 
 gem 'open_uri_redirections'
 
+# Use ActiveRecord session store to support larger session
+gem 'activerecord-session_store', github: 'rails/activerecord-session_store'
+
 # Use RMagick to connect with ImageMagick
 # gem 'rmagick'
 
