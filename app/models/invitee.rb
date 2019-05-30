@@ -5,6 +5,10 @@ class Invitee < ActiveRecord::Base
   before_destroy :destroy_identity
   before_destroy :destroy_user
 
+  def group
+    "reviewer"
+  end
+
   def destroy_identity
     identity = Identity.find_by(email: email)
     identity&.destroy!
