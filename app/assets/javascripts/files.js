@@ -90,62 +90,6 @@ function download_selected() {
     });
 }
 
-function approve_deckfile(deckfile_id){
-
-    $('#loadingModal').modal('show');
-
-    // Use Ajax to submit form data
-    $.ajax({
-        url: $('#form_for_deckfile_' + deckfile_id).attr('action'),
-        type: 'POST',
-        data: $('#form_for_deckfile_' + deckfile_id).serialize(),
-        datatype: 'json',
-        success: function(data) {
-
-            //console.log(data);
-
-            var maxId = Number($('#datafile_index_max').val());
-            var newId = 1;
-
-            if (maxId != NaN) {
-                newId = maxId + 1;
-            }
-            $('#datafile_index_max').val(newId);
-
-            var file = data.files[0];
-
-            //console.log(file);
-
-            var row =
-                '<tr id="datafile_index_' + newId + '"><td><div class = "row">' +
-
-                '<input value="false" type="hidden" name="dataset[datafiles_attributes][' + newId + '][_destroy]" id="dataset_datafiles_attributes_' + newId + '__destroy" />' +
-                '<input type="hidden"  value="'+ file.datafileId + '" name="dataset[datafiles_attributes][' + newId + '][id]" id="dataset_datafiles_attributes_' + newId + '_id" />'+
-
-                '<span class="col-md-8">' + file.name + '<input class="bytestream_name" value="' + file.name + '" style="visibility: hidden;"/></span><span class="col-md-2">' + file.size + '</span><span class="col-md-2">';
-            if (file.error) {
-                row = row + '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-warning-sign"></span>';
-            } else {
-                row = row + '<button type="button" class="btn btn-danger btn-sm" onclick="remove_file_row(' + newId + ')"><span class="glyphicon glyphicon-trash"></span></button></span>';
-            }
-
-            row = row + '</span></div></td></tr>';
-            if (file.error) {
-                $("#datafiles > tbody:last-child").append('<tr><td><div class="row"><p>' + file.name + ': ' + file.error + '</p></div></td></tr>');
-            } else {
-                $("#datafiles > tbody:last-child").append(row);
-            }
-
-            $("#deckfile_" + deckfile_id).remove();
-
-            if ($('#deckfiles_table tr').length < 1  ){
-                $('.deckfiles_div').remove();
-            }
-            $('#loadingModal').modal('hide');
-        }
-    });
-}
-
 function create_from_remote_unknown_size(){
     $('#loadingModal').modal('show');
 
@@ -311,17 +255,6 @@ function preview_image(iiif_root, web_id){
 function hide_image_preview(iiif_root, web_id){
     $("#preview_img_btn_" + web_id).html('<button type="button" class="btn btn-sm btn-success" onclick="preview_image(&#39;' + iiif_root + '&#39;, &#39;' + web_id + '&#39;)"><span class="glyphicon glyphicon-eye-open"></span> View</button>');
     $("#preview_" + web_id).hide();
-}
-
-function remove_deckfile(deckfile_id, deckfile_index){
-    $('#dataset_deckfiles_attributes_'+ deckfile_index +'_remove').val("true");
-    $('#deckfile_'+ deckfile_id).remove();
-}
-
-function restore_deckfile(deckfile_id, deckfile_index){
-    $('#dataset_deckfiles_attributes_'+ deckfile_index +'_remove').val("false");
-    $('.deckfile_restore_btn').hide();
-    $('.deckfile_remove_btn').show();
 }
 
 function initFileUpload() {

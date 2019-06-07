@@ -30,7 +30,7 @@
 
     <div class="selected-version boxed-alert">
       A newer version of this dataset is available.
-      <a href="<%= IDB_CONFIG[:datacite_url_prefix]%>/<%= version_group[:entries][0][:doi] %>">View the latest version.</a>
+      <a href="<%= @dataset.persistent_url_base %>/<%= version_group[:entries][0][:doi] %>">View the latest version.</a>
     </div>
 
   <% end %>
@@ -84,7 +84,7 @@
                 <% if entry[:selected] %> class="selected-version"
                 <% end %> >
                   <td class="text-center"><%= entry[:version] %></td>
-                  <td><a href="<%= IDB_CONFIG[:datacite_url_prefix]%>/<%= entry[:doi] %>"><%= entry[:doi] %></a></td>
+                  <td><a href="<%= @dataset.persistent_url_base %>/<%= entry[:doi] %>"><%= entry[:doi] %></a></td>
                   <td><%= entry[:version_comment] %></td>
                   <td><%= entry[:publication_date] %></td>
                 </tr>

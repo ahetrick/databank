@@ -36,7 +36,7 @@
               = @dataset.title && @dataset.title != "" ? "#{@dataset.title}." : "[The Title]."
             University of Illinois at Urbana-Champaign.
             %span( id="doi-preview" )
-              = @dataset.identifier && @dataset.identifier != "" ? "#{IDB_CONFIG[:datacite_url_prefix]}/#{@dataset.identifier}" : ""
+              = @dataset.identifier && @dataset.identifier != "" ? "#{@dataset.persistent_url}" : ""
           .panel-collapse.collapse.in(id="descriptionPanel" role="tabpanel" aria-labelledby="descriptionHeading" )
             .panel-body
               - if @dataset.errors.any?
@@ -392,7 +392,3 @@
       handleNotAgreed();
       $("#agreement").modal('show');
 
-  - @dataset.deckfiles.each do |deckfile|
-    = form_tag("/datafiles/create_from_deckfile", {id: "form_for_deckfile_#{deckfile.id}"}) do
-      = hidden_field_tag("dataset_key","#{@dataset.key}" )
-      = hidden_field_tag("deckfile_id", "#{deckfile.id}")

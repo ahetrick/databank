@@ -52,7 +52,7 @@ class User::Shibboleth < User::User
 
       if netid.respond_to?(:length) && netid.length > 0
 
-        admins = IDB_CONFIG[:admin_list].split(", ")
+        admins = IDB_CONFIG[:admin][:netids].split(", ")
 
         if admins.include?(netid)
           role = Databank::UserRole::ADMIN

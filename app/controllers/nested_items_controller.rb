@@ -16,7 +16,7 @@ class NestedItemsController < ApplicationController
   end
 
   def create
-    @nested_item = NestedItem.new(deckfile_params)
+    @nested_item = NestedItem.new(nested_item_params)
 
     respond_to do |format|
       if @nested_item.save
@@ -31,7 +31,7 @@ class NestedItemsController < ApplicationController
 
   def update
     respond_to do |format|
-      if @nested_item.update(deckfile_params)
+      if @nested_item.update(nested_item_params)
         format.html { redirect_to @nested_item, notice: 'Nested item was successfully updated.' }
         format.json { render :show, status: :ok, location: @nested_item }
       else
@@ -44,7 +44,7 @@ class NestedItemsController < ApplicationController
   def destroy
     @nested_item.destroy
     respond_to do |format|
-      format.html { redirect_to deckfiles_url, notice: 'Nested item was successfully destroyed.' }
+      format.html { redirect_to nested_item_url, notice: 'Nested item was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

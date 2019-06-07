@@ -3,14 +3,6 @@ require 'json'
 
 namespace :recovery do
 
-  desc 'confirm_backup'
-  task :confirm_backup => :environment do
-
-    notification = DatabankMailer.backup_report()
-    notification.deliver_now
-
-  end
-
   task :restore_record, [:doi] => [:environment] do |t, args|
 
     event_note = "restoration of #{args[:doi]}"

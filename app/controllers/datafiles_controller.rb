@@ -314,28 +314,6 @@ class DatafilesController < ApplicationController
 
   end
 
-  def create_from_deckfile
-
-    @datafile = Datafile.new
-    @dataset = Dataset.find_by_key(params[:dataset_key])
-    @deckfile = Deckfile.find(params[:deckfile_id])
-    if @dataset && @deckfile
-      @datafile.dataset_id = @dataset.id
-
-      if File.file?(@deckfile.path)
-        @datafile.binary = Pathname.new(@deckfile.path).open
-      else
-        raise "file not detected"
-      end
-      @datafile.save!
-    end
-    @deckfile.destroy!
-
-    render(json: to_fileupload, content_type: request.format, :layout => false)
-
-
-  end
-
   def remote_content_length
 
     response = nil

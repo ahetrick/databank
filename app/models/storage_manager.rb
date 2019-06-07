@@ -13,7 +13,7 @@ class StorageManager
   end
 
   def initialize_tmpdir
-    self.tmpdir = IDB_CONFIG['storage_tmpdir']
+    self.tmpdir = IDB_CONFIG[:storage_tmpdir]
   end
 
 end

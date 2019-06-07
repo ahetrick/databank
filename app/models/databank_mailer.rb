@@ -89,27 +89,13 @@ class DatabankMailer < ActionMailer::Base
   def error(error_text)
     @error_text = error_text
     subject = prepend_system_code('Illinois Data Bank] System Error')
-    mail(to: IDB_CONFIG[:tech_error_mail_list].to_s, subject: subject)
+    mail(to: IDB_CONFIG[:admin][:tech_mail_list].to_s, subject: subject)
   end
 
   def ezid_warnings(report)
     @report = report
     subject = prepend_system_code('Illinois Data Bank] EZID Differences Report')
-    mail(to: IDB_CONFIG[:tech_error_mail_list].to_s, subject: subject)
-  end
-
-  def backup_report
-    @expected_path = "#{IDB_CONFIG[:databank_backup_root]}/#{Date.current}.sql"
-
-    if File.exist?(@expected_path)
-      subject_base = "Illinois Data Bank] Backup exists for #{Date.current}"
-      @is_ok == true
-    else
-      subject_base = "Illinois Data Bank] Backup NOT FOUND for #{Date.current}"
-      @is_ok == false
-    end
-    subject = prepend_system_code(subject_base)
-    mail(to: IDB_CONFIG[:tech_error_mail_list].to_s, subject: subject)
+    mail(to: IDB_CONFIG[:admin][:tech_mail_list].to_s, subject: subject)
   end
 
   def confirmation_not_sent(dataset_key, err)
@@ -139,7 +125,7 @@ because dataset not found for key: #{dataset_key}."
     subject_base = 'Illinois Data Bank] Related Materials Links Status Report'
     subject = prepend_system_code(subject_base)
     @report = RelatedMaterial.link_report
-    mail(to: IDB_CONFIG[:related_materials_report_list].to_s, subject: subject)
+    mail(to: IDB_CONFIG[:admin][:materials_report_list].to_s, subject: subject)
   end
 
   def prepend_system_code(subject)

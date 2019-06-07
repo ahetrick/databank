@@ -17,7 +17,7 @@ module Stringable
 
                     end
 
-    citation_id = identifier.present? ? "#{IDB_CONFIG[:datacite_url_prefix]}/#{identifier}" : ""
+    citation_id = persistent_id
 
     "#{creator_list} (#{publication_year}): #{citationTitle}. #{publisher}. #{citation_id}"
   end
@@ -71,7 +71,7 @@ module Stringable
 
       return_string += %(, "version":"#{dataset_version}")
 
-      return_string += %(, "url":"#{IDB_CONFIG[:datacite_url_prefix]}/#{identifier}")
+      return_string += %(, "url":"#{persistent_url}")
 
       return_string += %(, "sameAs":"#{IDB_CONFIG[:root_url_text]}/#{key}")
 
@@ -241,7 +241,7 @@ module Stringable
     rescue StandardError => ex
       raise ex unless ex.message.include?("BinaryUploader")
     end
-    {"changes" => changes_arr, "model" => (IDB_CONFIG[:model]).to_s}
+    {"changes" => changes_arr}
   end
 
   def display_changelog
@@ -330,8 +330,7 @@ module Stringable
     related_materials do |material|
       materials << material.serializable_hash
     end
-    {"idb_dataset" => {"model"     => IDB_CONFIG[:model],
-                       "dataset"   => dataset,
+    {"idb_dataset" => {"dataset"   => dataset,
                        "creators"  => creators,
                        "funders"   => funders,
                        "materials" => materials,

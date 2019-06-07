@@ -15,10 +15,7 @@
 
 # Ignore local files.
 .idea
-config/database.yml
-config/databank.yml
-config/secrets.yml
-config/shibboleth.yml
+config/master.key
 public/uploads
 config/sunspot.yml
 nginx.conf.erb.old
@@ -48,7 +45,6 @@ dj_stop.sh
 /public/agreements
 /public/backups
 /public/sitemaps
-/public/deck
 /public/assets
 /dataset_staging
 /data

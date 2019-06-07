@@ -164,15 +164,6 @@ ActiveRecord::Schema.define(version: 2019_05_24_135131) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "deckfiles", id: :serial, force: :cascade do |t|
-    t.string "disposition", default: "ingest"
-    t.boolean "remove", default: false
-    t.string "path"
-    t.integer "dataset_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "definitions", id: :serial, force: :cascade do |t|
     t.string "term"
     t.string "meaning"

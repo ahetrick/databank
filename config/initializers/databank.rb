@@ -5,13 +5,13 @@ require 'tus/storage/filesystem'
 
 VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 
-PRODUCTION_PREFIXES = ["10.13012", "10.25988", "10.5072"]
+PRODUCTION_PREFIXES = ["10.13012", "10.25988"]
 
 DEMO_PREFIXES = ["10.26123"]
 
 TEST_PREFIXES = ["10.70114"]
 
-IDB_CONFIG = YAML.load_file(File.join(Rails.root, 'config', 'databank.yml'))[Rails.env]
+IDB_CONFIG = YAML.load(ERB.new(File.read(File.join(Rails.root, 'config', 'databank.yml'))).result)
 
 Application.storage_manager = StorageManager.new
 
@@ -42,7 +42,7 @@ else
 end
 
 # create identity invitees for admins
-IDB_CONFIG[:admin_identities_list].split(", ").each do |email|
+IDB_CONFIG[:admin][:identities].split(", ").each do |email|
 
   # weird logic to accomdate intitilzation/migration order for deploy
 

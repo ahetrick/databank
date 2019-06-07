@@ -77,12 +77,10 @@ class Dataset < ActiveRecord::Base
   has_many :contributors, dependent: :destroy
   has_many :funders, dependent: :destroy
   has_many :related_materials, dependent: :destroy
-  has_many :deckfiles, dependent: :destroy
   has_many :system_files, dependent: :destroy
   has_many :user_abilities, dependent: :destroy
 
   accepts_nested_attributes_for :datafiles, reject_if: :all_blank, allow_destroy: true
-  accepts_nested_attributes_for :deckfiles, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :creators, reject_if: :invalid_name, allow_destroy: true
   accepts_nested_attributes_for :contributors, reject_if: :invalid_name, allow_destroy: true
   accepts_nested_attributes_for :funders, reject_if:     proc {|attributes| attributes["name"].blank? },
@@ -204,18 +202,6 @@ class Dataset < ActiveRecord::Base
       break unless self.class.find_by(key: proposed_key)
     end
     proposed_key
-  end
-
-  def deck_location
-    "#{IDB_CONFIG[:ingest_deck_path]}/#{self.key}"
-  end
-
-  def deck_content?
-    File.directory?(deck_location) && !Dir["#{deck_location}/*"].empty?
-  end
-
-  def deck_filepaths
-    Dir["#{deck_location}/*"] if deck_content?
   end
 
   def current_token
@@ -374,8 +360,16 @@ class Dataset < ActiveRecord::Base
     nil
   end
 
+  def persistent_url_base
+    if is_test?
+      IDB_CONFIG[:test_datacite][:url_base]
+    else
+      IDB_CONFIG[:datacite][:url_base]
+    end
+  end
+
   def persistent_url
-    identifier.present? ? "#{IDB_CONFIG[:datacite_url_prefix]}/#{identifier}" : ""
+    identifier.present? ? "#{persistent_url_base}/#{identifier}" : ""
   end
 
   def license_code

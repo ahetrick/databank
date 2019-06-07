@@ -8,7 +8,7 @@
 # server 'db.example.com', user: 'deploy', roles: %w{db}
 server 'rds-dev.library.illinois.edu', user: 'lib-medusa-databank', roles: %w{app db web}
 
-set :rails_env, 'development'
+set :rails_env, 'staging'
 
 # Default deploy_to directory is /var/www/my_app_name
 set :deploy_to, '/home/lib-medusa-databank'

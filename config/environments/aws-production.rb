@@ -1,6 +1,9 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # use encrypted credentials
+  config.require_master_key = true
+
   #Google Analtyics Code
   GA.tracker = "UA-74879540-1"
 

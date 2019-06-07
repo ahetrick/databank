@@ -1,0 +1,98 @@
+:orcid_token: <%= Rails.application.credentials[:orcid_token] %>
+
+:recaptcha:
+  :site_key: <%= Rails.application.credentials[:recaptcha][:site_key] %>
+  :secret_key: <%= Rails.application.credentials[:recaptcha][:secret_key] %>
+
+:illinois_experts:
+  :key: <%= Rails.application.credentials[:illinois_experts][:key] %>
+  :endpoint: <%= Rails.application.credentials[:illinois_experts][:endpoint] %>
+
+:admin:
+  :netids: <%= Rails.application.credentials[Rails.env.to_sym][:admin][:netids] %>
+  :identities: <%= Rails.application.credentials[Rails.env.to_sym][:admin][:identities] %>
+  :tech_mail_list: <%= Rails.application.credentials[Rails.env.to_sym][:admin][:tech_mail_list] %>
+  :materials_report_list: <%= Rails.application.credentials[Rails.env.to_sym][:admin][:materials_report_list] %>
+
+:datacite:
+  :endpoint: <%= Rails.application.credentials[Rails.env.to_sym][:datacite][:endpoint] %>
+  :username: <%= Rails.application.credentials[Rails.env.to_sym][:datacite][:username] %>
+  :password: <%= Rails.application.credentials[Rails.env.to_sym][:datacite][:password] %>
+  :shoulder: <%= Rails.application.credentials[Rails.env.to_sym][:datacite][:shoulder] %>
+  :url_base: <%= Rails.application.credentials[Rails.env.to_sym][:datacite][:url_prefix] %>
+
+:test_datacite:
+  :endpoint: <%= Rails.application.credentials[Rails.env.to_sym][:test_datacite][:endpoint] %>
+  :username: <%= Rails.application.credentials[Rails.env.to_sym][:test_datacite][:username] %>
+  :password: <%= Rails.application.credentials[Rails.env.to_sym][:test_datacite][:password] %>
+  :shoulder: <%= Rails.application.credentials[Rails.env.to_sym][:test_datacite][:shoulder] %>
+  :url_base: <%= Rails.application.credentials[Rails.env.to_sym][:test_datacite][:url_prefix] %>
+
+:tasks_url: <%= Rails.application.credentials[Rails.env.to_sym][:tasks_url] %>
+:key_prefix: <%= Rails.application.credentials[Rails.env.to_sym][:key_prefix] %>
+:agreements_root_path: <%= Rails.application.credentials[Rails.env.to_sym][:agreements_root_path] %>
+:root_url_text: <%= Rails.application.credentials[Rails.env.to_sym][:root_url_text] %>
+:tmpdir: <%= Rails.application.credentials[Rails.env.to_sym][:tmpdir] %>
+:system_user_name: <%= Rails.application.credentials[Rails.env.to_sym][:system_user_name] %>
+:system_user_email: <%= Rails.application.credentials[Rails.env.to_sym][:system_user_email] %>
+:iiif_root: <%= Rails.application.credentials[Rails.env.to_sym][:iiif_root] %>
+:iiif_medusa_group: <%= Rails.application.credentials[Rails.env.to_sym][:iiif_medusa_group] %>
+:reserve_doi_netid: <%= Rails.application.credentials[Rails.env.to_sym][:reserve_doi_netid] %>
+:reserve_doi_role: <%= Rails.application.credentials[Rails.env.to_sym][:reserve_doi_role] %>
+:aws:
+ :s3_mode: <%= Rails.application.credentials[Rails.env.to_sym][:aws][:s3_mode] %>
+ :access_key_id: <%= Rails.application.credentials[Rails.env.to_sym][:aws][:access_key_id] %>
+ :secret_access_key: <%= Rails.application.credentials[Rails.env.to_sym][:aws][:secret_access_key] %>
+ :region: <%= Rails.application.credentials[Rails.env.to_sym][:aws][:region] %>
+
+:storage_tmpdir: <%= Rails.application.credentials[Rails.env.to_sym][:storage][:tmp_path] %>
+
+:storage:
+  - :name: draft
+    :type: <%= Rails.application.credentials[Rails.env.to_sym][:storage][:draft_type] %>
+    :path: <%= Rails.application.credentials[Rails.env.to_sym][:storage][:draft_path] %>
+  - :name: medusa
+    :type: <%= Rails.application.credentials[Rails.env.to_sym][:storage][:medusa_type] %>
+    :path: <%= Rails.application.credentials[Rails.env.to_sym][:storage][:medusa_path] %>
+
+:iiif:
+  :draft_base: <%= Rails.application.credentials[Rails.env.to_sym][:iiif][:draft_base] %>
+  :medusa_base: <%= Rails.application.credentials[Rails.env.to_sym][:iiif][:medusa_base] %>
+
+#You can set anything here that you might pass to Bunny.new. Anything you don't set just gets the Bunny default.
+#Typical fields needed for our setup are shown below.
+amqp:
+  ssl: <%= Rails.application.credentials[Rails.env.to_sym]['ampq']['ssl'] %>
+  port: <%= Rails.application.credentials[Rails.env.to_sym]['ampq']['port'] %>
+  host: <%= Rails.application.credentials[Rails.env.to_sym]['ampq']['host'] %>
+  user: <%= Rails.application.credentials[Rails.env.to_sym]['ampq']['user'] %>
+  password: <%= Rails.application.credentials[Rails.env.to_sym]['ampq']['password'] %>
+  verify_peer: <%= Rails.application.credentials[Rails.env.to_sym]['ampq']['verify_peer'] %>
+  heartbeat: 10
+#Configuration for the medusa integration
+medusa:
+  #AMQP queues to communicate with medusa server
+  outgoing_queue: <%= Rails.application.credentials[Rails.env.to_sym]['medusa']['outgoing_queue'] %>
+  incoming_queue: <%= Rails.application.credentials[Rails.env.to_sym]['medusa']['incoming_queue'] %>
+  medusa_path_root: <%= Rails.application.credentials[Rails.env.to_sym]['medusa']['medusa_path_root'] %>
+  dataset_staging: <%= Rails.application.credentials[Rails.env.to_sym]['medusa']['dataset_staging'] %>
+  file_group_url: <%= Rails.application.credentials[Rails.env.to_sym]['medusa']['file_group_url'] %>
+  datasets_url_base: <%= Rails.application.credentials[Rails.env.to_sym]['medusa']['datasets_url_base'] %>
+
+#Configuration for medusa downloader
+downloader:
+  ssl: <%= Rails.application.credentials[Rails.env.to_sym]['downloader']['ssl'] %>
+  host: <%= Rails.application.credentials[Rails.env.to_sym]['downloader']['host'] %>
+  port: 8080
+  realm: <%= Rails.application.credentials[Rails.env.to_sym]['downloader']['realm'] %>
+  user: <%= Rails.application.credentials[Rails.env.to_sym]['downloader']['user'] %>
+  password: <%= Rails.application.credentials[Rails.env.to_sym]['downloader']['password'] %>
+
+#Configuration for medusa downloader
+medusa_info:
+  ssl: <%= Rails.application.credentials[Rails.env.to_sym]['downloader']['password'] %>
+  host: <%= Rails.application.credentials[Rails.env.to_sym]['downloader']['password'] %>
+  port: 8080
+  user: <%= Rails.application.credentials[Rails.env.to_sym]['downloader']['password'] %>
+  password: <%= Rails.application.credentials[Rails.env.to_sym]['downloader']['password'] %>
+

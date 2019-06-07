@@ -761,19 +761,8 @@ class DatasetsController < ApplicationController
     @dataset.org_creators = @dataset.org_creators || false
     #set_license(@dataset)
     @publish_modal_msg = Dataset.publish_modal_msg(@dataset)
-    if @dataset.deck_content?
-      @dataset.deck_filepaths.each do |filepath|
-        Deckfile.find_or_create_by!(path: filepath, dataset_id: @dataset.id)
-      end
-    end
-
     @dataset.embargo ||= Databank::PublicationState::Embargo::NONE
 
-    @dataset.deckfiles.each do |deckfile|
-      unless File.exists?(deckfile.path)
-        deckfile.destroy
-      end
-    end
     @token = @dataset.current_token
 
     set_file_mode
@@ -1488,7 +1477,7 @@ class DatasetsController < ApplicationController
     if @dataset.identifier
       urlNode = doc.create_element('url')
       urlNode.parent = relatedurlsNode
-      urlNode.content = "#{IDB_CONFIG[:datacite_url_prefix]}/#{@dataset.identifier}"
+      urlNode.content = "#{IDB_CONFIG[:datacite][:url_prefix]}/#{@dataset.identifier}"
     end
 
     electronicNode = doc.create_element('electronic-resource-num')
@@ -1515,7 +1504,7 @@ class DatasetsController < ApplicationController
 
     t.write(%Q[Provider: Illinois Data Bank\nContent: text/plain; charset=%Q[us-ascii]\nTY  - DATA\nT1  - #{@dataset.title}\n])
 
-    t.write(%Q[DO  - #{@dataset.identifier}\nPY  - #{@dataset.publication_year}\nUR  - #{IDB_CONFIG[:datacite_url_prefix]}/#{@dataset.identifier}\nPB  - #{@dataset.publisher}\nER  - ])
+    t.write(%Q[DO  - #{@dataset.identifier}\nPY  - #{@dataset.publication_year}\nUR  - #{@dataset.persistent_url}\nPB  - #{@dataset.publisher}\nER  - ])
 
     if !@dataset.identifier
       @dataset.identifer = @dataset.key
@@ -1551,7 +1540,7 @@ class DatasetsController < ApplicationController
     t = Tempfile.new("#{@dataset.key}_endNote")
     citekey = SecureRandom.uuid
 
-    t.write("@data{#{citekey},\ndoi = {#{@dataset.identifier}},\nurl = {#{IDB_CONFIG[:datacite_url_prefix]}/#{@dataset.identifier}},\nauthor = {#{@dataset.creator_list}},\npublisher = {#{@dataset.publisher}},\ntitle = {#{@dataset.title} ﻿},\nyear = {#{@dataset.publication_year}}
+    t.write("@data{#{citekey},\ndoi = {#{@dataset.identifier}},\nurl = {#{@dataset.datacite_url_base}/#{@dataset.identifier}},\nauthor = {#{@dataset.creator_list}},\npublisher = {#{@dataset.publisher}},\ntitle = {#{@dataset.title} ﻿},\nyear = {#{@dataset.publication_year}}
 }")
 
     send_file t.path, :type => 'application/application/x-bibtex',
@@ -1578,11 +1567,6 @@ class DatasetsController < ApplicationController
   def download_metrics
   end
 
-  def download_deckfile
-    # Rails.logger.warn params.to_yaml
-    render :edit
-  end
-
   def recordtext
   end
 
@@ -1605,23 +1589,8 @@ class DatasetsController < ApplicationController
     raise ActiveRecord::RecordNotFound unless @dataset
   end
 
-  def set_file_mode
-
-    #Databank::Application.file_mode = Databank::FileMode::READ_ONLY
-
-    Databank::Application.file_mode = Databank::FileMode::WRITE_READ
-
-    #if IDB_CONFIG[:aws][:s3_mode] == false
-
-    #  mount_path = (Pathname.new(IDB_CONFIG[:storage_mount]).realpath).to_s.strip
-    #  read_only_path = (IDB_CONFIG[:read_only_realpath]).to_s.strip
-
-    #  if (mount_path.casecmp(read_only_path) == 0)
-    #    Databank::Application.file_mode = Databank::FileMode::READ_ONLY
-    #  end
-
-    #end
-
+  def set_file_mode(mode = Databank::FileMode::WRITE_READ)
+    Databank::Application.file_mode = mode
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
@@ -1633,8 +1602,7 @@ class DatasetsController < ApplicationController
                                     creators_attributes: [:dataset_id, :family_name, :given_name, :institution_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id],
                                     contributors_attributes: [:dataset_id, :family_name, :given_name, :identifier, :identifier_scheme, :type_of, :row_position, :is_contact, :email, :id, :_destroy, :_update, :audit_id],
                                     funders_attributes: [:dataset_id, :code, :name, :identifier, :identifier_scheme, :grant, :id, :_destroy, :_update, :audit_id],
-                                    related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id],
-                                    deckfiles_attributes: [:disposition, :remove, :path, :dataset_id, :id])
+                                    related_materials_attributes: [:material_type, :selected_type, :availability, :link, :uri, :uri_type, :citation, :datacite_list, :dataset_id, :_destroy, :id, :_update, :audit_id])
   end
 
 

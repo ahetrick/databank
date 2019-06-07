@@ -31,8 +31,7 @@ module Publishable
 
     if old_publication_state == Databank::PublicationState::DRAFT &&
         publication_state != Databank::PublicationState::DRAFT
-      # remove deck directory, if it exists
-      FileUtils.rm_rf(deck_location) if File.exist?(deck_location)
+
       # set release date to current if not embargo
       self.release_date = Date.current if publication_state == Databank::PublicationState::RELEASED
     end
