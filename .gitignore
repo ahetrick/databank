@@ -19,6 +19,7 @@ config/database.yml
 config/databank.yml
 config/secrets.yml
 config/shibboleth.yml
+config/master.key
 public/uploads
 config/sunspot.yml
 nginx.conf.erb.old

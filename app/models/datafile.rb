@@ -151,6 +151,7 @@ class Datafile < ActiveRecord::Base
   end
 
   def file_extension
+    return "" unless self.bytestream_name.present?
     filename_split = self.bytestream_name.split(".")
     if filename_split.count > 1 # otherwise cannot determine extension
       return filename_split.last
