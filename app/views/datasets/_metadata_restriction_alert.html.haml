@@ -18,3 +18,9 @@
     %a(href="/help?context=embargo&key=#{@dataset.key}")
       Contact the Research Data Service
     with any questions.
+-if !dataset.metadata_public?
+  .embargo-placeholder
+    This dataset is not available.
+    %a(href="/help?context=hold&key=#{@dataset.key}")
+      Contact the Research Data Service
+    with any questions.

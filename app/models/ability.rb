@@ -25,6 +25,10 @@ class Ability
         dataset.try(:depositor_email) == user.email
       end
       can :view, Dataset do |dataset|
+        dataset.try(:depositor_email) == user.email || dataset.publication_state != Databank::PublicationState::DRAFT
+      end
+
+      can :view_metadata, Dataset do |dataset|
         dataset.try(:depositor_email) == user.email || dataset.metadata_public?
       end
 
@@ -34,6 +38,10 @@ class Ability
 
     elsif user.is?(Databank::UserRole::REVIEWER) && user.group == Databank::IdentityGroup::NETWORK_CURATOR
       can [:view], Dataset do |dataset|
+        dataset.try(:data_curation_network) == true || dataset.publication_state != Databank::PublicationState::DRAFT
+      end
+
+      can [:view_metadata], Dataset do |dataset|
          dataset.try(:data_curation_network) == true || dataset.metadata_public?
       end
 
@@ -47,6 +55,9 @@ class Ability
 
     else
       can :view, Dataset do |dataset|
+        dataset.publication_state != Databank::PublicationState::DRAFT
+      end
+      can :view_metadata, Dataset do |dataset|
         dataset.metadata_public?
       end
       can :view_files, Dataset do |dataset|

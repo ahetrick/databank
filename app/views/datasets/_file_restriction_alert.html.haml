@@ -18,3 +18,9 @@
     %a(href="/help?context=embargo&key=#{dataset.key}")
       Contact the Research Data Service
     with any questions.
+-elsif !dataset.files_public?
+  .embargo-placeholder
+    Files associated with this dataset are not available.
+    %a(href="/help?context=embargo&key=#{dataset.key}")
+      Contact the Research Data Service
+    with any questions.

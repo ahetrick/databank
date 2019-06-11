@@ -37,106 +37,102 @@
 
   <%= render partial: 'metadata_restriction_alert', locals: {dataset: @dataset} %>
 
-  <% if (can? :view, @dataset) %>
+  <% if (can? :view_metadata, @dataset) %>
     <%= render partial: 'show_metadata', locals: {dataset: @dataset} %>
   <% end %>
 
   <!-- END metadata section-->
-  <div class="panel-group" id="versionGroup" role="tablist" aria-multiselectable="true">
-    <div class="panel panel-default">
-      <div class="panel-heading" role="tab" id="versionGroupHeading">
-        <h4 class="panel-title">
 
-          <% if version_group && version_group[:entries] && version_group[:entries].length > 1 %>
-            <a role="button" data-toggle="collapse" data-parent="#versionGroup" href="#versionGroupPanel" aria-expanded="true" aria-controls="versionGroupPanel" class="accordion-toggle">
-              <span class="metadata-label">Versions in Illinois Data Bank</span>
-            </a>
-          <% else %>
-            <a role="button" data-toggle="collapse" data-parent="#versionGroup" href="#versionGroupPanel" aria-expanded="false" aria-controls="versionGroupPanel" class="accordion-toggle collapsed">
-              <span class="metadata-label">Versions</span>
-            </a>
-          <% end %>
-        </h4>
-      </div>
-      <div class="panel-collapse collapse
-        <% if version_group && version_group[:entries] && version_group[:entries].length > 1 %> in
-        <% end %>" id="versionGroupPanel" role="tabpanel" aria-labelledby="versionGroupHeading">
-        <div class="panel-body">
+  <% if (can? :view_metadata, @dataset) %>
 
-          <% if version_group[:status] == 'error' %>
-            <%= version_group[:error] %>
-          <% else %>
+    <div class="panel-group" id="versionGroup" role="tablist" aria-multiselectable="true">
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="versionGroupHeading">
+          <h4 class="panel-title">
 
-            <table class="table table-striped">
-              <thead>
-              <tr>
-                <th class="text-center">Version</th>
-                <th>DOI</th>
-                <th>Comment</th>
-                <th>Publication Date</th>
-              </tr>
-              </thead>
-              <tbody>
+            <% if version_group && version_group[:entries] && version_group[:entries].length > 1 %>
+              <a role="button" data-toggle="collapse" data-parent="#versionGroup" href="#versionGroupPanel" aria-expanded="true" aria-controls="versionGroupPanel" class="accordion-toggle">
+                <span class="metadata-label">Versions in Illinois Data Bank</span>
+              </a>
+            <% else %>
+              <a role="button" data-toggle="collapse" data-parent="#versionGroup" href="#versionGroupPanel" aria-expanded="false" aria-controls="versionGroupPanel" class="accordion-toggle collapsed">
+                <span class="metadata-label">Versions</span>
+              </a>
+            <% end %>
+          </h4>
+        </div>
+        <div class="panel-collapse collapse
+          <% if version_group && version_group[:entries] && version_group[:entries].length > 1 %> in
+          <% end %>" id="versionGroupPanel" role="tabpanel" aria-labelledby="versionGroupHeading">
+          <div class="panel-body">
 
-              <% version_group[:entries].each do |entry| %>
+            <% if version_group[:status] == 'error' %>
+              <%= version_group[:error] %>
+            <% else %>
 
-                <tr
-                <% if entry[:selected] %> class="selected-version"
-                <% end %> >
-                  <td class="text-center"><%= entry[:version] %></td>
-                  <td><a href="https://doi.org/<%= entry[:doi] %>"><%= entry[:doi] %></a></td>
-                  <td><%= entry[:version_comment] %></td>
-                  <td><%= entry[:publication_date] %></td>
+              <table class="table table-striped">
+                <thead>
+                <tr>
+                  <th class="text-center">Version</th>
+                  <th>DOI</th>
+                  <th>Comment</th>
+                  <th>Publication Date</th>
                 </tr>
+                </thead>
+                <tbody>
+
+                <% version_group[:entries].each do |entry| %>
+
+                  <tr
+                  <% if entry[:selected] %> class="selected-version"
+                  <% end %> >
+                    <td class="text-center"><%= entry[:version] %></td>
+                    <td><a href="https://doi.org/<%= entry[:doi] %>"><%= entry[:doi] %></a></td>
+                    <td><%= entry[:version_comment] %></td>
+                    <td><%= entry[:publication_date] %></td>
+                  </tr>
 
 
-              <% end %>
-              </tbody>
-            </table>
+                <% end %>
+                </tbody>
+              </table>
 
-          <% end %>
+            <% end %>
 
+          </div>
         </div>
       </div>
     </div>
-  </div>
-
+  <% end %>
   <!-- BEGIN file section -->
 
-
-
-
-  <%= render partial: 'datasets/show_files', locals: {dataset: @dataset} %>
-
+  <!-- file partial handles file restriction alert, but section should only show if can view metadata -->
+  <% if (can? :view_metadata, @dataset) %>
+      <%= render partial: 'datasets/show_files', locals: {dataset: @dataset} %>
   <!-- END file section -->
 
-
-  <% if @dataset.publication_state != Databank::PublicationState::DRAFT %>
-
-    <% if (can? :manage, @dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::PermSuppress::FILE, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state) && @dataset.hold_state != Databank::PublicationState::TempSuppress::METADATA && !@dataset.suppress_changelog) %>
-      <div class="panel-group" id="changelog" role="tablist" aria-multiselectable="true">
-        <div class="panel panel-default">
-          <div class="panel-heading" role="tab" id="changelogHeading">
-            <h4 class="panel-title">
-              <a role="button" data-toggle="collapse" data-parent="#changelog" href="#changelogPanel" aria-expanded="false" aria-controls="changelogPanel" class="accordion-toggle collapsed">
-                <span class="metadata-label">Change Log</span>
-              </a>
-            </h4>
-          </div>
-          <div class="panel-collapse collapse" id="changelogPanel" role="tabpanel" aria-labelledby="changelogHeading">
-            <div class="panel-body">
-              <p><a href="/help?context=changelog&key=<%= @dataset.key %>">Contact the Research Data Service</a> for
-                help interpreting this log.</p>
-
-              <%= render partial: "show_changelog" %>
-
+    <% if @dataset.publication_state != Databank::PublicationState::DRAFT %>
+      <% if (can? :manage, @dataset) || ([Databank::PublicationState::RELEASED, Databank::PublicationState::PermSuppress::FILE, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state) && @dataset.hold_state != Databank::PublicationState::TempSuppress::METADATA && !@dataset.suppress_changelog) %>
+        <div class="panel-group" id="changelog" role="tablist" aria-multiselectable="true">
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="changelogHeading">
+              <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#changelog" href="#changelogPanel" aria-expanded="false" aria-controls="changelogPanel" class="accordion-toggle collapsed">
+                  <span class="metadata-label">Change Log</span>
+                </a>
+              </h4>
+            </div>
+            <div class="panel-collapse collapse" id="changelogPanel" role="tabpanel" aria-labelledby="changelogHeading">
+              <div class="panel-body">
+                <p><a href="/help?context=changelog&key=<%= @dataset.key %>">Contact the Research Data Service</a> for
+                  help interpreting this log.</p>
+                <%= render partial: "show_changelog" %>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-
+      <% end %>
     <% end %>
-
   <% end %>
 
   <% if can? :edit, @dataset %>
@@ -152,18 +148,6 @@
     <p>Once it is available, see DataCite Search result at: <a href="https://search.datacite.org/works/<%= @dataset.identifier %>"><%="https://search.datacite.org/works/#{@dataset.identifier}"%></a></p>
     <p>Log into <a href="https://doi.datacite.org/">DataCite Fabrica interface</a> for more details about DataCite's record for this DOI.</p>
   </div>
-
-  <!--<div class="curator-only">
-    <p><a href="http://ezid.lib.purdue.edu/manage/display_xml/doi:<%#= @dataset.identifier %>" target="_blank">DataCite
-      Metadata in XML format (via EZID)</a></p>
-
-    <p>
-      <a href="http://ezid.lib.purdue.edu/id/doi:<%#= @dataset.identifier %>" target="_blank">DataCite Metadata on
-        EZID
-        page</a>
-    </p>
-  </div>-->
-
 <% end %>
 
 <% if (can? :manage, @dataset) %>
