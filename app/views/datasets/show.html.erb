@@ -26,7 +26,7 @@
 <div id="main-show-div">
 
   <!-- BEGIN metadata section-->
-  <% if version_group && version_group[:entries] && version_group[:entries].length > 1 && @dataset.dataset_version.to_i > 0 && (version_group[:entries][0][:version]).to_i > @dataset.dataset_version.to_i %>
+  <% if version_group && version_group[:entries] && version_group[:entries].length > 1 && @dataset.dataset_version.to_f > 0 && (version_group[:entries][0][:version]).to_f > @dataset.dataset_version.to_f %>
 
     <div class="selected-version boxed-alert">
       A newer version of this dataset is available.

@@ -144,7 +144,7 @@ class Dataset < ActiveRecord::Base
   def version_group
 
     # version group is an array of hashes
-    self_version = self.dataset_version.to_i
+    self_version = self.dataset_version.to_f
 
     if !self_version || self_version < 1
       self_version = 1
@@ -207,7 +207,7 @@ class Dataset < ActiveRecord::Base
 
     end
 
-    (version_group_response[:entries].sort_by! {|k| k[:version]}).reverse!
+    (version_group_response[:entries].sort_by! {|k| k[:version].to_f}).reverse!
     version_group_response
 
   end
@@ -225,21 +225,18 @@ class Dataset < ActiveRecord::Base
 
   def related_version_entry_hash
     # version group is an array of hashes
-    self_version = self.dataset_version.to_i
 
-    if !self_version || self_version < 1
-      self_version = 1
+    if dataset_version.blank? || self.dataset_version.to_f < 1
+      write_attribute(:dataset_version, "1")
     end
 
-    {version: self_version, selected: false, doi: self.identifier || "not yet set", version_comment: self.version_comment || "", publication_date: self.release_date ? self.release_date.iso8601 : "not yet set"}
+    {version: dataset_version, selected: false, doi: self.identifier || "not yet set", version_comment: self.version_comment || "", publication_date: self.release_date ? self.release_date.iso8601 : "not yet set"}
   end
 
   def is_most_recent_version
 
-    # Rails.logger.warn (self.version_group[:entries].to_yaml)
-
     if self.version_group.length > 0
-      return (self.version_group[:entries][0])[:version] == self.dataset_version.to_i
+      return (self.version_group[:entries][0])[:version] == self.dataset_version.to_f
     else
       return true
     end
