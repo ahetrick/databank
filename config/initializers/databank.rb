@@ -11,7 +11,24 @@ DEMO_PREFIXES = ["10.26123"]
 
 TEST_PREFIXES = ["10.70114"]
 
-IDB_CONFIG = YAML.load(ERB.new(File.read(File.join(Rails.root, 'config', 'databank.yml'))).result)
+config_path = File.join(Rails.root, 'config', 'databank.yml')
+
+puts "file exists at config_path: #{File.file?(config_path)}"
+
+file_contents = File.read(config_path)
+
+#puts file_contents
+
+puts Rails.application.credentials.orcid_token
+puts Rails.application.credentials[Rails.env.to_sym][:admin][:netids]
+
+template = ERB.new(file_contents)
+
+puts template.class
+
+IDB_CONFIG = YAML.load template.result binding
+
+Rails.logger.warn IDB_CONFIG.to_yaml
 
 Application.storage_manager = StorageManager.new
 
