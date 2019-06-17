@@ -15,6 +15,7 @@
 
 # Ignore local files.
 .idea
+databank.iml
 config/master.key
 public/uploads
 config/sunspot.yml
