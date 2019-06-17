@@ -15,6 +15,7 @@
 
 # Ignore local files.
 .idea
+databank.iml
 config/database.yml
 config/databank.yml
 config/secrets.yml
