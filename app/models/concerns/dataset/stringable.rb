@@ -296,6 +296,24 @@ module Stringable
     end
   end
 
+  def bibtex_creator_list
+    if creators.count.zero?
+      "[Creator List]"
+    elsif creators.count == 1
+      creator = creators.first
+      if creator.institution_name && creator.institution_name != "" || creator.family_name && creator.family_name != ""
+        return creator.list_name
+      end
+    else
+      return_list = ""
+      creators.each_with_index do |creator, i|
+        return_list += " and " unless i.zero?
+        return_list += creator.list_name
+      end
+      return_list
+    end
+  end
+
   def contributor_list
     if contributors.count.zero?
       nil

@@ -157,7 +157,15 @@ class User::Shibboleth < User::User
         # One Time Pay"
         return false
       else
-        return false
+        student_level = xml_doc.xpath("//attr[@name='uiucedustudentlevelcode']").text()
+        return false unless student_level
+        student_level.strip!
+        if student_level == "1U"
+          # undergraduate
+          return false
+        else
+          return true
+        end
       end
     else
       return false

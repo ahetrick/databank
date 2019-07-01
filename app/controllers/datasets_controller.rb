@@ -1534,13 +1534,14 @@ class DatasetsController < ApplicationController
   def download_BibTeX
 
     if !@dataset.identifier
-      @dataset.identifier = @dataset.key
+      @dataset.identifier = @dataset.default_identifier
     end
 
     t = Tempfile.new("#{@dataset.key}_endNote")
-    citekey = SecureRandom.uuid
+    # citekey = SecureRandom.uuid
+    citekey = "illinoisdatabank#{@dataset.key}"
 
-    t.write("@data{#{citekey},\ndoi = {#{@dataset.identifier}},\nurl = {#{@dataset.datacite_url_base}/#{@dataset.identifier}},\nauthor = {#{@dataset.creator_list}},\npublisher = {#{@dataset.publisher}},\ntitle = {#{@dataset.title} ﻿},\nyear = {#{@dataset.publication_year}}
+    t.write("@data{#{citekey},\ndoi = {#{@dataset.identifier}},\nurl = {#{@dataset.datacite_url_base}/#{@dataset.identifier}},\nauthor = {#{@dataset.bibtex_creator_list}},\npublisher = {#{@dataset.publisher}},\ntitle = {#{@dataset.title} ﻿},\nyear = {#{@dataset.publication_year}}
 }")
 
     send_file t.path, :type => 'application/application/x-bibtex',
