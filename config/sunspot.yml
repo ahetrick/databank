@@ -1,0 +1,27 @@
+development:
+  solr:
+    hostname: localhost
+    port: 8982
+    log_level: INFO
+    path: /solr/development
+
+test:
+  solr:
+    hostname: localhost
+    port: 8981
+    log_level: INFO
+    path: /solr/test
+
+aws-demo:
+  solr:
+    hostname: solr-demo.library.illinois.edu
+    port: 8983
+    log_level: WARNING
+    path: /solr/databank
+
+aws-production:
+  solr:
+    hostname: solr-prod.library.illinois.edu
+    port: 8983
+    log_level: WARNING
+    path: /solr/databank

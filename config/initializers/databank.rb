@@ -11,24 +11,69 @@ DEMO_PREFIXES = ["10.26123"]
 
 TEST_PREFIXES = ["10.70114"]
 
-config_path = File.join(Rails.root, 'config', 'databank.yml')
+# puts Rails.application.credentials[:recaptcha][:site_key]
+# puts Rails.application.credentials[:recaptcha][:secret_key]
+# puts Rails.application.credentials[:illinois_experts][:key]
+# puts Rails.application.credentials[:illinois_experts][:endpoint]
+# puts Rails.application.credentials[Rails.env.to_sym][:admin][:netids]
+# puts Rails.application.credentials[Rails.env.to_sym][:admin][:identities]
+# puts Rails.application.credentials[Rails.env.to_sym][:admin][:tech_mail_list]
+# puts Rails.application.credentials[Rails.env.to_sym][:admin][:materials_report_list]
+# puts Rails.application.credentials[Rails.env.to_sym][:datacite][:endpoint]
+# puts Rails.application.credentials[Rails.env.to_sym][:datacite][:username]
+# puts Rails.application.credentials[Rails.env.to_sym][:datacite][:password]
+# puts Rails.application.credentials[Rails.env.to_sym][:datacite][:shoulder]
+# puts Rails.application.credentials[Rails.env.to_sym][:datacite][:url_base]
+# puts Rails.application.credentials[Rails.env.to_sym][:test_datacite][:endpoint]
+# puts Rails.application.credentials[Rails.env.to_sym][:test_datacite][:username]
+# puts Rails.application.credentials[Rails.env.to_sym][:test_datacite][:password]
+# puts Rails.application.credentials[Rails.env.to_sym][:test_datacite][:shoulder]
+# puts Rails.application.credentials[Rails.env.to_sym][:test_datacite][:url_base]
+# puts Rails.application.credentials[Rails.env.to_sym][:tasks_url]
+# puts Rails.application.credentials[Rails.env.to_sym][:key_prefix]
+# puts Rails.application.credentials[Rails.env.to_sym][:agreements_root_path]
+# puts Rails.application.credentials[Rails.env.to_sym][:root_url_text]
+# puts Rails.application.credentials[Rails.env.to_sym][:tmpdir]
+# puts Rails.application.credentials[Rails.env.to_sym][:system_user_name]
+# puts Rails.application.credentials[Rails.env.to_sym][:system_user_email]
+# puts Rails.application.credentials[Rails.env.to_sym][:iiif_root]
+# puts Rails.application.credentials[Rails.env.to_sym][:iiif_medusa_group]
+# puts Rails.application.credentials[Rails.env.to_sym][:reserve_doi_netid]
+# puts Rails.application.credentials[Rails.env.to_sym][:reserve_doi_role]
+# puts Rails.application.credentials[Rails.env.to_sym][:aws][:s3_mode]
+# puts Rails.application.credentials[Rails.env.to_sym][:aws][:access_key_id]
+# puts Rails.application.credentials[Rails.env.to_sym][:aws][:secret_access_key]
+# puts Rails.application.credentials[Rails.env.to_sym][:aws][:region]
+# puts Rails.application.credentials[Rails.env.to_sym][:storage][:tmp_path]
+# puts Rails.application.credentials[Rails.env.to_sym][:storage][:draft_type]
+# puts Rails.application.credentials[Rails.env.to_sym][:storage][:draft_path]
+# puts Rails.application.credentials[Rails.env.to_sym][:storage][:medusa_type]
+# puts Rails.application.credentials[Rails.env.to_sym][:storage][:medusa_path]
+# puts Rails.application.credentials[Rails.env.to_sym][:iiif][:draft_base]
+# puts Rails.application.credentials[Rails.env.to_sym][:iiif][:medusa_base]
+# puts Rails.application.credentials[Rails.env.to_sym][:amqp][:ssl]
+# puts Rails.application.credentials[Rails.env.to_sym][:amqp][:port]
+# puts Rails.application.credentials[Rails.env.to_sym][:amqp][:host]
+# puts Rails.application.credentials[Rails.env.to_sym][:amqp][:user]
+# puts Rails.application.credentials[Rails.env.to_sym][:amqp][:password]
+# puts Rails.application.credentials[Rails.env.to_sym][:amqp][:verify_peer]
+# puts Rails.application.credentials[Rails.env.to_sym][:medusa][:outgoing_queue]
+# puts Rails.application.credentials[Rails.env.to_sym][:medusa][:incoming_queue]
+# puts Rails.application.credentials[Rails.env.to_sym][:medusa][:medusa_path_root]
+# puts Rails.application.credentials[Rails.env.to_sym][:medusa][:dataset_staging]
+# puts Rails.application.credentials[Rails.env.to_sym][:medusa][:file_group_url]
+# puts Rails.application.credentials[Rails.env.to_sym][:medusa][:datasets_url_base]
+# puts Rails.application.credentials[Rails.env.to_sym][:downloader][:ssl]
+# puts Rails.application.credentials[Rails.env.to_sym][:downloader][:host]
+# puts Rails.application.credentials[Rails.env.to_sym][:downloader][:realm]
+# puts Rails.application.credentials[Rails.env.to_sym][:downloader][:user]
+# puts Rails.application.credentials[Rails.env.to_sym][:downloader][:password]
+# puts Rails.application.credentials[Rails.env.to_sym][:medusa_info][:ssl]
+# puts Rails.application.credentials[Rails.env.to_sym][:medusa_info][:host]
+# puts Rails.application.credentials[Rails.env.to_sym][:medusa_info][:user]
+# puts Rails.application.credentials[Rails.env.to_sym][:medusa_info][:password]
 
-puts "file exists at config_path: #{File.file?(config_path)}"
-
-file_contents = File.read(config_path)
-
-#puts file_contents
-
-puts Rails.application.credentials.orcid_token
-puts Rails.application.credentials[Rails.env.to_sym][:admin][:netids]
-
-template = ERB.new(file_contents)
-
-puts template.class
-
-IDB_CONFIG = YAML.load template.result binding
-
-Rails.logger.warn IDB_CONFIG.to_yaml
+IDB_CONFIG = YAML.load(ERB.new(File.read(File.join(Rails.root, 'config', 'databank.yml'))).result)
 
 Application.storage_manager = StorageManager.new
 
@@ -71,7 +116,6 @@ IDB_CONFIG[:admin][:identities].split(", ").each do |email|
       Invitee.create!(email:email, expires_at: Time.now + 1.years, role: Databank::UserRole::ADMIN)
     end
   end
-
 
 end
 

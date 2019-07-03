@@ -1,5 +1,5 @@
 development:
-  host: rds-dev.library.illinois.edu
+  host: localhost
   uid_field: eppn
   extra_fields:
     - eppn
@@ -13,9 +13,8 @@ development:
     name: displayName
     email: mail
 
-
-test:
-  host: rds-dev.library.illinois.edu
+aws-demo:
+  host: demo.library.illinois.edu
   uid_field: eppn
   extra_fields:
     - eppn
@@ -29,7 +28,7 @@ test:
     name: displayName
     email: mail
 
-production:
+aws-production:
   host: databank.illinois.edu
   uid_field: eppn
   extra_fields:
@@ -43,4 +42,18 @@ production:
   info_fields:
     name: displayName
     email: mail
-   
+
+test:
+  host: localhost
+  uid_field: eppn
+  extra_fields:
+    - eppn
+    - unscoped-affiliation
+    - uid
+    - sn
+    - nickname
+    - givenName
+  request_type: header
+  info_fields:
+    name: displayName
+    email: mail

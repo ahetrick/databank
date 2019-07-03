@@ -181,6 +181,7 @@ group :development, :test do
   gem 'shoulda-matchers'
   gem 'byebug'
   gem 'puma'
+  gem 'rb-readline'
 end
 
 #Use Cucumber for behavior testing

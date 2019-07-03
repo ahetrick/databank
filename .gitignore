@@ -18,7 +18,6 @@
 databank.iml
 config/master.key
 public/uploads
-config/sunspot.yml
 nginx.conf.erb.old
 nginx.conf.erb
 mock_medusa

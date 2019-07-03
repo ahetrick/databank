@@ -19,14 +19,14 @@
   :username: <%= Rails.application.credentials[Rails.env.to_sym][:datacite][:username] %>
   :password: <%= Rails.application.credentials[Rails.env.to_sym][:datacite][:password] %>
   :shoulder: <%= Rails.application.credentials[Rails.env.to_sym][:datacite][:shoulder] %>
-  :url_base: <%= Rails.application.credentials[Rails.env.to_sym][:datacite][:url_prefix] %>
+  :url_base: <%= Rails.application.credentials[Rails.env.to_sym][:datacite][:url_base] %>
 
 :test_datacite:
   :endpoint: <%= Rails.application.credentials[Rails.env.to_sym][:test_datacite][:endpoint] %>
   :username: <%= Rails.application.credentials[Rails.env.to_sym][:test_datacite][:username] %>
   :password: <%= Rails.application.credentials[Rails.env.to_sym][:test_datacite][:password] %>
   :shoulder: <%= Rails.application.credentials[Rails.env.to_sym][:test_datacite][:shoulder] %>
-  :url_base: <%= Rails.application.credentials[Rails.env.to_sym][:test_datacite][:url_prefix] %>
+  :url_base: <%= Rails.application.credentials[Rails.env.to_sym][:test_datacite][:url_base] %>
 
 :tasks_url: <%= Rails.application.credentials[Rails.env.to_sym][:tasks_url] %>
 :key_prefix: <%= Rails.application.credentials[Rails.env.to_sym][:key_prefix] %>
@@ -62,37 +62,36 @@
 #You can set anything here that you might pass to Bunny.new. Anything you don't set just gets the Bunny default.
 #Typical fields needed for our setup are shown below.
 amqp:
-  ssl: <%= Rails.application.credentials[Rails.env.to_sym]['ampq']['ssl'] %>
-  port: <%= Rails.application.credentials[Rails.env.to_sym]['ampq']['port'] %>
-  host: <%= Rails.application.credentials[Rails.env.to_sym]['ampq']['host'] %>
-  user: <%= Rails.application.credentials[Rails.env.to_sym]['ampq']['user'] %>
-  password: <%= Rails.application.credentials[Rails.env.to_sym]['ampq']['password'] %>
-  verify_peer: <%= Rails.application.credentials[Rails.env.to_sym]['ampq']['verify_peer'] %>
+  ssl: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:ssl] %>
+  port: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:port] %>
+  host: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:host] %>
+  user: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:user] %>
+  password: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:password] %>
+  verify_peer: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:verify_peer] %>
   heartbeat: 10
 #Configuration for the medusa integration
 medusa:
   #AMQP queues to communicate with medusa server
-  outgoing_queue: <%= Rails.application.credentials[Rails.env.to_sym]['medusa']['outgoing_queue'] %>
-  incoming_queue: <%= Rails.application.credentials[Rails.env.to_sym]['medusa']['incoming_queue'] %>
-  medusa_path_root: <%= Rails.application.credentials[Rails.env.to_sym]['medusa']['medusa_path_root'] %>
-  dataset_staging: <%= Rails.application.credentials[Rails.env.to_sym]['medusa']['dataset_staging'] %>
-  file_group_url: <%= Rails.application.credentials[Rails.env.to_sym]['medusa']['file_group_url'] %>
-  datasets_url_base: <%= Rails.application.credentials[Rails.env.to_sym]['medusa']['datasets_url_base'] %>
+  outgoing_queue: <%= Rails.application.credentials[Rails.env.to_sym][:medusa][:outgoing_queue] %>
+  incoming_queue: <%= Rails.application.credentials[Rails.env.to_sym][:medusa][:incoming_queue] %>
+  medusa_path_root: <%= Rails.application.credentials[Rails.env.to_sym][:medusa][:medusa_path_root] %>
+  dataset_staging: <%= Rails.application.credentials[Rails.env.to_sym][:medusa][:dataset_staging] %>
+  file_group_url: <%= Rails.application.credentials[Rails.env.to_sym][:medusa][:file_group_url] %>
+  datasets_url_base: <%= Rails.application.credentials[Rails.env.to_sym][:medusa][:datasets_url_base] %>
 
 #Configuration for medusa downloader
 downloader:
-  ssl: <%= Rails.application.credentials[Rails.env.to_sym]['downloader']['ssl'] %>
-  host: <%= Rails.application.credentials[Rails.env.to_sym]['downloader']['host'] %>
+  ssl: <%= Rails.application.credentials[Rails.env.to_sym][:downloader][:ssl] %>
+  host: <%= Rails.application.credentials[Rails.env.to_sym][:downloader][:host] %>
   port: 8080
-  realm: <%= Rails.application.credentials[Rails.env.to_sym]['downloader']['realm'] %>
-  user: <%= Rails.application.credentials[Rails.env.to_sym]['downloader']['user'] %>
-  password: <%= Rails.application.credentials[Rails.env.to_sym]['downloader']['password'] %>
+  realm: <%= Rails.application.credentials[Rails.env.to_sym][:downloader][:realm] %>
+  user: <%= Rails.application.credentials[Rails.env.to_sym][:downloader][:user] %>
+  password: <%= Rails.application.credentials[Rails.env.to_sym][:downloader][:password] %>
 
-#Configuration for medusa downloader
+#Configuration for medusa info
 medusa_info:
-  ssl: <%= Rails.application.credentials[Rails.env.to_sym]['downloader']['password'] %>
-  host: <%= Rails.application.credentials[Rails.env.to_sym]['downloader']['password'] %>
+  ssl: <%= Rails.application.credentials[Rails.env.to_sym][:medusa_info][:ssl] %>
+  host: <%= Rails.application.credentials[Rails.env.to_sym][:medusa_info][:host] %>
   port: 8080
-  user: <%= Rails.application.credentials[Rails.env.to_sym]['downloader']['password'] %>
-  password: <%= Rails.application.credentials[Rails.env.to_sym]['downloader']['password'] %>
-
+  user: <%= Rails.application.credentials[Rails.env.to_sym][:medusa_info][:user] %>
+  password: <%= Rails.application.credentials[Rails.env.to_sym][:medusa_info][:password] %>
