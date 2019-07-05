@@ -161,6 +161,9 @@ Rails.application.routes.draw do
   # route binary downloads
   get "/datafiles/:id/download", to: "datafiles#download"
 
+  # route binary downloads from curators
+  get "/datafiles/:id/download_no_record", to: "datafiles#download_no_record"
+
   # direct view
   get '/datafiles/:id/view', to: "datafiles#view"
 

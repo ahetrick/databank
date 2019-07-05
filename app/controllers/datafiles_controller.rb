@@ -9,7 +9,7 @@ OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
 class DatafilesController < ApplicationController
 
-  before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download, :record_download, :download_url,
+  before_action :set_datafile, only: [:show, :edit, :update, :destroy, :download, :record_download, :download_no_record, :download_url,
                                       :upload, :do_upload, :reset_upload, :resume_upload, :update_status, :bucket_and_key,
                                       :preview, :view, :peek_text, :filepath, :iiif_filepath]
 
@@ -219,6 +219,12 @@ class DatafilesController < ApplicationController
   def download
 
     @datafile.record_download(request.remote_ip)
+
+    download_no_record
+
+  end
+
+  def download_no_record
 
     if @datafile.current_root.root_type == :filesystem
       @datafile.with_input_file do |input_file|
