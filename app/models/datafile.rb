@@ -222,9 +222,9 @@ class Datafile < ActiveRecord::Base
   def record_download(request_ip)
     return nil if Robot.exists?(address: request_ip)
 
-    return nil unless dataset.publication_state != Databank::PublicationState::DRAFT
+    return nil if dataset.publication_state == Databank::PublicationState::DRAFT
 
-    return nil unless DateTime.current >= dataset.release_datetime
+    return nil if Date.current < dataset.release_date
 
     unless dataset.ip_downloaded_dataset_today(request_ip)
 
