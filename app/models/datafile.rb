@@ -224,6 +224,8 @@ class Datafile < ActiveRecord::Base
 
     return nil unless dataset.publication_state != Databank::PublicationState::DRAFT
 
+    return nil unless DateTime.current >= dataset.release_datetime
+
     unless dataset.ip_downloaded_dataset_today(request_ip)
 
       day_ds_download_set = DatasetDownloadTally.where(["dataset_key= ? and download_date = ?",
