@@ -30,13 +30,11 @@
 
 :tasks_url: <%= Rails.application.credentials[Rails.env.to_sym][:tasks_url] %>
 :key_prefix: <%= Rails.application.credentials[Rails.env.to_sym][:key_prefix] %>
-:agreements_root_path: <%= Rails.application.credentials[Rails.env.to_sym][:agreements_root_path] %>
 :root_url_text: <%= Rails.application.credentials[Rails.env.to_sym][:root_url_text] %>
 :tmpdir: <%= Rails.application.credentials[Rails.env.to_sym][:tmpdir] %>
 :system_user_name: <%= Rails.application.credentials[Rails.env.to_sym][:system_user_name] %>
 :system_user_email: <%= Rails.application.credentials[Rails.env.to_sym][:system_user_email] %>
 :iiif_root: <%= Rails.application.credentials[Rails.env.to_sym][:iiif_root] %>
-:iiif_medusa_group: <%= Rails.application.credentials[Rails.env.to_sym][:iiif_medusa_group] %>
 :reserve_doi_netid: <%= Rails.application.credentials[Rails.env.to_sym][:reserve_doi_netid] %>
 :reserve_doi_role: <%= Rails.application.credentials[Rails.env.to_sym][:reserve_doi_role] %>
 :aws:
@@ -67,7 +65,9 @@ amqp:
   host: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:host] %>
   user: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:user] %>
   password: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:password] %>
-  verify_peer: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:verify_peer] %>
+  verify: verify_none
+  verify_peer: false
+  fail_if_no_peer_cert: false
   heartbeat: 10
 #Configuration for the medusa integration
 medusa:
@@ -75,7 +75,6 @@ medusa:
   outgoing_queue: <%= Rails.application.credentials[Rails.env.to_sym][:medusa][:outgoing_queue] %>
   incoming_queue: <%= Rails.application.credentials[Rails.env.to_sym][:medusa][:incoming_queue] %>
   medusa_path_root: <%= Rails.application.credentials[Rails.env.to_sym][:medusa][:medusa_path_root] %>
-  dataset_staging: <%= Rails.application.credentials[Rails.env.to_sym][:medusa][:dataset_staging] %>
   file_group_url: <%= Rails.application.credentials[Rails.env.to_sym][:medusa][:file_group_url] %>
   datasets_url_base: <%= Rails.application.credentials[Rails.env.to_sym][:medusa][:datasets_url_base] %>
 
@@ -87,6 +86,7 @@ downloader:
   realm: <%= Rails.application.credentials[Rails.env.to_sym][:downloader][:realm] %>
   user: <%= Rails.application.credentials[Rails.env.to_sym][:downloader][:user] %>
   password: <%= Rails.application.credentials[Rails.env.to_sym][:downloader][:password] %>
+  endpoint: <%= Rails.application.credentials[Rails.env.to_sym][:downloader][:endpoint] %>
 
 #Configuration for medusa info
 medusa_info:
