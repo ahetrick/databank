@@ -88,7 +88,7 @@ if IDB_CONFIG[:aws][:s3_mode] == true
   Application.aws_client = Aws::S3::Client.new
 
   Tus::Server.opts[:storage] = Tus::Storage::S3.new(prefix: 'uploads',
-      bucket:            IDB_CONFIG[:storage][0][:bucket], # required
+      bucket:            STORAGE_CONFIG[:storage][0][:bucket], # required
       access_key_id:     IDB_CONFIG[:aws][:access_key_id],
       secret_access_key: IDB_CONFIG[:aws][:secret_access_key],
       region:            IDB_CONFIG[:aws][:region],

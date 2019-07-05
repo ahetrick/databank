@@ -45,14 +45,6 @@
 
 :storage_tmpdir: <%= Rails.application.credentials[Rails.env.to_sym][:storage][:tmp_path] %>
 
-:storage:
-  - :name: draft
-    :type: <%= Rails.application.credentials[Rails.env.to_sym][:storage][:draft_type] %>
-    :path: <%= Rails.application.credentials[Rails.env.to_sym][:storage][:draft_path] %>
-  - :name: medusa
-    :type: <%= Rails.application.credentials[Rails.env.to_sym][:storage][:medusa_type] %>
-    :path: <%= Rails.application.credentials[Rails.env.to_sym][:storage][:medusa_path] %>
-
 :iiif:
   :draft_base: <%= Rails.application.credentials[Rails.env.to_sym][:iiif][:draft_base] %>
   :medusa_base: <%= Rails.application.credentials[Rails.env.to_sym][:iiif][:medusa_base] %>
