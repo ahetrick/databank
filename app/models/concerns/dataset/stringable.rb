@@ -14,10 +14,9 @@ module Stringable
                       title
                     else
                       "[Title]"
-
                     end
 
-    citation_id = persistent_id
+    citation_id = persistent_url
 
     "#{creator_list} (#{publication_year}): #{citationTitle}. #{publisher}. #{citation_id}"
   end
