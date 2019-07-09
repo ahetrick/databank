@@ -14,7 +14,7 @@ development:
     email: mail
 
 aws-demo:
-  host: demo.library.illinois.edu
+  host: demo.databank.illinois.edu
   uid_field: eppn
   extra_fields:
     - eppn
