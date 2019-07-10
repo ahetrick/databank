@@ -52,8 +52,7 @@ class User::Shibboleth < User::User
 
       if netid.respond_to?(:length) && netid.length > 0
 
-        admins = IDB_CONFIG[:admin][:netids].split(", ")
-
+        admins = IDB_CONFIG[:admin][:netids].split(",").collect{|x| x.strip || x }
         if admins.include?(netid)
           role = Databank::UserRole::ADMIN
         elsif can_deposit(email)
