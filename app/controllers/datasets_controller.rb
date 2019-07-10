@@ -1215,7 +1215,7 @@ class DatasetsController < ApplicationController
     if @dataset.is_test?
       shoulder = IDB_CONFIG[:test_datacite_shoulder]
     else
-      shoulder = IDB_CONFIG[:datacite_shoulder]
+      shoulder = IDB_CONFIG[:datacite][:shoulder]
     end
 
     if !@dataset.identifier || @dataset.identifier == ''

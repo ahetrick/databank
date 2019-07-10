@@ -7,9 +7,9 @@ require "base64"
 module Identifiable
   extend ActiveSupport::Concern
 
-  URI_BASE ||= "https://#{IDB_CONFIG[:datacite_rest_base]}/dois"
-  CLIENT_ID ||= IDB_CONFIG[:datacite_username]
-  PASSWORD ||= IDB_CONFIG[:datacite_password]
+  URI_BASE ||= "https://#{IDB_CONFIG[:datacite][:url_base]}/dois"
+  CLIENT_ID ||= IDB_CONFIG[:datacite][:username]
+  PASSWORD ||= IDB_CONFIG[:datacite][:password]
 
   private_constant :URI_BASE
   private_constant :CLIENT_ID
@@ -38,7 +38,7 @@ module Identifiable
   end
 
   def default_identifier
-    "#{IDB_CONFIG[:datacite_shoulder]}#{key}_V1"
+    "#{IDB_CONFIG[:datacite][:shoulder]}#{key}_V1"
   end
 
   def create_draft_doi

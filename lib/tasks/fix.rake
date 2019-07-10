@@ -305,9 +305,9 @@ namespace :fix do
   desc 'fix specific test records in datacite'
   task :fix_datacite_custom => :environment do
 
-    host = IDB_CONFIG[:datacite_endpoint]
-    user = IDB_CONFIG[:datacite_username]
-    password = IDB_CONFIG[:datacite_password]
+    host = IDB_CONFIG[:datacite][:endpoint]
+    user = IDB_CONFIG[:datacite][:username]
+    password = IDB_CONFIG[:datacite][:password]
 
     bad_records = ['10.26123/idbdev-1772206_v1',
      '10.26123/idbdev-2774199_v1',
