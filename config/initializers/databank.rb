@@ -97,7 +97,7 @@ if IDB_CONFIG[:aws][:s3_mode] == true
 
 else
 
-  Tus::Server.opts[:storage] = Tus::Storage::Filesystem.new(IDB_CONFIG[:storage][0][:path] )
+  Tus::Server.opts[:storage] = Tus::Storage::Filesystem.new(STORAGE_CONFIG[:storage][0][:path] )
 
 end
 
