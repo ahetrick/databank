@@ -14,6 +14,7 @@ class AmqpConnector < Object
 
   def reinitialize
     config = (AMQP_CONFIG || {}).symbolize_keys
+    Rails.logger.warn "amqp config:\n#{config}"
     config.merge!(recover_from_connection_close: true)
     self.known_queues = Set.new
     self.connection.close if self.connection
