@@ -7,7 +7,7 @@ require "base64"
 module Identifiable
   extend ActiveSupport::Concern
 
-  URI_BASE ||= "https://#{IDB_CONFIG[:datacite][:url_base]}/dois"
+  URI_BASE ||= "https://#{IDB_CONFIG[:datacite][:endpoint]}/dois"
   CLIENT_ID ||= IDB_CONFIG[:datacite][:username]
   PASSWORD ||= IDB_CONFIG[:datacite][:password]
 
