@@ -1,0 +1,45 @@
+development:
+  :ssl: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:ssl] %>
+  :port: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:port] %>
+  :host: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:host] %>
+  :user: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:user] %>
+  :password: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:password] %>
+  :verify: verify_none
+  :verify_peer: false
+  :fail_if_no_peer_cert: false
+  :heartbeat: 10
+
+aws-demo:
+  :ssl: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:ssl] %>
+  :port: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:port] %>
+  :host: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:host] %>
+  :user: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:user] %>
+  :password: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:password] %>
+  :vhost: medusa
+  :verify: verify_none
+  :verify_peer: false
+  :fail_if_no_peer_cert: false
+  :heartbeat: 10
+
+aws-production:
+  :ssl: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:ssl] %>
+  :port: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:port] %>
+  :host: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:host] %>
+  :user: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:user] %>
+  :password: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:password] %>
+  :vhost: medusa
+  :verify: verify_none
+  :verify_peer: false
+  :fail_if_no_peer_cert: false
+  :heartbeat: 10
+
+test:
+  :ssl: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:ssl] %>
+  :port: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:port] %>
+  :host: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:host] %>
+  :user: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:user] %>
+  :password: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:password] %>
+  :verify: verify_none
+  :verify_peer: false
+  :fail_if_no_peer_cert: false
+  :heartbeat: 10

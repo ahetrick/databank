@@ -49,18 +49,6 @@
   :draft_base: <%= Rails.application.credentials[Rails.env.to_sym][:iiif][:draft_base] %>
   :medusa_base: <%= Rails.application.credentials[Rails.env.to_sym][:iiif][:medusa_base] %>
 
-#You can set anything here that you might pass to Bunny.new. Anything you don't set just gets the Bunny default.
-#Typical fields needed for our setup are shown below.
-amqp:
-  ssl: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:ssl] %>
-  port: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:port] %>
-  host: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:host] %>
-  user: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:user] %>
-  password: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:password] %>
-  verify: verify_none
-  verify_peer: false
-  fail_if_no_peer_cert: false
-  heartbeat: 10
 #Configuration for the medusa integration
 medusa:
   #AMQP queues to communicate with medusa server

@@ -13,7 +13,7 @@ class AmqpConnector < Object
   end
 
   def reinitialize
-    config = (IDB_CONFIG['amqp'] || {}).symbolize_keys
+    config = (AMQP_CONFIG || {}).symbolize_keys
     config.merge!(recover_from_connection_close: true)
     self.known_queues = Set.new
     self.connection.close if self.connection

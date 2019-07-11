@@ -16,7 +16,7 @@ namespace :medusa do
 
     idbconfig = YAML.load_file(File.join(Rails.root, 'config', 'databank.yml'))[Rails.env]
 
-    config = (idbconfig['amqp'] || {}).symbolize_keys
+    config = (AMQP_CONFIG || {}).symbolize_keys
 
     config.merge!(recover_from_connection_close: true)
 
@@ -46,7 +46,7 @@ namespace :medusa do
 
     idbconfig = YAML.load_file(File.join(Rails.root, 'config', 'databank.yml'))[Rails.env]
 
-    config = (idbconfig['amqp'] || {}).symbolize_keys
+    config = (AMQP_CONFIG || {}).symbolize_keys
 
     config.merge!(recover_from_connection_close: true)
 
@@ -79,7 +79,7 @@ namespace :medusa do
 
     idbconfig = YAML.load_file(File.join(Rails.root, 'config', 'databank.yml'))[Rails.env]
 
-    config = (idbconfig['amqp'] || {}).symbolize_keys
+    config = (AMQP_CONFIG || {}).symbolize_keys
 
     config.merge!(recover_from_connection_close: true)
 

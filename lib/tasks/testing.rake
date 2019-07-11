@@ -8,9 +8,7 @@ namespace :testing do
   task :send_msg => :environment do
     puts "sending message"
 
-    idbconfig = YAML.load_file(File.join(Rails.root, 'config', 'databank.yml'))[Rails.env]
-
-    config = (idbconfig['amqp'] || {}).symbolize_keys
+    config = (AMQP_CONFIG || {}).symbolize_keys
 
     config.merge!(recover_from_connection_close: true)
 
@@ -35,9 +33,7 @@ namespace :testing do
   task :get_msg => :environment do
     puts "getting message"
 
-    idbconfig = YAML.load_file(File.join(Rails.root, 'config', 'databank.yml'))[Rails.env]
-
-    config = (idbconfig['amqp'] || {}).symbolize_keys
+    config = (AMQP_CONFIG || {}).symbolize_keys
 
     config.merge!(recover_from_connection_close: true)
 
@@ -63,9 +59,7 @@ namespace :testing do
   task :send_ok => :environment do
     puts "sending message"
 
-    idbconfig = YAML.load_file(File.join(Rails.root, 'config', 'databank.yml'))[Rails.env]
-
-    config = (idbconfig['amqp'] || {}).symbolize_keys
+    config = (AMQP_CONFIG || {}).symbolize_keys
 
     config.merge!(recover_from_connection_close: true)
 
@@ -97,9 +91,7 @@ namespace :testing do
   task :send_error => :environment do
     puts "sending message"
 
-    idbconfig = YAML.load_file(File.join(Rails.root, 'config', 'databank.yml'))[Rails.env]
-
-    config = (idbconfig['amqp'] || {}).symbolize_keys
+    config = (AMQP_CONFIG || {}).symbolize_keys
 
     config.merge!(recover_from_connection_close: true)
 

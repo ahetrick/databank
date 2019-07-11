@@ -72,6 +72,7 @@ TEST_PREFIXES = ["10.70114"]
 
 IDB_CONFIG = YAML.load(ERB.new(File.read(File.join(Rails.root, 'config', 'databank.yml'))).result)
 STORAGE_CONFIG = YAML.load(ERB.new(File.read(File.join(Rails.root, 'config', 'medusa_storage.yml'))).result)[Rails.env]
+AMQP_CONFIG = YAML.load(ERB.new(File.read(File.join(Rails.root, 'config', 'amqp.yml'))).result)[Rails.env]
 
 Application.storage_manager = StorageManager.new
 
