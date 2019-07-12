@@ -15,7 +15,7 @@ aws-demo:
   :user: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:user] %>
   :password: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:password] %>
   :vhost: medusa
-  :verify: verify_none
+  :verify: false
   :verify_peer: false
   :fail_if_no_peer_cert: false
   :heartbeat: 10
@@ -26,7 +26,7 @@ aws-production:
   :user: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:user] %>
   :password: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:password] %>
   :vhost: medusa
-  :verify: verify_none
+  :verify: false
   :verify_peer: false
   :fail_if_no_peer_cert: false
   :heartbeat: 10
