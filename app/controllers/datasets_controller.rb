@@ -1247,6 +1247,8 @@ class DatasetsController < ApplicationController
     authorize! :edit, @dataset
 
     publish_attempt_result = @dataset.publish(current_user)
+    Rails.logger.warn "publish attempt result:"
+    Rails.logger.warn publish_attempt_result.to_yaml
 
     respond_to do |format|
       if publish_attempt_result[:status] == :ok && @dataset.save
@@ -1256,7 +1258,8 @@ class DatasetsController < ApplicationController
         format.html {redirect_to dataset_path(@dataset.key), notice: publish_attempt_result[:error_text]}
         format.json {render json: {status: :unprocessable_entity}, content_type: request.format, :layout => false}
       else
-        Rails.logger.warn publish_attempt_result.to_yaml
+        Rails.logger.warn "unexepected error in attempt to publish:"
+        #Rails.logger.warn publish_attempt_result.to_yaml
         format.html {redirect_to dataset_path(@dataset.key), notice: 'Error in publishing dataset has been logged for review by the Research Data Service.'}
         format.json {render json: {status: :unprocessable_entity}, content_type: request.format, :layout => false}
       end

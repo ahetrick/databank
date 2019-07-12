@@ -4,6 +4,10 @@ module Publishable
   extend ActiveSupport::Concern
 
   def publish(user)
+
+    return_json = {status: :error_occurred,
+                   error_text: "Incomplete workflow in publish attempt."}
+
     complete = Dataset.completion_check(self, user) == "ok"
     return {status: :error_occurred, error_text: Dataset.completion_check(self, user)} unless complete
 
@@ -13,7 +17,7 @@ module Publishable
 
     if (old_publication_state != Databank::PublicationState::DRAFT) &&
         (!identifier || identifier == "")
-      return {status:     :error_occurred,
+      return {status: :error_occurred,
               error_text: "Missing identifier for dataset that is not a draft. Dataset: #{key}"}
     end
 
@@ -24,10 +28,10 @@ module Publishable
     # set publication_state
     embargo_list = [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA]
     publication_state = if embargo && embargo_list.include?(embargo)
-                               embargo
-                             else
-                               Databank::PublicationState::RELEASED
-                             end
+                          embargo
+                        else
+                          Databank::PublicationState::RELEASED
+                        end
 
     if old_publication_state == Databank::PublicationState::DRAFT &&
         publication_state != Databank::PublicationState::DRAFT
@@ -53,6 +57,7 @@ module Publishable
 
       if IDB_CONFIG[:local_mode] && IDB_CONFIG[:local_mode] == true
         Rails.logger.warn "Dataset #{key} succesfully deposited."
+        return {status: :ok, old_publication_state: old_publication_state}
       else
         begin
           notification = DatabankMailer.confirm_deposit(key)
@@ -62,10 +67,12 @@ module Publishable
           notification.deliver_now
         end
       end
-      {status: :ok, old_publication_state: old_publication_state}
+      return {status: :ok, old_publication_state: old_publication_state}
     else
-      {status:     :error_occurred,
-       error_text: "Error in publishing dataset has been logged for review by the Research Data Service."}
+      return {status: :error_occurred,
+              error_text: "Error in publishing dataset has been logged for review by the Research Data Service."}
     end
+
+    return_json
   end
 end
