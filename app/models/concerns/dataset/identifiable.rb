@@ -58,6 +58,7 @@ module Identifiable
   # publish - Triggers a state move from draft or registered to findable
   def publish_doi
 
+    Rails.logger.warn "no identifier present" unless identifier_present?
     return false unless identifier_present?
 
     current_state = doi_state
@@ -134,9 +135,6 @@ module Identifiable
 
     response = Dataset.put_to_datacite(identifier, datacite_json_body(nil))
 
-    puts "inside update_doi"
-    puts response.code
-    puts response.code.class
     response.code == "200"
   end
 

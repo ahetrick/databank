@@ -1248,7 +1248,7 @@ class DatasetsController < ApplicationController
 
     publish_attempt_result = @dataset.publish(current_user)
     Rails.logger.warn "publish attempt result:"
-    Rails.logger.warn publish_attempt_result.to_yaml
+    Rails.logger.warn publish_attempt_result
 
     respond_to do |format|
       if publish_attempt_result[:status] == :ok && @dataset.save
