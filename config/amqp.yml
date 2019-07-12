@@ -1,5 +1,5 @@
 development:
-  :ssl: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:ssl] %>
+  :ssl: false
   :port: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:port] %>
   :host: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:host] %>
   :user: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:user] %>
@@ -10,8 +10,7 @@ development:
   :heartbeat: 10
 
 aws-demo:
-  :ssl: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:ssl] %>
-  :port: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:port] %>
+  :ssl: true
   :host: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:host] %>
   :user: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:user] %>
   :password: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:password] %>
@@ -22,8 +21,7 @@ aws-demo:
   :heartbeat: 10
 
 aws-production:
-  :ssl: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:ssl] %>
-  :port: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:port] %>
+  :ssl: true
   :host: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:host] %>
   :user: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:user] %>
   :password: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:password] %>
@@ -34,7 +32,7 @@ aws-production:
   :heartbeat: 10
 
 test:
-  :ssl: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:ssl] %>
+  :ssl: false
   :port: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:port] %>
   :host: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:host] %>
   :user: <%= Rails.application.credentials[Rails.env.to_sym][:amqp][:user] %>
