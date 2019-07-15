@@ -69,7 +69,7 @@ gem 'sdoc', group: :doc
 gem "figaro"
 
 # Use bootstrap for layout framework
-gem 'bootstrap-sass'
+gem 'bootstrap-sass', '~> 3.4.1'
 gem 'font-awesome-sass'
 gem 'autoprefixer-rails'
 
