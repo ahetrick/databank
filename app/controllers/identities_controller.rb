@@ -2,7 +2,7 @@
 
 class IdentitiesController < ApplicationController
   load_and_authorize_resource
-  skip_authorize_resource only: %i[new login register]
+  skip_authorize_resource only: %i[login register]
   before_action :set_identity, only: %i[show edit update destroy]
 
   # GET /identities
