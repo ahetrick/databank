@@ -1148,6 +1148,8 @@ GEM
     rubyzip (1.2.3)
     sass (3.7.4)
       sass-listen (~> 4.0.0)
+    sass-css-importer (1.0.0.beta.0)
+      sass (>= 3.1)
     sass-listen (4.0.0)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -1298,6 +1300,7 @@ DEPENDENCIES
   ruby-debug-ide
   ruby-filemagic
   rubyzip
+  sass-css-importer
   sass-rails
   sdoc
   selenium-webdriver

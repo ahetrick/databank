@@ -73,6 +73,8 @@ gem 'bootstrap-sass', '~> 3.4.1'
 gem 'font-awesome-sass'
 gem 'autoprefixer-rails'
 
+gem 'sass-css-importer'
+
 gem 'haml'
 
 gem 'uuid'
