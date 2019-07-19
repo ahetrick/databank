@@ -19,7 +19,7 @@
 //= require jquery-ui/effects/effect-highlight
 //= require zeroclipboard
 //= require bootstrap-sprockets
-//= require highcharts/highcharts
+//= require highcharts
 //= require highcharts/highcharts-more
 //= require highcharts/map
 //= require_tree .
