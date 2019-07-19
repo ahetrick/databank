@@ -20,5 +20,5 @@
 //= require zeroclipboard
 //= require bootstrap-sprockets
 //= require highcharts
-//= require highcharts/highcharts-moregit st
+//= require highcharts/highcharts-more
 //= require_tree .
