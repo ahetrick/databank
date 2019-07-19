@@ -58,7 +58,7 @@ Rails.application.routes.draw do
   get "/on_failed_registration", to: "welcome#on_failed_registration"
 
   resources :account_activations, only: [:edit]
-  resources :visulizations, only: [:index]
+  resources :visualizations, only: [:index]
 
   resources :related_materials
   resources :funders
