@@ -1,28 +1,30 @@
-source 'https://rubygems.org'
-ruby '2.5.2'
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+ruby "2.5.2"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2', '>= 5.2.2'
+gem "rails", "~> 5.2", ">= 5.2.2"
 
 # Use postgresql as the database for Active Record
-gem 'pg'
+gem "pg"
 # Use SCSS for stylesheets
-gem 'sass-rails'
+gem "sass-rails"
 # Use Uglifier as compressor for JavaScript assets
-gem 'uglifier'
+gem "uglifier"
 # Use CoffeeScript for .coffee assets and views
-gem 'coffee-rails'
+gem "coffee-rails"
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
 # Use in-house storage gem to manage flexible storage on filesystems and s3 buckets
-gem 'medusa_storage', git: 'https://github.com/medusa-project/medusa_storage.git', branch: 'master'
+gem "medusa_storage", git: "https://github.com/medusa-project/medusa_storage.git", branch: "master"
 
 # Use aws-sdk to manage signed urls for downloads
-gem 'aws-sdk'
+gem "aws-sdk"
 
 # Use browser to detect request browser
-gem 'browser'
+gem "browser"
 
 # Use tus-server to support chunked uploads of large files
 gem "tus-server"
@@ -31,125 +33,125 @@ gem "tus-server"
 gem "recaptcha"
 
 # Use jquery as the JavaScript library
-gem 'jquery-rails'
-gem 'jquery-ui-rails'
-gem 'jquery-datatables-rails', '~> 3.4.0'
+gem "jquery-datatables-rails", "~> 3.4.0"
+gem "jquery-rails"
+gem "jquery-ui-rails"
 
 # Use zeroclipboard-rails to copy text to clipboards
-gem 'zeroclipboard-rails'
+gem "zeroclipboard-rails"
 
 # Use filemagic to detect file types
-gem 'ruby-filemagic'
+gem "ruby-filemagic"
 
 # Use rubyzip to stream dynamically generated zip files
-gem 'rubyzip'
-gem 'zipline'
+gem "rubyzip"
+gem "zipline"
 
 # Use seven_zip_ruby to handle 7zip archives
-gem 'seven_zip_ruby'
+gem "seven_zip_ruby"
 
 # Use minitar to deal with POSIX tar archive files
-gem 'minitar'
+gem "minitar"
 
 # Use rchardet to attempt to detect character encoding
-gem 'rchardet'
+gem "rchardet"
 
 # Use roda for routing magic
-gem 'roda'
+gem "roda"
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 # gem 'turbolinks'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 2.0'
+gem "jbuilder", "~> 2.0"
 
 # bundle exec rake doc:rails generates the API under doc/api.
-gem 'sdoc', group: :doc
+gem "sdoc", group: :doc
 
 # Use figaro to set environment variables
 gem "figaro"
 
 # Use bootstrap for layout framework
-gem 'bootstrap-sass', '~> 3.4.1'
-gem 'font-awesome-sass'
-gem 'autoprefixer-rails'
+gem "autoprefixer-rails"
+gem "bootstrap-sass", "~> 3.4.1"
+gem "font-awesome-sass"
 
-gem 'sass-css-importer'
+gem "sass-css-importer"
 
-gem 'haml'
+gem "haml"
 
-gem 'uuid'
+gem "uuid"
 
-gem 'open_uri_redirections'
+gem "open_uri_redirections"
 
 # Use ActiveRecord session store to support larger session
-gem 'activerecord-session_store', github: 'rails/activerecord-session_store'
+gem "activerecord-session_store", github: "rails/activerecord-session_store"
 
 # Use RMagick to connect with ImageMagick
 # gem 'rmagick'
 
 # Use cocoon to make it easier to handle nested forms
-#gem 'cocoon'
+# gem 'cocoon'
 
 # Use ranked-model to support ordering resources
 # gem 'ranked-model'
 
-gem 'mime-types', require: 'mime/types/full'
+gem "mime-types", require: "mime/types/full"
 
 # Use 'rest-client' to interaction with file processor api
-gem 'rest-client'
+gem "rest-client"
 
 # Use highcharts and daru for interactive graphs
+gem "daru", git: "https://github.com/SciRuby/daru.git"
+gem "daru-data_tables", git: "https://github.com/Shekharrajak/daru-data_tables.git"
+gem "daru-view", git: "https://github.com/sciruby/daru-view.git"
+gem "google_visualr", git: "https://github.com/winston/google_visualr.git"
 gem "highcharts-rails"
-gem 'daru-view', :git => 'https://github.com/sciruby/daru-view.git'
-gem "daru", git: 'https://github.com/SciRuby/daru.git'
-gem "nyaplot", git: 'https://github.com/SciRuby/nyaplot.git'
-gem 'google_visualr', git: 'https://github.com/winston/google_visualr.git'
-gem 'daru-data_tables', git: 'https://github.com/Shekharrajak/daru-data_tables.git'
+gem "nyaplot", git: "https://github.com/SciRuby/nyaplot.git"
 
-#gem 'httpclient', git: 'git://github.com/medusa-project/httpclient.git'
+# gem 'httpclient', git: 'git://github.com/medusa-project/httpclient.git'
 
-gem 'nokogiri'
-gem 'nokogiri-diff'
-gem 'equivalent-xml'
+gem "equivalent-xml"
+gem "nokogiri"
+gem "nokogiri-diff"
 
 # use solr for searching
-gem 'sunspot_rails'
-gem 'sunspot_solr'
-gem 'progress_bar'
+gem "progress_bar"
+gem "sunspot_rails"
+gem "sunspot_solr"
 
 # use will_paginate for pagination of search results
-gem 'will_paginate'
-gem 'will_paginate-bootstrap'
+gem "will_paginate"
+gem "will_paginate-bootstrap"
 
 # Use ActiveModel has_secure_password
-gem 'bcrypt'
+gem "bcrypt"
 
 # Use Passenger standalone
 gem "passenger", require: "phusion_passenger/rack_handler"
 
 # Use email validator for model
-gem 'valid_email'
+gem "valid_email"
 
 # Use boostrap-datepicker-rails for selecting release date
 # gem 'bootstrap-datepicker-rails'
 
 # Use identity strategy to create local accounts for testing
-gem 'omniauth-identity'
-gem 'omniauth-shibboleth'
+gem "omniauth-identity"
+gem "omniauth-shibboleth"
 
 gem "omniauth-rails_csrf_protection"
 
 # Use Boxr to interact with Box API
-gem 'boxr'
+gem "boxr"
 
 # Use delayed_job during upload and ingest from box to avoid timeout failures
-gem 'delayed_job_active_record'
-gem 'daemons'
-gem 'progress_job'
+gem "daemons"
+gem "delayed_job_active_record"
+gem "progress_job"
 # gem 'delayed_job_heartbeat_plugin'
 
 # Use canan to restrict what resources a given user is allowed to access
-gem 'cancancan'
+gem "cancancan"
 
 # User bunny to handle RabbitMQ messages
 gem "bunny"
@@ -158,58 +160,56 @@ gem "bunny"
 gem "audited"
 
 # Use google-analytics-rails to support Google Analytics
-gem 'google-analytics-rails'
+gem "google-analytics-rails"
 
 # Use builder to support sitemaps generator
-gem 'builder'
+gem "builder"
 
 # Use curb to wrap curl
-gem 'curb'
+gem "curb"
 
 # Use modernizr-rails to handle different browsers differently
-gem 'modernizr-rails'
+gem "modernizr-rails"
 
 # use rubocop linter to support consisitent style
-gem 'rubocop', require: false
-gem 'rubocop-performance'
+gem "rubocop", require: false
+gem "rubocop-performance"
 
 # Access an IRB console on exception pages or by using <%= console %> in views
 # gem 'web-console', '~> 2.0'
 
 # Use mocha to support stubs for testing
-gem 'mocha'
+gem "mocha"
 
-#Use Selenenium web driver in testing
-gem 'selenium-webdriver'
+# Use Selenenium web driver in testing
+gem "selenium-webdriver"
 
-gem 'bootsnap', require: false
+gem "bootsnap", require: false
 
-gem 'simple_form'
+gem "simple_form"
 
 group :development, :test do
-  gem 'debase'
-  gem 'ruby-debug-ide'
-  gem 'factory_bot_rails'
-  gem 'shoulda-matchers'
-  gem 'byebug'
-  gem 'puma'
-  gem 'rb-readline'
+  gem "byebug"
+  gem "debase"
+  gem "factory_bot_rails"
+  gem "puma"
+  gem "rb-readline"
+  gem "ruby-debug-ide"
+  gem "shoulda-matchers"
 end
 
-#Use Cucumber for behavior testing
-gem 'cucumber-rails', :require => false
+# Use Cucumber for behavior testing
+gem "cucumber-rails", require: false
 
-#Use Capybara for behavior testing
-gem 'capybara'
+# Use Capybara for behavior testing
+gem "capybara"
 
-#Use DatabaseCleaner to clean the database
-gem 'database_cleaner'
+# Use DatabaseCleaner to clean the database
+gem "database_cleaner"
 
 # Use Capistrano for deployment
 
-gem 'capistrano-rails'
-gem 'capistrano-bundler'
-gem 'capistrano-rbenv'
-gem 'capistrano-passenger'
-
-
+gem "capistrano-bundler"
+gem "capistrano-passenger"
+gem "capistrano-rails"
+gem "capistrano-rbenv"
