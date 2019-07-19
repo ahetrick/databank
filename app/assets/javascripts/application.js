@@ -12,9 +12,14 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require dataTables/jquery.dataTables
+//= require dataTables/bootstrap/3/jquery.dataTables.bootstrap
 //= require jquery-ui/widgets/datepicker
 //= require jquery-ui/widgets/sortable
 //= require jquery-ui/effects/effect-highlight
 //= require zeroclipboard
 //= require bootstrap-sprockets
+//= require highcharts/highcharts
+//= require highcharts/highcharts-more
+//= require highcharts/map
 //= require_tree .

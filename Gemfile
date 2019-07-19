@@ -33,7 +33,7 @@ gem "recaptcha"
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
-gem 'highcharts-rails'
+gem 'jquery-datatables-rails', '~> 3.4.0'
 
 # Use zeroclipboard-rails to copy text to clipboards
 gem 'zeroclipboard-rails'
@@ -95,6 +95,14 @@ gem 'mime-types', require: 'mime/types/full'
 
 # Use 'rest-client' to interaction with file processor api
 gem 'rest-client'
+
+# Use highcharts and daru for interactive graphs
+gem "highcharts-rails"
+gem 'daru-view', :git => 'https://github.com/sciruby/daru-view.git'
+gem "daru", git: 'https://github.com/SciRuby/daru.git'
+gem "nyaplot", git: 'https://github.com/SciRuby/nyaplot.git'
+gem 'google_visualr', git: 'https://github.com/winston/google_visualr.git'
+gem 'daru-data_tables', git: 'https://github.com/Shekharrajak/daru-data_tables.git'
 
 #gem 'httpclient', git: 'git://github.com/medusa-project/httpclient.git'
 
