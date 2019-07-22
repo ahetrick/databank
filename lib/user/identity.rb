@@ -7,6 +7,9 @@ require_relative '../user'
 class User::Identity < User::User
 
   def self.from_omniauth(auth)
+
+    raise("missing or invalid auth") unless auth && auth[:uid] && auth["info"]["email"]
+
     if auth && auth[:uid] && auth["info"]["email"]
       email = auth["info"]["email"].strip
       identity = Identity.find_by_email(email)

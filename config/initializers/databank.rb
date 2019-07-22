@@ -11,65 +11,6 @@ DEMO_PREFIXES = ["10.26123"]
 
 TEST_PREFIXES = ["10.70114"]
 
-# puts Rails.application.credentials[:recaptcha][:site_key]
-# puts Rails.application.credentials[:recaptcha][:secret_key]
-# puts Rails.application.credentials[:illinois_experts][:key]
-# puts Rails.application.credentials[:illinois_experts][:endpoint]
-# puts Rails.application.credentials[Rails.env.to_sym][:admin][:netids]
-# puts Rails.application.credentials[Rails.env.to_sym][:admin][:identities]
-# puts Rails.application.credentials[Rails.env.to_sym][:admin][:tech_mail_list]
-# puts Rails.application.credentials[Rails.env.to_sym][:admin][:materials_report_list]
-# puts Rails.application.credentials[Rails.env.to_sym][:datacite][:endpoint]
-# puts Rails.application.credentials[Rails.env.to_sym][:datacite][:username]
-# puts Rails.application.credentials[Rails.env.to_sym][:datacite][:password]
-# puts Rails.application.credentials[Rails.env.to_sym][:datacite][:shoulder]
-# puts Rails.application.credentials[Rails.env.to_sym][:datacite][:url_base]
-# puts Rails.application.credentials[Rails.env.to_sym][:test_datacite][:endpoint]
-# puts Rails.application.credentials[Rails.env.to_sym][:test_datacite][:username]
-# puts Rails.application.credentials[Rails.env.to_sym][:test_datacite][:password]
-# puts Rails.application.credentials[Rails.env.to_sym][:test_datacite][:shoulder]
-# puts Rails.application.credentials[Rails.env.to_sym][:test_datacite][:url_base]
-# puts Rails.application.credentials[Rails.env.to_sym][:tasks_url]
-# puts Rails.application.credentials[Rails.env.to_sym][:key_prefix]
-# puts Rails.application.credentials[Rails.env.to_sym][:root_url_text]
-# puts Rails.application.credentials[Rails.env.to_sym][:tmpdir]
-# puts Rails.application.credentials[Rails.env.to_sym][:system_user_name]
-# puts Rails.application.credentials[Rails.env.to_sym][:system_user_email]
-# puts Rails.application.credentials[Rails.env.to_sym][:iiif_root]
-# puts Rails.application.credentials[Rails.env.to_sym][:reserve_doi_netid]
-# puts Rails.application.credentials[Rails.env.to_sym][:reserve_doi_role]
-# puts Rails.application.credentials[Rails.env.to_sym][:aws][:s3_mode]
-# puts Rails.application.credentials[Rails.env.to_sym][:aws][:access_key_id]
-# puts Rails.application.credentials[Rails.env.to_sym][:aws][:secret_access_key]
-# puts Rails.application.credentials[Rails.env.to_sym][:aws][:region]
-# puts Rails.application.credentials[Rails.env.to_sym][:storage][:tmp_path]
-# puts Rails.application.credentials[Rails.env.to_sym][:storage][:draft_type]
-# puts Rails.application.credentials[Rails.env.to_sym][:storage][:draft_path]
-# puts Rails.application.credentials[Rails.env.to_sym][:storage][:medusa_type]
-# puts Rails.application.credentials[Rails.env.to_sym][:storage][:medusa_path]
-# puts Rails.application.credentials[Rails.env.to_sym][:iiif][:draft_base]
-# puts Rails.application.credentials[Rails.env.to_sym][:iiif][:medusa_base]
-# puts Rails.application.credentials[Rails.env.to_sym][:amqp][:ssl]
-# puts Rails.application.credentials[Rails.env.to_sym][:amqp][:port]
-# puts Rails.application.credentials[Rails.env.to_sym][:amqp][:host]
-# puts Rails.application.credentials[Rails.env.to_sym][:amqp][:user]
-# puts Rails.application.credentials[Rails.env.to_sym][:amqp][:password]
-# puts Rails.application.credentials[Rails.env.to_sym][:amqp][:verify_peer]
-# puts Rails.application.credentials[Rails.env.to_sym][:medusa][:outgoing_queue]
-# puts Rails.application.credentials[Rails.env.to_sym][:medusa][:incoming_queue]
-# puts Rails.application.credentials[Rails.env.to_sym][:medusa][:medusa_path_root]
-# puts Rails.application.credentials[Rails.env.to_sym][:medusa][:file_group_url]
-# puts Rails.application.credentials[Rails.env.to_sym][:medusa][:datasets_url_base]
-# puts Rails.application.credentials[Rails.env.to_sym][:downloader][:ssl]
-# puts Rails.application.credentials[Rails.env.to_sym][:downloader][:host]
-# puts Rails.application.credentials[Rails.env.to_sym][:downloader][:realm]
-# puts Rails.application.credentials[Rails.env.to_sym][:downloader][:user]
-# puts Rails.application.credentials[Rails.env.to_sym][:downloader][:password]
-# puts Rails.application.credentials[Rails.env.to_sym][:medusa_info][:ssl]
-# puts Rails.application.credentials[Rails.env.to_sym][:medusa_info][:host]
-# puts Rails.application.credentials[Rails.env.to_sym][:medusa_info][:user]
-# puts Rails.application.credentials[Rails.env.to_sym][:medusa_info][:password]
-
 IDB_CONFIG = YAML.load(ERB.new(File.read(File.join(Rails.root, 'config', 'databank.yml'))).result)
 STORAGE_CONFIG = YAML.load(ERB.new(File.read(File.join(Rails.root, 'config', 'medusa_storage.yml'))).result)[Rails.env]
 AMQP_CONFIG = YAML.load(ERB.new(File.read(File.join(Rails.root, 'config', 'amqp.yml'))).result)[Rails.env]
@@ -102,20 +43,28 @@ else
 
 end
 
-# create identity invitees for admins
-IDB_CONFIG[:admin][:identities].split(", ").each do |email|
+if Rails.env.development?
+  # create local identity accounts for admins
+  admins = IDB_CONFIG[:admin][:netids].split(",").collect {|x| x.strip || x}
+  admins.each do |netid|
 
-  # weird logic to accomdate intitilzation/migration order for deploy
-
-  if ActiveRecord::Base.connection.table_exists? 'invitees'
-    invitee = Invitee.find_by_email(email);
-    if invitee && invitee.has_attribute?(:expires_at)
-      invitee.update_attribute(:expires_at, Time.now + 1.years)
-    elsif ActiveRecord::Base.connection.column_exists?(:invitees, :expires_at)
-      Invitee.create!(email:email, expires_at: Time.now + 1.years, role: Databank::UserRole::ADMIN)
-    end
+    email = "#{netid}@illinois.edu"
+    name = "admin #{netid}"
+    invitee = Invitee.find_or_create_by(email: email)
+    invitee.role = Databank::UserRole::ADMIN
+    invitee.expires_at = Time.zone.now + 1.years
+    invitee.save!
+    identity = Identity.find_or_create_by(email: email)
+    salt = BCrypt::Engine.generate_salt
+    localpass = IDB_CONFIG[:admin][:localpass]
+    encrypted_password = BCrypt::Engine.hash_secret(localpass, salt)
+    identity.password_digest = encrypted_password
+    identity.update_attributes(password: localpass, password_confirmation: localpass)
+    identity.name = name
+    identity.activated = true
+    identity.activated_at = Time.zone.now
+    identity.save!
   end
 
 end
-
 

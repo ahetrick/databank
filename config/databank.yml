@@ -10,9 +10,9 @@
 
 :admin:
   :netids: <%= Rails.application.credentials[Rails.env.to_sym][:admin][:netids] %>
-  :identities: <%= Rails.application.credentials[Rails.env.to_sym][:admin][:identities] %>
   :tech_mail_list: <%= Rails.application.credentials[Rails.env.to_sym][:admin][:tech_mail_list] %>
   :materials_report_list: <%= Rails.application.credentials[Rails.env.to_sym][:admin][:materials_report_list] %>
+  :localpass: <%= Rails.application.credentials[Rails.env.to_sym][:admin][:localpass] %>
 
 :datacite:
   :endpoint: <%= Rails.application.credentials[Rails.env.to_sym][:datacite][:endpoint] %>
