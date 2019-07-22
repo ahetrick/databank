@@ -24,8 +24,6 @@ namespace :databank do
         else
           tally.destroy
         end
-      else
-        puts tally.to_yaml
       end
     end
   end

@@ -15,7 +15,6 @@ module Complete
       e_arr << "identifier to import" if dataset.is_import? && !dataset.identifier
       e_arr += Dataset.license_error(dataset) || []
       e_arr += Dataset.creator_email_errors(dataset) || []
-      e_arr += Dataset.release_date_error(dataset, current_user) || []
       e_arr += Dataset.duplicate_doi_error(dataset) || []
       e_arr += Dataset.duplicate_datafile_error(dataset) || []
       e_arr += Dataset.embargo_errors(dataset) || []
@@ -47,16 +46,6 @@ module Complete
       e_arr
     end
 
-    def release_date_error(dataset, current_user)
-      puts current_user.class
-      puts current_user.to_yaml
-      return nil if (current_user&.role == "admin") ||
-          !dataset.release_date ||
-          dataset.release_date <= (Date.current + 1.year)
-
-      ["a release date no more than one year in the future"]
-    end
-
     def license_error(dataset)
       return nil if !dataset.license || dataset.license != "license.txt"
 
@@ -83,12 +72,18 @@ module Complete
 
     def embargo_errors(dataset)
       embargo_states = [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA]
+
       if dataset.embargo && embargo_states.include?(dataset.embargo) &&
           (!dataset.release_date || dataset.release_date <= Date.current)
-        ["a future release date for delayed publication (embargo) selection"]
-      elsif dataset.release_date && dataset.release_date > Date.current
-        ["a delayed publication (embargo) selection for a future release date"]
+        return ["a future release date for delayed publication (embargo) selection"]
       end
+
+      if (!dataset.embargo || embargo_states.exclude(dataset.embargo)) &&
+          (dataset.release_date && dataset.release_date > Date.current)
+        return ["a delayed publication (embargo) selection for a future release date"]
+      end
+
+      return nil
     end
   end
 end
