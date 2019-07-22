@@ -58,8 +58,8 @@ module Identifiable
   # publish - Triggers a state move from draft or registered to findable
   def publish_doi
 
-    Rails.logger.warn "no identifier present" unless identifier_present?
-    return false unless identifier_present?
+    raise "no identifier present" unless identifier_present?
+    #return false unless identifier_present?
 
     current_state = doi_state
 
@@ -71,7 +71,8 @@ module Identifiable
       current_state = doi_state
     end
 
-    return false unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
+    raise "invalid state for publish_doi, must be draft or registered"
+    #return false unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
 
     publish_body = datacite_json_body(Databank::DoiEvent::PUBLISH)
 
@@ -79,10 +80,18 @@ module Identifiable
 
     current_state = doi_state
 
-    return false unless defined?(current_state) && current_state == Databank::DoiState::FINDABLE
+    unless defined?(current_state) && current_state == Databank::DoiState::FINDABLE
+      raise("problem sending metadata to DataCite #{key}")
+    end
+
+    #return false unless defined?(current_state) && current_state == Databank::DoiState::FINDABLE
 
     if publication_state != Databank::PublicationState::RELEASED
-      update(publication_state: Databank::PublicationState::RELEASED)
+      if update(publication_state: Databank::PublicationState::RELEASED)
+        return true
+      else
+        raise "problem updating dataset record to published state"
+      end
     end
 
     true

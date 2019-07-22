@@ -826,7 +826,7 @@ class DatasetsController < ApplicationController
 
     old_creator_state = @dataset.org_creators || false
 
-    Rails.logger.warn dataset_params
+    #Rails.logger.warn dataset_params
 
     @dataset.release_date ||= Date.current
 
@@ -1247,8 +1247,8 @@ class DatasetsController < ApplicationController
     authorize! :edit, @dataset
 
     publish_attempt_result = @dataset.publish(current_user)
-    Rails.logger.warn "publish attempt result:"
-    Rails.logger.warn publish_attempt_result
+    #Rails.logger.warn "publish attempt result:"
+    #Rails.logger.warn publish_attempt_result
 
     respond_to do |format|
       if publish_attempt_result[:status] == :ok && @dataset.save
