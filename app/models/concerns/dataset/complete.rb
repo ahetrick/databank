@@ -78,7 +78,7 @@ module Complete
         return ["a future release date for delayed publication (embargo) selection"]
       end
 
-      if (!dataset.embargo || embargo_states.exclude(dataset.embargo)) &&
+      if (!dataset.embargo || embargo_states.exclude?(dataset.embargo)) &&
           (dataset.release_date && dataset.release_date > Date.current)
         return ["a delayed publication (embargo) selection for a future release date"]
       end
