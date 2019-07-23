@@ -90,16 +90,19 @@ class DatafilesController < ApplicationController
     end
 
     begin
-      @datafile.save
-    rescue ActiveRecord::StatementInvalid
+      if @datafile.save
+        render json: to_fileupload, content_type: request.format, :layout => false
+      else
+        render json: @datafile.errors, status: :unprocessable_entity
+      end
+    rescue ActiveRecord::StatementInvalid, StandardError
       @datafile.peek_type=Databank::PeekType::NONE
       @datafile.peek_text= nil
-    end
-
-    if @datafile.save
-      render json: to_fileupload, content_type: request.format, :layout => false
-    else
-      render json: @datafile.errors, status: :unprocessable_entity
+      if @datafile.save
+        render json: to_fileupload, content_type: request.format, :layout => false
+      else
+        render json: @datafile.errors, status: :unprocessable_entity
+      end
     end
 
   end
