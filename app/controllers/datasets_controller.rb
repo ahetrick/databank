@@ -642,6 +642,23 @@ class DatasetsController < ApplicationController
       else
         @dataset.update_attribute(:data_curation_network, false)
       end
+
+      form_netids = params[:internal_reviewer] || []
+
+      current_netids = @dataset.internal_reviewer_netids || []
+
+      netids_to_remove = current_netids - form_netids
+
+      netids_to_add = form_netids - current_netids
+
+      netids_to_add.each do |netid|
+        UserAbility.remove_internal_dataset_reviewer(@dataset.key, netid)
+      end
+
+      netids_to_remove.each do |netid|
+        UserAbility.add_internal_dataset_reviewer(@dataset.key, netid)
+      end
+
     end
     redirect_to "/datasets/#{@dataset.key}"
   end

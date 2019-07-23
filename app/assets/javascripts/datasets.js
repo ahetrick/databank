@@ -877,5 +877,12 @@ function setOrgCreators(dataset_id, new_value) {
     }
 }
 
+function addInternalReviewerRow(){
+    var netid = $("#newInternalReviewer").val();
+    var reviewer_row = "<div class='row'><div class='col-md-1'><div class='pull-right'><input name='internal_reviewer[]' type='checkbox' value='" + netid + "' checked='checked'></div></div><div class='col-md-3'>Data Curation Network</div>"
+    $("#new_internal_reviewers_div").append(reviewer_row);
+    $("#newInternalReviewer").attr("value", "")
+}
+
 $(document).ready(ready);
 $(document).on('page:load', ready);

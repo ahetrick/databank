@@ -19,15 +19,27 @@
                   -else
                     %input(type="checkbox" name="can_read[]" value="#{Databank::UserRole::NETWORK_REVIEWER}")
               .col-md-3
-                Data Curation Network
-              .col-md-2
-                %button(type="submit" class="btn btn-primary") Update
-          %hr
-          %strong Internal Reviewer NetIDs:
-          =form_tag("/datasets/#{@dataset.key}/internal_reviewers") do
+                Data Curation Network (DCN)
+            %hr
+            %strong Internal Reviewer NetIDs:
+            -@dataset.internal_reviewer_netids.each do |netid|
+              .row
+                .col-md-1
+                  .pull-right
+                    %input(type="checkbox" name="internal_reviewer[]" value="#{netid}" checked="checked")
+                .col-md-3
+                  =netid
+            %div(id="new_internal_reviewers_div")
             .row
+              .col-md-4
+                %input(type="text" name="newInternalReviewer" id="newInternalReviewer" placeholder="netid")
               .col-md-2
-                %button(type="submit" class="btn btn-primary") Save changes
+                %button(type="button" class= "btn btn-success" onclick="addInternalReviewerRow")
+                  %span(class="glyphicon glyphicon-plus")
+                  Add
+            .row
+              .col-md-3.col-md-6
+                %button(type="submit" class="btn btn-primary") Update
 
 
 
