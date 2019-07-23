@@ -3,9 +3,10 @@
 %table
   %thead
     %tr
-      %th Dataset
-      %th User name
-      %th User email
+      %th User uid
+      %th User provider
+      %th Resource type
+      %th Resource id
       %th Ability
       %th
       %th
@@ -14,9 +15,10 @@
   %tbody
     - @user_abilities.each do |user_ability|
       %tr
-        %td= user_ability.dataset_id
-        %td= user_ability.user_name
-        %td= user_ability.user_email
+        %td= user_ability.user_uid
+        %td= user_ability.user_provider
+        %td= user_ability.resource_type
+        %td= user_ability.resource_id.to_s
         %td= user_ability.ability
         %td= link_to 'Show', user_ability
         %td= link_to 'Edit', edit_user_ability_path(user_ability)

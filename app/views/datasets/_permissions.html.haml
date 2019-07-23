@@ -1,16 +1,16 @@
 .curator-only
-  =form_tag("/datasets/#{@dataset.key}/permissions") do
-    .panel-group(id="permissions" role="tablist" aria-multiselectable="true")
-      .panel.panel-default
-        .panel-heading(role="tab" id="permissionsHeading")
-          %h4(class="panel-title")
-            %a(role="button" data-toggle="collapse" data-parent="#access" href="#permissionsPanel" aria-expanded="false" aria-controls="permissionsPanel" class="accordion-toggle collapsed" )
-              %span( class="metadata-label" ) Permissions
-        .panel-collapse.collapse(id="permissionsPanel" role="tabpanel" aria-labelledby="permissionsHeading" )
-          .panel-body
-            %input(id="permission_action" type="hidden" name="permission_action" value="update_permissions" )
-            %strong Groups allowed to review this dataset, even when in a draft, held, or embargoed state:
-            %hr
+  .panel-group(id="permissions" role="tablist" aria-multiselectable="true")
+    .panel.panel-default
+      .panel-heading(role="tab" id="permissionsHeading")
+        %h4(class="panel-title")
+          %a(role="button" data-toggle="collapse" data-parent="#access" href="#permissionsPanel" aria-expanded="false" aria-controls="permissionsPanel" class="accordion-toggle collapsed" )
+            %span( class="metadata-label" ) Permissions
+      .panel-collapse.collapse(id="permissionsPanel" role="tabpanel" aria-labelledby="permissionsHeading" )
+        .panel-body
+          %input(id="permission_action" type="hidden" name="permission_action" value="update_permissions" )
+          %strong Groups allowed to review this dataset, even when in a draft, held, or embargoed state:
+          %hr
+          =form_tag("/datasets/#{@dataset.key}/permissions") do
             .row
               .col-md-1
                 .pull-right
@@ -22,4 +22,13 @@
                 Data Curation Network
               .col-md-2
                 %button(type="submit" class="btn btn-primary") Update
+          %hr
+          %strong Internal Reviewer NetIDs:
+          =form_tag("/datasets/#{@dataset.key}/internal_reviewers") do
+            .row
+              .col-md-2
+                %button(type="submit" class="btn btn-primary") Save changes
+
+
+
 

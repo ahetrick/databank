@@ -1,14 +1,17 @@
 %p#notice= notice
 
 %p
-  %b Dataset:
-  = @user_ability.dataset_id
+  %b User uid:
+  = @user_ability.user_uid
 %p
-  %b User name:
-  = @user_ability.user_name
+  %b User provider:
+  = @user_ability.user_provider
 %p
-  %b User email:
-  = @user_ability.user_email
+  %b Resource type:
+  = @user_ability.resource_type
+%p
+  %b Resource id:
+  = @user_ability.resource_id.to_s
 %p
   %b Ability:
   = @user_ability.ability

@@ -1,4 +1,5 @@
 class UserAbilitiesController < ApplicationController
+  load_and_authorize_resource
   before_action :set_user_ability, only: [:show, :edit, :update, :destroy]
 
   # GET /user_abilities
@@ -69,6 +70,6 @@ class UserAbilitiesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_ability_params
-      params.require(:user_ability).permit(:dataset_id, :user_name, :user_email, :ability)
+      params.require(:user_ability).permit(:user_provider, :user_uid, :resource_type, :resource_id, :ability)
     end
 end

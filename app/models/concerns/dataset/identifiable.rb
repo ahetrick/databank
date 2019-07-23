@@ -68,10 +68,11 @@ module Identifiable
     if current_state.nil?
       result =  create_draft_doi
       raise("unknown problem creating draft doi") if result.nil?
+      sleep(5)
       current_state = doi_state
     end
 
-    raise "invalid state for publish_doi, must be draft or registered"
+    raise "invalid state for publish_doi, must be draft or registered: #{current_state}"
     #return false unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
 
     publish_body = datacite_json_body(Databank::DoiEvent::PUBLISH)

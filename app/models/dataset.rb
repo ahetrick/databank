@@ -422,8 +422,14 @@ class Dataset < ActiveRecord::Base
     end
   end
 
-  def user_abilites
-    DatasetUserAbility.where(dataset_key: self.key)
+  def internal_reviewers
+    uids = UserAbility.where(user_provider: 'shibboleth',
+                             resource_type: 'dataset',
+                             'resource_id': self.id).pluck(:uid)
+    uid_parts = uids.collect {|x| x.split("@") || [x]}
+
+    netids = uid_parts.collect {|x| x[0] }
+
   end
 
   def ind_creators_to_contributors
