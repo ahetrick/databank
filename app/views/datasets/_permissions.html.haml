@@ -22,6 +22,14 @@
                 Data Curation Network (DCN)
             %hr
             %strong Internal Reviewer NetIDs:
+            %ul
+              %li
+                %p To add, enter the netid in the text box, then click Add.
+              %li
+                %p When all are added, click Update.
+              %li
+                %p To remove, uncheck box next to netid.
+
             -@dataset.internal_reviewer_netids.each do |netid|
               .row
                 .col-md-1
@@ -35,10 +43,9 @@
                 %input(type="text" name="newInternalReviewer" id="newInternalReviewer" placeholder="netid")
               .col-md-2
                 %button(type="button" class= "btn btn-success" onclick="addInternalReviewerRow()")
-                  %span(class="glyphicon glyphicon-plus")
                   Add
             .row
-              .col-md-3.col-md-6
+              .col-md-3.col-md-offset-6
                 %button(type="submit" class="btn btn-primary") Update
 
 
