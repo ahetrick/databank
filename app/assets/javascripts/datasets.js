@@ -882,7 +882,7 @@ function addInternalReviewerRow(){
     console.log(netid);
     var reviewerRow ="<div class='row'><div class='col-md-1'><div class='pull-right'><input name='internal_reviewer[]' type='checkbox' value='" + netid + "' checked='checked'></div></div><div class='col-md-3'>"+ netid +"</div>"
     $(reviewerRow).prependTo("#newInternalReviewersDiv");
-    $("#newInternalReviewer").attr("value", "")
+    $("#newInternalReviewer").val("");
 }
 
 $(document).ready(ready);
