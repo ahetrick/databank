@@ -68,7 +68,7 @@ module Identifiable
     if current_state.nil?
       result =  create_draft_doi
       raise("unknown problem creating draft doi") if result.nil?
-      sleep(5)
+      sleep(1.5)
       current_state = doi_state
     end
 
