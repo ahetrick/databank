@@ -878,9 +878,11 @@ function setOrgCreators(dataset_id, new_value) {
 }
 
 function addInternalReviewerRow(){
+    console.log("inside addInternalReviewerRow");
     var netid = $("#newInternalReviewer").val();
-    var reviewer_row = "<div class='row'><div class='col-md-1'><div class='pull-right'><input name='internal_reviewer[]' type='checkbox' value='" + netid + "' checked='checked'></div></div><div class='col-md-3'>Data Curation Network</div>"
-    $("#new_internal_reviewers_div").append(reviewer_row);
+    console.log(netid);
+    var reviewerRow ="<div class='row'><div class='col-md-1'><div class='pull-right'><input name='internal_reviewer[]' type='checkbox' value='" + netid + "' checked='checked'></div></div><div class='col-md-3'>Data Curation Network</div>"
+    $(reviewerRow).prependTo("#newInternalReviewersDiv");
     $("#newInternalReviewer").attr("value", "")
 }
 
