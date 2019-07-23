@@ -425,7 +425,7 @@ class Dataset < ActiveRecord::Base
     uids = UserAbility.where(user_provider: 'shibboleth',
                              resource_type: 'dataset',
                              ability: 'view_files',
-                             'resource_id': self.id).pluck(:uid)
+                             'resource_id': self.id).pluck(:user_uid)
     uid_parts = uids.collect {|x| x.split("@") || [x]}
 
     netids = uid_parts.collect {|x| x[0] }

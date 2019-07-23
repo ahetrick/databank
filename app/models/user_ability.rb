@@ -5,7 +5,7 @@ class UserAbility < ActiveRecord::Base
     UserAbility.find_by(resource_type: model,
                         resource_id: model_id,
                         provider: user.provider,
-                        uid: user.uid,
+                        user_uid: user.uid,
                         ability: ability).exists?
 
   end
@@ -19,22 +19,22 @@ class UserAbility < ActiveRecord::Base
     existing_view_metadata_record = UserAbility.find_by(resource_type: "Dataset",
                                                         resource_id: dataset.id,
                                                         provider: "shibboleth",
-                                                        uid: "#{netid@illinois.edu}",
+                                                        user_uid: "#{netid@illinois.edu}",
                                                         ability: :view)
 
     UserAbility.create(dataset_id: dataset.id,
                        provider: "shibboleth",
-                       uid: "#{netid@illinois.edu}",
+                       user_uid: "#{netid@illinois.edu}",
                        ability: :view) unless existing_view_metadata_record
 
     existing_view_files_record = UserAbility.find_by(resource_type: "Dataset",
                                                      resource_id: dataset.id,
                                                      provider: "shibboleth",
-                                                     uid: "#{netid@illinois.edu}",
+                                                     user_uid: "#{netid@illinois.edu}",
                                                      ability: :view_files)
     UserAbility.create(dataset_id: dataset.id,
                        provider: "shibboleth",
-                       uid: "#{netid@illinois.edu}",
+                       user_uid: "#{netid@illinois.edu}",
                        ability: :view_files) unless existing_view_files_record
 
   end
@@ -47,14 +47,14 @@ class UserAbility < ActiveRecord::Base
 
     existing_view_metadata_record = UserAbility.find_by(dataset_id: dataset.id,
                                                         provider: "shibboleth",
-                                                        uid: "#{netid@illinois.edu}",
+                                                        user_uid: "#{netid@illinois.edu}",
                                                         ability: :view)
 
     existing_view_metadata_record.destroy if existing_view_metadata_record
 
     existing_view_files_record = UserAbility.find_by(dataset_id: dataset.id,
                                                         provider: "shibboleth",
-                                                        uid: "#{netid@illinois.edu}",
+                                                        user_uid: "#{netid@illinois.edu}",
                                                         ability: :view_files)
 
     existing_view_files_record.destroy if existing_view_files_record
