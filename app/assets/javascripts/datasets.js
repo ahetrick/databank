@@ -864,7 +864,6 @@ function handleKeywordKeyup() {
         $('#keyword-label').html("Keywords");
         $('#keyword-text').attr("placeholder", "[Semicolon separated list of keywords or phrases, e.g.: institutional repositories; file formats]")
     }
-
 }
 
 function setOrgCreators(dataset_id, new_value) {
