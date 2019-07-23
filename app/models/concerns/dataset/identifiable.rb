@@ -72,9 +72,10 @@ module Identifiable
       current_state = doi_state
     end
 
-    raise "invalid state for publish_doi, must be draft or registered: #{current_state}"
-    #return false unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
-
+    unless [Databank::DoiState::DRAFT, Databank::DoiState::REGISTERED].include?(current_state)
+      raise "invalid state for publish_doi, must be draft or registered: #{current_state}"
+    end
+    
     publish_body = datacite_json_body(Databank::DoiEvent::PUBLISH)
 
     Dataset.put_to_datacite(identifier, publish_body)
