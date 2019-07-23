@@ -880,7 +880,7 @@ function addInternalReviewerRow(){
     console.log("inside addInternalReviewerRow");
     var netid = $("#newInternalReviewer").val();
     console.log(netid);
-    var reviewerRow ="<div class='row'><div class='col-md-1'><div class='pull-right'><input name='internal_reviewer[]' type='checkbox' value='" + netid + "' checked='checked'></div></div><div class='col-md-3'>Data Curation Network</div>"
+    var reviewerRow ="<div class='row'><div class='col-md-1'><div class='pull-right'><input name='internal_reviewer[]' type='checkbox' value='" + netid + "' checked='checked'></div></div><div class='col-md-3'>"+ netid +"</div>"
     $(reviewerRow).prependTo("#newInternalReviewersDiv");
     $("#newInternalReviewer").attr("value", "")
 }
