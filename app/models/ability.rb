@@ -30,11 +30,16 @@ class Ability
         dataset.try(:depositor_email) == user.email
       end
       can :view, Dataset do |dataset|
-        dataset.try(:depositor_email) == user.email || dataset.metadata_public?
+        dataset.try(:depositor_email) == user.email ||
+            dataset.metadata_public? ||
+            UserAbility.user_can?("Dataset", dataset.id, "view", user)
       end
 
       can :view_files, Dataset do |dataset|
-        dataset.try(:depositor_email) == user.email || dataset.files_public?
+        dataset.try(:depositor_email) == user.email ||
+            dataset.files_public? ||
+            dataset.internal_reviewer_netids.include?(user.email.split("@").first) ||
+            UserAbility.user_can?("Dataset", dataset.id, "view_files", user)
       end
 
     elsif user.is?(Databank::UserRole::NETWORK_REVIEWER)

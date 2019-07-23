@@ -1,11 +1,23 @@
 class UserAbility < ActiveRecord::Base
+
+  def self.user_can?(model, model_id, ability, user)
+    user ||= User::Shibboleth.new # guest user (not logged in)
+    UserAbility.find_by(resource_type: model,
+                        resource_id: model_id,
+                        provider: user.provider,
+                        uid: user.uid,
+                        ability: ability).exists?
+
+  end
+
   def self.add_internal_dataset_reviewer(dataset_key, netid)
 
     dataset = Dataset.find_by key: dataset_key
 
     raise "dataset not found" unless dataset
 
-    existing_view_metadata_record = UserAbility.find_by(dataset_id: dataset.id,
+    existing_view_metadata_record = UserAbility.find_by(resource_type: "Dataset",
+                                                        resource_id: dataset.id,
                                                         provider: "shibboleth",
                                                         uid: "#{netid@illinois.edu}",
                                                         ability: :view)
@@ -15,10 +27,11 @@ class UserAbility < ActiveRecord::Base
                        uid: "#{netid@illinois.edu}",
                        ability: :view) unless existing_view_metadata_record
 
-    existing_view_files_record = UserAbility.find_by(dataset_id: dataset.id,
-                                                        provider: "shibboleth",
-                                                        uid: "#{netid@illinois.edu}",
-                                                        ability: :view_files)
+    existing_view_files_record = UserAbility.find_by(resource_type: "Dataset",
+                                                     resource_id: dataset.id,
+                                                     provider: "shibboleth",
+                                                     uid: "#{netid@illinois.edu}",
+                                                     ability: :view_files)
     UserAbility.create(dataset_id: dataset.id,
                        provider: "shibboleth",
                        uid: "#{netid@illinois.edu}",
