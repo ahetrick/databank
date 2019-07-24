@@ -4,7 +4,7 @@ class UserAbility < ActiveRecord::Base
     user ||= User::Shibboleth.new # guest user (not logged in)
     UserAbility.find_by(resource_type: model,
                         resource_id: model_id,
-                        provider: user.provider,
+                        user_provider: user.provider,
                         user_uid: user.uid,
                         ability: ability).exists?
 
@@ -18,22 +18,22 @@ class UserAbility < ActiveRecord::Base
 
     existing_view_metadata_record = UserAbility.find_by(resource_type: "Dataset",
                                                         resource_id: dataset.id,
-                                                        provider: "shibboleth",
+                                                        user_provider: "shibboleth",
                                                         user_uid: "#{netid}@illinois.edu",
                                                         ability: :view)
 
     UserAbility.create(dataset_id: dataset.id,
-                       provider: "shibboleth",
+                       user_provider: "shibboleth",
                        user_uid: "#{netid}@illinois.edu",
                        ability: :view) unless existing_view_metadata_record
 
     existing_view_files_record = UserAbility.find_by(resource_type: "Dataset",
                                                      resource_id: dataset.id,
-                                                     provider: "shibboleth",
+                                                     user_provider: "shibboleth",
                                                      user_uid: "#{netid}@illinois.edu",
                                                      ability: :view_files)
     UserAbility.create(dataset_id: dataset.id,
-                       provider: "shibboleth",
+                       user_provider: "shibboleth",
                        user_uid: "#{netid}@illinois.edu",
                        ability: :view_files) unless existing_view_files_record
 
@@ -47,7 +47,7 @@ class UserAbility < ActiveRecord::Base
 
     existing_view_metadata_record = UserAbility.find_by(resource_type: "Dataset",
                                                         resource_id: dataset.id,
-                                                        provider: "shibboleth",
+                                                        user_provider: "shibboleth",
                                                         user_uid: "#{netid}@illinois.edu",
                                                         ability: :view)
 
@@ -55,7 +55,7 @@ class UserAbility < ActiveRecord::Base
 
     existing_view_files_record = UserAbility.find_by(resource_type: "Dataset",
                                                      resource_id: dataset.id,
-                                                        provider: "shibboleth",
+                                                        user_provider: "shibboleth",
                                                         user_uid: "#{netid}@illinois.edu",
                                                         ability: :view_files)
 
