@@ -631,10 +631,10 @@ class DatasetsController < ApplicationController
   def update_permissions
 
     #DEBUG
-    Rails.logger.warn dataset_params
+    Rails.logger.warn params.to_yaml
     authorize! :manage, @dataset
-    if dataset_params.has_key?(:can_read)
-      if dataset_params[:can_read].include?(Databank::UserRole::NETWORK_REVIEWER)
+    if params.has_key?(:can_read)
+      if params[:can_read].include?(Databank::UserRole::NETWORK_REVIEWER)
         @dataset.update_attribute(:data_curation_network, true)
       else
         @dataset.update_attribute(:data_curation_network, false)
@@ -643,13 +643,21 @@ class DatasetsController < ApplicationController
       @dataset.update_attribute(:data_curation_network, false)
     end
 
-    form_netids = dataset_params[:internal_reviewer] || []
+    form_netids = params[:internal_reviewer] || []
+
+    Rails.logger.warn("form_netids: #{form_netids}")
 
     current_netids = @dataset.internal_reviewer_netids || []
 
+    Rails.logger.warn("current_netids: #{current_netids}")
+
     netids_to_remove = current_netids - form_netids
 
+    Rails.logger.warn("netids_to_remove: #{netids_to_remove}")
+
     netids_to_add = form_netids - current_netids
+
+    Rails.logger.warn("netids_to_add: #{netids_to_add}")
 
     netids_to_add.each do |netid|
       UserAbility.remove_internal_dataset_reviewer(@dataset.key, netid)
