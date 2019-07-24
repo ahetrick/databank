@@ -631,39 +631,33 @@ class DatasetsController < ApplicationController
   def update_permissions
 
     #DEBUG
-    Rails.logger.warn params
     authorize! :manage, @dataset
-    if params.has_key?(:permission_action)
-      if params.has_key?(:can_read)
-        if params[:can_read].include?(Databank::UserRole::NETWORK_REVIEWER)
-          @dataset.update_attribute(:data_curation_network, true)
-        else
-          @dataset.update_attribute(:data_curation_network, false)
-        end
+    if params.has_key?(:can_read)
+      if params[:can_read].include?(Databank::UserRole::NETWORK_REVIEWER)
+        @dataset.update_attribute(:data_curation_network, true)
       else
         @dataset.update_attribute(:data_curation_network, false)
       end
-
-      form_netids = params[:internal_reviewer] || []
-
-      current_netids = @dataset.internal_reviewer_netids || []
-
-      netids_to_remove = current_netids - form_netids
-
-      netids_to_add = form_netids - current_netids
-
-      netids_to_add.each do |netid|
-        UserAbility.remove_internal_dataset_reviewer(@dataset.key, netid)
-      end
-
-      netids_to_remove.each do |netid|
-        UserAbility.add_internal_dataset_reviewer(@dataset.key, netid)
-      end
-
     else
-      Rails.logger.warn("what are we even doing here?")
-
+      @dataset.update_attribute(:data_curation_network, false)
     end
+
+    form_netids = params[:internal_reviewer] || []
+
+    current_netids = @dataset.internal_reviewer_netids || []
+
+    netids_to_remove = current_netids - form_netids
+
+    netids_to_add = form_netids - current_netids
+
+    netids_to_add.each do |netid|
+      UserAbility.remove_internal_dataset_reviewer(@dataset.key, netid)
+    end
+
+    netids_to_remove.each do |netid|
+      UserAbility.add_internal_dataset_reviewer(@dataset.key, netid)
+    end
+
     redirect_to "/datasets/#{@dataset.key}"
   end
 
