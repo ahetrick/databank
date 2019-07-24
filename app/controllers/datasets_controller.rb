@@ -631,6 +631,7 @@ class DatasetsController < ApplicationController
   def update_permissions
 
     #DEBUG
+    Rails.logger.warn params.to_yaml
     authorize! :manage, @dataset
     if params.has_key?(:can_read)
       if params[:can_read].include?(Databank::UserRole::NETWORK_REVIEWER)
