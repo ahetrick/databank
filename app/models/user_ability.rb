@@ -45,14 +45,16 @@ class UserAbility < ActiveRecord::Base
 
     raise "dataset not found" unless dataset
 
-    existing_view_metadata_record = UserAbility.find_by(dataset_id: dataset.id,
+    existing_view_metadata_record = UserAbility.find_by(resource_type: "Dataset",
+                                                        resource_id: dataset.id,
                                                         provider: "shibboleth",
                                                         user_uid: "#{netid}@illinois.edu",
                                                         ability: :view)
 
     existing_view_metadata_record.destroy if existing_view_metadata_record
 
-    existing_view_files_record = UserAbility.find_by(dataset_id: dataset.id,
+    existing_view_files_record = UserAbility.find_by(resource_type: "Dataset",
+                                                     resource_id: dataset.id,
                                                         provider: "shibboleth",
                                                         user_uid: "#{netid}@illinois.edu",
                                                         ability: :view_files)
