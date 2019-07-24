@@ -630,7 +630,8 @@ class DatasetsController < ApplicationController
 
   def update_permissions
 
-    #Rails.logger.warn params
+    #DEBUG
+    Rails.logger.warn params
     authorize! :manage, @dataset
     if params.has_key?(:permission_action)
       if params.has_key?(:can_read)
@@ -658,6 +659,9 @@ class DatasetsController < ApplicationController
       netids_to_remove.each do |netid|
         UserAbility.add_internal_dataset_reviewer(@dataset.key, netid)
       end
+
+    else
+      Rails.logger.warn("what are we even doing here?")
 
     end
     redirect_to "/datasets/#{@dataset.key}"
