@@ -22,20 +22,23 @@ class UserAbility < ActiveRecord::Base
                                                         user_uid: "#{netid}@illinois.edu",
                                                         ability: :view)
 
-    UserAbility.create(dataset_id: dataset.id,
-                       user_provider: "shibboleth",
-                       user_uid: "#{netid}@illinois.edu",
-                       ability: :view) unless existing_view_metadata_record
+
+    UserAbility.create!(resource_type: "Dataset",
+                        resource_id: dataset.id,
+                        user_provider: "shibboleth",
+                        user_uid: "#{netid}@illinois.edu",
+                        ability: :view) unless existing_view_metadata_record
 
     existing_view_files_record = UserAbility.find_by(resource_type: "Dataset",
                                                      resource_id: dataset.id,
                                                      user_provider: "shibboleth",
                                                      user_uid: "#{netid}@illinois.edu",
                                                      ability: :view_files)
-    UserAbility.create(dataset_id: dataset.id,
-                       user_provider: "shibboleth",
-                       user_uid: "#{netid}@illinois.edu",
-                       ability: :view_files) unless existing_view_files_record
+    UserAbility.create!(resource_type: "Dataset",
+                        resource_id: dataset.id,
+                        user_provider: "shibboleth",
+                        user_uid: "#{netid}@illinois.edu",
+                        ability: :view_files) unless existing_view_files_record
 
   end
 
