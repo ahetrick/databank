@@ -2,7 +2,7 @@ class UserAbility < ActiveRecord::Base
 
   def self.user_can?(model, model_id, ability, user)
     user ||= User::Shibboleth.new # guest user (not logged in)
-    UserAbility.find_by(resource_type: model,
+    UserAbility.where(resource_type: model,
                         resource_id: model_id,
                         user_provider: user.provider,
                         user_uid: user.uid,
