@@ -423,7 +423,7 @@ class Dataset < ActiveRecord::Base
 
   def internal_reviewer_netids
     uids = UserAbility.where(user_provider: 'shibboleth',
-                             resource_type: 'dataset',
+                             resource_type: 'Dataset',
                              ability: 'view_files',
                              'resource_id': self.id).pluck(:user_uid)
     uid_parts = uids.collect {|x| x.split("@") || [x]}
