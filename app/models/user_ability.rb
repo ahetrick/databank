@@ -31,7 +31,7 @@ class UserAbility < ActiveRecord::Base
 
     raise "view record not created" unless existing_view_metadata_record
 
-    Rails.logger.warn existing_view_metadata_record.to_yml
+    #Rails.logger.warn existing_view_metadata_record.to_yml
 
     existing_view_files_record = UserAbility.find_by(resource_type: "Dataset",
                                                      resource_id: dataset.id,
@@ -46,7 +46,7 @@ class UserAbility < ActiveRecord::Base
 
     raise "view_files record not created" unless existing_view_files_record
 
-    Rails.logger.warn existing_view_files_record.to_yaml
+    #Rails.logger.warn existing_view_files_record.to_yaml
 
   end
 
