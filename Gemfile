@@ -78,6 +78,7 @@ gem "font-awesome-sass"
 gem "sass-css-importer"
 
 gem "haml"
+gem "haml-rails"
 
 gem "uuid"
 
