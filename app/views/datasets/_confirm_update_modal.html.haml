@@ -1,0 +1,22 @@
+/ Modal
+#deposit.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "agreement-label", :role => "dialog", :tabindex => "-1"}
+  .modal-dialog.modal-lg
+    .modal-content
+      .modal-body
+        %button.close{"data-dismiss" => "modal"}
+        .publish-msg
+          %p.ds-paragraph= Dataset.publish_modal_msg(@dataset).html_safe
+      .modal-footer.container-fluid
+        %button{:onclick => "update_and_publish()"}>
+        , type="button" class="btn btn-primary" data-dismiss="modal" id="login-button"&gt;
+        %span.glyphicon.glyphicon-send
+        Publish
+      = succeed "," do
+        %button{:onclick => "window.open(\"/help\")"}
+      %span.glyphicon.glyphicon-question-sign
+      Get Help
+    %button{:onclick => "window.location = \"/datasets/"}
+    = @dataset.key
+    "' , type="button" class="btn btn-danger" data-dismiss="modal" id="help-button"&gt;
+    %span.glyphicon.glyphicon-remove
+    Cancel

@@ -1,0 +1,14 @@
+%h3 To start your data deposit, please review the deposit agreement and answer the following questions:
+%hr/
+.panel.panel-default
+  .panel-heading
+    %h4.panel-title
+      %a.accordion-toggle.collapsed{"data-toggle" => "collapse", :href => "#collapseOne "}
+        %strong Illinois Data Bank Deposit Agreement
+        (click to expand)
+  #collapseOne.panel-collapse.collapse
+  - if @dataset  @dataset.depositor_email
+    in
+  "&gt;
+  .panel-body.idb-help
+    = render partial: 'policies/deposit_agreement_body'

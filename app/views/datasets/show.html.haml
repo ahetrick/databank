@@ -1,0 +1,66 @@
+- if current_user&.provider == 'identity' && current_user.role == Databank::UserRole::NETWORK_REVIEWER
+  = render partial: 'data_curation_network/heading'
+- version_group = @dataset.version_group
+- if [Databank::PublicationState::RELEASED, Databank::PublicationState::TempSuppress::FILE, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state)
+  = @dataset.structured_data.html_safe
+= render partial: 'download_link_modal'
+- if (can? :edit, @dataset)
+  = render partial: 'offer_review_h_modal'
+  = render partial: 'confirm_deposit_modal'
+  = render partial: 'datasets/dashboards/show'
+  = render partial: 'incomplete_deposit_modal'
+- if (can? :manage, @dataset)
+  = render partial: 'permissions'
+  = render partial: 'review_requests'
+- if ((can? :manage, @dataset) && (@dataset.publication_state != Databank::PublicationState::DRAFT))
+  = render partial: 'curator_access_controls'
+#main-show-div
+  / BEGIN metadata section
+  - if version_group && version_group[:entries] && version_group[:entries].length > 1 && @dataset.dataset_version.to_i > 0 && (version_group[:entries][0][:version]).to_i > @dataset.dataset_version.to_i
+    .selected-version.boxed-alert
+      A newer version of this dataset is available.
+      %a{:href => ""}
+      = @dataset.persistent_url_base
+      \/#{version_group[:entries][0][:doi]}"&gt;View the latest version.
+= render partial: 'metadata_restriction_alert', locals: {dataset: @dataset}
+- if (can? :view, @dataset)
+  = render partial: 'show_metadata', locals: {dataset: @dataset}
+/ END metadata section
+#versionGroup.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+  .panel.panel-default
+    #versionGroupHeading.panel-heading{:role => "tab"}
+      %h4.panel-title
+        - if version_group  version_group[:entries]  version_group[:entries].length  1
+          %a.accordion-toggle{"aria-controls" => "versionGroupPanel", "aria-expanded" => "true", "data-parent" => "#versionGroup", "data-toggle" => "collapse", :href => "#versionGroupPanel", :role => "button"}
+            %span.metadata-label Versions in Illinois Data Bank
+        - else
+          %a.accordion-toggle.collapsed{"aria-controls" => "versionGroupPanel", "aria-expanded" => "false", "data-parent" => "#versionGroup", "data-toggle" => "collapse", :href => "#versionGroupPanel", :role => "button"}
+            %span.metadata-label Versions
+    .panel-collapse.collapse
+    - if version_group  version_group[:entries]  version_group[:entries].length  1
+      in
+    " id="versionGroupPanel" role="tabpanel" aria-labelledby="versionGroupHeading"&gt;
+    .panel-body
+      - if version_group[:status] == 'error'
+        = version_group[:error]
+      - else
+        %table.table.table-striped
+          %thead
+            %tr
+              %th.text-center Version
+              %th DOI
+              %th Comment
+              %th Publication Date
+          %tbody
+            - version_group[:entries].each do |entry|
+              %tr
+              - if entry[:selected]
+                class="selected-version"
+              \&gt;
+              %td.text-center= entry[:version]
+              %td
+                %a{:href => ""}
+                = @dataset.persistent_url_base
+                \/#{entry[:doi]}"&gt;#{entry[:doi]}
+            %td= entry[:version_comment]
+            %td= entry[:publication_date]
