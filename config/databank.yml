@@ -28,6 +28,7 @@
   :shoulder: <%= Rails.application.credentials[Rails.env.to_sym][:test_datacite][:shoulder] %>
   :url_base: <%= Rails.application.credentials[Rails.env.to_sym][:test_datacite][:url_base] %>
 
+:delayed_job_pid_dir: <%= Rails.application.credentials[Rails.env.to_sym][:delayed_job_pid_dir] %>
 :tasks_url: <%= Rails.application.credentials[Rails.env.to_sym][:tasks_url] %>
 :key_prefix: <%= Rails.application.credentials[Rails.env.to_sym][:key_prefix] %>
 :root_url_text: <%= Rails.application.credentials[Rails.env.to_sym][:root_url_text] %>
