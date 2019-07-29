@@ -10,7 +10,7 @@ xml.tag! 'sitemapindex', 'xmlns' => "http://www.sitemaps.org/schemas/sitemap/0.9
   @datasets.each do |dataset|
     xml.tag! 'url' do
       xml.tag! 'loc', dataset_url(dataset)
-      xml.lastmod post.updated_at.strftime("%F")
+      xml.lastmod dataset.updated_at.strftime("%F")
     end
   end
 
