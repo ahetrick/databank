@@ -25,7 +25,7 @@ set :passenger_restart_with_touch, true
 set :linked_files, fetch(:linked_files, []).push('config/master.key', 'nginx.conf.erb')
 
 # Default value for linked_dirs is []
-set :linked_dirs, fetch(:linked_dirs, []).push('log', 'scripts', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'tmp/uploads', 'tmp/sessions', 'public/sitemaps')
+set :linked_dirs, fetch(:linked_dirs, []).push('log', 'scripts', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'tmp/uploads', 'tmp/sessions')
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
