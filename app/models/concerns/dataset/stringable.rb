@@ -186,10 +186,9 @@ module Stringable
     end
 
     content += "\n[ #{'File'.pluralize(datafiles.count)} (#{datafiles.count}): ] \n"
-
-    formatted_size = ApplicationController.helpers.number_to_human_size(datafile.bytestream_size)
-
+    
     complete_datafiles.each do |datafile|
+      formatted_size = ApplicationController.helpers.number_to_human_size(datafile.bytestream_size)
       content += ". #{datafile.bytestream_name}, #{formatted_size}\n"
     end
 
