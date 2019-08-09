@@ -34,11 +34,8 @@ bin/svc_hooks/*
 bin/README
 api-client
 postgres
-idb_stop.sh
-idb_start.sh
-idb_restart.sh
-dj_start.sh
-dj_stop.sh
+start.sh
+stop.sh
 /uploads
 /uploads_rw
 /uploads_ro
