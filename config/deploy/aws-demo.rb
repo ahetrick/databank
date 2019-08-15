@@ -10,6 +10,9 @@ server 'demo.databank.illinois.edu', user: 'databank', roles: %w{app db web}
 
 set :rails_env, 'aws-demo'
 
+# RAILS_GROUPS env value for the assets:precompile task. Default to nil.
+set :rails_assets_groups, :assets
+
 set :ssh_options, {
     forward_agent: true,
     auth_methods: ["publickey"],
