@@ -16,32 +16,16 @@ module User
               format: { with: VALID_EMAIL_REGEX },
               uniqueness: { case_sensitive: false }
 
+    class_attribute :system_user
+
     def is? (requested_role)
       self.role == requested_role.to_s
     end
 
-    def self.create_system_user
-      create! do |user|
-        user.provider = "system"
-        user.uid = IDB_CONFIG[:system_user_email]
-        user.name = IDB_CONFIG[:system_user_name]
-        user.email = IDB_CONFIG[:system_user_email]
-        user.username = IDB_CONFIG[:system_user_name]
-        user.role = "admin"
-      end
-    end
-
-    def self.reserve_doi_user()
-
-      user = User::User.new(provider: "system",
-                      uid: IDB_CONFIG[:reserve_doi_netid],
-                      email: "#{IDB_CONFIG[:reserve_doi_netid]}@illinois.edu",
-                      username: IDB_CONFIG[:reserve_doi_netid],
-                      name: IDB_CONFIG[:reserve_doi_netid],
-                      role: "admin")
-
-      user
-
+    def self.system_user
+      system_user = User.find_by_provider_and_uid("system", IDB_CONFIG[:system_user_email])
+      system_user = User.create_system_user unless system_user
+      return system_user
     end
 
     # Converts email to all lower-case.
@@ -84,6 +68,19 @@ module User
 
     def self.display_name(email)
       raise "subclass responsibility"
+    end
+
+    class << self
+      def create_system_user
+        create! do |user|
+          user.provider = "system"
+          user.uid = IDB_CONFIG[:system_user_email]
+          user.name = IDB_CONFIG[:system_user_name]
+          user.email = IDB_CONFIG[:system_user_email]
+          user.username = IDB_CONFIG[:system_user_name]
+          user.role = "admin"
+        end
+      end
     end
 
   end

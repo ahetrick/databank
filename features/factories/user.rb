@@ -7,16 +7,15 @@ FactoryBot.define do
     expires_at { Date.current + 1.month }
   end
   factory :identity do
+    localpass = IDB_CONFIG[:admin][:localpass]
     sequence(:name) {|n| "User #{n}" }
     sequence(:email) {|n| "user#{n}@example.com" }
-    sequence(:password) {|n| "password#{n}" }
+    password { localpass }
+    password_confirmation { localpass }
+    salt = BCrypt::Engine.generate_salt
+    encrypted_password = BCrypt::Engine.hash_secret(localpass, salt)
+    password_digest { encrypted_password }
     activated { true }
     activated_at { Time.current - 1.month }
-  end
-  factory :identity_user, class: User::Identity do
-    sequence(:uid) {|n| "user-#{n}" }
-    sequence(:name) {|n| "User #{n}" }
-    sequence(:email) {|n| "user#{n}@example.com" }
-    role { "admin" }
   end
 end

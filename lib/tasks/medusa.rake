@@ -3,105 +3,14 @@ require 'bunny'
 require 'json'
 
 namespace :medusa do
-
-  desc 'get a RabbitMQ ingest response message'
-  task :get_ingest_response_msg => :environment do
-    AmqpConnector.instance.with_message(IDB_CONFIG['medusa']['incoming_queue'], create_medusa_ingest_message(staging_path)) do |payload|
-    end
-  end
-
-  desc 'simulate RabbitMQ ok response from Medusa'
-  task :send_ok => :environment do
-    puts "sending message"
-
-    idbconfig = YAML.load_file(File.join(Rails.root, 'config', 'databank.yml'))[Rails.env]
-
-    config = (AMQP_CONFIG || {}).symbolize_keys
-
-    config.merge!(recover_from_connection_close: true)
-
-    conn = Bunny.new(config)
-    conn.start
-
-    ch = conn.create_channel
-    q = ch.queue("medusa_to_idb", :durable => true)
-    x = ch.default_exchange
-
-    msg_hash = {status: 'ok',
-                operation: 'ingest',
-                staging_path: 'uploads/file.txt',
-                medusa_path: 'file.txt',
-                medusa_uuid: '149603bb-0cad-468b-9ef0-e91023a5d460',
-                error: ''}
-
-    x.publish("#{msg_hash.to_json}", :routing_key => q.name)
-
-    conn.close
-
-  end
-
-  desc 'simulate RabbitMQ error response from Medusa'
-  task :send_error => :environment do
-    puts "sending message"
-
-    idbconfig = YAML.load_file(File.join(Rails.root, 'config', 'databank.yml'))[Rails.env]
-
-    config = (AMQP_CONFIG || {}).symbolize_keys
-
-    config.merge!(recover_from_connection_close: true)
-
-    conn = Bunny.new(config)
-    conn.start
-
-    ch = conn.create_channel
-    q = ch.queue("medusa_to_idb", :durable => true)
-    x = ch.default_exchange
-
-    # q.subscribe do |delivery_info, metadata, payload|
-    #   puts "Received #{payload}"
-    # end
-
-    msg_hash = {status: 'error',
-                operation: 'ingest',
-                staging_path: 'uploads/test.txt',
-                medusa_path: '',
-                medusa_uuid: '',
-                error: 'malformed thingy'}
-
-    x.publish("#{msg_hash.to_json}", :routing_key => q.name)
-
-    conn.close
-
-  end
-
   desc 'get Medusa RabbitMQ ingest response messages'
   task :get_medusa_ingest_responses => :environment do
-
-    idbconfig = YAML.load_file(File.join(Rails.root, 'config', 'databank.yml'))[Rails.env]
-
-    config = (AMQP_CONFIG || {}).symbolize_keys
-
-    config.merge!(recover_from_connection_close: true)
-
-    conn = Bunny.new(config)
-    conn.start
-
-    ch = conn.create_channel
-    q = ch.queue("medusa_to_idb", :durable => true)
-    x = ch.default_exchange
-
-    has_payload = true
-
-    while has_payload
-      delivery_info, properties, payload = q.pop
-      if payload.nil?
-        has_payload = false
-      else
+    while true
+      AmqpHelper::Connector[:databank].with_message(MedusaIngest.incoming_queue) do |payload|
+        exit if payload.nil?
         MedusaIngest.on_medusa_message(payload)
       end
     end
-    conn.close
-
   end
 
   desc 'update medusa_path of datafile from ingest'

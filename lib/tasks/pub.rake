@@ -4,11 +4,7 @@ namespace :pub do
   desc 'update publication state for datasets with current or past release date'
   task :update_state => :environment do
 
-    @current_user = User::User.find_by_provider_and_uid("system", IDB_CONFIG[:system_user_email])
-
-    if !@current_user
-      @current_user = User::User.create_system_user
-    end
+    @current_user = User::User.system_user
 
     Dataset.all.each do |dataset|
 

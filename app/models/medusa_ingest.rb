@@ -361,13 +361,13 @@ class MedusaIngest < ActiveRecord::Base
   end
 
   def send_medusa_ingest_message
-    AmqpConnector.instance.send_message(MedusaIngest.outgoing_queue, medusa_ingest_message)
+    AmqpHelper::Connector[:databank].send_message(MedusaIngest.outgoing_queue, medusa_ingest_message)
   end
 
   def medusa_ingest_message
-    {"operation"    => "ingest",
-     "staging_key"  => staging_key,
-     "target_key"   => target_key,
-     "pass_through" => {class: idb_class, identifier: idb_identifier}}
+    {:operation => "ingest",
+     :staging_key => staging_key,
+     :target_key => target_key,
+     :pass_through => {class: idb_class, identifier: idb_identifier}}
   end
 end

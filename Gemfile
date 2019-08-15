@@ -155,7 +155,9 @@ gem "progress_job"
 gem "cancancan"
 
 # User bunny to handle RabbitMQ messages
-gem "bunny"
+gem 'bunny'
+gem 'amq-protocol'
+gem 'amqp_helper', '~>0.2.0', git: 'git://github.com/medusa-project/amqp_helper.git'
 
 # Used audited-activerecord for dataset changelog
 gem "audited"
@@ -179,15 +181,15 @@ gem "rubocop-performance"
 # Access an IRB console on exception pages or by using <%= console %> in views
 # gem 'web-console', '~> 2.0'
 
-# Use mocha to support stubs for testing
-gem "mocha"
-
-# Use Selenenium web driver in testing
-gem "selenium-webdriver"
-
 gem "bootsnap", require: false
 
 gem "simple_form"
+
+# Use Capistrano for deployment
+gem "capistrano-bundler"
+gem "capistrano-passenger"
+gem "capistrano-rails"
+gem "capistrano-rbenv"
 
 group :development, :test do
   gem "byebug"
@@ -199,18 +201,22 @@ group :development, :test do
   gem "shoulda-matchers"
 end
 
-# Use Cucumber for behavior testing
-gem "cucumber-rails", require: false
-
-# Use Capybara for behavior testing
-gem "capybara"
-
-# Use DatabaseCleaner to clean the database
-gem "database_cleaner"
-
-# Use Capistrano for deployment
-
-gem "capistrano-bundler"
-gem "capistrano-passenger"
-gem "capistrano-rails"
-gem "capistrano-rbenv"
+group :test do
+  #gem 'cucumber', '~> 2.0'
+  gem 'cucumber-rails', require: false
+  gem 'database_cleaner'
+  gem 'simplecov'
+  gem 'json_spec'
+  gem 'capybara'
+  gem 'capybara-email'
+  gem 'launchy'
+  #testing with javascript - requires phantomjs to be installed on the test machine
+  gem 'poltergeist'
+  #other js testing options
+  gem 'selenium-webdriver'
+  gem 'sunspot_test'
+  gem 'connection_pool'
+  #need my version of bunny-mock where the default exchange works as expected. Wait to see if the fix gets merged
+  gem 'bunny-mock', git: 'git://github.com/hading/bunny-mock.git'
+  gem 'rack_session_access'
+end
