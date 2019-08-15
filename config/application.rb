@@ -2,7 +2,7 @@ require_relative 'boot'
 
 require 'rails/all'
 
-Bundler.require(:default, Rails.env) # Rails.env is just a string
+Bundler.require(:default, Rails.env)
 
 module Databank
 
