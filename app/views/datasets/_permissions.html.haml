@@ -37,6 +37,23 @@
               .col-md-2
                 %button(type="button" class= "btn btn-success" onclick="addInternalReviewerRow()")
                   Add
+            %hr
+            %strong Internal Editor NetIDs:
+
+            -@dataset.internal_editor_netids.each do |netid|
+              .row
+                .col-md-1
+                  .pull-right
+                    %input(type="checkbox" name="internal_editor[]" value="#{netid}" checked="checked")
+                .col-md-3
+                  =netid
+            %div(id="newInternalEditorsDiv")
+            .row
+              .col-md-3.col-md-offset-1
+                %input(type="text" name="newInternalReviewer" id="newInternalEditor" class="form-control" placeholder="enter netid then click add")
+              .col-md-2
+                %button(type="button" class= "btn btn-success" onclick="addInternalEditorRow()")
+                  Add
             .row
               .col-md-3.col-md-offset-6
                 %button(type="submit" class="btn btn-primary") Update

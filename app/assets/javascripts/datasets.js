@@ -846,7 +846,6 @@ function handleCheckFileGroupChange() {
 }
 
 function handleKeywordKeyup() {
-
     var keywordString = $('#keyword-text').val();
     keywordArr = keywordString.split(";");
     var keyword_count = keywordArr.length;
@@ -867,7 +866,6 @@ function handleKeywordKeyup() {
 }
 
 function setOrgCreators(dataset_id, new_value) {
-
     if (window.confirm("Are you sure?")) {
         window.onbeforeunload = null;
         $('#dataset_org_creators').val(new_value);
@@ -877,12 +875,17 @@ function setOrgCreators(dataset_id, new_value) {
 }
 
 function addInternalReviewerRow(){
-    console.log("inside addInternalReviewerRow");
     var netid = $("#newInternalReviewer").val();
-    console.log(netid);
     var reviewerRow ="<div class='row'><div class='col-md-1'><div class='pull-right'><input name='internal_reviewer[]' type='checkbox' value='" + netid + "' checked='checked'></div></div><div class='col-md-3'>"+ netid +"</div>"
     $(reviewerRow).prependTo("#newInternalReviewersDiv");
     $("#newInternalReviewer").val("");
+}
+
+function addInternalEditorRow(){
+    var netid = $("#newInternalEditor").val();
+    var reviewerRow ="<div class='row'><div class='col-md-1'><div class='pull-right'><input name='internal_editor[]' type='checkbox' value='" + netid + "' checked='checked'></div></div><div class='col-md-3'>"+ netid +"</div>"
+    $(reviewerRow).prependTo("#newInternalEditorsDiv");
+    $("#newInternalEditor").val("");
 }
 
 $(document).ready(ready);

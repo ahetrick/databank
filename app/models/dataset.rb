@@ -434,6 +434,19 @@ class Dataset < ActiveRecord::Base
 
   end
 
+  def internal_editor_netids
+    uids = UserAbility.where(user_provider: 'shibboleth',
+                             resource_type: 'Dataset',
+                             ability: 'edit',
+                             'resource_id': self.id).pluck(:user_uid)
+    uid_parts = uids.collect {|x| x.split("@") || [x]}
+
+    netids = uid_parts.collect {|x| x[0] }
+
+    netids.uniq
+
+  end
+
   def ind_creators_to_contributors
     individual_creators.each do |creator|
       Contributor.create(dataset_id:        creator.dataset_id,
