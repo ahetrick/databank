@@ -9,9 +9,9 @@ module Publishable
                    error_text: "Incomplete workflow in publish attempt."}
     completion_check_result = Dataset.completion_check(self, user)
     # DEBUG
-    Rails.logger.warn completion_check_result
+    #Rails.logger.warn completion_check_result
     complete = (completion_check_result == "ok")
-    return {status: :error_occurred, error_text: Dataset.completion_check(self, user)} unless complete
+    return {status: :error_occurred, error_text: completion_check_result} unless complete
 
     release_date ||= Date.current
 
@@ -41,6 +41,8 @@ module Publishable
       # set release date to current if not embargo
       self.release_date = Date.current if publication_state == Databank::PublicationState::RELEASED
     end
+
+    save!
 
     metadata_should_be_public = [Databank::PublicationState::RELEASED,
                                  Databank::PublicationState::Embargo::FILE,
