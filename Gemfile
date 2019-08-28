@@ -33,7 +33,7 @@ gem "tus-server"
 gem "recaptcha"
 
 # Use jquery as the JavaScript library
-gem "jquery-datatables-rails", "~> 3.4.0"
+gem "jquery-datatables-rails"
 gem "jquery-rails"
 gem "jquery-ui-rails"
 
@@ -62,7 +62,7 @@ gem "roda"
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 # gem 'turbolinks'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem "jbuilder", "~> 2.0"
+gem "jbuilder"
 
 # bundle exec rake doc:rails generates the API under doc/api.
 gem "sdoc", group: :doc
@@ -74,8 +74,6 @@ gem "figaro"
 gem "autoprefixer-rails"
 gem "bootstrap-sass"
 gem "font-awesome-sass"
-
-gem "sass-css-importer"
 
 gem "haml"
 gem "haml-rails"
