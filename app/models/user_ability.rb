@@ -19,10 +19,10 @@ class UserAbility < ActiveRecord::Base
       netids_to_remove = current_netids - form_netids
       netids_to_add = form_netids - current_netids
       netids_to_remove.each do |netid|
-        UserAbility.remove_internal_reviewer(dataset_key, netid)
+        remove_internal_reviewer(dataset_key, netid)
       end
       netids_to_add.each do |netid|
-        UserAbility.add_internal_reviewer(dataset_key, netid)
+        add_internal_reviewer(dataset_key, netid)
       end
     end
 
@@ -33,25 +33,25 @@ class UserAbility < ActiveRecord::Base
       netids_to_remove = current_netids - form_netids
       netids_to_add = form_netids - current_netids
       netids_to_remove.each do |netid|
-        UserAbility.remove_internal_editor(dataset_key, netid)
+        remove_internal_editor(dataset_key, netid)
       end
       netids_to_add.each do |netid|
-        UserAbility.add_internal_editor(dataset_key, netid)
+        add_internal_editor(dataset_key, netid)
       end
     end
 
     def add_internal_reviewer(dataset_key, netid)
       dataset = Dataset.find_by key: dataset_key
       raise("dataset not found") unless dataset
-      self.class.grant_internal(dataset, netid, :view)
-      self.class.grant_internal(dataset, netid, :view_files)
+      grant_internal(dataset, netid, :view)
+      grant_internal(dataset, netid, :view_files)
     end
 
     def remove_internal_reviewer(dataset_key, netid)
       dataset = Dataset.find_by key: dataset_key
       raise("dataset not found") unless dataset
-      self.class.revoke_internal(dataset, netid, :view)
-      self.class.revoke_internal(dataset, netid, :view_files)
+      revoke_internal(dataset, netid, :view)
+      revoke_internal(dataset, netid, :view_files)
     end
 
     def add_internal_editor(dataset_key, netid)
@@ -69,7 +69,7 @@ class UserAbility < ActiveRecord::Base
         destroy_file
       ]
       abilities.each do |ability|
-        self.class.grant_internal(dataset, netid, ability)
+        grant_internal(dataset, netid, ability)
       end
     end
 
@@ -88,11 +88,9 @@ class UserAbility < ActiveRecord::Base
         destroy_file
       ]
       abilities.each do |ability|
-        self.class.revoke_internal(dataset, netid, ability)
+        revoke_internal(dataset, netid, ability)
       end
     end
-
-    private
 
     def grant_internal(dataset, netid, ability)
       existing_record = UserAbility.find_by(resource_type: "Dataset",
