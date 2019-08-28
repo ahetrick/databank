@@ -72,7 +72,7 @@ gem "figaro"
 
 # Use bootstrap for layout framework
 gem "autoprefixer-rails"
-gem "bootstrap-sass", "~> 3.4.1"
+gem "bootstrap-sass"
 gem "font-awesome-sass"
 
 gem "sass-css-importer"
