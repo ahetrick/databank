@@ -43,15 +43,15 @@ class UserAbility < ActiveRecord::Base
     def add_internal_reviewer(dataset_key, netid)
       dataset = Dataset.find_by key: dataset_key
       raise("dataset not found") unless dataset
-      UserAbility.grant_internal(dataset, netid, :view)
-      UserAbility.grant_internal(dataset, netid, :view_files)
+      self.class.grant_internal(dataset, netid, :view)
+      self.class.grant_internal(dataset, netid, :view_files)
     end
 
     def remove_internal_reviewer(dataset_key, netid)
       dataset = Dataset.find_by key: dataset_key
       raise("dataset not found") unless dataset
-      UserAbility.revoke_internal(dataset, netid, :view)
-      UserAbility.revoke_internal(dataset, netid, :view_files)
+      self.class.revoke_internal(dataset, netid, :view)
+      self.class.revoke_internal(dataset, netid, :view_files)
     end
 
     def add_internal_editor(dataset_key, netid)
@@ -69,7 +69,7 @@ class UserAbility < ActiveRecord::Base
         destroy_file
       ]
       abilities.each do |ability|
-        UserAbility.grant_internal(dataset, netid, ability)
+        self.class.grant_internal(dataset, netid, ability)
       end
     end
 
@@ -88,7 +88,7 @@ class UserAbility < ActiveRecord::Base
         destroy_file
       ]
       abilities.each do |ability|
-        UserAbility.revoke_internal(dataset, netid, ability)
+        self.class.revoke_internal(dataset, netid, ability)
       end
     end
 
