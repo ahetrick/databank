@@ -27,19 +27,22 @@ class Ability
         publish
         destroy_file
       ], Dataset do |dataset|
-        dataset.try(:depositor_email) == user.email
+        dataset.try(:depositor_email) == user.email ||
+            UserAbility.user_can?("Dataset", dataset.id, "edit", user)
       end
       can :view, Dataset do |dataset|
         dataset.try(:depositor_email) == user.email ||
             dataset.metadata_public? ||
-            UserAbility.user_can?("Dataset", dataset.id, "view", user)
+            UserAbility.user_can?("Dataset", dataset.id, "view", user) ||
+            UserAbility.user_can?("Dataset", dataset.id, "edit", user)
       end
 
       can :view_files, Dataset do |dataset|
         dataset.try(:depositor_email) == user.email ||
             dataset.files_public? ||
             dataset.internal_reviewer_netids.include?(user.email.split("@").first) ||
-            UserAbility.user_can?("Dataset", dataset.id, "view_files", user)
+            UserAbility.user_can?("Dataset", dataset.id, "view_files", user) ||
+            UserAbility.user_can?("Dataset", dataset.id, "edit", user)
       end
 
     elsif user.is?(Databank::UserRole::NETWORK_REVIEWER)
