@@ -167,7 +167,7 @@ class DatasetsController < ApplicationController
 
       when "depositor"
 
-        current_netid = current_user.email.split(".").first
+        current_netid = current_user.email.split("@").first
         search_get_my_facets = Dataset.search do
           all_of do
             without(:depositor, 'error')
