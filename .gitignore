@@ -14,8 +14,6 @@
 *.log
 
 # Ignore local files.
-.idea
-databank.iml
 config/master.key
 public/uploads
 nginx.conf.erb.old
@@ -23,7 +21,6 @@ nginx.conf.erb
 mock_medusa
 mock_bk
 /scripts
-features/support/login_data.yml
 solr
 cantaloupe
 bin/databank_dev

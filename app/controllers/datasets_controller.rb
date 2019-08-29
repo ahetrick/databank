@@ -167,15 +167,19 @@ class DatasetsController < ApplicationController
 
       when "depositor"
 
+        current_netid = current_user.email.split(".").first
         search_get_my_facets = Dataset.search do
-
           all_of do
             without(:depositor, 'error')
-            with :depositor_email, current_user.email
+            any_of do
+              with :depositor_email, current_user.email
+              with :internal_editor_netids, current_netid
+            end
             with(:is_most_recent_version, true)
             with :is_test, false
             any_of do
               with :publication_state, Databank::PublicationState::DRAFT
+      ls
               with :publication_state, Databank::PublicationState::RELEASED
               with :publication_state, Databank::PublicationState::Embargo::FILE
               with :publication_state, Databank::PublicationState::TempSuppress::FILE
@@ -183,7 +187,7 @@ class DatasetsController < ApplicationController
               with :publication_state, Databank::PublicationState::PermSuppress::FILE
             end
           end
-          keywords (params[:q])
+          keywords(params[:q])
           facet(:visibility_code)
 
         end

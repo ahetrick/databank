@@ -15,6 +15,8 @@ IDB_CONFIG = YAML.load(ERB.new(File.read(File.join(Rails.root, 'config', 'databa
 STORAGE_CONFIG = YAML.load(ERB.new(File.read(File.join(Rails.root, 'config', 'medusa_storage.yml'))).result)[Rails.env]
 
 Application.storage_manager = StorageManager.new
+# Initializes a Markdown parser
+Application.markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true)
 
 Tus::Server.opts[:max_size] = 2 * 1024*1024*1024*1024 # 2TB
 

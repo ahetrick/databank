@@ -61,6 +61,12 @@
 
                               %span.col-md-2
 
+                                -if datafile.is_markdown?
+                                  %span
+                                    %button(type='button' id="preview_md_btn_#{datafile.web_id}" class='btn btn-sm btn-success' onclick='preview_md("#{datafile.web_id}")')
+                                      %span.glyphicon.glyphicon-eye-open(id="preview_glyph_#{datafile.web_id}")
+                                      View
+
                                 -if datafile.is_all_txt?
                                   %span
                                     %button(type='button' id="preview_btn_#{datafile.web_id}" class='btn btn-sm btn-success' onclick='preview("#{datafile.web_id}")')
@@ -104,5 +110,8 @@
                             .row
                               .indent
                                 .preview(id="preview_#{datafile.web_id}")
+                                  -if datafile.is_markdown?
+                                    =Application.markdown.render(datafile.text_preview)
+
                             .row.loading.text-center
                               %i(class="far fa-spinner fa-spin fa-4x view-load-spinner spinner_#{datafile.web_id}" )

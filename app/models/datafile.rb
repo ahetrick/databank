@@ -338,6 +338,8 @@ class Datafile < ActiveRecord::Base
     mime_parts = mime_type.split("/")
     return Databank::PeekType::NONE unless mime_parts.length == 2
 
+    return Databank::PeekType::MARKDOWN if mime_parts[0] == "markdown"
+
     text_subtypes = ["csv", "xml", "x-sh", "x-javascript", "json", "r", "rb"]
     supported_image_subtypes = %w[jp2 jpeg dicom gif png bmp]
     nonzip_archive_subtypes = ["x-7z-compressed", "x-tar"]
@@ -364,6 +366,7 @@ class Datafile < ActiveRecord::Base
                           "vnd.ms-powerpoint.slideshow.macroEnabled.12"]
     subtype = mime_parts[1].downcase
     if mime_parts[0] == "text" || text_subtypes.include?(subtype)
+
       return Databank::PeekType::ALL_TEXT unless num_bytes > ALLOWED_DISPLAY_BYTES
 
       return Databank::PeekType::PART_TEXT

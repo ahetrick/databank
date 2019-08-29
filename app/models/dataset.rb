@@ -52,6 +52,7 @@ class Dataset < ActiveRecord::Base
     string :depositor_email
     string :visibility_code
     string :dataset_version
+    string :internal_editor_netids, multiple: true
     string :funder_codes, multiple: true
     string :grant_numbers, multiple: true
     string :creator_names, multiple: true

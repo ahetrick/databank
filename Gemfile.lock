@@ -1174,6 +1174,7 @@ GEM
     rdoc (6.2.0)
     recaptcha (5.1.0)
       json
+    redcarpet (3.5.0)
     regexp_parser (1.6.0)
     rest-client (2.1.0)
       http-accept (>= 1.7.0, < 2.0)
@@ -1373,6 +1374,7 @@ DEPENDENCIES
   rb-readline
   rchardet
   recaptcha
+  redcarpet
   rest-client
   roda
   rubocop

@@ -67,8 +67,14 @@ class DatafilesController < ApplicationController
       @datafile.storage_key = tus_key
       @datafile.binary_size = params[:datafile][:size]
       @datafile.mime_type = params[:datafile][:mime_type]
+
+      markdown_extensions = ["md", "MD", "mdown", "mkdn", "mkd", "markdown"]
+      file_parts = @datafile.binary_name.split(".")
       initial_peek_type = Datafile.peek_type_from_mime(@datafile.mime_type, @datafile.binary_size)
-      if initial_peek_type
+
+      if file_parts && markdown_extensions.include(file_parts.last)
+        @datafile.peek_text = Databank::PeekType::MARKDOWN
+      elsif initial_peek_type
         @datafile.peek_type = initial_peek_type
         if initial_peek_type == Databank::PeekType::ALL_TEXT
           @datafile.peek_text = @datafile.all_text_peek

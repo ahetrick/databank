@@ -144,23 +144,27 @@ module Viewable
 
   end
 
+  def is_markdown?
+    return peek_type = Databank::PeekType::MARKDOWN
+  end
+
   def is_archive?
-    return self.peek_type == 'listing'
+    return peek_type == Databank::PeekType::LISTING
   end
 
   def is_all_txt?
-    return self.peek_type == 'all_text'
+    return self.peek_type == Databank::PeekType::ALL_TEXT
   end
 
   def is_part_txt?
-    return self.peek_type == 'part_text'
+    return self.peek_type == Databank::PeekType::PART_TEXT
   end
 
   def is_image?
-
     supported_extensions = ['avi', 'bmp', 'jp2', 'jpg', 'jpeg', 'png', 'tif', 'tiff']
-
-    return self.peek_type == 'image' && self.file_extension && supported_extensions.include?(self.file_extension)
+    return (peek_type == Databank::PeekType::IMAGE) &&
+        (file_extension) &&
+        (supported_extensions.include?(file_extension))
   end
 
   def is_microsoft?

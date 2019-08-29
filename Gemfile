@@ -96,6 +96,9 @@ gem "activerecord-session_store", github: "rails/activerecord-session_store"
 
 gem "mime-types", require: "mime/types/full"
 
+# Use redcarpet to render markdown
+gem "redcarpet"
+
 # Use 'rest-client' to interaction with file processor api
 gem "rest-client"
 

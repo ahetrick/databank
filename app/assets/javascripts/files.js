@@ -210,7 +210,6 @@ function create_from_remote(){
 }
 
 function preview(web_id){
-    console.log("inside preview")
     $("#preview_" + web_id).show();
 
     if ($("#preview_" + web_id).hasClass('fetched')){
@@ -228,6 +227,20 @@ function preview(web_id){
     $("#preview_glyph_" + web_id).removeClass("glyphicon-eye-open");
     $("#preview_glyph_" + web_id).addClass("glyphicon-eye-close");
     $("#preview_btn_" + web_id).attr('onclick', "hide_preview('" + web_id  + "')");
+}
+
+function preview_md(web_id){
+    $("#preview_" + web_id).show();
+    $("#preview_glyph_" + web_id).removeClass("glyphicon-eye-open");
+    $("#preview_glyph_" + web_id).addClass("glyphicon-eye-close");
+    $("#preview_md_btn_" + web_id).attr('onclick', "hide_md_preview('" + web_id  + "')");
+}
+
+function hide_md_preview(web_id){
+    $("#preview_glyph_" + web_id).removeClass("glyphicon-eye-close");
+    $("#preview_glyph_" + web_id).addClass("glyphicon-eye-open");
+    $("#preview_md_btn_" + web_id).attr('onclick', "preview_md('" + web_id  + "')");
+    $("#preview_" + web_id).hide();
 }
 
 function hide_preview(web_id){

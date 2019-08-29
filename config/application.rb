@@ -83,6 +83,7 @@ module Databank
     MICROSOFT = 'microsoft'
     PDF = 'pdf'
     LISTING = 'listing'
+    MARKDOWN = 'markdown'
     NONE = 'none'
   end
 
@@ -127,6 +128,8 @@ module Databank
     attr_accessor :settings
 
     attr_accessor :storage_manager
+
+    attr_accessor :markdown
 
     attr_accessor :aws_signer
 
