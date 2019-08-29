@@ -198,6 +198,7 @@ class DatasetsController < ApplicationController
             with(:is_test, false)
             any_of do
               with :depositor_email, current_user.email
+              with :internal_editor_netids, current_netid
               with :publication_state, Databank::PublicationState::RELEASED
               with :publication_state, Databank::PublicationState::Embargo::FILE
               with :publication_state, Databank::PublicationState::TempSuppress::FILE
@@ -229,6 +230,7 @@ class DatasetsController < ApplicationController
             with :is_test, false
             any_of do
               with :depositor_email, current_user.email
+              with :internal_editor_netids, current_netid
               with :publication_state, Databank::PublicationState::RELEASED
               with :publication_state, Databank::PublicationState::Embargo::FILE
               with :publication_state, Databank::PublicationState::TempSuppress::FILE
