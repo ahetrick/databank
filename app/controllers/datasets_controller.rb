@@ -169,8 +169,6 @@ class DatasetsController < ApplicationController
 
         current_netid = current_user.email.split("@").first
 
-        Rails.logger.warn("current_netid: #{current_netid}")
-        
         search_get_my_facets = Dataset.search do
           all_of do
             without(:depositor, 'error')
