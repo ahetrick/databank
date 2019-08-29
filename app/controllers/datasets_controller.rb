@@ -168,6 +168,10 @@ class DatasetsController < ApplicationController
       when "depositor"
 
         current_netid = current_user.email.split("@").first
+
+        Rails.logger.warn("current_netid: #{current_netid}")
+        Rails.logger.warn("internal_editor_netids: #{internal_editor_netids}")
+
         search_get_my_facets = Dataset.search do
           all_of do
             without(:depositor, 'error')
@@ -205,6 +209,10 @@ class DatasetsController < ApplicationController
               with :publication_state, Databank::PublicationState::PermSuppress::FILE
               all_of do
                 with :depositor_email, current_user.email
+                with :publication_state, Databank::PublicationState::TempSuppress::METADATA
+              end
+              all_of do
+                with :internal_editor_netids, current_netid
                 with :publication_state, Databank::PublicationState::TempSuppress::METADATA
               end
             end
