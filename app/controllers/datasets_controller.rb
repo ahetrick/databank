@@ -179,7 +179,6 @@ class DatasetsController < ApplicationController
             with :is_test, false
             any_of do
               with :publication_state, Databank::PublicationState::DRAFT
-      ls
               with :publication_state, Databank::PublicationState::RELEASED
               with :publication_state, Databank::PublicationState::Embargo::FILE
               with :publication_state, Databank::PublicationState::TempSuppress::FILE
