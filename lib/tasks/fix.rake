@@ -10,6 +10,21 @@ namespace :fix do
     end
   end
 
+  desk 'retrofit markdown text'
+  task :retrofit_markdown => :environment do
+    markdown_extensions = ["md", "MD", "mdown", "mkdn", "mkd", "markdown"]
+    Dataset.all.each do |dataset|
+      dataset.datafiles each do |datafile|
+        file_parts = datafile.binary_name.split(".")
+        if file_parts && markdown_extensions.include?(file_parts.last)
+          datafile.peek_type = Databank::PeekType::MARKDOWN
+          datafile.peek_text = Application.markdown.render(@datafile.all_text_peek)
+          datafile.save
+        end
+      end
+    end
+  end
+
   # to be run AFTER switching dev system config to test system
   desc 'add dev dois to DataCite test system'
   task :add_test_dois => :environment do
