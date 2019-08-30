@@ -9,7 +9,7 @@ module DatafilesHelper
 
   def full_text(datafile)
     datafile.with_input_io do |io|
-      io.read
+      io.readline(nil, 5000)
     end
   end
 end
