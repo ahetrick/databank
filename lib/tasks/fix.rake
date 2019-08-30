@@ -10,7 +10,7 @@ namespace :fix do
     end
   end
 
-  desk 'retrofit markdown text'
+  desc 'retrofit markdown text'
   task :retrofit_markdown => :environment do
     markdown_extensions = ["md", "MD", "mdown", "mkdn", "mkd", "markdown"]
     Dataset.all.each do |dataset|
