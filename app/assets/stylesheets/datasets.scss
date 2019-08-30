@@ -377,18 +377,22 @@ legend.metadata-border {
 //}
 
 .preview{
-
   padding-left: 15px;
-
   background-color: $color__lightest-grey;
-
   font-family: monospace;
-
   margin-right: 15px;
-
   max-height: 400px;
   max-width: 10in;
+  overflow-y: scroll;
+  overflow-x: scroll;
+}
 
+.markdown_preview{
+  padding-left: 15px;
+  background-color: $color__lightest-grey;
+  margin-right: 15px;
+  max-height: 400px;
+  max-width: 10in;
   overflow-y: scroll;
   overflow-x: scroll;
 }

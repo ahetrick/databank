@@ -164,6 +164,7 @@ ready = function () {
     $('.new-save').hide();
 
     $('.preview').hide();
+    $('.markdown_preview').hide();
 
     $('.nav-item').click(function () {
 

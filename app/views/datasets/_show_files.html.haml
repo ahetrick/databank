@@ -109,9 +109,12 @@
 
                             .row
                               .indent
-                                .preview(id="preview_#{datafile.web_id}")
-                                  -if datafile.is_markdown?
-                                    =Application.markdown.render(raw(text_preview(datafile)))
+                                -if datafile.is_markdown?
+                                  .markdown_preview(id="preview_#{datafile.web_id}")
+                                    =raw(Application.markdown.render(text_preview(datafile)))
+                                -else
+                                  .preview(id="preview_#{datafile.web_id}")
+
 
                             .row.loading.text-center
                               %i(class="far fa-spinner fa-spin fa-4x view-load-spinner spinner_#{datafile.web_id}" )
