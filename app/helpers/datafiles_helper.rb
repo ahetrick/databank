@@ -7,4 +7,9 @@ module DatafilesHelper
     end
   end
 
+  def full_text(datafile)
+    datafile.with_input_io do |io|
+      io.read
+    end
+  end
 end

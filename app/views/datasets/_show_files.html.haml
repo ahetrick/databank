@@ -111,7 +111,7 @@
                               .indent
                                 -if datafile.is_markdown?
                                   .markdown_preview(id="preview_#{datafile.web_id}")
-                                    =raw(Application.markdown.render(text_preview(datafile)))
+                                    =raw(Application.markdown.render(full_text(datafile)))
                                 -else
                                   .preview(id="preview_#{datafile.web_id}")
 
