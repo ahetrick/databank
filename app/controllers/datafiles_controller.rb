@@ -72,7 +72,7 @@ class DatafilesController < ApplicationController
       file_parts = @datafile.binary_name.split(".")
       initial_peek_type = Datafile.peek_type_from_mime(@datafile.mime_type, @datafile.binary_size)
 
-      if file_parts && markdown_extensions.include(file_parts.last)
+      if file_parts && markdown_extensions.include?(file_parts.last)
         @datafile.peek_text = Databank::PeekType::MARKDOWN
       elsif initial_peek_type
         @datafile.peek_type = initial_peek_type
