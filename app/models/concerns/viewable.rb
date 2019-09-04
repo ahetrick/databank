@@ -145,7 +145,7 @@ module Viewable
   end
 
   def is_markdown?
-    return peek_type = Databank::PeekType::MARKDOWN
+    return peek_type == Databank::PeekType::MARKDOWN
   end
 
   def is_archive?
