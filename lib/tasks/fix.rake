@@ -14,11 +14,12 @@ namespace :fix do
   task :retrofit_markdown => :environment do
     markdown_extensions = ["md", "MD", "mdown", "mkdn", "mkd", "markdown"]
     Dataset.all.each do |dataset|
-      dataset.datafiles each do |datafile|
+      dataset.datafiles.each do |datafile|
         file_parts = datafile.binary_name.split(".")
         if file_parts && markdown_extensions.include?(file_parts.last)
           datafile.peek_type = Databank::PeekType::MARKDOWN
-          datafile.peek_text = Application.markdown.render(@datafile.all_text_peek)
+          datafile.peek_text = Application.markdown.render(datafile.all_text_peek)
+
           datafile.save
         end
       end
@@ -391,6 +392,19 @@ namespace :fix do
         end
 
       end
+    end
+  end
+
+  desc "charstuff"
+  task :charstuff => :environment do
+    test_path = "/Users/mfall3/Downloads/Bobcat data description.txt"
+    if File.file?(test_path)
+      content = File.read(test_path)
+      content.gsub!(/[”“]/, '"')
+      content.gsub!(/[‘’]/, "'")
+      puts content
+    else
+      puts "file not found"
     end
   end
 

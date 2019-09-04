@@ -56,6 +56,9 @@ gem "minitar"
 # Use rchardet to attempt to detect character encoding
 gem "rchardet"
 
+# User iconv to convert between encodings
+gem "iconv"
+
 # Use roda for routing magic
 gem "roda"
 

@@ -141,12 +141,12 @@ class Datafile < ActiveRecord::Base
   end
 
   def file_extension
+    return "" unless bytestream_name
+
     filename_split = bytestream_name.split(".")
-    if filename_split.count > 1 # otherwise cannot determine extension
-      return filename_split.last
-    else
-      return ""
-    end
+    return "" unless filename_split.count > 1
+
+    return filename_split.last
   end
 
   def ip_downloaded_file_today(request_ip)
@@ -415,6 +415,8 @@ class Datafile < ActiveRecord::Base
 
     begin
       all_text_string = current_root.as_string(storage_key)
+      all_text_string.gsub!(/[”“]/, '"')
+      all_text_string.gsub!(/[‘’]/, "'")
       all_text_string.force_encoding(Encoding::UTF_8) if all_text_string.encoding == Encoding::ASCII_8BIT
       return all_text_string if all_text_string.encoding == Encoding::UTF_8
 
