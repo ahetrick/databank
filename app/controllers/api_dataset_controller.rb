@@ -59,94 +59,9 @@ class ApiDatasetController < ApplicationController
         Rails.logger.warn ex.message
         render json: "#{ex.message}\n", status: 500
       end
-
-    elsif params.has_key?('phase')
-      begin
-
-        unless params.has_key?('filename')
-          render json: "missing paramter: filename", status: 400
-        end
-
-        case params['phase']
-        when 'setup'
-
-          @dataset.complete_datafiles.each do |datafile|
-            if datafile.bytestream_name == params['filename']
-              raise "File with the name #{params['filename']} already exists in this dataset."
-            end
-          end
-
-          raise "missing paramter: filesize" unless params.has_key?('filesize')
-
-          raise "File too large. Max file size: 2TB." if (params['filesize']).to_i > 2199023255552
-
-          if File.directory?("#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}")
-            FileUtils.rm_rf("#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}")
-          end
-
-          FileUtils::mkdir_p "#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}"
-          FileUtils.touch("#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}/#{params['filename']}")
-          if File.exists?("#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}/#{params['filename']}")
-            render json: "successfully set up #{params['filename']}", status: 200
-          else
-            render json: "error setting up #{params['filename']}", status: 500
-          end
-
-        when 'transfer'
-
-          begin
-
-            raise "missing paramater: previous_size" unless params.has_key?('previous_size')
-
-            raise "missing bytechunk" unless params.has_key?('bytechunk')
-
-            writepath = "#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}/#{params['filename']}"
-
-            written_size = File.size(writepath)
-
-            raise "File too large. Max file size: 2TB." if written_size > 2199023255551
-
-            unless(params['previous_size'].to_i == written_size.to_i)
-              raise("Unexpected previous_size value.  Expected: #{written_size.to_s}, Recieved: #{params['previous_size']}")
-            end
-
-            File.open(writepath, "a") do |f|
-              f.write(File.read(params['bytechunk'].open))
-            end
-
-            render json: "successfully added chunk to #{params['filename']}", status: 200
-          rescue StandardError => ex
-            Rails.logger.warn ex.message
-            render json: {error: "#{ex.message}\n", progress: File.size(writepath), status: 500}
-          end
-
-        when 'verify'
-
-          writepath = "#{IDB_CONFIG[:datafile_store_dir]}/api/#{@dataset.key}/#{params['filename']}"
-
-          df = Datafile.create(dataset_id: @dataset.id)
-          df.storage_root = 'draft'
-          df.storage_key = "/api/#{@dataset.key}/#{params['filename']}"
-          df.binary_name = params['filename']
-          df.binary_size = File.size(writepath)
-          df.save
-
-          render json: "#{params['filename']} successfully uploaded.  Refresh dataset page to see newly uploaded file. #{IDB_CONFIG[:root_url_text]}/datasets/#{@dataset.key}/edit", status: 200
-
-        else
-          render json: "invalid phase parameter: #{params['phase']}", status: 400
-        end
-
-
-      rescue StandardError => ex
-        Rails.logger.warn ex.message
-        render json: "#{ex.message}\n", status: 500
-      end
     else
       render json: "invalid request", status: 500
-
     end
-
 
   end
 
