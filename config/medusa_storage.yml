@@ -19,28 +19,19 @@ test:
 aws-demo:
   :storage:
     - :name: draft
-      :type: filesystem
-      :path: <%= Rails.application.credentials[Rails.env.to_sym][:storage][:draft_path] %>
+      :type: s3
+      :aws_access_key_id: <%= Rails.application.credentials[Rails.env.to_sym][:aws][:access_key_id] %>
+      :aws_secret_access_key: <%= Rails.application.credentials[Rails.env.to_sym][:aws][:secret_access_key] %>
+      :region: us-east-2
+      :bucket: <%= Rails.application.credentials[Rails.env.to_sym][:storage][:draft_bucket] %>
+      :prefix: <%= Rails.application.credentials[Rails.env.to_sym][:storage][:draft_prefix] %>
     - :name: medusa
-      :type: filesystem
-      :path: <%= Rails.application.credentials[Rails.env.to_sym][:storage][:medusa_path] %>
-
-#aws-demo:
-#  :storage:
-#    - :name: draft
-#      :type: s3
-#      :aws_access_key_id: <%= Rails.application.credentials[Rails.env.to_sym][:aws][:access_key_id] %>
-#      :aws_secret_access_key: <%= Rails.application.credentials[Rails.env.to_sym][:aws][:secret_access_key] %>
-#      :region: us-east-2
-#      :bucket: <%= Rails.application.credentials[Rails.env.to_sym][:storage][:draft_bucket] %>
-#      :prefix: <%= Rails.application.credentials[Rails.env.to_sym][:storage][:draft_prefix] %>
-#    - :name: medusa
-#      :type: s3
-#      :aws_access_key_id: <%= Rails.application.credentials[Rails.env.to_sym][:aws][:access_key_id] %>
-#      :aws_secret_access_key: <%= Rails.application.credentials[Rails.env.to_sym][:aws][:secret_access_key] %>
-#      :region: us-east-2
-#      :bucket: <%= Rails.application.credentials[Rails.env.to_sym][:storage][:medusa_bucket] %>
-#      :prefix: <%= Rails.application.credentials[Rails.env.to_sym][:storage][:medusa_prefix] %>
+      :type: s3
+      :aws_access_key_id: <%= Rails.application.credentials[Rails.env.to_sym][:aws][:access_key_id] %>
+      :aws_secret_access_key: <%= Rails.application.credentials[Rails.env.to_sym][:aws][:secret_access_key] %>
+      :region: us-east-2
+      :bucket: <%= Rails.application.credentials[Rails.env.to_sym][:storage][:medusa_bucket] %>
+      :prefix: <%= Rails.application.credentials[Rails.env.to_sym][:storage][:medusa_prefix] %>
 
 aws-production:
   :storage:
