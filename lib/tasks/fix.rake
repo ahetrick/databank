@@ -2,6 +2,16 @@ require 'csv'
 
 namespace :fix do
 
+  desc 'hide embargoed resources'
+  task :hide_embargoed => :environment do
+    Dataset.where(publication_state: Databank::PublicationState::RELEASED,
+                  embargo: [Databank::PublicationState::Embargo::FILE,
+                            Databank::PublicationState::Embargo::METADATA]).each do |dataset|
+      dataset.publication_state = dataset.embargo if release_date > Date.today
+      dataset.save
+    end
+  end
+
   # to be run BEFORE switching dev system config to test system
   desc 'report on doi states'
   task :doi_report => :environment do
