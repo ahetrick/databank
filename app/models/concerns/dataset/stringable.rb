@@ -286,7 +286,7 @@ module Stringable
       end
     else
       return_list = ""
-      creators.each_with_index do |creator, i|
+      creators.each_with_index do |crea
         return_list += "; " unless i.zero?
         return_list += creator.list_name
       end

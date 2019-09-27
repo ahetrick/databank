@@ -269,6 +269,9 @@ function generate_creator_preview() {
             } else {
                if (($("#dataset_creators_attributes_" + creator_index + "_family_name").val() != "") && ($("#dataset_creators_attributes_" + creator_index + "_given_name").val() != "")){
                    $(this).removeClass("invalid-name");
+                   if (creator_list_preview.length > 0) {
+                       creator_list_preview = creator_list_preview + "; ";
+                   }
                    creator_list_preview = creator_list_preview + $("#dataset_creators_attributes_" + creator_index + "_family_name").val();
                    creator_list_preview = creator_list_preview + ", "
                    creator_list_preview = creator_list_preview + $("#dataset_creators_attributes_" + creator_index + "_given_name").val();
