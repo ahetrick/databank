@@ -20,6 +20,8 @@ creators_ready = function () {
         cells = $('#creator_table').find('tr')[0].cells.length;
         desired_width = table_width / cells + 'px';
 
+        console.log(dataset_creator_type);
+
         handleCreatorTable(dataset_creator_type);
 
         $('#creator_table td').css('width', desired_width);
@@ -168,14 +170,21 @@ function remove_creator_row(creator_index, creator_type) {
 
 function handleCreatorTable(creator_type) {
 
+    console.log("inside handleCreatorTable");
+
+    console.log(creator_type);
+
     var person_creators_type = 0;
     var org_creators_type = 1;
 
     $('#creator_table tr').each(function (i) {
         // for all but header row, set the row_position value of the input to match the table row position
+        console.log("inside handleCreatorTable each");
         if (i > 0) {
             var split_id = (this.id).split('_');
             var creator_index = split_id[2];
+
+            console.log("creator_index: " + creator_index);
 
             $("#dataset_creators_attributes_" + creator_index + "_row_position").val(i);
 
@@ -189,17 +198,17 @@ function handleCreatorTable(creator_type) {
             if ((i + 1) == ($("#creator_table tr").length)) {
 
                 if (creator_type == org_creators_type){
-                    $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x27" + creator_index + "x27, 1 )' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_institution_creator()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
+                    $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(" + creator_index + ", 1 )' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_institution_creator()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
                 } else {
-                    $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x27" + creator_index + "x27, 0  )' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_person_creator()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
+                    $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(" + creator_index + ", 0  )' type='button'><span class='glyphicon glyphicon-trash'></span></button>&nbsp;&nbsp;<button class='btn btn-success btn-sm' onclick='add_person_creator()' type='button'><span class='glyphicon glyphicon-plus'></span></button>");
                 }
 
 
             } else {
                 if (creator_type == org_creators_type) {
-                    $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x27" + creator_index + "x27, 1  )' type='button'><span class='glyphicon glyphicon-trash'></span></button>");
+                    $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(" + creator_index + ", 1  )' type='button'><span class='glyphicon glyphicon-trash'></span></button>");
                 } else {
-                    $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(\x27" + creator_index + "x27, 0  )' type='button'><span class='glyphicon glyphicon-trash'></span></button>");
+                    $("td:last-child", this).html("<button class='btn btn-danger btn-sm' onclick='remove_creator_row(" + creator_index + ", 0  )' type='button'><span class='glyphicon glyphicon-trash'></span></button>");
                 }
 
             }
