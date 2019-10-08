@@ -11,7 +11,7 @@
       contact the Research Data Service Team
     with questions.
 
-- if ((can? :edit, @dataset) && (Databank::Application.file_mode == Databank::FileMode::WRITE_READ))
+- if ((can? :update, @dataset) && (Databank::Application.file_mode == Databank::FileMode::WRITE_READ))
   .idb-dashboard.panel.panel-warning
     -#.panel-heading
     -#  %span(class="metadata-label" )Dataset Dashboard

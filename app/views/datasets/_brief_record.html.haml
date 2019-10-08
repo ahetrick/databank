@@ -41,7 +41,7 @@
           suppressed by curator
 
 
-  -if(can? :view, dataset) && dataset.release_date
+  -if(can? :read, dataset) && dataset.release_date
     .label.label-info
       -if dataset.release_date > Date.current()
         planned publication date:

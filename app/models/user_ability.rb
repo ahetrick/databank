@@ -12,83 +12,35 @@ class UserAbility < ActiveRecord::Base
 
     end
 
-    def update_internal_reviewers(dataset_key, form_netids = [])
+    def update_internal_permissions(dataset_key, form_reviewers = [], form_editors = [])
       dataset = Dataset.find_by(key: dataset_key)
       raise("dataset not found") unless dataset
-      current_netids = dataset.internal_reviewer_netids || []
-      netids_to_remove = current_netids - form_netids
-      netids_to_add = form_netids - current_netids
-      netids_to_remove.each do |netid|
-        remove_internal_reviewer(dataset_key, netid)
-      end
-      netids_to_add.each do |netid|
-        add_internal_reviewer(dataset_key, netid)
-      end
-    end
+      current_reviewers = dataset.internal_reviewer_netids || []
+      current_editors = dataset.internal_editor_netids || []
 
-    def update_internal_editors(dataset_key, form_netids = [])
-      dataset = Dataset.find_by(key: dataset_key)
-      raise("dataset not found") unless dataset
-      current_netids = dataset.internal_editor_netids || []
-      netids_to_remove = current_netids - form_netids
-      netids_to_add = form_netids - current_netids
-      netids_to_remove.each do |netid|
-        remove_internal_editor(dataset_key, netid)
+      form_can_read = form_editors + form_reviewers
+      current_can_read = current_reviewers + current_editors
+
+      remove_read = current_can_read - form_can_read
+      remove_read.each do |netid|
+        revoke_internal(dataset, netid, :read)
+        revoke_internal(dataset, netid, :view_files)
       end
-      netids_to_add.each do |netid|
-        add_internal_editor(dataset_key, netid)
+
+      add_read = form_can_read - current_can_read
+      add_read.each do |netid|
+        grant_internal(dataset, netid, :read)
+        grant_internal(dataset, netid, :view_files)
       end
-    end
 
-    def add_internal_reviewer(dataset_key, netid)
-      dataset = Dataset.find_by key: dataset_key
-      raise("dataset not found") unless dataset
-      grant_internal(dataset, netid, :view)
-      grant_internal(dataset, netid, :view_files)
-    end
-
-    def remove_internal_reviewer(dataset_key, netid)
-      dataset = Dataset.find_by key: dataset_key
-      raise("dataset not found") unless dataset
-      revoke_internal(dataset, netid, :view)
-      revoke_internal(dataset, netid, :view_files)
-    end
-
-    def add_internal_editor(dataset_key, netid)
-      dataset = Dataset.find_by key: dataset_key
-      raise "dataset not found" unless dataset
-      abilities = %i[
-        edit
-        update
-        destroy
-        request_review
-        get_new_token
-        get_current_token
-        validiate_change2published
-        publish
-        destroy_file
-      ]
-      abilities.each do |ability|
-        grant_internal(dataset, netid, ability)
+      remove_update = current_editors - form_editors
+      remove_update.each do |netid|
+        revoke_internal(dataset, netid, :update)
       end
-    end
 
-    def self.remove_internal_editor(dataset_key, netid)
-      dataset = Dataset.find_by key: dataset_key
-      raise "dataset not found" unless dataset
-      abilities = %i[
-        edit
-        update
-        destroy
-        request_review
-        get_new_token
-        get_current_token
-        validiate_change2published
-        publish
-        destroy_file
-      ]
-      abilities.each do |ability|
-        revoke_internal(dataset, netid, ability)
+      add_update = form_editors - current_editors
+      add_update.each do |netid|
+        grant_internal(dataset, netid, :update)
       end
     end
 

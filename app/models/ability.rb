@@ -5,67 +5,50 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
-    # Define abilities for the passed in user here. For example:
+
+    # cancancan automatically adds read, create, update
+    # alias_action :index, :show, :to => :read
+    # alias_action :new, :to => :create
+    # alias_action :edit, :to => :update
 
     user ||= User::Shibboleth.new # guest user (not logged in)
 
-    if user.is?(Databank::UserRole::ADMIN)
-      can :manage, :all
+    can :manage, :all if user.is?(Databank::UserRole::ADMIN)
 
-    elsif user.is?(Databank::UserRole::DEPOSITOR)
+    can :create, [Dataset, Datafile] if user.is?(Databank::UserRole::DEPOSITOR)
 
-      can %i[read create], [Dataset, Datafile]
+    can :manage, Datafile do |datafile|
+      datafile.dataset.publication_state == Databank::PublicationState::DRAFT &&
+          user.can?(:update, datafile.dataset)
+    end
 
-      can %i[
-        edit
-        update
-        destroy
-        request_review
-        get_new_token
-        get_current_token
-        validiate_change2published
-        publish
-        destroy_file
-      ], Dataset do |dataset|
-        dataset.try(:depositor_email) == user.email ||
-            UserAbility.user_can?("Dataset", dataset.id, "edit", user)
-      end
-      can :view, Dataset do |dataset|
-        dataset.try(:depositor_email) == user.email ||
-            dataset.metadata_public? ||
-            UserAbility.user_can?("Dataset", dataset.id, "view", user) ||
-            UserAbility.user_can?("Dataset", dataset.id, "edit", user)
-      end
+    can :read, Dataset do |dataset|
+      dataset.metadata_public? ||
+          dataset.depositor_email == user.email ||
+          UserAbility.user_can?("Dataset", dataset.id, :update, user) ||
+          UserAbility.user_can?("Dataset", dataset.id, :read, user) ||
+          dataset.data_curation_network && user.is?(Databank::UserRole::NETWORK_REVIEWER)
+    end
 
-      can :view_files, Dataset do |dataset|
-        dataset.try(:depositor_email) == user.email ||
-            dataset.files_public? ||
-            dataset.internal_reviewer_netids.include?(user.email.split("@").first) ||
-            UserAbility.user_can?("Dataset", dataset.id, "view_files", user) ||
-            UserAbility.user_can?("Dataset", dataset.id, "edit", user)
-      end
+    can :update, Dataset do |dataset|
+      dataset.depositor_email == user.email ||
+          UserAbility.user_can?("Dataset", dataset.id, :update, user)
+    end
 
-    elsif user.is?(Databank::UserRole::NETWORK_REVIEWER)
-      can [:view], Dataset do |dataset|
-        dataset.try(:data_curation_network) == true || dataset.metadata_public?
-      end
+    can :destroy, Dataset do |dataset|
+      dataset.publication_state == Databank::PublicationState::DRAFT &&
+          (dataset.depositor_email == user.email || UserAbility.user_can?("Dataset", dataset.id, :update, user))
+    end
 
-      can [:view_files], Dataset do |dataset|
-        dataset.try(:data_curation_network) == true || dataset.files_public?
-      end
+    can :view_files, Dataset do |dataset|
+      dataset.files_public? ||
+          UserAbility.user_can?("Dataset", dataset.id, :update, user) ||
+          UserAbility.user_can?("Dataset", dataset.id, :read, user) ||
+          dataset.data_curation_network && user.is?(Databank::UserRole::NETWORK_REVIEWER)
+    end
 
-      can [:view, :update, :edit], Identity do |identity|
-        identity.try(:email) == user.email
-      end
-
-    else
-      can :view, Dataset do |dataset|
-        dataset.metadata_public?
-      end
-      can :view_files, Dataset do |dataset|
-        dataset.files_public?
-      end
-      can :login, Identity
+    can [:read, :update], Identity do |identity|
+      identity.email == user.email
     end
   end
 end

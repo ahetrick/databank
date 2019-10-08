@@ -76,3 +76,5 @@ medusa_info:
   port: 8080
   user: <%= Rails.application.credentials[Rails.env.to_sym][:medusa_info][:user] %>
   password: <%= Rails.application.credentials[Rails.env.to_sym][:medusa_info][:password] %>
+
+:testers: "tester@example.com,not_tester@example.com"

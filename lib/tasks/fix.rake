@@ -2,6 +2,23 @@ require 'csv'
 
 namespace :fix do
 
+  desc 'fix internal user ability records'
+  task :fix_internal_ability => :environment do
+    UserAbility.all.destroy_all
+    Dataset.all.each do |dataset|
+      next if dataset.internal_view_netids.empty?
+
+      dataset.internal_view_netids.each do |netid|
+        UserAbility.grant_internal(dataset, netid, :read)
+        UserAbility.grant_internal(dataset, netid, :view_files)
+      end
+      dataset.internal_editor_netids.each do |netid|
+        UserAbility.grant_internal(dataset, netid, :update)
+      end
+    end
+    
+  end
+
   desc 'hide embargoed resources'
   task :hide_embargoed => :environment do
     Dataset.where(publication_state: Databank::PublicationState::RELEASED,

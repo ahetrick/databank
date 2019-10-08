@@ -153,6 +153,35 @@ module Indexable
     funder_names.join(" ").to_s
   end
 
+  def internal_view_netids
+    internal_reviewer_netids + internal_editor_netids
+  end
+
+  def internal_reviewer_netids
+    uids = UserAbility.where(user_provider: 'shibboleth',
+                             resource_type: 'Dataset',
+                             ability: 'view_files',
+                             'resource_id': self.id).pluck(:user_uid)
+    uid_parts = uids.collect {|x| x.split("@") || [x]}
+
+    netids = uid_parts.collect {|x| x[0] }
+
+    netids.uniq
+
+  end
+
+  def internal_editor_netids
+    uids = UserAbility.where(user_provider: 'shibboleth',
+                             resource_type: 'Dataset',
+                             ability: 'edit',
+                             'resource_id': id).pluck(:user_uid)
+    uid_parts = uids.collect {|x| x.split("@") || [x]}
+
+    netids = uid_parts.collect {|x| x[0] }
+
+    netids.uniq
+  end
+
   def grant_numbers
     Funder.where(dataset_id: id).pluck(:grant)
   end

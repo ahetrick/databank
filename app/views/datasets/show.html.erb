@@ -9,7 +9,7 @@
 <% end %>
 
 <%= render partial: 'download_link_modal' %>
-<% if (can? :edit, @dataset) %>
+<% if (can? :update, @dataset) %>
   <%= render partial: 'offer_review_h_modal' %>
   <%= render partial: 'confirm_deposit_modal' %>
   <%= render partial: 'datasets/dashboards/show' %>
@@ -37,7 +37,7 @@
 
   <%= render partial: 'metadata_restriction_alert', locals: {dataset: @dataset} %>
 
-  <% if (can? :view, @dataset) %>
+  <% if (can? :read, @dataset) %>
     <%= render partial: 'show_metadata', locals: {dataset: @dataset} %>
   <% end %>
 
@@ -134,7 +134,7 @@
 
   <% end %>
 
-  <% if can? :edit, @dataset %>
+  <% if can? :update, @dataset %>
     <a href="/datasets/<%= @dataset.key %>/review_deposit_agreement">Review Deposit Agreement</a>
   <% end %>
 
@@ -198,7 +198,7 @@
 <% end %>
 
 
-<% if (@dataset.title) && (@dataset.title.downcase.include? 'unicorn') && ((can? :edit, @dataset) && [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state)) %>
+<% if (@dataset.title) && (@dataset.title.downcase.include? 'unicorn') && ((can? :update, @dataset) && [Databank::PublicationState::RELEASED, Databank::PublicationState::Embargo::FILE].include?(@dataset.publication_state)) %>
   <div class="pull-right">
     <%= image_tag('Rainbow_Unicorn.png') %>
   </div>

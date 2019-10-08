@@ -52,7 +52,7 @@ class Dataset < ActiveRecord::Base
     string :depositor_email
     string :visibility_code
     string :dataset_version
-    string :internal_editor_netids, multiple: true
+    string :internal_view_netids, multiple: true
     string :funder_codes, multiple: true
     string :grant_numbers, multiple: true
     string :creator_names, multiple: true
@@ -420,32 +420,6 @@ class Dataset < ActiveRecord::Base
     else
       "not_mine"
     end
-  end
-
-  def internal_reviewer_netids
-    uids = UserAbility.where(user_provider: 'shibboleth',
-                             resource_type: 'Dataset',
-                             ability: 'view_files',
-                             'resource_id': self.id).pluck(:user_uid)
-    uid_parts = uids.collect {|x| x.split("@") || [x]}
-
-    netids = uid_parts.collect {|x| x[0] }
-
-    netids.uniq
-
-  end
-
-  def internal_editor_netids
-    uids = UserAbility.where(user_provider: 'shibboleth',
-                             resource_type: 'Dataset',
-                             ability: 'edit',
-                             'resource_id': self.id).pluck(:user_uid)
-    uid_parts = uids.collect {|x| x.split("@") || [x]}
-
-    netids = uid_parts.collect {|x| x[0] }
-
-    netids.uniq
-
   end
 
   def ind_creators_to_contributors

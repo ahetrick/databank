@@ -602,7 +602,7 @@ class DatasetsController < ApplicationController
   # GET /datasets/1.json
   def show
 
-    authorize! :view, @dataset
+    authorize! :read, @dataset
 
     if Rails.env.aws_production?
       @datacite_fabrica_url = "https://doi.datacite.org/"
@@ -650,12 +650,9 @@ class DatasetsController < ApplicationController
     else
       @dataset.update_attribute(:data_curation_network, false)
     end
-
-    internal_reviewer_netids = params[:internal_reviewer] || []
-    UserAbility.update_internal_reviewers(@dataset.key, internal_reviewer_netids)
-
-    internal_editor_netids = params[:internal_editor] || []
-    UserAbility.update_internal_editors(@dataset.key, internal_editor_netids)
+    reviewer_netids = params[:internal_reviewer] || []
+    editor_netids = params[:internal_editor] || []
+    UserAbility.update_internal_permissions(@dataset.key, reviewer_netids, editor_netids)
 
     redirect_to "/datasets/#{@dataset.key}"
   end
@@ -765,6 +762,8 @@ class DatasetsController < ApplicationController
 
   # GET /datasets/1/edit
   def edit
+    authorize! :update, @dataset
+    set_file_mode
     if @dataset.org_creators && @dataset.org_creators == true
       @dataset.contributors.build unless @dataset.contributors.count > 0
     end
@@ -785,18 +784,18 @@ class DatasetsController < ApplicationController
     @license_info_arr = LICENSE_INFO_ARR
 
     @dataset.subject = Databank::Subject::NONE unless @dataset.subject
-    authorize! :edit, @dataset
+    authorize! :update, @dataset
 
   end
 
   def get_new_token
-    authorize! :edit, @dataset
+    authorize! :update, @dataset
     @token = @dataset.new_token
     render json: {token: @token.identifier, expires: @token.expires}
   end
 
   def get_current_token
-
+    authorize! :update, @dataset
     if @dataset.current_token && !@dataset.current_token.nil?
       @token = @dataset.current_token
       render json: {token: @token.identifier, expires: @token.expires}
@@ -810,13 +809,8 @@ class DatasetsController < ApplicationController
   # POST /datasets
   # POST /datasets.json
   def create
-
+    authorize! :create, Dataset
     @dataset = Dataset.new(dataset_params)
-
-    authorize! :edit, @dataset
-
-    set_file_mode
-
     respond_to do |format|
       if @dataset.save
         format.html {redirect_to edit_dataset_path(@dataset.key)}
@@ -826,76 +820,52 @@ class DatasetsController < ApplicationController
         format.json {render json: @dataset.errors, status: :unprocessable_entity}
       end
     end
-
-
   end
 
   # PATCH/PUT /datasets/1
   # PATCH/PUT /datasets/1.json
   def update
-
-    authorize! :edit, @dataset
-
+    authorize! :update, @dataset
     old_publication_state = @dataset.publication_state
-
     old_creator_state = @dataset.org_creators || false
-
-    #Rails.logger.warn dataset_params
-
     @dataset.release_date ||= Date.current
 
     respond_to do |format|
-
       if @dataset.update(dataset_params)
-
         if dataset_params[:org_creators] == 'true' && old_creator_state == false
-
           # convert individual creators to additional contacts (contributors)
           @dataset.ind_creators_to_contributors
           params['context'] = 'continue_edit'
-
         elsif dataset_params[:org_creators] == 'false' && old_creator_state == true
-
           # delete all institutional creators
           @dataset.institutional_creators.delete_all
-
           # convert all additional contacts (contributors) to individual authors
           @dataset.contributors_to_ind_creators
           params['context'] = 'continue_edit'
-
         end
-
         if params.has_key?('context') && params['context'] == 'exit'
-
           if @dataset.publication_state == Databank::PublicationState::DRAFT
             format.html {redirect_to "/datasets?q=&#{URI.encode('depositors[]')}=#{current_user.name}&context=exit_draft"}
           else
             format.html {redirect_to "/datasets?q=&#{URI.encode('depositors[]')}=#{current_user.name}&context=exit_doi"}
           end
-
         elsif params.has_key?('context') && params['context'] == 'publish'
-
           if Databank::PublicationState::DRAFT == @dataset.publication_state
             raise "invalid publication state for update-and-publish"
-
             # only update complete datasets
           elsif Dataset.completion_check(@dataset, current_user) == 'ok'
-
             # set publication_state
             if @dataset.embargo && [Databank::PublicationState::Embargo::FILE, Databank::PublicationState::Embargo::METADATA].include?(@dataset.embargo)
               @dataset.publication_state = @dataset.embargo
             else
               @dataset.publication_state = Databank::PublicationState::RELEASED
             end
-
             if old_publication_state != Databank::PublicationState::RELEASED && @dataset.publication_state == Databank::PublicationState::RELEASED
               @dataset.release_date ||= Date.current
             end
-
             @dataset.save
             # send_dataset_to_medusa only sends metadata files unless old_publication_state is draft
             MedusaIngest.send_dataset_to_medusa(@dataset)
-
             if @dataset.is_test? || @dataset.update_doi
               format.html {redirect_to dataset_path(@dataset.key)}
               format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
@@ -903,38 +873,27 @@ class DatasetsController < ApplicationController
               format.html {redirect_to dataset_path(@dataset.key), notice: 'Error updating DataCite Metadata, details have been logged.'}
               format.json {render json: @dataset.errors, status: :unprocessable_entity}
             end
-
           else #this else means completion_check was not ok within publish context
             Rails.logger.warn Dataset.completion_check(@dataset, current_user)
             raise "Error: Cannot update published dataset with incomplete information."
           end
-
         elsif params.has_key?('context') && params['context'] == 'continue_edit'
           format.html {redirect_to edit_dataset_path(@dataset)}
           format.json {render :edit, status: :ok, location: edit_dataset_path(@dataset)}
-
         else #this else means context was not set to exit or publish - this is the normal draft update
           format.html {redirect_to dataset_path(@dataset.key)}
           format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
         end
-
       else #this else means update failed
         format.html {render :edit}
         format.json {render json: @dataset.errors, status: :unprocessable_entity}
       end
-
     end
-
   end
 
   def validate_change2published
-
-    authorize! :edit, @dataset
-
-    # Rails.logger.warn params.to_yaml
-
+    authorize! :update, @dataset
     if params.has_key?(:dataset) && (params[:dataset]).has_key?(:identifier) && params[:dataset][:identifer] != ""
-
       proposed_dataset = Dataset.create()
       if params[:dataset].has_key?(:title)
         proposed_dataset.title = params[:dataset][:title]
@@ -1052,9 +1011,7 @@ class DatasetsController < ApplicationController
   # DELETE /datasets/1
   # DELETE /datasets/1.json
   def destroy
-
-    authorize! :edit, @dataset
-
+    authorize! :destroy, @dataset
     @dataset.destroy
     respond_to do |format|
       if current_user
@@ -1062,7 +1019,6 @@ class DatasetsController < ApplicationController
       else
         format.html {redirect_to datasets_url, notice: 'Dataset was successfully deleted.'}
       end
-
       format.json {head :no_content}
     end
   end
@@ -1073,9 +1029,7 @@ class DatasetsController < ApplicationController
   end
 
   def suppress_changelog
-
     authorize! :manage, @dataset
-
     @dataset.suppress_changelog = true
     respond_to do |format|
       if @dataset.save
@@ -1086,13 +1040,10 @@ class DatasetsController < ApplicationController
         format.json {render json: @dataset.errors, status: :unprocessable_entity}
       end
     end
-
   end
 
   def unsuppress_changelog
-
     authorize! :manage, @dataset
-
     @dataset.suppress_changelog = false
     respond_to do |format|
       if @dataset.save
@@ -1103,15 +1054,11 @@ class DatasetsController < ApplicationController
         format.json {render json: @dataset.errors, status: :unprocessable_entity}
       end
     end
-
   end
 
   def temporarily_suppress_files
-
     authorize! :manage, @dataset
-
     @dataset.hold_state = Databank::PublicationState::TempSuppress::FILE
-
     respond_to do |format|
       if @dataset.save
         format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset files have been temporarily suppressed.]}
@@ -1125,15 +1072,10 @@ class DatasetsController < ApplicationController
   end
 
   def temporarily_suppress_metadata
-
     authorize! :manage, @dataset
-
     @dataset.hold_state = Databank::PublicationState::TempSuppress::METADATA
-
     respond_to do |format|
-
       if @dataset.save
-
         if @dataset.update_doi
           format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset metadata and files have been temporarily suppressed.]}
           format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
@@ -1144,22 +1086,15 @@ class DatasetsController < ApplicationController
       else
         format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.]}
         format.json {render json: @dataset.errors, status: :unprocessable_entity}
-
       end
     end
-
   end
 
   def unsuppress
-
     authorize! :manage, @dataset
-
     @dataset.hold_state = Databank::PublicationState::TempSuppress::NONE
-
     respond_to do |format|
-
       if @dataset.save
-
         if @dataset.update_doi
           format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset has been unsuppressed.]}
           format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
@@ -1170,21 +1105,16 @@ class DatasetsController < ApplicationController
       else
         format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.]}
         format.json {render json: @dataset.errors, status: :unprocessable_entity}
-
       end
     end
   end
 
   def permanently_suppress_files
-
     authorize! :manage, @dataset
-
     @dataset.publication_state = Databank::PublicationState::PermSuppress::FILE
     @dataset.hold_state = Databank::PublicationState::PermSuppress::FILE
     @dataset.tombstone_date = Date.current
-
     respond_to do |format|
-
       if @dataset.save
         format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset files have been permanently supressed.]}
         format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
@@ -1192,21 +1122,16 @@ class DatasetsController < ApplicationController
         format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Error - see log.]}
         format.json {render json: @dataset.errors, status: :unprocessable_entity}
       end
-
     end
-
   end
 
   def permanently_suppress_metadata
-
     authorize! :manage, @dataset
-
     @dataset.hold_state = Databank::PublicationState::PermSuppress::METADATA
     @dataset.publication_state = Databank::PublicationState::PermSuppress::METADATA
     @dataset.tombstone_date = Date.current.iso8601
     @dataset.embargo = Databank::PublicationState::Embargo::NONE
     @dataset.save
-
     if @dataset.hide_doi
       format.html {redirect_to dataset_path(@dataset.key), notice: %Q[Dataset has been permanently supressed in Illinois Data Bank and DataCite.]}
       format.json {render :show, status: :ok, location: dataset_path(@dataset.key)}
@@ -1214,11 +1139,10 @@ class DatasetsController < ApplicationController
       format.html {redirect_to dataset_path(@dataset.key), alert: %Q[Dataset metadata and files have been permenantly suppressed in Illinois Data Bank, but DataCite has not been updated.]}
       format.json {render :show, status: :unprocessable_entity, location: dataset_path(@dataset.key)}
     end
-
   end
 
   def request_review
-
+    authorize! :update, @dataset
     params = Hash.new
     params['help-name'] = @dataset.depositor_name
     params['help-email'] = @dataset.depositor_email
@@ -1242,7 +1166,6 @@ class DatasetsController < ApplicationController
     help_request.deliver_now
 
     respond_to do |format|
-
       if @dataset.save
         format.html {redirect_to dataset_path(@dataset.key), notice: "Your request has been submitted. In the meantime, your DOI has been reserved and you can give your citation to your publisher as a placeholder:  #{@dataset.plain_text_citation}"}
         format.json {render json: {status: :ok}, content_type: request.format, :layout => false}
@@ -1250,20 +1173,13 @@ class DatasetsController < ApplicationController
         format.html {redirect_to dataset_path(@dataset.key), notice: "Your request has been submitted."}
         format.json {render json: {status: :ok}, content_type: request.format, :layout => false}
       end
-
     end
-
   end
 
   # publishing in IDB means interacting with DataCite and Medusa
   def publish
-
-    authorize! :edit, @dataset
-
+    authorize! :update, @dataset
     publish_attempt_result = @dataset.publish(current_user)
-    #Rails.logger.warn "publish attempt result:"
-    #Rails.logger.warn publish_attempt_result
-
     respond_to do |format|
       if publish_attempt_result[:status] == :ok && @dataset.save
         format.html {redirect_to dataset_path(@dataset.key), notice: Dataset.deposit_confirmation_notice(publish_attempt_result[:old_publication_state], @dataset)}
@@ -1278,13 +1194,10 @@ class DatasetsController < ApplicationController
         format.json {render json: {status: :unprocessable_entity}, content_type: request.format, :layout => false}
       end
     end
-
   end
 
   def send_to_medusa
-
-    authorize! :edit, @dataset
-
+    authorize! :update, @dataset
     ingest_record_url = MedusaIngest.send_dataset_to_medusa(@dataset)
     render json: {result: ingest_record_url || "error", status: :ok}
   end
@@ -1305,11 +1218,9 @@ class DatasetsController < ApplicationController
     else
       @agreement_text = File.read(Rails.root.join("public", "deposit_agreement.txt"))
     end
-
   end
 
   def zip_and_download_selected
-
     if @dataset.identifier && !@dataset.identifier.empty? && @dataset.publication_state != Databank::PublicationState::DRAFT
       @dataset.complete_datafiles.each do |datafile|
 
@@ -1321,50 +1232,34 @@ class DatasetsController < ApplicationController
     else
       file_name = "datafiles.zip"
     end
-
-    datafiles = Datafile.where(web_id: params[:selected_files])
-
     datafiles = Array.new
-
     web_ids = params[:selected_files]
-
     web_ids.each do |web_id|
-
       df = Datafile.find_by_web_id(web_id)
       if df
         datafiles.append([df.bytestream_path, df.bytestream_name])
       end
-
     end
 
     file_mappings = datafiles
                         .lazy # Lazy allows us to begin sending the download immediately instead of waiting to download everything
                         .map {|url, path| [open(url), path]}
     zipline(file_mappings, file_name)
-
   end
 
   # precondition: all valid web_ids in medusa
   def download_link
-
     return_hash = Hash.new
-
     if params.has_key?('web_ids')
       web_ids_str = params['web_ids']
       web_ids = web_ids_str.split('~')
-
       if !web_ids.respond_to?(:count) || web_ids.count < 1
         return_hash["status"] = "error"
         return_hash["error"] = "no web_ids after split"
         render(json: return_hash.to_json, content_type: request.format, :layout => false)
       end
-
       web_ids.each(&:strip!)
-
-      path_arr = Array.new
-
       parametrized_doi = @dataset.identifier.parameterize
-
       download_hash = DownloaderClient.datafiles_download_hash(@dataset, web_ids, "DOI-#{parametrized_doi}")
       if download_hash
         if download_hash['status'] == 'ok'
@@ -1377,7 +1272,6 @@ class DatasetsController < ApplicationController
               #Rails.logger.warn "did not find datafile for web_id #{web_id}"
             end
           end
-
           return_hash["status"] = "ok"
           return_hash["url"] = download_hash['download_url']
           return_hash["total_size"] = download_hash['total_size']
@@ -1395,47 +1289,23 @@ class DatasetsController < ApplicationController
       return_hash["error"] = "no web_ids in request"
       render(json: return_hash.to_json, content_type: request.format, :layout => false)
     end
-
   end
 
   def confirmation_message()
-
-    # Rails.logger.warn "params inside confirmation messaage: #{params.to_yaml}"
-
     proposed_dataset = @dataset
-    old_embargo_state = @dataset.embargo || Databank::PublicationState::Embargo::NONE
-    new_embargo_state = @dataset.embargo || Databank::PublicationState::Embargo::NONE
-    #old_publication_state = @dataset.publication_state
-    #new_publication_state = @dataset.publication_state
-
     if params.has_key?('new_embargo_state')
-
-      # Rails.logger.warn "new_embargo state detected: #{params['new_embargo_state']}"
-
       case params['new_embargo_state']
       when Databank::PublicationState::Embargo::FILE
         new_embargo_state = Databank::PublicationState::Embargo::FILE
-
-        #new_publication_state = Databank::PublicationState::Embargo::FILE
       when Databank::PublicationState::Embargo::METADATA
         new_embargo_state = Databank::PublicationState::Embargo::METADATA
-        #new_publication_state = Databank::PublicationState::Embargo::METADATA
       else
         new_embargo_state = Databank::PublicationState::Embargo::NONE
-        #new_publication_state = Databank::PublicationState::RELEASED
       end
-
       proposed_dataset.embargo = new_embargo_state
       proposed_dataset.release_date = params['release_date'] || @dataset.release_date
-
-      #proposed_dataset.publication_state = new_publication_state
-
     end
-
-    # Rails.logger.warn "proposed dataset just before detection"
-    # Rails.logger.warn proposed_dataset.to_yaml
     render json: {status: :ok, message: Dataset.publish_modal_msg(proposed_dataset)}
-
   end
 
   def download_endNote_XML
@@ -1574,7 +1444,6 @@ class DatasetsController < ApplicationController
   end
 
   def serialization
-
     @serialization_json = self.recovery_serialization.to_json
     respond_to do |format|
       format.html

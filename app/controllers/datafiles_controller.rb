@@ -30,19 +30,19 @@ class DatafilesController < ApplicationController
 
   # GET /datafiles/new
   def new
-    authorize! :edit, @dataset
+    authorize! :update, @dataset
     @datafile = Datafile.new
     @datafile.web_id ||= @datafile.generate_web_id
   end
 
   # GET /datafiles/1/edit
   def edit
-    authorize! :edit, @dataset
+    authorize! :update, @dataset
   end
 
   def add
     @datafile = Datafile.create(dataset_id: @dataset.id)
-    authorize! :edit, @dataset
+    authorize! :update, @dataset
     respond_to do |format|
       format.html {redirect_to "/datasets/#{@dataset.key}/datafiles/#{@datafile.web_id}/upload"}
       format.json {render :edit, status: :created, location: "/datasets/#{@dataset.key}/datafiles/#{@datafile.webi_id}/upload"}
@@ -52,6 +52,7 @@ class DatafilesController < ApplicationController
   # POST /datafiles
   # POST /datafiles.json
   def create
+    authorize! :update, @dataset
     @datafile = Datafile.new(dataset_id: @dataset.id)
 
     if params.has_key?(:datafile) && params[:datafile].has_key?(:tus_url)
@@ -115,7 +116,6 @@ class DatafilesController < ApplicationController
   end
 
   def view
-
     if @datafile.current_root.root_type == :filesystem
       @datafile.with_input_file do |input_file|
         send_file input_file, type: safe_content_type(@datafile), disposition: 'inline', filename: @datafile.name
@@ -123,15 +123,12 @@ class DatafilesController < ApplicationController
     else
       redirect_to(datafile_view_link(@datafile))
     end
-
   end
 
   # PATCH/PUT /datafiles/1
   # PATCH/PUT /datafiles/1.json
   def update
-
     @datafile.assign_attributes(status: 'new', upload: nil) if params[:delete_upload] == 'yes'
-
     respond_to do |format|
       if @datafile.update(datafile_params)
         format.html {redirect_to @datafile, notice: 'Datafile was successfully updated.'}
@@ -146,9 +143,8 @@ class DatafilesController < ApplicationController
   # DELETE /datafiles/1
   # DELETE /datafiles/1.json
   def destroy
-
+    authorize! :update, @dataset
     respond_to do |format|
-
       if @datafile.destroy && @dataset.save
         format.html {redirect_to edit_dataset_path(@dataset.key)}
         format.json {render json: {"confirmation" => "deleted"}, status: :ok}
@@ -156,9 +152,7 @@ class DatafilesController < ApplicationController
         format.html {redirect_to edit_dataset_path(@dataset.key)}
         format.json {render json: @datafile.errors, status: :unprocessable_entity}
       end
-
     end
-
   end
 
   def upload
@@ -199,9 +193,7 @@ class DatafilesController < ApplicationController
       @datafile.save!
 
       render json: to_fileupload and return
-
     end
-
   end
 
   def reset_upload
@@ -227,11 +219,8 @@ class DatafilesController < ApplicationController
   end
 
   def download
-
     @datafile.record_download(request.remote_ip)
-
     download_no_record
-
   end
 
   def download_no_record
@@ -244,7 +233,6 @@ class DatafilesController < ApplicationController
     else
       redirect_to(datafile_download_link(@datafile))
     end
-
   end
 
   def to_fileupload
